@@ -158,83 +158,90 @@ class HomePage extends StatelessWidget {
       body: Column(
         children: [
           // Horizontal categories
-SizedBox(
-  height: 88,
-  child: ListView(
-    scrollDirection: Axis.horizontal,
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-    children: [
-      GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AllCourses()),
-          );
-        },
-        child: Column(
-          children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: const Color(0xFF00C853).withOpacity(0.15),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(Icons.menu_book_outlined,
-                  size: 26, color: Color(0xFF00C853)),
+          SizedBox(
+            height: 88,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const AllCourses()),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF00C853).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(
+                          Icons.menu_book_outlined,
+                          size: 26,
+                          color: Color(0xFF00C853),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const SizedBox(
+                        width: 72,
+                        child: Text(
+                          'All Courses',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 11),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const TranslatorInHome(),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF42A5F5).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(
+                          Icons.translate,
+                          size: 26,
+                          color: Color(0xFF42A5F5),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const SizedBox(
+                        width: 72,
+                        child: Text(
+                          'Translate',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 11),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 4),
-            const SizedBox(
-              width: 72,
-              child: Text(
-                'All Courses',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 11),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-      const SizedBox(width: 12),
-      GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const TranslatorInHome()),
-          );
-        },
-        child: Column(
-          children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: const Color(0xFF42A5F5).withOpacity(0.15),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(Icons.translate,
-                  size: 26, color: Color(0xFF42A5F5)),
-            ),
-            const SizedBox(height: 4),
-            const SizedBox(
-              width: 72,
-              child: Text(
-                'Translate',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 11),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ],
-  ),
-),
-
+          ),
 
           // Search bar for chats
           Padding(
@@ -359,7 +366,9 @@ class _ChatTile extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 1.5), // smaller vertical gap
+      padding: const EdgeInsets.symmetric(
+        vertical: 1.5,
+      ), // smaller vertical gap
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         leading: Stack(
@@ -372,7 +381,7 @@ class _ChatTile extends StatelessWidget {
               bottom: 0,
               left: 0,
               child: Container(
-                width: 14,  // a bit bigger to match avatar
+                width: 14, // a bit bigger to match avatar
                 height: 14,
                 decoration: BoxDecoration(
                   color: Colors.red,
@@ -400,8 +409,7 @@ class _ChatTile extends StatelessWidget {
             const SizedBox(height: 4),
             if (chat.myTurn)
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: theme.brightness == Brightness.dark
                       ? const Color(0xFF311b86)
