@@ -506,7 +506,6 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
       padding: MediaQuery.of(context).viewInsets,
