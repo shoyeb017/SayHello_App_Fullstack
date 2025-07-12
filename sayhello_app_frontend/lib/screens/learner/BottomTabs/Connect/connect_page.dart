@@ -465,7 +465,6 @@ class _ConnectPageState extends State<ConnectPage> {
   }
 }
 
-// Add this at the bottom of your existing ConnectPage code
 // This widget is shown when clicking the filter/search icon
 
 void showSearchFilterSheet(BuildContext context) {
@@ -484,7 +483,6 @@ void showSearchFilterSheet(BuildContext context) {
     ),
   );
 }
-
 
 class SearchFilterSheet extends StatefulWidget {
   const SearchFilterSheet({Key? key}) : super(key: key);
