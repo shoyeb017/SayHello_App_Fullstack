@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 class FeedPage extends StatelessWidget {
   const FeedPage({super.key});
 
@@ -11,4 +12,5 @@ class FeedPage extends StatelessWidget {
       ),
     );
   }
+
 }

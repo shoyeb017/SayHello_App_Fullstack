@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 // Dummy course model
 class Course {
   final String title;
