@@ -96,8 +96,6 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     List<String> filteredLanguages = allLanguages
         .where(
@@ -253,13 +251,9 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
       body: Builder(
         builder: (context) {
           final isDark = Theme.of(context).brightness == Brightness.dark;
-          final Color bgColor = isDark ? const Color(0xFF121212) : Colors.white;
           final Color boxColor = isDark
               ? const Color(0xFF1F1F1F)
               : Colors.grey.shade200;
-          final Color langButtonColor = isDark
-              ? const Color(0xFF2A2A2A)
-              : Colors.grey.shade300;
           final Color hintColor = isDark
               ? Colors.grey.shade600
               : Colors.grey.shade700;
@@ -453,38 +447,6 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _LanguageBox extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-
-  const _LanguageBox({required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        decoration: BoxDecoration(
-          color: theme.brightness == Brightness.dark
-              ? Colors.grey.shade800
-              : Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-            const Icon(Icons.arrow_drop_down),
-          ],
-        ),
       ),
     );
   }

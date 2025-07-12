@@ -128,6 +128,8 @@ class HomePage extends StatelessWidget {
           title: Row(
             children: [
               const SizedBox(width: 10),
+              // Theme toggle button
+              // Use the theme provider to toggle dark/light mode
               IconButton(
                 icon: Icon(
                   themeProvider.themeMode == ThemeMode.dark
