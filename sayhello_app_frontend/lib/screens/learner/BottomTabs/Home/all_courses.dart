@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 // Dummy course model
 class Course {
   final String title;
@@ -80,7 +79,7 @@ class _AllCoursesState extends State<AllCourses> {
       appBar: AppBar(
         title: const Text(
           'All Courses',
-          style: TextStyle(fontWeight: FontWeight.bold , fontSize: 20),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         centerTitle: true,
         leading: Navigator.of(context).canPop()

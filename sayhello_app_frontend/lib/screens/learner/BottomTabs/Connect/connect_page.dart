@@ -470,12 +470,13 @@ class _ConnectPageState extends State<ConnectPage> {
 void showSearchFilterSheet(BuildContext context) {
   showModalBottomSheet(
     context: context,
-    isScrollControlled: true,// So you can add spacing
+    isScrollControlled: true, // So you can add spacing
     builder: (context) => Padding(
-      padding: const EdgeInsets.only(top: 40), // 👈 Push the sheet down from top
+      padding: const EdgeInsets.only(
+        top: 40,
+      ), // 👈 Push the sheet down from top
       child: Container(
         decoration: const BoxDecoration(
-          
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: const SearchFilterSheet(),
