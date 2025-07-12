@@ -1,8 +1,4 @@
-// language_talks_home.dart
-// Demo UI that closely matches the screenshot you provided.
-// Just drop this file into a fresh Flutter app (lib folder) and run it.
-// No external packages are required – everything uses the core Material library.
-// ──────────────────────────────────────────────────────────────────────────────
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
