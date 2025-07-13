@@ -353,6 +353,9 @@ class HomePage extends StatelessWidget {
 // }
 
 
+
+
+
 // ──────────────────────────────────────────────────────────────────────────────
 // Single chat row
 class _ChatTile extends StatelessWidget {
