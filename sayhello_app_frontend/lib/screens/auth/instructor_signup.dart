@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
 
 class InstructorSignupPage extends StatefulWidget {
   const InstructorSignupPage({super.key});
@@ -19,16 +21,34 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
   String nativeLanguage = '', learningLanguage = '';
   File? profileImage;
 
-  final List<String> languageOptions = ['English', 'Arabic', 'Japanese', 'Bangla', 'Korean'];
+  final List<String> languageOptions = [
+    'English',
+    'Arabic',
+    'Japanese',
+    'Bangla',
+    'Korean',
+  ];
   final List<String> genderOptions = ['Male', 'Female', 'Other'];
-  final List<String> countryOptions = ['Bangladesh', 'USA', 'UK', 'India', 'Japan', 'Others'];
+  final List<String> countryOptions = [
+    'Bangladesh',
+    'USA',
+    'UK',
+    'India',
+    'Japan',
+    'Others',
+  ];
 
   final Color primaryColor = const Color(0xFF7A54FF);
   final Color offWhite = const Color(0xFFF5F5F5);
-  final Color inputFieldColor = const Color(0xFFF0F0F0);
+
+  Color get inputFieldColor => Theme.of(context).brightness == Brightness.dark
+      ? Colors.grey[800]!
+      : const Color(0xFFF0F0F0);
 
   Future<void> pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
     if (pickedFile != null) {
       setState(() => profileImage = File(pickedFile.path));
     }
@@ -56,42 +76,67 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: offWhite,
+      backgroundColor: isDark ? Colors.grey[900] : offWhite,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              themeProvider.themeMode == ThemeMode.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            onPressed: () {
+              bool toDark = themeProvider.themeMode != ThemeMode.dark;
+              themeProvider.toggleTheme(toDark);
+            },
+          ),
+        ],
       ),
       body: IndexedStack(
         index: currentStep,
-        children: [
-          _buildStep1(),
-          _buildStep2(),
-        ],
+        children: [_buildStep1(), _buildStep2()],
       ),
     );
   }
 
   Widget _buildStep1() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? Colors.grey[850] : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black26 : Colors.black12,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Form(
         key: _formKeyStep1,
         child: ListView(
           shrinkWrap: true,
           children: [
-            const Text("Step 1: Personal Information", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const Text(
+              "Step 1: Personal Information",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
 
             Center(
@@ -99,8 +144,12 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: profileImage != null ? FileImage(profileImage!) : null,
-                    child: profileImage == null ? const Icon(Icons.person, size: 40) : null,
+                    backgroundImage: profileImage != null
+                        ? FileImage(profileImage!)
+                        : null,
+                    child: profileImage == null
+                        ? const Icon(Icons.person, size: 40)
+                        : null,
                   ),
                   Positioned(
                     bottom: 0,
@@ -118,19 +167,37 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
             _inputField('Full Name', (val) => name = val ?? ''),
             const SizedBox(height: 12),
 
-            _dropdown('Gender', gender, genderOptions, (val) => setState(() => gender = val)),
+            _dropdown(
+              'Gender',
+              gender,
+              genderOptions,
+              (val) => setState(() => gender = val),
+            ),
             const SizedBox(height: 12),
 
-            _dropdown('Country', country, countryOptions, (val) => setState(() => country = val)),
+            _dropdown(
+              'Country',
+              country,
+              countryOptions,
+              (val) => setState(() => country = val),
+            ),
             const SizedBox(height: 12),
 
-            const Text('Date of Birth', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+            const Text(
+              'Date of Birth',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            ),
             const SizedBox(height: 6),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: inputFieldColor,
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 14,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
                 elevation: 0,
               ),
               icon: Icon(Icons.calendar_today, size: 18, color: primaryColor),
@@ -156,10 +223,15 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
               ),
               onPressed: nextStep,
-              child: const Text('Next', style: TextStyle(color: Colors.white, fontSize: 16)),
+              child: const Text(
+                'Next',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
             ),
           ],
         ),
@@ -168,39 +240,72 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
   }
 
   Widget _buildStep2() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? Colors.grey[850] : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black26 : Colors.black12,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Form(
         key: _formKeyStep2,
         child: ListView(
           shrinkWrap: true,
           children: [
-            const Text("Step 2: Language & Bio", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const Text(
+              "Step 2: Language & Bio",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
 
-            _dropdown('Native Language', nativeLanguage, languageOptions, (val) => setState(() => nativeLanguage = val)),
+            _dropdown(
+              'Native Language',
+              nativeLanguage,
+              languageOptions,
+              (val) => setState(() => nativeLanguage = val),
+            ),
             const SizedBox(height: 12),
 
-            _dropdown('Teaching Language', learningLanguage, languageOptions, (val) => setState(() => learningLanguage = val)),
+            _dropdown(
+              'Teaching Language',
+              learningLanguage,
+              languageOptions,
+              (val) => setState(() => learningLanguage = val),
+            ),
             const SizedBox(height: 12),
 
             TextFormField(
               maxLines: 4,
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? Colors.white : Colors.black,
+              ),
               decoration: InputDecoration(
                 labelText: 'Bio (Optional)',
+                labelStyle: TextStyle(
+                  color: isDark ? Colors.grey[400] : Colors.grey[700],
+                ),
                 alignLabelWithHint: true,
                 fillColor: inputFieldColor,
                 filled: true,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
-                contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
               ),
-              style: const TextStyle(fontSize: 14),
               onSaved: (val) => bio = val ?? '',
             ),
 
@@ -213,19 +318,32 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: primaryColor,
                     side: BorderSide(color: primaryColor),
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 24,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
                   ),
                   child: const Text('Back', style: TextStyle(fontSize: 14)),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 24,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
                   ),
                   onPressed: submitForm,
-                  child: const Text('Submit', style: TextStyle(color: Colors.white, fontSize: 16)),
+                  child: const Text(
+                    'Submit',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
                 ),
               ],
             ),
@@ -236,32 +354,77 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
   }
 
   Widget _inputField(String label, FormFieldSetter<String> onSave) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return TextFormField(
-      style: const TextStyle(fontSize: 14),
+      style: TextStyle(
+        fontSize: 14,
+        color: isDark ? Colors.white : Colors.black,
+      ),
       decoration: InputDecoration(
         labelText: label,
+        labelStyle: TextStyle(
+          color: isDark ? Colors.grey[400] : Colors.grey[700],
+        ),
         filled: true,
         fillColor: inputFieldColor,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
-        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(24),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 16,
+        ),
       ),
       onSaved: onSave,
       validator: (val) => val == null || val.isEmpty ? 'Required' : null,
     );
   }
 
-  Widget _dropdown(String label, String value, List<String> items, Function(String) onChanged) {
+  Widget _dropdown(
+    String label,
+    String value,
+    List<String> items,
+    Function(String) onChanged,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: label,
+        labelStyle: TextStyle(
+          color: isDark ? Colors.grey[400] : Colors.grey[700],
+        ),
         filled: true,
         fillColor: inputFieldColor,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
-        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(24),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 16,
+        ),
       ),
+      style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+      dropdownColor: isDark ? Colors.grey[800] : Colors.white,
       value: value.isNotEmpty ? value : null,
-      icon: const Icon(Icons.arrow_drop_down),
-      items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
+      icon: Icon(
+        Icons.arrow_drop_down,
+        color: isDark ? Colors.grey[400] : Colors.grey[700],
+      ),
+      items: items
+          .map(
+            (item) => DropdownMenuItem(
+              value: item,
+              child: Text(
+                item,
+                style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+              ),
+            ),
+          )
+          .toList(),
       onChanged: (val) => onChanged(val ?? ''),
       validator: (val) => val == null ? 'Required' : null,
     );

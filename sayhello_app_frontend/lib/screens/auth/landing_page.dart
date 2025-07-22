@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({Key? key}) : super(key: key);
@@ -71,8 +73,11 @@ class _LandingPageState extends State<LandingPage>
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -81,25 +86,53 @@ class _LandingPageState extends State<LandingPage>
             Container(
               alignment: Alignment.centerLeft,
               width: double.infinity,
-              margin: const EdgeInsets.only(
-                left: 20,
-              ), // <-- adds little gap on left
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    "SayHello",
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.deepPurple,
+              margin: const EdgeInsets.only(left: 20, right: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "SayHello",
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.w700,
+                            color: isDark
+                                ? const Color(0xFF7a54ff)
+                                : Colors.deepPurple,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "Practice 5+ languages",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        Text(
+                          "Meet 50 million global friends",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Text("Practice 5+ languages", style: TextStyle(fontSize: 18)),
-                  Text(
-                    "Meet 50 million global friends",
-                    style: TextStyle(fontSize: 18),
+                  IconButton(
+                    icon: Icon(
+                      themeProvider.themeMode == ThemeMode.dark
+                          ? Icons.light_mode
+                          : Icons.dark_mode,
+                      color: isDark ? Colors.white : Colors.black,
+                      size: 28,
+                    ),
+                    onPressed: () {
+                      bool toDark = themeProvider.themeMode != ThemeMode.dark;
+                      themeProvider.toggleTheme(toDark);
+                    },
                   ),
                 ],
               ),
@@ -210,6 +243,8 @@ class _LandingPageState extends State<LandingPage>
   }
 
   List<Widget> _buildFlagBubbles() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final items = [
       {
         'flag': '🇨🇳',
@@ -331,7 +366,7 @@ class _LandingPageState extends State<LandingPage>
                   right: 0,
                   child: CircleAvatar(
                     radius: 8,
-                    backgroundColor: Colors.white,
+                    backgroundColor: isDark ? Colors.grey[800] : Colors.white,
                     child: Text(
                       item['flag']!,
                       style: const TextStyle(fontSize: 12),
@@ -341,21 +376,27 @@ class _LandingPageState extends State<LandingPage>
               ],
             ),
             const SizedBox(width: 1),
-            // White chat bubble
+            // Chat bubble
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? Colors.grey[800] : Colors.white,
                 borderRadius: BorderRadius.circular(18),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black12,
+                    color: isDark ? Colors.black26 : Colors.black12,
                     blurRadius: 3,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              child: Text(item['text']!, style: const TextStyle(fontSize: 14)),
+              child: Text(
+                item['text']!,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
             ),
           ],
         ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
 
 class InstructorSignInPage extends StatefulWidget {
   const InstructorSignInPage({super.key});
@@ -14,35 +16,55 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     final Color primaryColor = const Color(0xFF7a54ff);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Colors.grey[100], // off-white
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Instructor Sign In'),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
-        foregroundColor: primaryColor,
+        foregroundColor: isDark ? Colors.white : primaryColor,
+        actions: [
+          IconButton(
+            icon: Icon(
+              themeProvider.themeMode == ThemeMode.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            onPressed: () {
+              bool toDark = themeProvider.themeMode != ThemeMode.dark;
+              themeProvider.toggleTheme(toDark);
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
           // Abstract top purple wave
-          SizedBox(height: 24,),
+          SizedBox(height: 24),
 
           // White card container for form
           Expanded(
             child: SingleChildScrollView(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 24),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 32,
+                ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDark ? Colors.grey[850] : Colors.white,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: isDark
+                          ? Colors.black26
+                          : Colors.black.withOpacity(0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -53,7 +75,10 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                   children: [
                     const Text(
                       'Welcome Instructor',
-                      style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Text(
@@ -68,10 +93,32 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                     // Username field
                     TextField(
                       controller: _usernameController,
-                      decoration: const InputDecoration(
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                      decoration: InputDecoration(
                         labelText: 'Username',
-                        prefixIcon: Icon(Icons.person),
-                        border: OutlineInputBorder(),
+                        labelStyle: TextStyle(
+                          color: isDark ? Colors.grey[400] : Colors.grey[700],
+                        ),
+                        prefixIcon: Icon(Icons.person, color: primaryColor),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: isDark
+                                ? Colors.grey[600]!
+                                : Colors.grey[300]!,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: isDark
+                                ? Colors.grey[600]!
+                                : Colors.grey[300]!,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: primaryColor),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -80,13 +127,38 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                     TextField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock),
-                        border: const OutlineInputBorder(),
+                        labelStyle: TextStyle(
+                          color: isDark ? Colors.grey[400] : Colors.grey[700],
+                        ),
+                        prefixIcon: Icon(Icons.lock, color: primaryColor),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: isDark
+                                ? Colors.grey[600]!
+                                : Colors.grey[300]!,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: isDark
+                                ? Colors.grey[600]!
+                                : Colors.grey[300]!,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: primaryColor),
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: primaryColor,
                           ),
                           onPressed: () {
                             setState(() {
@@ -106,7 +178,9 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                           final username = _usernameController.text.trim();
                           final password = _passwordController.text.trim();
                           // TODO: Add sign-in logic here
-                          debugPrint('Instructor Username: $username, Password: $password');
+                          debugPrint(
+                            'Instructor Username: $username, Password: $password',
+                          );
                           Navigator.pushNamed(context, '/instructor-main');
                         },
                         icon: const Icon(Icons.login, color: Colors.white),

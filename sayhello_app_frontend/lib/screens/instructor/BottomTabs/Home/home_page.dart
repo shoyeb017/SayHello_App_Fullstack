@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../providers/theme_provider.dart';
+import 'instructor_course_portal.dart';
 
 class InstructorHomePage extends StatefulWidget {
   const InstructorHomePage({super.key});
@@ -8,83 +11,529 @@ class InstructorHomePage extends StatefulWidget {
 }
 
 class _InstructorHomePageState extends State<InstructorHomePage> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  // Dynamic course data - replace with backend API later
+  final List<Map<String, dynamic>> _allCourses = [
+    {
+      'id': 'course_001',
+      'title': 'Flutter Development Masterclass',
+      'description':
+          'Complete Flutter development course for beginners to advanced',
+      'status': 'active',
+      'enrolledStudents': 45,
+      'totalSessions': 20,
+      'completedSessions': 12,
+      'upcomingSessions': 3,
+      'rating': 4.8,
+      'price': 299.99,
+      'thumbnail': 'https://picsum.photos/300/200?random=1',
+      'createdAt': DateTime.now().subtract(const Duration(days: 30)),
+      'category': 'Programming',
+      'difficulty': 'Intermediate',
+    },
+    {
+      'id': 'course_002',
+      'title': 'React Native for Mobile Apps',
+      'description': 'Build cross-platform mobile apps with React Native',
+      'status': 'active',
+      'enrolledStudents': 32,
+      'totalSessions': 15,
+      'completedSessions': 8,
+      'upcomingSessions': 2,
+      'rating': 4.6,
+      'price': 249.99,
+      'thumbnail': 'https://picsum.photos/300/200?random=2',
+      'createdAt': DateTime.now().subtract(const Duration(days: 60)),
+      'category': 'Programming',
+      'difficulty': 'Beginner',
+    },
+    {
+      'id': 'course_003',
+      'title': 'Advanced JavaScript Concepts',
+      'description': 'Deep dive into modern JavaScript and ES6+ features',
+      'status': 'completed',
+      'enrolledStudents': 78,
+      'totalSessions': 12,
+      'completedSessions': 12,
+      'upcomingSessions': 0,
+      'rating': 4.9,
+      'price': 199.99,
+      'thumbnail': 'https://picsum.photos/300/200?random=3',
+      'createdAt': DateTime.now().subtract(const Duration(days: 120)),
+      'category': 'Programming',
+      'difficulty': 'Advanced',
+    },
+    {
+      'id': 'course_004',
+      'title': 'UI/UX Design Fundamentals',
+      'description':
+          'Learn the principles of user interface and experience design',
+      'status': 'draft',
+      'enrolledStudents': 0,
+      'totalSessions': 18,
+      'completedSessions': 0,
+      'upcomingSessions': 0,
+      'rating': 0.0,
+      'price': 179.99,
+      'thumbnail': 'https://picsum.photos/300/200?random=4',
+      'createdAt': DateTime.now().subtract(const Duration(days: 5)),
+      'category': 'Design',
+      'difficulty': 'Beginner',
+    },
+  ];
+
+  List<Map<String, dynamic>> get _filteredCourses {
+    if (_searchQuery.isEmpty) return _allCourses;
+
+    return _allCourses.where((course) {
+      final title = course['title'].toString().toLowerCase();
+      final description = course['description'].toString().toLowerCase();
+      final category = course['category'].toString().toLowerCase();
+      final query = _searchQuery.toLowerCase();
+
+      return title.contains(query) ||
+          description.contains(query) ||
+          category.contains(query);
+    }).toList();
+  }
+
+  // Get quick stats
+  Map<String, int> get _quickStats {
+    int totalStudents = 0;
+    int upcomingSessions = 0;
+    int activeCourses = 0;
+
+    for (var course in _allCourses) {
+      totalStudents += course['enrolledStudents'] as int;
+      upcomingSessions += course['upcomingSessions'] as int;
+      if (course['status'] == 'active') activeCourses++;
+    }
+
+    return {
+      'totalStudents': totalStudents,
+      'upcomingSessions': upcomingSessions,
+      'activeCourses': activeCourses,
+      'totalCourses': _allCourses.length,
+    };
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final stats = _quickStats;
+    final courses = _filteredCourses;
+
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Instructor Home'),
-        backgroundColor: const Color(0xFF7A54FF),
-        foregroundColor: Colors.white,
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        automaticallyImplyLeading: false,
+        scrolledUnderElevation: 0,
+        title: Row(
           children: [
-            Text(
-              'Welcome, Instructor!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF7A54FF),
+            const Expanded(
+              child: Text(
+                'Instructor Dashboard',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
               ),
             ),
-            SizedBox(height: 20),
-            Card(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Dashboard Overview',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text('• Total Courses: 5'),
-                    Text('• Active Students: 120'),
-                    Text('• Pending Reviews: 8'),
-                    Text('• This Month Earnings: \$2,450'),
-                  ],
-                ),
+            IconButton(
+              icon: Icon(
+                themeProvider.themeMode == ThemeMode.dark
+                    ? Icons.light_mode
+                    : Icons.dark_mode,
               ),
+              onPressed: () {
+                bool toDark = themeProvider.themeMode != ThemeMode.dark;
+                themeProvider.toggleTheme(toDark);
+              },
             ),
-            SizedBox(height: 20),
-            Text(
-              'Recent Activity',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Expanded(
-              child: ListView(
-                children: [
-                  ListTile(
-                    leading: Icon(
-                      Icons.notifications,
-                      color: Color(0xFF7A54FF),
-                    ),
-                    title: Text('New student enrolled in Flutter Course'),
-                    subtitle: Text('2 hours ago'),
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.rate_review, color: Color(0xFF7A54FF)),
-                    title: Text('New review on React Course'),
-                    subtitle: Text('5 hours ago'),
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.message, color: Color(0xFF7A54FF)),
-                    title: Text('3 new messages from students'),
-                    subtitle: Text('1 day ago'),
-                  ),
-                ],
-              ),
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                _showAddCourseDialog();
+              },
             ),
           ],
         ),
       ),
+      body: Column(
+        children: [
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              controller: _searchController,
+              style: TextStyle(color: isDark ? Colors.white : Colors.black),
+              decoration: InputDecoration(
+                hintText: 'Search courses...',
+                hintStyle: TextStyle(
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                ),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                ),
+                filled: true,
+                fillColor: isDark ? Colors.grey[800] : Colors.grey[100],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+              ),
+            ),
+          ),
+
+          // Quick Stats Cards
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    'Active Courses',
+                    stats['activeCourses']!,
+                    Icons.school,
+                    isDark,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildStatCard(
+                    'Total Students',
+                    stats['totalStudents']!,
+                    Icons.people,
+                    isDark,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildStatCard(
+                    'Upcoming Sessions',
+                    stats['upcomingSessions']!,
+                    Icons.schedule,
+                    isDark,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Course List
+          Expanded(
+            child: courses.isEmpty
+                ? _buildEmptyState(isDark)
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: courses.length,
+                    itemBuilder: (context, index) {
+                      return _buildCourseCard(courses[index], isDark);
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String title, int value, IconData icon, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[850] : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black26 : Colors.grey[200]!,
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: const Color(0xFF7A54FF), size: 24),
+          const SizedBox(height: 8),
+          Text(
+            value.toString(),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCourseCard(Map<String, dynamic> course, bool isDark) {
+    final status = course['status'] as String;
+    final statusColor = _getStatusColor(status);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[850] : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black26 : Colors.grey[200]!,
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: () {
+          // Navigate to course portal - will create this file
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => InstructorCoursePortalPage(course: course),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    course['title'],
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    status.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: statusColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              course['description'],
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? Colors.grey[300] : Colors.grey[600],
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(
+                  Icons.people,
+                  size: 16,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '${course['enrolledStudents']} students',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                if (course['rating'] > 0) ...[
+                  Icon(Icons.star, size: 16, color: Colors.amber),
+                  const SizedBox(width: 4),
+                  Text(
+                    course['rating'].toStringAsFixed(1),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                  ),
+                ],
+                const Spacer(),
+                Text(
+                  '\$${course['price'].toStringAsFixed(0)}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF7A54FF),
+                  ),
+                ),
+              ],
+            ),
+            if (status == 'active') ...[
+              const SizedBox(height: 12),
+              LinearProgressIndicator(
+                value: course['completedSessions'] / course['totalSessions'],
+                backgroundColor: isDark ? Colors.grey[700] : Colors.grey[300],
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  Color(0xFF7A54FF),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Progress: ${course['completedSessions']}/${course['totalSessions']} sessions',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(bool isDark) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.school_outlined,
+            size: 80,
+            color: isDark ? Colors.grey[600] : Colors.grey[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            _searchQuery.isEmpty
+                ? 'No courses yet'
+                : 'No courses found for "$_searchQuery"',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _searchQuery.isEmpty
+                ? 'Create your first course to get started'
+                : 'Try different search terms',
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? Colors.grey[500] : Colors.grey[500],
+            ),
+          ),
+          const SizedBox(height: 24),
+          if (_searchQuery.isEmpty)
+            ElevatedButton.icon(
+              onPressed: _showAddCourseDialog,
+              icon: const Icon(Icons.add, color: Colors.white),
+              label: const Text(
+                'Create Course',
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF7A54FF),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'active':
+        return Colors.green;
+      case 'completed':
+        return Colors.blue;
+      case 'draft':
+        return Colors.orange;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  void _showAddCourseDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: isDark ? Colors.grey[850] : Colors.white,
+          title: Text(
+            'Create New Course',
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+          ),
+          content: Text(
+            'Course creation feature coming soon!\n\nThis will include:\n• Course title and description\n• Pricing and duration\n• Session scheduling\n• Content upload',
+            style: TextStyle(
+              color: isDark ? Colors.grey[300] : Colors.grey[700],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Color(0xFF7A54FF)),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
