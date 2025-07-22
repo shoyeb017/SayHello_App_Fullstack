@@ -1,146 +1,365 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
-class LandingPage extends StatelessWidget {
-  const LandingPage({super.key});
+class LandingPage extends StatefulWidget {
+  const LandingPage({Key? key}) : super(key: key);
+
+  @override
+  State<LandingPage> createState() => _LandingPageState();
+}
+
+class _LandingPageState extends State<LandingPage>
+    with TickerProviderStateMixin {
+  late ScrollController _scrollControllerLTR;
+  late ScrollController _scrollControllerRTL;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollControllerLTR = ScrollController();
+    _scrollControllerRTL = ScrollController();
+
+    // Initialize RTL controller offset to maxScroll after first frame:
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollControllerRTL.hasClients) {
+        final maxScroll = _scrollControllerRTL.position.maxScrollExtent;
+        _scrollControllerRTL.jumpTo(maxScroll);
+      }
+      _startAutoScrollLTR();
+      _startAutoScrollRTL();
+    });
+  }
+
+  void _startAutoScrollLTR() {
+    Timer.periodic(const Duration(milliseconds: 15), (timer) {
+      // faster by using 100ms interval
+      if (_scrollControllerLTR.hasClients) {
+        final maxScroll = _scrollControllerLTR.position.maxScrollExtent;
+        final current =
+            _scrollControllerLTR.offset + 1; // scroll 3 pixels per tick
+        if (current >= maxScroll) {
+          _scrollControllerLTR.jumpTo(0);
+        } else {
+          _scrollControllerLTR.jumpTo(current);
+        }
+      }
+    });
+  }
+
+  void _startAutoScrollRTL() {
+    Timer.periodic(const Duration(milliseconds: 15), (timer) {
+      if (_scrollControllerRTL.hasClients) {
+        final maxScroll = _scrollControllerRTL.position.maxScrollExtent;
+        final current =
+            _scrollControllerRTL.offset -
+            1; // scroll 3 pixels per tick backward
+        if (current <= 0) {
+          _scrollControllerRTL.jumpTo(maxScroll);
+        } else {
+          _scrollControllerRTL.jumpTo(current);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollControllerLTR.dispose();
+    _scrollControllerRTL.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Colors.grey[100],
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 40),
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
 
-              // Logo
-              Center(
-                child: Icon(
-                  Icons.language,
-                  size: 72,
-                  color: Colors.indigo,
-                ),
-              ),
-              const SizedBox(height: 20),
-
-
-              // App name
-              Center(
-                child: Text(
-                  'SayHello',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black87,
+            Container(
+              alignment: Alignment.centerLeft,
+              width: double.infinity,
+              margin: const EdgeInsets.only(
+                left: 20,
+              ), // <-- adds little gap on left
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    "SayHello",
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.deepPurple,
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              Center(
-                child: Text(
-                  'Start your language journey',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: isDark ? Colors.grey[400] : Colors.grey[700],
+                  SizedBox(height: 10),
+                  Text("Practice 5+ languages", style: TextStyle(fontSize: 18)),
+                  Text(
+                    "Meet 50 million global friends",
+                    style: TextStyle(fontSize: 18),
                   ),
-                ),
+                ],
               ),
+            ),
 
-              const SizedBox(height: 50),
+            const SizedBox(height: 10),
 
-              // Choose Learner
-              _buildRoleCard(
-                context,
-                title: 'I am a Learner',
-                icon: Icons.person_outline,
-                color: Colors.teal,
-                onTap: () {
-                  Navigator.pushNamed(context, '/learner-signin');
-                },
+            SizedBox(
+              height: 60,
+              child: ListView(
+                controller: _scrollControllerLTR,
+                scrollDirection: Axis.horizontal,
+                children: _buildFlagBubbles(),
               ),
+            ),
 
-              const SizedBox(height: 24),
+            const SizedBox(height: 10),
 
-              // Choose Instructor
-              _buildRoleCard(
-                context,
-                title: 'I am an Instructor',
-                icon: Icons.school_outlined,
-                color: Colors.deepPurple,
-                onTap: () {
-                  // Navigate to instructor sign-in page
-                  Navigator.pushNamed(context, '/instructor-signin');
-                },
+            SizedBox(
+              height: 60,
+              child: ListView(
+                controller: _scrollControllerRTL,
+                scrollDirection: Axis.horizontal,
+                // reverse: true,  <-- REMOVE THIS
+                children: _buildFlagBubbles(),
               ),
+            ),
 
-              const Spacer(),
-
-              Center(
-                child: Text(
-                  '© 2025 SayHello',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? Colors.grey : Colors.grey.shade600,
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/learner-signin');
+                    },
+                    icon: const Icon(
+                      Icons.school,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                    label: const Text(
+                      "I am a Learner",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF7a54ff),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/instructor-signin');
+                    },
+                    icon: const Icon(
+                      Icons.person_outline,
+                      color: Color(0xFF7a54ff),
+                      size: 24,
+                    ),
+                    label: const Text(
+                      "I am an Instructor",
+                      style: TextStyle(color: Color(0xFF7a54ff), fontSize: 20),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFF7a54ff)),
+                      backgroundColor: Colors.transparent,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+
+            const SizedBox(height: 24),
+            const Text.rich(
+              TextSpan(
+                text:
+                    'Your first login creates your account, and in doing so you agree to our ',
+                children: [
+                  TextSpan(
+                    text: 'Terms of Service',
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                  TextSpan(text: ' and '),
+                  TextSpan(
+                    text: 'Privacy Policy',
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                ],
+              ),
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12),
+            ),
+            const SizedBox(height: 12),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildRoleCard(
-    BuildContext context, {
-    required String title,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  List<Widget> _buildFlagBubbles() {
+    final items = [
+      {
+        'flag': '🇨🇳',
+        'text': '你好',
+        'image': 'https://i.pravatar.cc/150?img=1',
+      },
+      {
+        'flag': '🇧🇷',
+        'text': 'Olá!',
+        'image': 'https://i.pravatar.cc/150?img=2',
+      },
+      {
+        'flag': '🇯🇵',
+        'text': 'こんにちは',
+        'image': 'https://i.pravatar.cc/150?img=3',
+      },
+      {
+        'flag': '🇫🇷',
+        'text': 'Bonjour!',
+        'image': 'https://i.pravatar.cc/150?img=4',
+      },
+      {
+        'flag': '🇰🇷',
+        'text': '안녕하세요',
+        'image': 'https://i.pravatar.cc/150?img=5',
+      },
+      {
+        'flag': '🇪🇬',
+        'text': 'أهلاً',
+        'image': 'https://i.pravatar.cc/150?img=6',
+      },
+      {
+        'flag': '🇩🇪',
+        'text': 'Hallo',
+        'image': 'https://i.pravatar.cc/150?img=7',
+      },
+      {
+        'flag': '🇮🇹',
+        'text': 'Ciao',
+        'image': 'https://i.pravatar.cc/150?img=8',
+      },
+      {
+        'flag': '🇪🇸',
+        'text': '¡Hola!',
+        'image': 'https://i.pravatar.cc/150?img=9',
+      },
+      {
+        'flag': '🇷🇺',
+        'text': 'Привет',
+        'image': 'https://i.pravatar.cc/150?img=10',
+      },
+      {
+        'flag': '🇮🇳',
+        'text': 'नमस्ते',
+        'image': 'https://i.pravatar.cc/150?img=11',
+      },
+      {
+        'flag': '🇹🇷',
+        'text': 'Merhaba',
+        'image': 'https://i.pravatar.cc/150?img=12',
+      },
+      {
+        'flag': '🇹🇭',
+        'text': 'สวัสดี',
+        'image': 'https://i.pravatar.cc/150?img=13',
+      },
+      {
+        'flag': '🇲🇽',
+        'text': '¡Qué tal!',
+        'image': 'https://i.pravatar.cc/150?img=14',
+      },
+      {
+        'flag': '🇸🇦',
+        'text': 'مرحبا',
+        'image': 'https://i.pravatar.cc/150?img=15',
+      },
+      {
+        'flag': '🇧🇩',
+        'text': 'হ্যালো',
+        'image': 'https://i.pravatar.cc/150?img=16',
+      },
+      {
+        'flag': '🇻🇳',
+        'text': 'Xin chào',
+        'image': 'https://i.pravatar.cc/150?img=17',
+      },
+      {
+        'flag': '🇬🇧',
+        'text': 'Hello!',
+        'image': 'https://i.pravatar.cc/150?img=18',
+      },
+      {
+        'flag': '🇺🇸',
+        'text': 'Hey!',
+        'image': 'https://i.pravatar.cc/150?img=19',
+      },
+      {
+        'flag': '🇵🇭',
+        'text': 'Kumusta',
+        'image': 'https://i.pravatar.cc/150?img=20',
+      },
+    ];
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-        decoration: BoxDecoration(
-          color: isDark ? Colors.grey.shade900 : Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withOpacity(0.3)
-                  : Colors.grey.withOpacity(0.2),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
+    return items.map((item) {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 32, color: color),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: isDark ? Colors.white : Colors.black87,
+            // Avatar + Flag Stack
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage(item['image']!),
                 ),
-              ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: CircleAvatar(
+                    radius: 8,
+                    backgroundColor: Colors.white,
+                    child: Text(
+                      item['flag']!,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Icon(Icons.arrow_forward_ios, size: 18, color: color),
+            const SizedBox(width: 1),
+            // White chat bubble
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 3,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Text(item['text']!, style: const TextStyle(fontSize: 14)),
+            ),
           ],
         ),
-      ),
-    );
+      );
+    }).toList();
   }
 }
