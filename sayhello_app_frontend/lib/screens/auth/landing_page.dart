@@ -16,82 +16,77 @@ class LandingPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 40),
-              // App Logo / Icon
+
+              // Logo
               Center(
                 child: Icon(
                   Icons.language,
                   size: 72,
-                  color: Colors.purple,
+                  color: Colors.indigo,
                 ),
               ),
-              const SizedBox(height: 16),
-              // App Name
+              const SizedBox(height: 20),
+
+              // App name
               Center(
                 child: Text(
-                  'Polyglot Learner',
+                  'SayHello',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
+
               Center(
                 child: Text(
-                  'Choose your role to continue',
+                  'Start your language journey',
                   style: TextStyle(
                     fontSize: 14,
                     color: isDark ? Colors.grey[400] : Colors.grey[700],
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
 
-              // Learner Sign In
-              _buildOptionButton(
-                context,
-                icon: Icons.login,
-                label: 'Learner Sign In',
-                onTap: () => Navigator.pushNamed(context, '/learner-signin'),
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 50),
 
-              // Learner Sign Up
-              _buildOptionButton(
+              // Choose Learner
+              _buildRoleCard(
                 context,
-                icon: Icons.person_add,
-                label: 'Learner Sign Up',
-                onTap: () => Navigator.pushNamed(context, '/learner-signup'),
+                title: 'I am a Learner',
+                icon: Icons.person_outline,
+                color: Colors.teal,
+                onTap: () {
+                  Navigator.pushNamed(context, '/learner-signin');
+                },
               ),
-              const SizedBox(height: 16),
 
-              // Instructor Sign In
-              _buildOptionButton(
-                context,
-                icon: Icons.school,
-                label: 'Instructor Sign In',
-                onTap: () => Navigator.pushNamed(context, '/instructor-signin'),
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
 
-              // Instructor Sign Up
-              _buildOptionButton(
+              // Choose Instructor
+              _buildRoleCard(
                 context,
-                icon: Icons.how_to_reg,
-                label: 'Instructor Sign Up',
-                onTap: () => Navigator.pushNamed(context, '/instructor-signup'),
+                title: 'I am an Instructor',
+                icon: Icons.school_outlined,
+                color: Colors.deepPurple,
+                onTap: () {
+                  Navigator.pushNamed(context, '/instructor-signin');
+                },
               ),
+
               const Spacer(),
+
               Center(
                 child: Text(
-                  '© 2025 Polyglot App',
+                  '© 2025 SayHello',
                   style: TextStyle(
                     fontSize: 12,
                     color: isDark ? Colors.grey : Colors.grey.shade600,
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -99,20 +94,23 @@ class LandingPage extends StatelessWidget {
     );
   }
 
-  Widget _buildOptionButton(BuildContext context,
-      {required IconData icon,
-      required String label,
-      required VoidCallback onTap}) {
+  Widget _buildRoleCard(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         decoration: BoxDecoration(
           color: isDark ? Colors.grey.shade900 : Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: isDark
@@ -125,19 +123,19 @@ class LandingPage extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, size: 28, color: Colors.purple),
-            const SizedBox(width: 16),
+            Icon(icon, size: 32, color: color),
+            const SizedBox(width: 20),
             Expanded(
               child: Text(
-                label,
+                title,
                 style: TextStyle(
-                  fontSize: 16,
-                  color: isDark ? Colors.white : Colors.black87,
+                  fontSize: 18,
                   fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
             ),
-            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.purple),
+            Icon(Icons.arrow_forward_ios, size: 18, color: color),
           ],
         ),
       ),

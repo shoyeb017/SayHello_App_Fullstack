@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'providers/theme_provider.dart';
 import 'screens/learner/learner_main_tab.dart';
+import 'screens/auth/landing_page.dart';
 
 void main() {
   runApp(
@@ -49,7 +50,8 @@ class MyApp extends StatelessWidget {
       themeMode: themeProvider.themeMode,   // system / light / dark
       theme: ThemeData.light(),             // light theme
       darkTheme: customDarkTheme,           // custom dark theme
-      home: const LearnerMainTab(),
+      // home: const LearnerMainTab(),
+      home: const LandingPage(),
     );
   }
 }
