@@ -1,6 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 class LearnerSignupPage extends StatefulWidget {
   const LearnerSignupPage({super.key});
@@ -24,7 +24,12 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
   final languageOptions = ['English', 'Arabic', 'Japanese', 'Bangla', 'Korean'];
   final genderOptions = ['Male', 'Female', 'Other'];
   final countryOptions = ['Bangladesh', 'USA', 'Japan', 'Korea', 'Saudi Arabia', 'Other'];
-  final allInterests = ['Music', 'Travel', 'Books', 'Gaming', 'Cooking', 'Movies', 'Photography', 'Fitness', 'Art', 'Others'];
+  final allInterests = [
+    'Music', 'Travel', 'Books', 'Gaming', 'Cooking', 'Movies', 'Photography', 'Fitness', 'Art', 'Others'
+  ];
+
+  final Color primaryColor = const Color(0xFF7A54FF);
+  final Color grayBackground = const Color(0xFFF0F0F0);
 
   Future<void> pickImage() async {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -41,7 +46,9 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
 
   void submitForm() {
     if (_formKeys[2].currentState!.validate()) {
-      _formKeys.forEach((key) => key.currentState!.save());
+      for (var key in _formKeys) {
+        key.currentState!.save();
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Learner Registered Successfully!')),
       );
@@ -50,7 +57,6 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xFF7A54FF);
     const offWhite = Color(0xFFF5F5F5);
     const whiteBoxDecoration = BoxDecoration(
       color: Colors.white,
@@ -88,24 +94,32 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                       child: ListView(
                         shrinkWrap: true,
                         children: [
-                          const Text('Step 1: Personal Info', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Step 1: Personal Info',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
                           const SizedBox(height: 12),
                           Center(
                             child: GestureDetector(
                               onTap: pickImage,
                               child: CircleAvatar(
-                                radius: 40, // smaller radius
+                                radius: 40,
                                 backgroundImage: profileImage != null ? FileImage(profileImage!) : null,
-                                child: profileImage == null ? const Icon(Icons.camera_alt, size: 30, color: Colors.grey) : null,
+                                child: profileImage == null
+                                    ? const Icon(Icons.camera_alt, size: 30, color: Colors.grey)
+                                    : null,
                                 backgroundColor: Colors.grey[200],
                               ),
                             ),
                           ),
                           const SizedBox(height: 12),
-                          _inputField('Full Name', (val) => name = val!, Icons.person, fontSize: 14, paddingVertical: 8),
-                          _inputField('Email', (val) => email = val!, Icons.email, inputType: TextInputType.emailAddress, fontSize: 14, paddingVertical: 8),
-                          _inputField('Username (Unchangeable)', (val) => username = val!, Icons.account_circle, fontSize: 14, paddingVertical: 8),
-                          _inputField('Password', (val) => password = val!, Icons.lock, isPassword: true, fontSize: 14, paddingVertical: 8),
+                          _inputField('Full Name', (val) => name = val ?? '', Icons.person,
+                              fontSize: 14, paddingVertical: 8),
+                          _inputField('Email', (val) => email = val ?? '', Icons.email,
+                              inputType: TextInputType.emailAddress, fontSize: 14, paddingVertical: 8),
+                          _inputField('Username', (val) => username = val ?? '', Icons.account_circle,
+                              fontSize: 14, paddingVertical: 8),
+                          _passwordField(),
                           const SizedBox(height: 20),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -130,10 +144,17 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                       child: ListView(
                         shrinkWrap: true,
                         children: [
-                          const Text('Step 2: Language Info', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Step 2: Language Info',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
                           const SizedBox(height: 12),
-                          _dropdown('Native Language', nativeLanguage, languageOptions, (val) => setState(() => nativeLanguage = val), fontSize: 14),
-                          _dropdown('Learning Language', learningLanguage, languageOptions, (val) => setState(() => learningLanguage = val), fontSize: 14),
+                          _dropdown('Native Language', nativeLanguage, languageOptions,
+                              (val) => setState(() => nativeLanguage = val),
+                              fontSize: 14),
+                          _dropdown('Learning Language', learningLanguage, languageOptions,
+                              (val) => setState(() => learningLanguage = val),
+                              fontSize: 14),
                           const SizedBox(height: 12),
                           const Text('Skill Level', style: TextStyle(fontSize: 14)),
                           Slider(
@@ -153,7 +174,7 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                                 onPressed: previousStep,
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: primaryColor,
-                                  side: const BorderSide(color: primaryColor),
+                                  side: BorderSide(color: primaryColor),
                                   padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                 ),
@@ -184,19 +205,26 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                       child: ListView(
                         shrinkWrap: true,
                         children: [
-                          const Text('Step 3: Additional Info', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Step 3: Additional Info',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
                           const SizedBox(height: 12),
-                          _dropdown('Gender', gender, genderOptions, (val) => setState(() => gender = val), fontSize: 14),
-                          _dropdown('Country', country, countryOptions, (val) => setState(() => country = val), fontSize: 14),
+                          _dropdown('Gender', gender, genderOptions, (val) => setState(() => gender = val),
+                              fontSize: 14),
+                          _dropdown('Country', country, countryOptions, (val) => setState(() => country = val),
+                              fontSize: 14),
                           const SizedBox(height: 12),
                           TextFormField(
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Bio',
                               filled: true,
-                              fillColor: Color(0xFFF5F5F5),
+                              fillColor: grayBackground,
                               isDense: true,
-                              contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                              border: OutlineInputBorder(),
+                              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                  borderSide: BorderSide.none),
                             ),
                             maxLines: 3,
                             style: const TextStyle(fontSize: 14),
@@ -204,7 +232,19 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                           ),
                           const SizedBox(height: 12),
                           const Text('Date of Birth', style: TextStyle(fontSize: 14)),
-                          ElevatedButton(
+                          ElevatedButton.icon(
+                            icon: Icon(Icons.calendar_today, color: primaryColor, size: 18),
+                            label: Text(
+                              dob == null
+                                  ? 'Choose DOB'
+                                  : '${dob!.day}/${dob!.month}/${dob!.year}',
+                              style: TextStyle(color: primaryColor, fontSize: 14),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: grayBackground,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
                             onPressed: () async {
                               final picked = await showDatePicker(
                                 context: context,
@@ -214,17 +254,6 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                               );
                               if (picked != null) setState(() => dob = picked);
                             },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor,
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            ),
-                            child: Text(
-                              dob == null
-                                  ? 'Choose DOB'
-                                  : '${dob!.day}/${dob!.month}/${dob!.year}',
-                              style: const TextStyle(color: Colors.white, fontSize: 14),
-                            ),
                           ),
                           const SizedBox(height: 12),
                           const Text('Select Interests', style: TextStyle(fontSize: 14)),
@@ -245,6 +274,9 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                                     }
                                   });
                                 },
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
                               );
                             }).toList(),
                           ),
@@ -256,7 +288,7 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                                 onPressed: previousStep,
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: primaryColor,
-                                  side: const BorderSide(color: primaryColor),
+                                  side: BorderSide(color: primaryColor),
                                   padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                 ),
@@ -286,50 +318,102 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
     );
   }
 
-  Widget _inputField(String label, FormFieldSetter<String> onSave, IconData icon,
-      {bool isPassword = false,
-      TextInputType inputType = TextInputType.text,
-      double fontSize = 16,
-      double paddingVertical = 12}) {
+  Widget _inputField(
+    String label,
+    FormFieldSetter<String> onSave,
+    IconData icon, {
+    bool isPassword = false,
+    TextInputType inputType = TextInputType.text,
+    double fontSize = 16,
+    double paddingVertical = 12,
+    String? initialValue,
+  }) {
     return Padding(
       padding: EdgeInsets.only(bottom: paddingVertical),
-      child: TextFormField(
-        obscureText: isPassword,
-        keyboardType: inputType,
-        style: TextStyle(fontSize: fontSize),
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon, size: fontSize + 4),
-          border: const OutlineInputBorder(),
-          filled: true,
-          fillColor: Colors.white,
-          isDense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: grayBackground,
+          borderRadius: BorderRadius.circular(24),
         ),
-        onSaved: onSave,
-        validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+        child: TextFormField(
+          initialValue: initialValue,
+          obscureText: isPassword,
+          keyboardType: inputType,
+          style: TextStyle(fontSize: fontSize),
+          decoration: InputDecoration(
+            labelText: label,
+            prefixIcon: Icon(icon, size: fontSize + 4, color: primaryColor),
+            border: InputBorder.none,
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+          ),
+          onSaved: onSave,
+          validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+        ),
       ),
     );
   }
 
-  Widget _dropdown(String label, String value, List<String> items, Function(String) onChanged,
-      {double fontSize = 16}) {
+  Widget _passwordField() {
+    return StatefulBuilder(
+      builder: (context, setStateSB) {
+        bool _obscure = true;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Container(
+            decoration: BoxDecoration(
+              color: grayBackground,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: TextFormField(
+              obscureText: _obscure,
+              style: const TextStyle(fontSize: 14),
+              decoration: InputDecoration(
+                labelText: 'Password',
+                prefixIcon: Icon(Icons.lock, color: primaryColor, size: 18),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                suffixIcon: IconButton(
+                  icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility, color: primaryColor),
+                  onPressed: () => setStateSB(() => _obscure = !_obscure),
+                ),
+              ),
+              onSaved: (val) => password = val ?? '',
+              validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _dropdown(
+    String label,
+    String value,
+    List<String> items,
+    Function(String) onChanged, {
+    double fontSize = 16,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<String>(
         decoration: InputDecoration(
           labelText: label,
-          border: const OutlineInputBorder(),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: grayBackground,
           isDense: true,
           contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24),
+            borderSide: BorderSide.none,
+          ),
         ),
         style: TextStyle(fontSize: fontSize, color: Colors.black87),
         value: value.isNotEmpty ? value : null,
         items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
         onChanged: (val) => onChanged(val ?? ''),
-        validator: (val) => val == null ? 'Required' : null,
+        validator: (val) => val == null || val.isEmpty ? 'Required' : null,
       ),
     );
   }

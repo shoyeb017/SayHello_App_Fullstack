@@ -67,6 +67,7 @@ class MyApp extends StatelessWidget {
         '/instructor-signin': (context) => const InstructorSignInPage(),
         '/learner-signup': (context) => const LearnerSignupPage(),
         '/instructor-signup': (context) => const InstructorSignupPage(),
+        '/learner-main': (context) => const LearnerMainTab(),
       },
     );
   }

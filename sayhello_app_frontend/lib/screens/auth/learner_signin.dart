@@ -105,6 +105,7 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
                           final password = _passwordController.text.trim();
                           // TODO: Implement sign-in logic
                           debugPrint('Username: $username, Password: $password');
+                          Navigator.pushNamed(context, '/learner-main');
                         },
                         icon: const Icon(Icons.login, color: Colors.white),
                         label: const Text(
