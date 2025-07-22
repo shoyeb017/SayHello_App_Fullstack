@@ -10,7 +10,7 @@ import 'package:sayhello_app_frontend/screens/auth/learner_signup.dart';
 import 'package:sayhello_app_frontend/screens/auth/instructor_signup.dart';
 
 import 'screens/learner/learner_main_tab.dart';
-
+import 'screens/instructor/instructor_main_tab.dart';
 
 void main() {
   runApp(
@@ -68,6 +68,7 @@ class MyApp extends StatelessWidget {
         '/learner-signup': (context) => const LearnerSignupPage(),
         '/instructor-signup': (context) => const InstructorSignupPage(),
         '/learner-main': (context) => const LearnerMainTab(),
+        '/instructor-main': (context) => const InstructorMainTab(),
       },
     );
   }

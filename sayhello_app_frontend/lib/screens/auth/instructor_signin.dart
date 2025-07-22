@@ -107,6 +107,7 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                           final password = _passwordController.text.trim();
                           // TODO: Add sign-in logic here
                           debugPrint('Instructor Username: $username, Password: $password');
+                          Navigator.pushNamed(context, '/instructor-main');
                         },
                         icon: const Icon(Icons.login, color: Colors.white),
                         label: const Text(
