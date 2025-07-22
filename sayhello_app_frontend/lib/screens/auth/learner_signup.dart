@@ -61,17 +61,20 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
     return Scaffold(
       backgroundColor: offWhite,
       appBar: AppBar(
-        title: const Text('SayHello - Learner Sign Up', style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
         child: Column(
           children: [
             StepProgressIndicator(currentStep: currentStep, color: primaryColor),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Expanded(
               child: IndexedStack(
                 index: currentStep,
@@ -80,33 +83,38 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                   Form(
                     key: _formKeys[0],
                     child: Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(12),
                       decoration: whiteBoxDecoration,
                       child: ListView(
+                        shrinkWrap: true,
                         children: [
-                          const Text('Step 1: Personal Info', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 16),
+                          const Text('Step 1: Personal Info', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 12),
                           Center(
                             child: GestureDetector(
                               onTap: pickImage,
                               child: CircleAvatar(
-                                radius: 50,
+                                radius: 40, // smaller radius
                                 backgroundImage: profileImage != null ? FileImage(profileImage!) : null,
-                                child: profileImage == null ? const Icon(Icons.camera_alt, size: 40, color: Colors.grey) : null,
+                                child: profileImage == null ? const Icon(Icons.camera_alt, size: 30, color: Colors.grey) : null,
                                 backgroundColor: Colors.grey[200],
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          _inputField('Full Name', (val) => name = val!, Icons.person),
-                          _inputField('Email', (val) => email = val!, Icons.email, inputType: TextInputType.emailAddress),
-                          _inputField('Username (Unchangeable)', (val) => username = val!, Icons.account_circle),
-                          _inputField('Password', (val) => password = val!, Icons.lock, isPassword: true),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 12),
+                          _inputField('Full Name', (val) => name = val!, Icons.person, fontSize: 14, paddingVertical: 8),
+                          _inputField('Email', (val) => email = val!, Icons.email, inputType: TextInputType.emailAddress, fontSize: 14, paddingVertical: 8),
+                          _inputField('Username (Unchangeable)', (val) => username = val!, Icons.account_circle, fontSize: 14, paddingVertical: 8),
+                          _inputField('Password', (val) => password = val!, Icons.lock, isPassword: true, fontSize: 14, paddingVertical: 8),
+                          const SizedBox(height: 20),
                           ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
                             onPressed: nextStep,
-                            child: const Text('Next'),
+                            child: const Text('Next', style: TextStyle(color: Colors.white, fontSize: 16)),
                           ),
                         ],
                       ),
@@ -117,16 +125,17 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                   Form(
                     key: _formKeys[1],
                     child: Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(12),
                       decoration: whiteBoxDecoration,
                       child: ListView(
+                        shrinkWrap: true,
                         children: [
-                          const Text('Step 2: Language Info', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 16),
-                          _dropdown('Native Language', nativeLanguage, languageOptions, (val) => setState(() => nativeLanguage = val)),
-                          _dropdown('Learning Language', learningLanguage, languageOptions, (val) => setState(() => learningLanguage = val)),
-                          const SizedBox(height: 16),
-                          const Text('Skill Level'),
+                          const Text('Step 2: Language Info', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 12),
+                          _dropdown('Native Language', nativeLanguage, languageOptions, (val) => setState(() => nativeLanguage = val), fontSize: 14),
+                          _dropdown('Learning Language', learningLanguage, languageOptions, (val) => setState(() => learningLanguage = val), fontSize: 14),
+                          const SizedBox(height: 12),
+                          const Text('Skill Level', style: TextStyle(fontSize: 14)),
                           Slider(
                             value: skillLevel,
                             divisions: 4,
@@ -136,15 +145,28 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                             max: 4,
                             activeColor: primaryColor,
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              OutlinedButton(onPressed: previousStep, child: const Text('Back')),
+                              OutlinedButton(
+                                onPressed: previousStep,
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: primaryColor,
+                                  side: const BorderSide(color: primaryColor),
+                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
+                                child: const Text('Back', style: TextStyle(fontSize: 14)),
+                              ),
                               ElevatedButton(
-                                style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: primaryColor,
+                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
                                 onPressed: nextStep,
-                                child: const Text('Next'),
+                                child: const Text('Next', style: TextStyle(color: Colors.white, fontSize: 16)),
                               ),
                             ],
                           ),
@@ -157,22 +179,31 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                   Form(
                     key: _formKeys[2],
                     child: Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(12),
                       decoration: whiteBoxDecoration,
                       child: ListView(
+                        shrinkWrap: true,
                         children: [
-                          const Text('Step 3: Additional Info', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 16),
-                          _dropdown('Gender', gender, genderOptions, (val) => setState(() => gender = val)),
-                          _dropdown('Country', country, countryOptions, (val) => setState(() => country = val)),
-                          const SizedBox(height: 16),
+                          const Text('Step 3: Additional Info', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 12),
+                          _dropdown('Gender', gender, genderOptions, (val) => setState(() => gender = val), fontSize: 14),
+                          _dropdown('Country', country, countryOptions, (val) => setState(() => country = val), fontSize: 14),
+                          const SizedBox(height: 12),
                           TextFormField(
-                            decoration: const InputDecoration(labelText: 'Bio', filled: true, fillColor: Color(0xFFF5F5F5)),
+                            decoration: const InputDecoration(
+                              labelText: 'Bio',
+                              filled: true,
+                              fillColor: Color(0xFFF5F5F5),
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                              border: OutlineInputBorder(),
+                            ),
                             maxLines: 3,
+                            style: const TextStyle(fontSize: 14),
                             onSaved: (val) => bio = val ?? '',
                           ),
-                          const SizedBox(height: 16),
-                          const Text('Date of Birth'),
+                          const SizedBox(height: 12),
+                          const Text('Date of Birth', style: TextStyle(fontSize: 14)),
                           ElevatedButton(
                             onPressed: () async {
                               final picked = await showDatePicker(
@@ -183,18 +214,26 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                               );
                               if (picked != null) setState(() => dob = picked);
                             },
-                            child: Text(dob == null
-                                ? 'Choose DOB'
-                                : '${dob!.day}/${dob!.month}/${dob!.year}'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                            child: Text(
+                              dob == null
+                                  ? 'Choose DOB'
+                                  : '${dob!.day}/${dob!.month}/${dob!.year}',
+                              style: const TextStyle(color: Colors.white, fontSize: 14),
+                            ),
                           ),
-                          const SizedBox(height: 16),
-                          const Text('Select Interests'),
+                          const SizedBox(height: 12),
+                          const Text('Select Interests', style: TextStyle(fontSize: 14)),
                           Wrap(
                             spacing: 8,
                             children: allInterests.map((interest) {
                               final selected = interests.contains(interest);
                               return FilterChip(
-                                label: Text(interest),
+                                label: Text(interest, style: const TextStyle(fontSize: 13)),
                                 selected: selected,
                                 selectedColor: primaryColor.withOpacity(0.2),
                                 onSelected: (val) {
@@ -209,15 +248,28 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                               );
                             }).toList(),
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              OutlinedButton(onPressed: previousStep, child: const Text('Back')),
+                              OutlinedButton(
+                                onPressed: previousStep,
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: primaryColor,
+                                  side: const BorderSide(color: primaryColor),
+                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
+                                child: const Text('Back', style: TextStyle(fontSize: 14)),
+                              ),
                               ElevatedButton(
-                                style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: primaryColor,
+                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
                                 onPressed: submitForm,
-                                child: const Text('Submit'),
+                                child: const Text('Submit', style: TextStyle(color: Colors.white, fontSize: 16)),
                               ),
                             ],
                           ),
@@ -235,18 +287,24 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
   }
 
   Widget _inputField(String label, FormFieldSetter<String> onSave, IconData icon,
-      {bool isPassword = false, TextInputType inputType = TextInputType.text}) {
+      {bool isPassword = false,
+      TextInputType inputType = TextInputType.text,
+      double fontSize = 16,
+      double paddingVertical = 12}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: paddingVertical),
       child: TextFormField(
         obscureText: isPassword,
         keyboardType: inputType,
+        style: TextStyle(fontSize: fontSize),
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon),
+          prefixIcon: Icon(icon, size: fontSize + 4),
           border: const OutlineInputBorder(),
           filled: true,
           fillColor: Colors.white,
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         ),
         onSaved: onSave,
         validator: (val) => val == null || val.isEmpty ? 'Required' : null,
@@ -254,7 +312,8 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
     );
   }
 
-  Widget _dropdown(String label, String value, List<String> items, Function(String) onChanged) {
+  Widget _dropdown(String label, String value, List<String> items, Function(String) onChanged,
+      {double fontSize = 16}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<String>(
@@ -263,7 +322,10 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
           border: const OutlineInputBorder(),
           filled: true,
           fillColor: Colors.white,
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         ),
+        style: TextStyle(fontSize: fontSize, color: Colors.black87),
         value: value.isNotEmpty ? value : null,
         items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
         onChanged: (val) => onChanged(val ?? ''),
