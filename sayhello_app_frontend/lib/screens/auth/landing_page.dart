@@ -27,6 +27,7 @@ class LandingPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
+
               // App name
               Center(
                 child: Text(
@@ -72,6 +73,7 @@ class LandingPage extends StatelessWidget {
                 icon: Icons.school_outlined,
                 color: Colors.deepPurple,
                 onTap: () {
+                  // Navigate to instructor sign-in page
                   Navigator.pushNamed(context, '/instructor-signin');
                 },
               ),
