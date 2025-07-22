@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/theme_provider.dart';
-import 'screens/learner/learner_main_tab.dart';
+
 import 'screens/auth/landing_page.dart';
+import 'package:sayhello_app_frontend/screens/auth/learner_signin.dart';
+import 'package:sayhello_app_frontend/screens/auth/instructor_signin.dart';
+import 'package:sayhello_app_frontend/screens/auth/learner_signup.dart';
+import 'package:sayhello_app_frontend/screens/auth/instructor_signup.dart';
+
+import 'screens/learner/learner_main_tab.dart';
+
 
 void main() {
   runApp(
@@ -51,7 +58,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.light(),             // light theme
       darkTheme: customDarkTheme,           // custom dark theme
       // home: const LearnerMainTab(),
-      home: const LandingPage(),
+      // home: const LandingPage(),
+
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const LandingPage(),
+        '/learner-signin': (context) => const LearnerSignInPage(),
+        '/instructor-signin': (context) => const InstructorSignInPage(),
+        '/learner-signup': (context) => const LearnerSignupPage(),
+        // '/instructor-signup': (context) => const InstructorSignupPage(),
+      },
     );
   }
 }
