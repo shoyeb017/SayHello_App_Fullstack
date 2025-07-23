@@ -7,9 +7,15 @@ class OnlineSessionTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? Colors.grey.shade900 : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black;
-    final subTextColor = isDark ? Colors.grey.shade400 : Colors.grey.shade600;
+
+    // Consistent theme colors
+    final textColor =
+        Theme.of(context).textTheme.bodyLarge?.color ??
+        (isDark ? Colors.white : Colors.black);
+    final subTextColor =
+        Theme.of(context).textTheme.bodyMedium?.color ??
+        (isDark ? Colors.grey.shade400 : Colors.grey.shade600);
+    final cardColor = Theme.of(context).cardColor;
 
     // Dynamic session data with enrollment status and scheduling
     final sessions = [
@@ -71,14 +77,17 @@ class OnlineSessionTab extends StatelessWidget {
     ];
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16), // Reduced padding to prevent overflow
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Section
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16), // Reduced padding
+            constraints: const BoxConstraints(
+              maxWidth: double.infinity,
+            ), // Prevent overflow
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -95,25 +104,42 @@ class OnlineSessionTab extends StatelessWidget {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.video_call, color: Colors.white, size: 28),
-                    SizedBox(width: 12),
-                    Text(
-                      'Live Sessions',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                    Icon(
+                      Icons.video_call,
+                      color: Colors.white,
+                      size: 24,
+                    ), // Reduced size
+                    SizedBox(width: 8),
+                    Expanded(
+                      // Prevent overflow
+                      child: Text(
+                        'Live Sessions',
+                        style: TextStyle(
+                          fontSize: 20, // Reduced font size
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 const Text(
                   'Join interactive sessions with your instructor',
-                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ), // Reduced font size
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 16),
-                Row(
+                const SizedBox(height: 12),
+                // Use Wrap instead of Row to prevent overflow
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     _buildStatCard(
                       'Total Sessions',

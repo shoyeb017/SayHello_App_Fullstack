@@ -22,25 +22,33 @@ class CourseDetails extends StatelessWidget {
     final price =
         double.tryParse(course['price']?.toString() ?? '49.99') ?? 49.99;
 
-    final textColor = isDark ? Colors.white : Colors.black;
-    final subTextColor = isDark ? Colors.grey.shade400 : Colors.grey.shade700;
-    final cardColor = isDark ? Colors.grey.shade900 : Colors.white;
+    // Consistent color scheme
+    final textColor =
+        Theme.of(context).textTheme.bodyLarge?.color ??
+        (isDark ? Colors.white : Colors.black);
+    final subTextColor =
+        Theme.of(context).textTheme.bodyMedium?.color ??
+        (isDark ? Colors.grey.shade400 : Colors.grey.shade600);
+    final cardColor = Theme.of(context).cardColor;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16), // Reduced padding to prevent overflow
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Course Thumbnail and Header
           Container(
             width: double.infinity,
+            constraints: const BoxConstraints(
+              maxWidth: double.infinity,
+            ), // Prevent overflow
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.purple.withOpacity(0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
+                  color: Colors.purple.withOpacity(0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
@@ -236,10 +244,12 @@ class CourseDetails extends StatelessWidget {
                       Text(
                         title,
                         style: TextStyle(
-                          fontSize: 26,
+                          fontSize: 24, // Reduced font size
                           fontWeight: FontWeight.bold,
                           color: textColor,
                         ),
+                        maxLines: 2, // Prevent overflow
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -249,21 +259,34 @@ class CourseDetails extends StatelessWidget {
                           color: Colors.purple,
                           fontWeight: FontWeight.w600,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 16),
-                      Row(
+                      Wrap(
+                        // Use Wrap to prevent overflow
+                        spacing: 8,
+                        runSpacing: 8,
                         children: [
-                          Icon(Icons.star, color: Colors.amber, size: 24),
-                          const SizedBox(width: 6),
-                          Text(
-                            rating.toStringAsFixed(1),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: textColor,
-                            ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                                size: 20,
+                              ), // Reduced size
+                              const SizedBox(width: 4),
+                              Text(
+                                rating.toStringAsFixed(1),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: textColor,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 16),
                           Text(
                             '($enrolledStudents students enrolled)',
                             style: TextStyle(fontSize: 14, color: subTextColor),
@@ -326,56 +349,68 @@ class CourseDetails extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          // Course Info Grid
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: 1.5,
-            children: [
-              _buildInfoCard(
-                'Duration',
-                course['duration'] ?? '4 weeks',
-                Icons.schedule,
-                Colors.orange,
-                isDark,
-                cardColor,
-                textColor,
-                subTextColor,
-              ),
-              _buildInfoCard(
-                'Start Date',
-                startDate,
-                Icons.calendar_today,
-                Colors.green,
-                isDark,
-                cardColor,
-                textColor,
-                subTextColor,
-              ),
-              _buildInfoCard(
-                'End Date',
-                endDate,
-                Icons.event_available,
-                Colors.red,
-                isDark,
-                cardColor,
-                textColor,
-                subTextColor,
-              ),
-              _buildInfoCard(
-                'Price',
-                '\$${course['price']?.toString() ?? '99'}',
-                Icons.attach_money,
-                Colors.purple,
-                isDark,
-                cardColor,
-                textColor,
-                subTextColor,
-              ),
-            ],
+          // Course Info Grid - Made responsive
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final screenWidth = constraints.maxWidth;
+              final crossAxisCount = screenWidth > 600
+                  ? 4
+                  : 2; // Responsive grid
+              final childAspectRatio = screenWidth > 600
+                  ? 1.2
+                  : 1.3; // Adjusted ratio
+
+              return GridView.count(
+                crossAxisCount: crossAxisCount,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: childAspectRatio,
+                children: [
+                  _buildInfoCard(
+                    'Duration',
+                    course['duration'] ?? '4 weeks',
+                    Icons.schedule,
+                    Colors.orange,
+                    isDark,
+                    cardColor,
+                    textColor,
+                    subTextColor,
+                  ),
+                  _buildInfoCard(
+                    'Start Date',
+                    startDate,
+                    Icons.calendar_today,
+                    Colors.green,
+                    isDark,
+                    cardColor,
+                    textColor,
+                    subTextColor,
+                  ),
+                  _buildInfoCard(
+                    'End Date',
+                    endDate,
+                    Icons.event_available,
+                    Colors.red,
+                    isDark,
+                    cardColor,
+                    textColor,
+                    subTextColor,
+                  ),
+                  _buildInfoCard(
+                    'Price',
+                    '\$${price.toStringAsFixed(2)}',
+                    Icons.attach_money,
+                    Colors.purple,
+                    isDark,
+                    cardColor,
+                    textColor,
+                    subTextColor,
+                  ),
+                ],
+              );
+            },
           ),
 
           const SizedBox(height: 24),
@@ -438,30 +473,37 @@ class CourseDetails extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Better spacing
         children: [
           Row(
             children: [
-              Icon(icon, color: iconColor, size: 20),
-              const SizedBox(width: 8),
+              Icon(icon, color: iconColor, size: 18), // Reduced size
+              const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 12, // Reduced font size
                     fontWeight: FontWeight.w600,
                     color: textColor,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: iconColor,
+          const SizedBox(height: 6),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 14, // Reduced font size
+                fontWeight: FontWeight.bold,
+                color: iconColor,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

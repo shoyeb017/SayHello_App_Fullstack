@@ -7,9 +7,15 @@ class RecordedClassTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? Colors.grey.shade900 : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black;
-    final subTextColor = isDark ? Colors.grey.shade400 : Colors.grey.shade600;
+
+    // Consistent theme colors
+    final textColor =
+        Theme.of(context).textTheme.bodyLarge?.color ??
+        (isDark ? Colors.white : Colors.black);
+    final subTextColor =
+        Theme.of(context).textTheme.bodyMedium?.color ??
+        (isDark ? Colors.grey.shade400 : Colors.grey.shade600);
+    final cardColor = Theme.of(context).cardColor;
 
     // Enhanced dynamic recordings data
     final recordings = [
@@ -95,14 +101,15 @@ class RecordedClassTab extends StatelessWidget {
     });
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Section
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16),
+            constraints: const BoxConstraints(maxWidth: double.infinity),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -119,38 +126,44 @@ class RecordedClassTab extends StatelessWidget {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.ondemand_video, color: Colors.white, size: 28),
-                    SizedBox(width: 12),
-                    Text(
-                      'Recorded Classes',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                    Icon(Icons.ondemand_video, color: Colors.white, size: 24),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Recorded Classes',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 const Text(
                   'Access all recorded sessions anytime',
-                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                  style: TextStyle(fontSize: 14, color: Colors.white70),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 16),
-                Row(
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     _buildStatCard(
                       'Total Videos',
                       '${recordings.length}',
                       Icons.video_library,
                     ),
-                    const SizedBox(width: 16),
                     _buildStatCard(
                       'Watched',
                       '$watchedCount/${recordings.length}',
                       Icons.check_circle,
                     ),
-                    const SizedBox(width: 16),
                     _buildStatCard(
                       'Duration',
                       '${(totalDuration / 60).toStringAsFixed(0)}h ${totalDuration % 60}m',
@@ -162,26 +175,29 @@ class RecordedClassTab extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
           // Filter and Sort Section
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Video Library',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: textColor,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              Row(
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
                 children: [
                   _buildFilterChip('All', true, context),
-                  const SizedBox(width: 8),
                   _buildFilterChip('Watched', false, context),
-                  const SizedBox(width: 8),
                   _buildFilterChip('New', false, context),
                 ],
               ),
@@ -200,9 +216,9 @@ class RecordedClassTab extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: isDark ? Colors.black26 : Colors.grey.shade300,
+                        color: isDark ? Colors.black26 : Colors.grey.shade200,
                         blurRadius: 6,
-                        offset: const Offset(0, 3),
+                        offset: const Offset(0, 2),
                       ),
                     ],
                   ),
@@ -212,7 +228,8 @@ class RecordedClassTab extends StatelessWidget {
                       // Video Thumbnail
                       Container(
                         width: double.infinity,
-                        height: 180,
+                        height: 160,
+                        constraints: const BoxConstraints(maxHeight: 200),
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(16),
@@ -232,7 +249,7 @@ class RecordedClassTab extends StatelessWidget {
                             const Center(
                               child: Icon(
                                 Icons.play_circle_outline,
-                                size: 64,
+                                size: 48,
                                 color: Colors.white,
                               ),
                             ),
@@ -320,21 +337,26 @@ class RecordedClassTab extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              recording['title'] ?? 'Untitled Recording',
+                              (recording['title'] ?? 'Untitled Recording')
+                                  .toString(),
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: textColor,
                               ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              recording['description'] ?? '',
+                              (recording['description'] ?? '').toString(),
                               style: TextStyle(
                                 fontSize: 14,
                                 color: subTextColor,
                                 height: 1.4,
                               ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 12),
 
@@ -404,10 +426,16 @@ class RecordedClassTab extends StatelessWidget {
                             const SizedBox(height: 16),
 
                             // Action Buttons
-                            Row(
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
                               children: [
-                                Expanded(
-                                  flex: 2,
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width > 600
+                                      ? 150
+                                      : (MediaQuery.of(context).size.width -
+                                                64) /
+                                            2,
                                   child: ElevatedButton.icon(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.purple,
@@ -425,6 +453,7 @@ class RecordedClassTab extends StatelessWidget {
                                           ? Icons.play_arrow
                                           : Icons.play_circle_fill,
                                       color: Colors.white,
+                                      size: 18,
                                     ),
                                     label: Text(
                                       recording['watchProgress'] > 0
@@ -433,12 +462,17 @@ class RecordedClassTab extends StatelessWidget {
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
+                                        fontSize: 14,
                                       ),
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 12),
-                                Expanded(
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width > 600
+                                      ? 120
+                                      : (MediaQuery.of(context).size.width -
+                                                64) /
+                                            3,
                                   child: OutlinedButton.icon(
                                     style: OutlinedButton.styleFrom(
                                       side: const BorderSide(
@@ -456,12 +490,14 @@ class RecordedClassTab extends StatelessWidget {
                                     icon: const Icon(
                                       Icons.download,
                                       color: Colors.purple,
+                                      size: 18,
                                     ),
                                     label: const Text(
                                       'Download',
                                       style: TextStyle(
                                         color: Colors.purple,
                                         fontWeight: FontWeight.w600,
+                                        fontSize: 14,
                                       ),
                                     ),
                                   ),
@@ -482,31 +518,30 @@ class RecordedClassTab extends StatelessWidget {
   }
 
   Widget _buildStatCard(String label, String value, IconData icon) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: Colors.white, size: 20),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: Colors.white, size: 20),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
-            Text(
-              label,
-              style: const TextStyle(fontSize: 10, color: Colors.white70),
-            ),
-          ],
-        ),
+          ),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 10, color: Colors.white70),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }

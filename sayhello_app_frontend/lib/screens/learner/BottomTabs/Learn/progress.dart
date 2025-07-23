@@ -7,9 +7,15 @@ class ProgressTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? Colors.grey.shade900 : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black;
-    final subTextColor = isDark ? Colors.grey.shade400 : Colors.grey.shade600;
+
+    // Consistent theme colors
+    final textColor =
+        Theme.of(context).textTheme.bodyLarge?.color ??
+        (isDark ? Colors.white : Colors.black);
+    final subTextColor =
+        Theme.of(context).textTheme.bodyMedium?.color ??
+        (isDark ? Colors.grey.shade400 : Colors.grey.shade600);
+    final cardColor = Theme.of(context).cardColor;
 
     // Enhanced dynamic progress data with detailed tracking
     final List<Map<String, dynamic>> modules = [
@@ -184,14 +190,15 @@ class ProgressTab extends StatelessWidget {
         modules.where((m) => m['score'] > 0).length;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Section with Overall Progress
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16),
+            constraints: const BoxConstraints(maxWidth: double.infinity),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
