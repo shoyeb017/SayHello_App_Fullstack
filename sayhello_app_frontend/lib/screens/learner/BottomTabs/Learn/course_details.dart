@@ -80,7 +80,8 @@ class CourseDetails extends StatelessWidget {
                             gradient: LinearGradient(
                               colors: [
                                 Colors.purple.withOpacity(0.8),
-                                Colors.indigo.withOpacity(0.6),
+                                Colors.purple.shade600.withOpacity(0.6),
+                                Colors.purple.shade800.withOpacity(0.7),
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -88,22 +89,57 @@ class CourseDetails extends StatelessWidget {
                           ),
                           child: Stack(
                             children: [
-                              const Center(
+                              // Background pattern
+                              Positioned.fill(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(16),
+                                      topRight: Radius.circular(16),
+                                    ),
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                        'assets/images/course_pattern.png',
+                                      ),
+                                      fit: BoxFit.cover,
+                                      opacity: 0.1,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              // Course content overlay
+                              Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(
-                                      Icons.play_circle_outline,
-                                      size: 64,
-                                      color: Colors.white,
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: const Icon(
+                                        Icons.school,
+                                        size: 48,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                    SizedBox(height: 12),
-                                    Text(
-                                      'Course Preview',
+                                    const SizedBox(height: 12),
+                                    const Text(
+                                      'Course Content',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 18,
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Learn ${course['category'] ?? 'Language'}',
+                                      style: TextStyle(
+                                        color: Colors.white.withOpacity(0.9),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
                                       ),
                                     ),
                                   ],
@@ -119,14 +155,20 @@ class CourseDetails extends StatelessWidget {
                                     vertical: 6,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.6),
+                                    color: Colors.purple.shade700.withOpacity(
+                                      0.9,
+                                    ),
                                     borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.3),
+                                      width: 1,
+                                    ),
                                   ),
                                   child: Text(
                                     course['level'] ?? 'Beginner',
                                     style: const TextStyle(
                                       fontSize: 12,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -142,16 +184,56 @@ class CourseDetails extends StatelessWidget {
                                     vertical: 6,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: Colors.white.withOpacity(0.25),
                                     borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.4),
+                                      width: 1,
+                                    ),
                                   ),
                                   child: Text(
                                     course['category'] ?? 'Language',
                                     style: const TextStyle(
                                       fontSize: 12,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),
+                                  ),
+                                ),
+                              ),
+                              // Duration badge at bottom
+                              Positioned(
+                                bottom: 16,
+                                left: 16,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.purple.shade800.withOpacity(
+                                      0.8,
+                                    ),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.access_time,
+                                        size: 12,
+                                        color: Colors.white,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        course['duration'] ?? '4 weeks',
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -273,7 +355,7 @@ class CourseDetails extends StatelessWidget {
                             children: [
                               Icon(
                                 Icons.star,
-                                color: Colors.amber,
+                                color: Colors.purple.shade300,
                                 size: 20,
                               ), // Reduced size
                               const SizedBox(width: 4),
@@ -329,7 +411,7 @@ class CourseDetails extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black,
+                        color: textColor,
                       ),
                     ),
                   ],
@@ -372,7 +454,7 @@ class CourseDetails extends StatelessWidget {
                     'Duration',
                     course['duration'] ?? '4 weeks',
                     Icons.schedule,
-                    Colors.orange,
+                    Colors.purple,
                     isDark,
                     cardColor,
                     textColor,
@@ -382,7 +464,7 @@ class CourseDetails extends StatelessWidget {
                     'Start Date',
                     startDate,
                     Icons.calendar_today,
-                    Colors.green,
+                    Colors.purple.shade300,
                     isDark,
                     cardColor,
                     textColor,
@@ -392,7 +474,7 @@ class CourseDetails extends StatelessWidget {
                     'End Date',
                     endDate,
                     Icons.event_available,
-                    Colors.red,
+                    Colors.purple.shade400,
                     isDark,
                     cardColor,
                     textColor,
@@ -402,7 +484,7 @@ class CourseDetails extends StatelessWidget {
                     'Price',
                     '\$${price.toStringAsFixed(2)}',
                     Icons.attach_money,
-                    Colors.purple,
+                    Colors.purple.shade600,
                     isDark,
                     cardColor,
                     textColor,

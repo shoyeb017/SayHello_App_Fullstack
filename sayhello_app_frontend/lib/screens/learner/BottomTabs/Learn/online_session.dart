@@ -92,7 +92,7 @@ class OnlineSessionTab extends StatelessWidget {
               gradient: LinearGradient(
                 colors: [
                   Colors.purple.withOpacity(0.8),
-                  Colors.indigo.withOpacity(0.6),
+                  Colors.purple.shade600.withOpacity(0.6),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -180,7 +180,7 @@ class OnlineSessionTab extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: isDark ? Colors.black26 : Colors.grey.shade300,
+                        color: isDark ? Colors.black26 : Colors.purple.shade100,
                         blurRadius: 6,
                         offset: const Offset(0, 3),
                       ),
@@ -437,15 +437,15 @@ class OnlineSessionTab extends StatelessWidget {
   Color _getStatusColor(String? status) {
     switch (status) {
       case 'live':
-        return Colors.red;
+        return Colors.purple.shade600;
       case 'upcoming':
-        return Colors.green;
+        return Colors.purple.shade400;
       case 'completed':
-        return Colors.blue;
+        return Colors.purple.shade300;
       case 'cancelled':
-        return Colors.orange;
+        return Colors.purple.shade200;
       default:
-        return Colors.grey;
+        return Colors.purple;
     }
   }
 
@@ -484,7 +484,7 @@ class OnlineSessionTab extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Reminder set for ${session['title']}'),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.purple.shade400,
       ),
     );
   }
@@ -493,7 +493,7 @@ class OnlineSessionTab extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Joining ${session['title']}...'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.purple.shade600,
       ),
     );
   }

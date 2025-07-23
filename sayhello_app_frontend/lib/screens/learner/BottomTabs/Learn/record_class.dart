@@ -113,8 +113,8 @@ class RecordedClassTab extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.indigo.withOpacity(0.8),
-                  Colors.purple.withOpacity(0.6),
+                  Colors.purple.withOpacity(0.8),
+                  Colors.purple.shade600.withOpacity(0.6),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -237,8 +237,8 @@ class RecordedClassTab extends StatelessWidget {
                           ),
                           gradient: LinearGradient(
                             colors: [
-                              Colors.indigo.withOpacity(0.8),
-                              Colors.purple.withOpacity(0.6),
+                              Colors.purple.withOpacity(0.8),
+                              Colors.purple.shade600.withOpacity(0.6),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -306,7 +306,7 @@ class RecordedClassTab extends StatelessWidget {
                                 left: 12,
                                 child: Icon(
                                   Icons.check_circle,
-                                  color: Colors.green,
+                                  color: Colors.purple,
                                   size: 24,
                                 ),
                               ),
@@ -404,7 +404,7 @@ class RecordedClassTab extends StatelessWidget {
                                           vertical: 4,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: Colors.indigo.withOpacity(0.1),
+                                          color: Colors.purple.withOpacity(0.1),
                                           borderRadius: BorderRadius.circular(
                                             8,
                                           ),
@@ -413,7 +413,7 @@ class RecordedClassTab extends StatelessWidget {
                                           topic,
                                           style: const TextStyle(
                                             fontSize: 11,
-                                            color: Colors.indigo,
+                                            color: Colors.purple,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -589,7 +589,7 @@ class RecordedClassTab extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Downloading: ${recording['title']}'),
-        backgroundColor: Colors.indigo,
+        backgroundColor: Colors.purple.shade600,
       ),
     );
   }
