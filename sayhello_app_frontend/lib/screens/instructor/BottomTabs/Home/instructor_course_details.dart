@@ -34,19 +34,10 @@ class _InstructorCourseDetailsTabState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Course Header Card
+          // Course Header Card with Thumbnail
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  const Color(0xFF7A54FF),
-                  const Color(0xFF7A54FF).withOpacity(0.8),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -57,52 +48,135 @@ class _InstructorCourseDetailsTabState
               ],
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                // Course Thumbnail
+                Container(
+                  width: double.infinity,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
+                    image: widget.course['thumbnail'] != null
+                        ? DecorationImage(
+                            image: NetworkImage(widget.course['thumbnail']),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                    color: widget.course['thumbnail'] == null
+                        ? const Color(0xFF7A54FF).withOpacity(0.1)
+                        : null,
                   ),
+                  child: widget.course['thumbnail'] == null
+                      ? Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(16),
+                              topRight: Radius.circular(16),
+                            ),
+                            gradient: LinearGradient(
+                              colors: [
+                                const Color(0xFF7A54FF).withOpacity(0.8),
+                                const Color(0xFF7A54FF).withOpacity(0.6),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ),
+                          child: const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.image,
+                                  size: 48,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Course Thumbnail',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : null,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Instructor Dashboard',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white.withOpacity(0.9),
+
+                // Course Info Section
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFF7A54FF),
+                        const Color(0xFF7A54FF).withOpacity(0.8),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(16),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Icon(Icons.star, color: Colors.amber, size: 20),
-                    const SizedBox(width: 4),
-                    Text(
-                      rating.toStringAsFixed(1),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.white,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Icon(
-                      Icons.people,
-                      color: Colors.white.withOpacity(0.9),
-                      size: 20,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '$enrolledStudents students',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white.withOpacity(0.9),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Instructor Dashboard',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white.withOpacity(0.9),
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Icon(Icons.star, color: Colors.amber, size: 20),
+                          const SizedBox(width: 4),
+                          Text(
+                            rating.toStringAsFixed(1),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Icon(
+                            Icons.people,
+                            color: Colors.white.withOpacity(0.9),
+                            size: 20,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '$enrolledStudents students',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white.withOpacity(0.9),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

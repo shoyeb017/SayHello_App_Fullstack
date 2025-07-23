@@ -305,7 +305,6 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[850] : Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -331,105 +330,225 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
+            // Course Thumbnail
+            Container(
+              width: double.infinity,
+              height: 140,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+                image: course['thumbnail'] != null
+                    ? DecorationImage(
+                        image: NetworkImage(course['thumbnail']),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+                color: course['thumbnail'] == null
+                    ? const Color(0xFF7A54FF).withOpacity(0.1)
+                    : null,
+              ),
+              child: course['thumbnail'] == null
+                  ? Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
+                        gradient: LinearGradient(
+                          colors: [
+                            const Color(0xFF7A54FF).withOpacity(0.8),
+                            const Color(0xFF7A54FF).withOpacity(0.6),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                      child: Stack(
+                        children: [
+                          const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.play_circle_outline,
+                                  size: 32,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Course Preview',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Status Badge
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: statusColor.withOpacity(0.9),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                status.toUpperCase(),
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Stack(
+                      children: [
+                        // Overlay for better text visibility
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                            ),
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.3),
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                          ),
+                        ),
+                        // Status Badge
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: statusColor.withOpacity(0.9),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              status.toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+
+            // Course Content
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
                     course['title'],
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    status.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: statusColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              course['description'],
-              style: TextStyle(
-                fontSize: 14,
-                color: isDark ? Colors.grey[300] : Colors.grey[600],
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Icon(
-                  Icons.people,
-                  size: 16,
-                  color: isDark ? Colors.grey[400] : Colors.grey[600],
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '${course['enrolledStudents']} students',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? Colors.grey[400] : Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                if (course['rating'] > 0) ...[
-                  Icon(Icons.star, size: 16, color: Colors.amber),
-                  const SizedBox(width: 4),
+                  const SizedBox(height: 8),
                   Text(
-                    course['rating'].toStringAsFixed(1),
+                    course['description'],
                     style: TextStyle(
-                      fontSize: 12,
-                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      fontSize: 14,
+                      color: isDark ? Colors.grey[300] : Colors.grey[600],
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.people,
+                        size: 16,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${course['enrolledStudents']} students',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      if (course['rating'] > 0) ...[
+                        Icon(Icons.star, size: 16, color: Colors.amber),
+                        const SizedBox(width: 4),
+                        Text(
+                          course['rating'].toStringAsFixed(1),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                      const Spacer(),
+                      Text(
+                        '\$${course['price'].toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF7A54FF),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (status == 'active') ...[
+                    const SizedBox(height: 12),
+                    LinearProgressIndicator(
+                      value:
+                          course['completedSessions'] / course['totalSessions'],
+                      backgroundColor: isDark
+                          ? Colors.grey[700]
+                          : Colors.grey[300],
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Color(0xFF7A54FF),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Progress: ${course['completedSessions']}/${course['totalSessions']} sessions',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      ),
+                    ),
+                  ],
                 ],
-                const Spacer(),
-                Text(
-                  '\$${course['price'].toStringAsFixed(0)}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF7A54FF),
-                  ),
-                ),
-              ],
+              ),
             ),
-            if (status == 'active') ...[
-              const SizedBox(height: 12),
-              LinearProgressIndicator(
-                value: course['completedSessions'] / course['totalSessions'],
-                backgroundColor: isDark ? Colors.grey[700] : Colors.grey[300],
-                valueColor: const AlwaysStoppedAnimation<Color>(
-                  Color(0xFF7A54FF),
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Progress: ${course['completedSessions']}/${course['totalSessions']} sessions',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: isDark ? Colors.grey[400] : Colors.grey[600],
-                ),
-              ),
-            ],
           ],
         ),
       ),
