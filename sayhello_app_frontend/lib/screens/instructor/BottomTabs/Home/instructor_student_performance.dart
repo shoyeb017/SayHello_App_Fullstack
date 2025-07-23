@@ -155,163 +155,174 @@ class _InstructorStudentPerformanceTabState
           child: Column(
             children: [
               // Quick Stats
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatCard(
-                      'Total Students',
-                      _students.length.toString(),
-                      Icons.people,
-                      isDark,
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 90,
+                      child: _buildStatCard(
+                        'Total Students',
+                        _students.length.toString(),
+                        Icons.people,
+                        isDark,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(
-                      'Avg Progress',
-                      '${(_students.map((s) => s['progress']).reduce((a, b) => a + b) / _students.length).round()}%',
-                      Icons.trending_up,
-                      isDark,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 90,
+                      child: _buildStatCard(
+                        'Avg Progress',
+                        '${(_students.map((s) => s['progress']).reduce((a, b) => a + b) / _students.length).round()}%',
+                        Icons.trending_up,
+                        isDark,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(
-                      'At Risk',
-                      _students
-                          .where((s) => s['status'] == 'At Risk')
-                          .length
-                          .toString(),
-                      Icons.warning,
-                      isDark,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 90,
+                      child: _buildStatCard(
+                        'At Risk',
+                        _students
+                            .where((s) => s['status'] == 'At Risk')
+                            .length
+                            .toString(),
+                        Icons.warning,
+                        isDark,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(
-                      'Completed',
-                      _students
-                          .where((s) => s['status'] == 'Completed')
-                          .length
-                          .toString(),
-                      Icons.check_circle,
-                      isDark,
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 90,
+                      child: _buildStatCard(
+                        'Completed',
+                        _students
+                            .where((s) => s['status'] == 'Completed')
+                            .length
+                            .toString(),
+                        Icons.check_circle,
+                        isDark,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 16),
 
               // Search and filters
-              Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: TextField(
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 250,
+                      child: TextField(
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Search students...',
+                          hintStyle: TextStyle(
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          ),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          ),
+                          filled: true,
+                          fillColor: isDark ? Colors.grey[800] : Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: isDark
+                                  ? Colors.grey[600]!
+                                  : Colors.grey[300]!,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: isDark
+                                  ? Colors.grey[600]!
+                                  : Colors.grey[300]!,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 16,
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _searchQuery = value;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    DropdownButton<String>(
+                      value: _selectedFilter,
+                      dropdownColor: isDark ? Colors.grey[800] : Colors.white,
                       style: TextStyle(
                         color: isDark ? Colors.white : Colors.black,
                       ),
-                      decoration: InputDecoration(
-                        hintText: 'Search students...',
-                        hintStyle: TextStyle(
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                        ),
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                        ),
-                        filled: true,
-                        fillColor: isDark ? Colors.grey[800] : Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: isDark
-                                ? Colors.grey[600]!
-                                : Colors.grey[300]!,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: isDark
-                                ? Colors.grey[600]!
-                                : Colors.grey[300]!,
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 16,
-                        ),
-                      ),
+                      items: ['All', 'Active', 'Completed', 'At Risk']
+                          .map(
+                            (filter) => DropdownMenuItem(
+                              value: filter,
+                              child: Text(filter),
+                            ),
+                          )
+                          .toList(),
                       onChanged: (value) {
                         setState(() {
-                          _searchQuery = value;
+                          _selectedFilter = value ?? 'All';
                         });
                       },
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  DropdownButton<String>(
-                    value: _selectedFilter,
-                    dropdownColor: isDark ? Colors.grey[800] : Colors.white,
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                    items: ['All', 'Active', 'Completed', 'At Risk']
-                        .map(
-                          (filter) => DropdownMenuItem(
-                            value: filter,
-                            child: Text(filter),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedFilter = value ?? 'All';
-                      });
-                    },
-                  ),
-                  const SizedBox(width: 12),
-                  DropdownButton<String>(
-                    value: _sortBy,
-                    dropdownColor: isDark ? Colors.grey[800] : Colors.white,
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                    items: [
-                      const DropdownMenuItem(
-                        value: 'name',
-                        child: Text('Name'),
+                    const SizedBox(width: 12),
+                    DropdownButton<String>(
+                      value: _sortBy,
+                      dropdownColor: isDark ? Colors.grey[800] : Colors.white,
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
                       ),
-                      const DropdownMenuItem(
-                        value: 'progress',
-                        child: Text('Progress'),
-                      ),
-                      const DropdownMenuItem(
-                        value: 'attendance',
-                        child: Text('Attendance'),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _sortBy = value ?? 'name';
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      _sortAscending
-                          ? Icons.arrow_upward
-                          : Icons.arrow_downward,
-                      color: const Color(0xFF7A54FF),
+                      items: [
+                        const DropdownMenuItem(
+                          value: 'name',
+                          child: Text('Name'),
+                        ),
+                        const DropdownMenuItem(
+                          value: 'progress',
+                          child: Text('Progress'),
+                        ),
+                        const DropdownMenuItem(
+                          value: 'attendance',
+                          child: Text('Attendance'),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _sortBy = value ?? 'name';
+                        });
+                      },
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _sortAscending = !_sortAscending;
-                      });
-                    },
-                  ),
-                ],
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: Icon(
+                        _sortAscending
+                            ? Icons.arrow_upward
+                            : Icons.arrow_downward,
+                        color: const Color(0xFF7A54FF),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _sortAscending = !_sortAscending;
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -320,38 +331,41 @@ class _InstructorStudentPerformanceTabState
         // Actions Bar
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            children: [
-              ElevatedButton.icon(
-                icon: const Icon(Icons.file_download, size: 18),
-                label: const Text('Export Data'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7A54FF),
-                  foregroundColor: Colors.white,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.file_download, size: 18),
+                  label: const Text('Export Data'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF7A54FF),
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: _exportStudentData,
                 ),
-                onPressed: _exportStudentData,
-              ),
-              const SizedBox(width: 12),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.email, size: 18),
-                label: const Text('Send Feedback'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
+                const SizedBox(width: 12),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.email, size: 18),
+                  label: const Text('Send Feedback'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: _sendBulkFeedback,
                 ),
-                onPressed: _sendBulkFeedback,
-              ),
-              const Spacer(),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.card_membership, size: 18),
-                label: const Text('Issue Certificates'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  foregroundColor: Colors.white,
+                const SizedBox(width: 12),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.card_membership, size: 18),
+                  label: const Text('Issue Certificates'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: _issueCertificates,
                 ),
-                onPressed: _issueCertificates,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
 
@@ -396,6 +410,9 @@ class _InstructorStudentPerformanceTabState
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            textAlign: TextAlign.center,
           ),
           Text(
             title,
@@ -403,6 +420,9 @@ class _InstructorStudentPerformanceTabState
               fontSize: 10,
               color: isDark ? Colors.grey[400] : Colors.grey[600],
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -445,12 +465,16 @@ class _InstructorStudentPerformanceTabState
                     children: [
                       Row(
                         children: [
-                          Text(
-                            student['name'],
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: isDark ? Colors.white : Colors.black,
+                          Expanded(
+                            child: Text(
+                              student['name'],
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -481,6 +505,8 @@ class _InstructorStudentPerformanceTabState
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
                           fontSize: 12,
                         ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -578,41 +604,51 @@ class _InstructorStudentPerformanceTabState
             const SizedBox(height: 12),
 
             // Performance Metrics
-            Row(
-              children: [
-                Expanded(
-                  child: _buildMetric(
-                    'Attendance',
-                    '${student['attendanceRate']}%',
-                    Icons.calendar_today,
-                    isDark,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 80,
+                    child: _buildMetric(
+                      'Attendance',
+                      '${student['attendanceRate']}%',
+                      Icons.calendar_today,
+                      isDark,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: _buildMetric(
-                    'Assignments',
-                    '${student['assignments']['submitted']}/${student['assignments']['total']}',
-                    Icons.assignment,
-                    isDark,
+                  const SizedBox(width: 16),
+                  SizedBox(
+                    width: 80,
+                    child: _buildMetric(
+                      'Assignments',
+                      '${student['assignments']['submitted']}/${student['assignments']['total']}',
+                      Icons.assignment,
+                      isDark,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: _buildMetric(
-                    'Avg Score',
-                    '${student['assignments']['averageScore']}%',
-                    Icons.grade,
-                    isDark,
+                  const SizedBox(width: 16),
+                  SizedBox(
+                    width: 80,
+                    child: _buildMetric(
+                      'Avg Score',
+                      '${student['assignments']['averageScore']}%',
+                      Icons.grade,
+                      isDark,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: _buildMetric(
-                    'Interactions',
-                    '${student['interactions']}',
-                    Icons.forum,
-                    isDark,
+                  const SizedBox(width: 16),
+                  SizedBox(
+                    width: 80,
+                    child: _buildMetric(
+                      'Interactions',
+                      '${student['interactions']}',
+                      Icons.forum,
+                      isDark,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -632,6 +668,9 @@ class _InstructorStudentPerformanceTabState
             fontSize: 12,
             color: isDark ? Colors.white : Colors.black,
           ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+          textAlign: TextAlign.center,
         ),
         Text(
           label,
@@ -639,6 +678,9 @@ class _InstructorStudentPerformanceTabState
             fontSize: 9,
             color: isDark ? Colors.grey[400] : Colors.grey[600],
           ),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+          textAlign: TextAlign.center,
         ),
       ],
     );

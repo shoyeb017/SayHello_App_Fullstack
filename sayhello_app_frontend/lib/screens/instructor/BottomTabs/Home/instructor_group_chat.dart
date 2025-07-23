@@ -176,28 +176,39 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
               ),
               const SizedBox(height: 8),
               SizedBox(
-                height: 40,
+                height: 45,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: _onlineStudents.length,
                   separatorBuilder: (_, __) => const SizedBox(width: 8),
                   itemBuilder: (context, index) {
                     final student = _onlineStudents[index];
-                    return Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 16,
-                          backgroundImage: NetworkImage(student['avatar']),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          student['name'].split(' ')[0],
-                          style: TextStyle(
-                            fontSize: 8,
-                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    final firstName = student['name'].split(' ')[0];
+                    return SizedBox(
+                      width: 35,
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 16,
+                            backgroundImage: NetworkImage(student['avatar']),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 2),
+                          Text(
+                            firstName.length > 6
+                                ? '${firstName.substring(0, 6)}.'
+                                : firstName,
+                            style: TextStyle(
+                              fontSize: 8,
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                          ),
+                        ],
+                      ),
                     );
                   },
                 ),
@@ -231,47 +242,50 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
               ),
             ),
           ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: isDark ? Colors.white : Colors.black,
+          child: SafeArea(
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Type a message to your students...',
+                      hintStyle: TextStyle(
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      filled: true,
+                      fillColor: isDark ? Colors.grey[800] : Colors.grey[100],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    onSubmitted: (_) => _sendMessage(),
+                    maxLines: null,
+                    textInputAction: TextInputAction.send,
                   ),
-                  decoration: InputDecoration(
-                    hintText: 'Type a message to your students...',
-                    hintStyle: TextStyle(
-                      color: isDark ? Colors.grey[400] : Colors.grey[600],
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    filled: true,
-                    fillColor: isDark ? Colors.grey[800] : Colors.grey[100],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24),
-                      borderSide: BorderSide.none,
-                    ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF7A54FF),
+                    shape: BoxShape.circle,
                   ),
-                  onSubmitted: (_) => _sendMessage(),
-                  maxLines: null,
+                  child: IconButton(
+                    icon: const Icon(Icons.send_rounded, color: Colors.white),
+                    onPressed: _sendMessage,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Container(
-                decoration: const BoxDecoration(
-                  color: Color(0xFF7A54FF),
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.send_rounded, color: Colors.white),
-                  onPressed: _sendMessage,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
@@ -303,6 +317,8 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF7A54FF),
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
               ),
             ],
@@ -317,29 +333,33 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
                   bottomLeft: !isInstructor ? const Radius.circular(4) : null,
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    message['message'],
-                    style: TextStyle(
-                      color: isInstructor
-                          ? Colors.white
-                          : (isDark ? Colors.white : Colors.black87),
-                      fontSize: 14,
+              child: IntrinsicWidth(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      message['message'],
+                      style: TextStyle(
+                        color: isInstructor
+                            ? Colors.white
+                            : (isDark ? Colors.white : Colors.black87),
+                        fontSize: 14,
+                      ),
+                      softWrap: true,
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _formatTime(timestamp),
-                    style: TextStyle(
-                      color: isInstructor
-                          ? Colors.white70
-                          : (isDark ? Colors.grey[400] : Colors.grey[600]),
-                      fontSize: 10,
+                    const SizedBox(height: 4),
+                    Text(
+                      _formatTime(timestamp),
+                      style: TextStyle(
+                        color: isInstructor
+                            ? Colors.white70
+                            : (isDark ? Colors.grey[400] : Colors.grey[600]),
+                        fontSize: 10,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -375,49 +395,57 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
             'Chat Settings',
             style: TextStyle(color: isDark ? Colors.white : Colors.black),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(
-                  Icons.notification_add,
-                  color: Color(0xFF7A54FF),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(
+                    Icons.notification_add,
+                    color: Color(0xFF7A54FF),
+                  ),
+                  title: Text(
+                    'Send Announcement',
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showAnnouncementDialog();
+                  },
                 ),
-                title: Text(
-                  'Send Announcement',
-                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                ListTile(
+                  leading: const Icon(
+                    Icons.people_outline,
+                    color: Color(0xFF7A54FF),
+                  ),
+                  title: Text(
+                    'Manage Participants',
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // TODO: Navigate to participants management
+                  },
                 ),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showAnnouncementDialog();
-                },
-              ),
-              ListTile(
-                leading: const Icon(
-                  Icons.people_outline,
-                  color: Color(0xFF7A54FF),
+                ListTile(
+                  leading: const Icon(Icons.block, color: Color(0xFF7A54FF)),
+                  title: Text(
+                    'Moderation Settings',
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // TODO: Navigate to moderation settings
+                  },
                 ),
-                title: Text(
-                  'Manage Participants',
-                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  // TODO: Navigate to participants management
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.block, color: Color(0xFF7A54FF)),
-                title: Text(
-                  'Moderation Settings',
-                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  // TODO: Navigate to moderation settings
-                },
-              ),
-            ],
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -446,20 +474,25 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
             'Send Announcement',
             style: TextStyle(color: isDark ? Colors.white : Colors.black),
           ),
-          content: TextField(
-            controller: announcementController,
-            maxLines: 4,
-            style: TextStyle(color: isDark ? Colors.white : Colors.black),
-            decoration: InputDecoration(
-              hintText: 'Type your announcement...',
-              hintStyle: TextStyle(
-                color: isDark ? Colors.grey[400] : Colors.grey[600],
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: TextField(
+                controller: announcementController,
+                maxLines: 4,
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                decoration: InputDecoration(
+                  hintText: 'Type your announcement...',
+                  hintStyle: TextStyle(
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  filled: true,
+                  fillColor: isDark ? Colors.grey[800] : Colors.grey[100],
+                ),
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              filled: true,
-              fillColor: isDark ? Colors.grey[800] : Colors.grey[100],
             ),
           ),
           actions: [
