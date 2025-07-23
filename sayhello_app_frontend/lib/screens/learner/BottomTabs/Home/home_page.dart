@@ -236,44 +236,6 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 12),
-                // HelloTalk Chat Button
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ChatPage()),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF7a54ff).withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Icon(
-                          Icons.chat_bubble_outline,
-                          size: 26,
-                          color: Color(0xFF7a54ff),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const SizedBox(
-                        width: 72,
-                        child: Text(
-                          'HelloTalk Chat',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 11),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
@@ -461,7 +423,30 @@ class _ChatTile extends StatelessWidget {
               ),
           ],
         ),
-        onTap: () {},
+        onTap: () {
+          // Create a ChatUser from the ChatItem data to navigate to individual chat
+          final chatUser = ChatUser(
+            id: 'user_${chat.name}',
+            name: chat.name,
+            avatarUrl: chat.avatarUrl,
+            country: 'Unknown', // Could be enhanced with real data
+            flag: '🌍', // Default flag
+            age: 25, // Default age
+            gender: 'F', // Default gender
+            isOnline: true, // Default online status
+            lastSeen: DateTime.now(),
+            interests: ['Language Exchange', 'Chat'], // Default interests
+            nativeLanguage: 'Unknown',
+            learningLanguage: 'English',
+          );
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatDetailPage(user: chatUser),
+            ),
+          );
+        },
       ),
     );
   }
