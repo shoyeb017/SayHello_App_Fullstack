@@ -92,7 +92,7 @@ class OnlineSessionTab extends StatelessWidget {
               gradient: LinearGradient(
                 colors: [
                   Colors.purple.withOpacity(0.8),
-                  Colors.purple.shade600.withOpacity(0.6),
+                  Colors.indigo.withOpacity(0.6),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -180,7 +180,7 @@ class OnlineSessionTab extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: isDark ? Colors.black26 : Colors.purple.shade100,
+                        color: isDark ? Colors.black26 : Colors.grey.shade300,
                         blurRadius: 6,
                         offset: const Offset(0, 3),
                       ),

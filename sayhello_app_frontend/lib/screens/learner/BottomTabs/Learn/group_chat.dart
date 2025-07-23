@@ -114,7 +114,7 @@ class _GroupChatTabState extends State<GroupChatTab> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.blue.withOpacity(0.8),
+                      Colors.purple.withOpacity(0.8),
                       Colors.purple.withOpacity(0.6),
                     ],
                   ),
@@ -175,7 +175,7 @@ class _GroupChatTabState extends State<GroupChatTab> {
                       radius: 16,
                       backgroundColor: isInstructor
                           ? Colors.purple
-                          : Colors.teal,
+                          : Colors.purple.shade300,
                       child: Text(
                         (message['name'] as String)
                             .substring(0, 1)
@@ -422,7 +422,7 @@ class _GroupChatTabState extends State<GroupChatTab> {
                     leading: CircleAvatar(
                       backgroundColor: participant['role'] == 'instructor'
                           ? Colors.purple
-                          : Colors.teal,
+                          : Colors.purple.shade300,
                       child: Text(
                         (participant['name'] as String)
                             .substring(0, 1)
@@ -452,9 +452,9 @@ class _GroupChatTabState extends State<GroupChatTab> {
   Color _getStatusColor(String? status) {
     switch (status) {
       case 'online':
-        return Colors.green;
+        return Colors.purple.shade600;
       case 'away':
-        return Colors.orange;
+        return Colors.purple.shade400;
       case 'offline':
         return Colors.grey;
       default:

@@ -202,8 +202,8 @@ class ProgressTab extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.green.withOpacity(0.8),
-                  Colors.teal.withOpacity(0.6),
+                  Colors.purple.withOpacity(0.8),
+                  Colors.purple.withOpacity(0.6),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -282,24 +282,33 @@ class ProgressTab extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 // Stats Row
-                Row(
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 12,
                   children: [
-                    _buildStatCard(
-                      'Modules',
-                      '$completedModules/${modules.length}',
-                      Icons.library_books,
+                    SizedBox(
+                      width: (MediaQuery.of(context).size.width - 64) / 3,
+                      child: _buildStatCard(
+                        'Modules',
+                        '$completedModules/${modules.length}',
+                        Icons.library_books,
+                      ),
                     ),
-                    const SizedBox(width: 16),
-                    _buildStatCard(
-                      'Time Spent',
-                      '${(totalTimeSpent / 60).toStringAsFixed(1)}h',
-                      Icons.schedule,
+                    SizedBox(
+                      width: (MediaQuery.of(context).size.width - 64) / 3,
+                      child: _buildStatCard(
+                        'Time Spent',
+                        '${(totalTimeSpent / 60).toStringAsFixed(1)}h',
+                        Icons.schedule,
+                      ),
                     ),
-                    const SizedBox(width: 16),
-                    _buildStatCard(
-                      'Avg Score',
-                      '${averageScore.isNaN ? 0 : averageScore.toInt()}%',
-                      Icons.star,
+                    SizedBox(
+                      width: (MediaQuery.of(context).size.width - 64) / 3,
+                      child: _buildStatCard(
+                        'Avg Score',
+                        '${averageScore.isNaN ? 0 : averageScore.toInt()}%',
+                        Icons.star,
+                      ),
                     ),
                   ],
                 ),
@@ -327,13 +336,13 @@ class ProgressTab extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.2),
+                  color: Colors.purple.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
                   '${(overallProgress * 100).toInt()}% Complete',
                   style: const TextStyle(
-                    color: Colors.green,
+                    color: Colors.purple,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -372,8 +381,8 @@ class ProgressTab extends StatelessWidget {
                       height: 48,
                       decoration: BoxDecoration(
                         color: module['completed'] == true
-                            ? Colors.green
-                            : Colors.orange,
+                            ? Colors.purple
+                            : Colors.purple.shade300,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
@@ -401,7 +410,9 @@ class ProgressTab extends StatelessWidget {
                           style: TextStyle(fontSize: 13, color: subTextColor),
                         ),
                         const SizedBox(height: 8),
-                        Row(
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
@@ -425,7 +436,6 @@ class ProgressTab extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 8),
                             Text(
                               '${module['completedLessons']}/${module['lessons']} lessons',
                               style: TextStyle(
@@ -433,7 +443,6 @@ class ProgressTab extends StatelessWidget {
                                 color: subTextColor,
                               ),
                             ),
-                            const SizedBox(width: 8),
                             Text(
                               module['timeSpent'] ?? '',
                               style: TextStyle(
@@ -451,8 +460,8 @@ class ProgressTab extends StatelessWidget {
                               : Colors.grey.shade200,
                           valueColor: AlwaysStoppedAnimation<Color>(
                             module['completed'] == true
-                                ? Colors.green
-                                : Colors.orange,
+                                ? Colors.purple
+                                : Colors.purple.shade300,
                           ),
                           minHeight: 6,
                         ),
@@ -504,7 +513,7 @@ class ProgressTab extends StatelessWidget {
                                             ? Icons.check_circle
                                             : Icons.radio_button_unchecked,
                                         color: activity['completed']
-                                            ? Colors.green
+                                            ? Colors.purple
                                             : Colors.grey,
                                         size: 20,
                                       ),
@@ -604,7 +613,7 @@ class ProgressTab extends StatelessWidget {
                         'Completion Rate',
                         '${(overallProgress * 100).toInt()}%',
                         Icons.timeline,
-                        Colors.blue,
+                        Colors.purple,
                         isDark,
                       ),
                     ),
@@ -614,7 +623,7 @@ class ProgressTab extends StatelessWidget {
                         'Average Score',
                         '${averageScore.isNaN ? 0 : averageScore.toInt()}%',
                         Icons.star,
-                        Colors.amber,
+                        Colors.purple.shade400,
                         isDark,
                       ),
                     ),
@@ -628,7 +637,7 @@ class ProgressTab extends StatelessWidget {
                         'Time Investment',
                         '${(totalTimeSpent / 60).toStringAsFixed(1)} hours',
                         Icons.schedule,
-                        Colors.green,
+                        Colors.purple.shade600,
                         isDark,
                       ),
                     ),
@@ -653,31 +662,33 @@ class ProgressTab extends StatelessWidget {
   }
 
   Widget _buildStatCard(String label, String value, IconData icon) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: Colors.white, size: 20),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: Colors.white, size: 20),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
-            Text(
-              label,
-              style: const TextStyle(fontSize: 10, color: Colors.white70),
-            ),
-          ],
-        ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 10, color: Colors.white70),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
@@ -724,21 +735,21 @@ class ProgressTab extends StatelessWidget {
   Color _getDifficultyColor(String? difficulty) {
     switch (difficulty?.toLowerCase()) {
       case 'beginner':
-        return Colors.green;
+        return Colors.purple.shade300;
       case 'intermediate':
-        return Colors.orange;
+        return Colors.purple.shade500;
       case 'advanced':
-        return Colors.red;
+        return Colors.purple.shade700;
       default:
         return Colors.purple;
     }
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 90) return Colors.green;
-    if (score >= 80) return Colors.blue;
-    if (score >= 70) return Colors.orange;
-    return Colors.red;
+    if (score >= 90) return Colors.purple;
+    if (score >= 80) return Colors.purple.shade400;
+    if (score >= 70) return Colors.purple.shade300;
+    return Colors.red; // Keep red for low scores as warning
   }
 
   IconData _getActivityIcon(String? type) {

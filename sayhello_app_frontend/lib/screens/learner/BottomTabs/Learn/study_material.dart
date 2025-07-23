@@ -98,8 +98,8 @@ class StudyMaterialTab extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.teal.withOpacity(0.8),
-                  Colors.blue.withOpacity(0.6),
+                  Colors.purple.withOpacity(0.8),
+                  Colors.purple.withOpacity(0.6),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -239,9 +239,7 @@ class StudyMaterialTab extends StatelessWidget {
                           Expanded(
                             child: ElevatedButton.icon(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: _getTypeColor(
-                                  material['type']?.toString(),
-                                ),
+                                backgroundColor: Colors.purple,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 12,
                                 ),
@@ -267,11 +265,7 @@ class StudyMaterialTab extends StatelessWidget {
                           Expanded(
                             child: OutlinedButton.icon(
                               style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  color: _getTypeColor(
-                                    material['type']?.toString(),
-                                  ),
-                                ),
+                                side: BorderSide(color: Colors.purple),
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 12,
                                 ),
@@ -285,18 +279,14 @@ class StudyMaterialTab extends StatelessWidget {
                                 material['isDownloaded'] == true
                                     ? Icons.download_done
                                     : Icons.download,
-                                color: _getTypeColor(
-                                  material['type']?.toString(),
-                                ),
+                                color: Colors.purple,
                               ),
                               label: Text(
                                 material['isDownloaded'] == true
                                     ? 'Downloaded'
                                     : 'Download',
                                 style: TextStyle(
-                                  color: _getTypeColor(
-                                    material['type']?.toString(),
-                                  ),
+                                  color: Colors.purple,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -377,7 +367,7 @@ class StudyMaterialTab extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Opening: ${material['title']}'),
-        backgroundColor: _getTypeColor(material['type']),
+        backgroundColor: Colors.purple,
       ),
     );
   }
@@ -386,7 +376,7 @@ class StudyMaterialTab extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Downloading: ${material['title']}'),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.purple.shade600,
       ),
     );
   }
