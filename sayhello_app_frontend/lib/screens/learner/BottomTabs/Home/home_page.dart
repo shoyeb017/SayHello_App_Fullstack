@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
@@ -6,6 +5,7 @@ import 'search_people_in_home.dart';
 import 'chat_item.dart';
 import 'all_courses.dart';
 import 'translator_in_home.dart';
+import '../../Chat/chat.dart'; // Import our new chat interface
 
 void main() {
   runApp(const LanguageTalksApp());
@@ -124,9 +124,9 @@ class HomePage extends StatelessWidget {
           title: Row(
             children: [
               const SizedBox(width: 10),
+
               // Theme toggle button
               // Use the theme provider to toggle dark/light mode
-
               IconButton(
                 icon: Icon(
                   themeProvider.themeMode == ThemeMode.dark
@@ -227,6 +227,44 @@ class HomePage extends StatelessWidget {
                         width: 72,
                         child: Text(
                           'Translate',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 11),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // HelloTalk Chat Button
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ChatPage()),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF7a54ff).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(
+                          Icons.chat_bubble_outline,
+                          size: 26,
+                          color: Color(0xFF7a54ff),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const SizedBox(
+                        width: 72,
+                        child: Text(
+                          'HelloTalk Chat',
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 11),
                           maxLines: 1,
@@ -351,10 +389,6 @@ class HomePage extends StatelessWidget {
 //     );
 //   }
 // }
-
-
-
-
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Single chat row
