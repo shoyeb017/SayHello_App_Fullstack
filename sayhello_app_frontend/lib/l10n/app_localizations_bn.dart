@@ -780,7 +780,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get deleteChat => 'Delete Chat';
 
   @override
-  String get chatOptions => 'Chat Options';
+  String get chatOptions => 'চ্যাট অপশন';
 
   @override
   String get addCourse => 'কোর্স যোগ করুন';
@@ -1087,118 +1087,118 @@ class AppLocalizationsBn extends AppLocalizations {
   String get spanish => 'স্প্যানিশ';
 
   @override
-  String get aboutMe => 'About Me';
+  String get aboutMe => 'আমার সম্পর্কে';
 
   @override
-  String get selfIntroduction => 'Self-introduction';
+  String get selfIntroduction => 'আত্মপরিচয়';
 
   @override
-  String get tellUsAboutYourself => 'Tell us about yourself...';
+  String get tellUsAboutYourself => 'আপনার সম্পর্কে বলুন...';
 
   @override
-  String get editBio => 'Edit Bio';
+  String get editBio => 'জীবনী সম্পাদনা';
 
   @override
-  String get editImage => 'Edit Image';
+  String get editImage => 'ছবি সম্পাদনা';
 
   @override
-  String get camera => 'Camera';
+  String get camera => 'ক্যামেরা';
 
   @override
-  String get gallery => 'Gallery';
+  String get gallery => 'গ্যালারি';
 
   @override
-  String get takePhoto => 'Take Photo';
+  String get takePhoto => 'ছবি তুলুন';
 
   @override
-  String get selectFromGallery => 'Select from Gallery';
+  String get selectFromGallery => 'গ্যালারি থেকে নির্বাচন করুন';
 
   @override
-  String get native => 'Native';
+  String get native => 'মাতৃভাষা';
 
   @override
-  String get learning => 'Learning';
+  String get learning => 'শিখছি';
 
   @override
-  String get addHobbies => 'Add Hobbies';
+  String get addHobbies => 'শখ যোগ করুন';
 
   @override
-  String get selectHobbies => 'Select Hobbies';
+  String get selectHobbies => 'শখ নির্বাচন করুন';
 
   @override
-  String get personalInformation => 'Personal Information';
+  String get personalInformation => 'ব্যক্তিগত তথ্য';
 
   @override
-  String get selectGender => 'Select Gender';
+  String get selectGender => 'লিঙ্গ নির্বাচন করুন';
 
   @override
-  String get selectAge => 'Select Age';
+  String get selectAge => 'বয়স নির্বাচন করুন';
 
   @override
-  String get birthday => 'Birthday';
+  String get birthday => 'জন্মদিন';
 
   @override
-  String get birthdayUpdatedSuccessfully => 'Birthday updated successfully!';
+  String get birthdayUpdatedSuccessfully => 'জন্মদিন সফলভাবে আপডেট হয়েছে!';
 
   @override
-  String get theme => 'Theme';
+  String get theme => 'থিম';
 
   @override
-  String get themeMode => 'Theme Mode';
+  String get themeMode => 'থিম মোড';
 
   @override
-  String get darkMode => 'Dark Mode';
+  String get darkMode => 'ডার্ক মোড';
 
   @override
-  String get lightMode => 'Light Mode';
+  String get lightMode => 'লাইট মোড';
 
   @override
-  String get movie => 'Movie';
+  String get movie => 'সিনেমা';
 
   @override
-  String get anime => 'Anime';
+  String get anime => 'অ্যানিমে';
 
   @override
-  String get cosplay => 'Cosplay';
+  String get cosplay => 'কসপ্লে';
 
   @override
-  String get reading => 'Reading';
+  String get reading => 'পড়া';
 
   @override
-  String get sports => 'Sports';
+  String get sports => 'খেলাধুলা';
 
   @override
-  String get dancing => 'Dancing';
+  String get dancing => 'নাচ';
 
   @override
-  String get videoCallFeature => 'Video call feature coming soon!';
+  String get videoCallFeature => 'ভিডিও কল ফিচার শীঘ্রই আসছে!';
 
   @override
-  String get messageTranslated => 'Message translated!';
+  String get messageTranslated => 'বার্তা অনুবাদ হয়েছে!';
 
   @override
-  String get originalMessage => 'Original:';
+  String get originalMessage => 'মূল:';
 
   @override
-  String get correctionMessage => 'Correction:';
+  String get correctionMessage => 'সংশোধন:';
 
   @override
-  String get correctMessage => 'Correct Message';
+  String get correctMessage => 'বার্তা সংশোধন করুন';
 
   @override
-  String get sendAttachment => 'Send Attachment';
+  String get sendAttachment => 'সংযুক্তি পাঠান';
 
   @override
-  String get photo => 'Photo';
+  String get photo => 'ছবি';
 
   @override
-  String get voice => 'Voice';
+  String get voice => 'কণ্ঠস্বর';
 
   @override
-  String get document => 'Document';
+  String get document => 'নথি';
 
   @override
-  String get location => 'Location';
+  String get location => 'অবস্থান';
 
   @override
   String attachmentComingSoon(String attachment) {
@@ -1211,23 +1211,82 @@ class AppLocalizationsBn extends AppLocalizations {
   }
 
   @override
-  String get followers => 'Followers';
+  String get followers => 'অনুসরণকারী';
 
   @override
-  String get sharedInterests => 'Shared Interests';
+  String get sharedInterests => 'সাধারণ আগ্রহ';
 
   @override
-  String get interestsAndHobbies => 'Interests & Hobbies';
+  String get interestsAndHobbies => 'আগ্রহ ও শখ';
 
   @override
-  String get showLess => 'Show less';
+  String get showLess => 'কম দেখান';
 
   @override
-  String get showMore => 'Show more';
+  String get showMore => 'আরো দেখান';
 
   @override
-  String get messageButton => 'Message';
+  String get messageButton => 'বার্তা';
 
   @override
-  String get callButton => 'Call';
+  String get callButton => 'কল';
+
+  @override
+  String get cameraFeatureComingSoon => 'ক্যামেরা ফিচার শীঘ্রই আসছে!';
+
+  @override
+  String get galleryFeatureComingSoon => 'গ্যালারি ফিচার শীঘ্রই আসছে!';
+
+  @override
+  String get bioUpdatedSuccessfully => 'জীবনী সফলভাবে আপডেট হয়েছে!';
+
+  @override
+  String get hobbiesUpdatedSuccessfully => 'শখ সফলভাবে আপডেট হয়েছে!';
+
+  @override
+  String genderUpdatedTo(String gender) {
+    return 'Gender updated to $gender';
+  }
+
+  @override
+  String ageUpdatedTo(int age) {
+    return 'Age updated to $age';
+  }
+
+  @override
+  String fieldUpdatedSuccessfully(String field) {
+    return '$field updated successfully!';
+  }
+
+  @override
+  String enterYourField(String field) {
+    return 'Enter your $field';
+  }
+
+  @override
+  String get colorMode => 'কালার মোড';
+
+  @override
+  String get changeAppLanguage => 'অ্যাপের ভাষা পরিবর্তন করুন';
+
+  @override
+  String get chooseYourPreferredLanguage => 'আপনার পছন্দের ভাষা বেছে নিন';
+
+  @override
+  String genderUpdated(String gender) {
+    return 'লিঙ্গ $gender এ আপডেট করা হয়েছে';
+  }
+
+  @override
+  String ageUpdated(int age) {
+    return 'বয়স $age এ আপডেট করা হয়েছে';
+  }
+
+  @override
+  String fieldUpdated(String field) {
+    return '$field সফলভাবে আপডেট হয়েছে!';
+  }
+
+  @override
+  String get enterCorrection => 'সংশোধন লিখুন...';
 }

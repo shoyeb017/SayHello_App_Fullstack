@@ -1230,4 +1230,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get callButton => 'Call';
+
+  @override
+  String get cameraFeatureComingSoon => 'Camera feature coming soon!';
+
+  @override
+  String get galleryFeatureComingSoon => 'Gallery feature coming soon!';
+
+  @override
+  String get bioUpdatedSuccessfully => 'Bio updated successfully!';
+
+  @override
+  String get hobbiesUpdatedSuccessfully => 'Hobbies updated successfully!';
+
+  @override
+  String genderUpdatedTo(String gender) {
+    return 'Gender updated to $gender';
+  }
+
+  @override
+  String ageUpdatedTo(int age) {
+    return 'Age updated to $age';
+  }
+
+  @override
+  String fieldUpdatedSuccessfully(String field) {
+    return '$field updated successfully!';
+  }
+
+  @override
+  String enterYourField(String field) {
+    return 'Enter your $field';
+  }
+
+  @override
+  String get colorMode => 'Color Mode';
+
+  @override
+  String get changeAppLanguage => 'Change app language';
+
+  @override
+  String get chooseYourPreferredLanguage => 'Choose your preferred language';
+
+  @override
+  String genderUpdated(String gender) {
+    return 'Gender updated to $gender';
+  }
+
+  @override
+  String ageUpdated(int age) {
+    return 'Age updated to $age';
+  }
+
+  @override
+  String fieldUpdated(String field) {
+    return '$field updated successfully!';
+  }
+
+  @override
+  String get enterCorrection => 'Enter correction...';
 }

@@ -235,8 +235,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
               TextButton(
-                onPressed: () => _showEditDialog(context, AppLocalizations.of(context)!.name, userName),
-                child: Text(AppLocalizations.of(context)!.edit, style: TextStyle(color: primaryColor)),
+                onPressed: () => _showEditDialog(
+                  context,
+                  AppLocalizations.of(context)!.name,
+                  userName,
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.edit,
+                  style: TextStyle(color: primaryColor),
+                ),
               ),
             ],
           ),
@@ -269,7 +276,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     border: Border.all(color: Colors.grey[300]!, width: 1),
                   ),
                   child: Text(
-                    userBio.isEmpty ? AppLocalizations.of(context)!.tellUsAboutYourself : userBio,
+                    userBio.isEmpty
+                        ? AppLocalizations.of(context)!.tellUsAboutYourself
+                        : userBio,
                     style: TextStyle(
                       fontSize: 14,
                       color: userBio.isEmpty
@@ -310,7 +319,7 @@ class _ProfilePageState extends State<ProfilePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Language',
+            AppLocalizations.of(context)!.language,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -322,7 +331,7 @@ class _ProfilePageState extends State<ProfilePage> {
           // Native language
           _buildLanguageItem(
             context,
-            'Native',
+            AppLocalizations.of(context)!.native,
             nativeLanguage,
             '🇺🇸',
             isDark,
@@ -334,7 +343,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
           // Learning language
           Text(
-            'Learning',
+            AppLocalizations.of(context)!.learning,
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 14,
@@ -402,9 +411,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
-                'Native',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.native,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
@@ -439,7 +448,7 @@ class _ProfilePageState extends State<ProfilePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Interests',
+            AppLocalizations.of(context)!.interests,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -451,7 +460,7 @@ class _ProfilePageState extends State<ProfilePage> {
           // Hobbies
           _buildInterestItem(
             context,
-            'Add Hobbies',
+            AppLocalizations.of(context)!.addHobbies,
             selectedInterests.join(', '),
             Icons.favorite_outline,
             isDark,
@@ -551,7 +560,7 @@ class _ProfilePageState extends State<ProfilePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Personal Information',
+            AppLocalizations.of(context)!.personalInformation,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -563,7 +572,7 @@ class _ProfilePageState extends State<ProfilePage> {
           // Email
           _buildPersonalInfoItem(
             context,
-            'Email',
+            AppLocalizations.of(context)!.email,
             email,
             Icons.email_outlined,
             isDark,
@@ -575,7 +584,7 @@ class _ProfilePageState extends State<ProfilePage> {
           // Gender
           _buildPersonalInfoItem(
             context,
-            'Gender',
+            AppLocalizations.of(context)!.gender,
             gender,
             Icons.person_outline,
             isDark,
@@ -587,7 +596,7 @@ class _ProfilePageState extends State<ProfilePage> {
           // Age
           _buildPersonalInfoItem(
             context,
-            'Age',
+            AppLocalizations.of(context)!.age,
             age.toString(),
             Icons.cake_outlined,
             isDark,
@@ -599,7 +608,7 @@ class _ProfilePageState extends State<ProfilePage> {
           // Birthday
           _buildPersonalInfoItem(
             context,
-            'Birthday',
+            AppLocalizations.of(context)!.birthday,
             birthday,
             Icons.calendar_today_outlined,
             isDark,
@@ -621,11 +630,11 @@ class _ProfilePageState extends State<ProfilePage> {
   }) {
     return GestureDetector(
       onTap: () {
-        if (title == 'Gender') {
+        if (title == AppLocalizations.of(context)!.gender) {
           _showGenderSelectionDialog(context, primaryColor);
-        } else if (title == 'Age') {
+        } else if (title == AppLocalizations.of(context)!.age) {
           _showAgeSelectionDialog(context, primaryColor);
-        } else if (title == 'Birthday') {
+        } else if (title == AppLocalizations.of(context)!.birthday) {
           _showBirthdaySelectionDialog(context, primaryColor);
         } else {
           _showEditDialog(context, title, value);
@@ -696,27 +705,35 @@ class _ProfilePageState extends State<ProfilePage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Change Profile Picture',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              AppLocalizations.of(context)!.editImage,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             ListTile(
               leading: Icon(Icons.camera_alt, color: primaryColor),
-              title: Text('Take Photo'),
+              title: Text(AppLocalizations.of(context)!.takePhoto),
               onTap: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Camera feature coming soon!')),
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.cameraFeatureComingSoon,
+                    ),
+                  ),
                 );
               },
             ),
             ListTile(
               leading: Icon(Icons.photo_library, color: primaryColor),
-              title: Text('Choose from Gallery'),
+              title: Text(AppLocalizations.of(context)!.selectFromGallery),
               onTap: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Gallery feature coming soon!')),
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.galleryFeatureComingSoon,
+                    ),
+                  ),
                 );
               },
             ),
@@ -735,11 +752,11 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Edit Bio'),
+        title: Text(AppLocalizations.of(context)!.editBio),
         content: TextField(
           controller: controller,
           decoration: InputDecoration(
-            hintText: 'Tell us about yourself...',
+            hintText: AppLocalizations.of(context)!.tellUsAboutYourself,
             border: const OutlineInputBorder(),
           ),
           maxLines: 5,
@@ -748,16 +765,23 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Bio updated successfully!')),
+                SnackBar(
+                  content: Text(
+                    AppLocalizations.of(context)!.bioUpdatedSuccessfully,
+                  ),
+                ),
               );
             },
-            child: Text('Save', style: TextStyle(color: primaryColor)),
+            child: Text(
+              AppLocalizations.of(context)!.save,
+              style: TextStyle(color: primaryColor),
+            ),
           ),
         ],
       ),
@@ -772,7 +796,7 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: Text('Select Hobbies'),
+          title: Text(AppLocalizations.of(context)!.selectHobbies),
           content: SizedBox(
             width: double.maxFinite,
             child: ListView.builder(
@@ -802,16 +826,23 @@ class _ProfilePageState extends State<ProfilePage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Hobbies updated successfully!')),
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.hobbiesUpdatedSuccessfully,
+                    ),
+                  ),
                 );
               },
-              child: Text('Save', style: TextStyle(color: primaryColor)),
+              child: Text(
+                AppLocalizations.of(context)!.save,
+                style: TextStyle(color: primaryColor),
+              ),
             ),
           ],
         ),
@@ -821,21 +852,25 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Gender selection dialog
   void _showGenderSelectionDialog(BuildContext context, Color primaryColor) {
-    final genders = ['Male', 'Female', 'Other'];
+    final genders = [
+      AppLocalizations.of(context)!.male,
+      AppLocalizations.of(context)!.female,
+      AppLocalizations.of(context)!.other,
+    ];
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Select Gender'),
+        title: Text(AppLocalizations.of(context)!.selectGender),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: genders
               .map(
                 (g) => ListTile(
                   leading: Icon(
-                    g == 'Male'
+                    g == AppLocalizations.of(context)!.male
                         ? Icons.male
-                        : g == 'Female'
+                        : g == AppLocalizations.of(context)!.female
                         ? Icons.female
                         : Icons.person,
                     color: primaryColor,
@@ -844,7 +879,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   onTap: () {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Gender updated to $g')),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context)!.genderUpdated(g),
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -862,7 +901,7 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Select Age'),
+        title: Text(AppLocalizations.of(context)!.selectAge),
         content: SizedBox(
           height: 200,
           child: ListWheelScrollView.useDelegate(
@@ -887,16 +926,23 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Age updated to $selectedAge')),
+                SnackBar(
+                  content: Text(
+                    AppLocalizations.of(context)!.ageUpdated(selectedAge),
+                  ),
+                ),
               );
             },
-            child: Text('Save', style: TextStyle(color: primaryColor)),
+            child: Text(
+              AppLocalizations.of(context)!.save,
+              style: TextStyle(color: primaryColor),
+            ),
           ),
         ],
       ),
@@ -923,7 +969,11 @@ class _ProfilePageState extends State<ProfilePage> {
     ).then((selectedDate) {
       if (selectedDate != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Birthday updated successfully!')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.birthdayUpdatedSuccessfully,
+            ),
+          ),
         );
       }
     });
@@ -953,17 +1003,21 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () {
               // TODO: Save the edited value
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('$title updated successfully!')),
+                SnackBar(
+                  content: Text(
+                    AppLocalizations.of(context)!.fieldUpdated(title),
+                  ),
+                ),
               );
             },
-            child: const Text('Save'),
+            child: Text(AppLocalizations.of(context)!.save),
           ),
         ],
       ),
@@ -1005,7 +1059,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             // Settings title
             Text(
-              'Settings',
+              AppLocalizations.of(context)!.settings,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -1028,7 +1082,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: primaryColor,
                 ),
                 title: Text(
-                  'Color Mode',
+                  AppLocalizations.of(context)!.colorMode,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: isDark ? Colors.white : Colors.black,
@@ -1036,8 +1090,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 subtitle: Text(
                   themeProvider.themeMode == ThemeMode.dark
-                      ? 'Dark Mode'
-                      : 'Light Mode',
+                      ? AppLocalizations.of(context)!.darkMode
+                      : AppLocalizations.of(context)!.lightMode,
                   style: TextStyle(color: Colors.grey[600]),
                 ),
                 trailing: Switch(
@@ -1065,14 +1119,14 @@ class _ProfilePageState extends State<ProfilePage> {
               child: ListTile(
                 leading: Icon(Icons.language, color: primaryColor),
                 title: Text(
-                  'Language',
+                  AppLocalizations.of(context)!.language,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: isDark ? Colors.white : Colors.black,
                   ),
                 ),
                 subtitle: Text(
-                  'Change app language',
+                  AppLocalizations.of(context)!.changeAppLanguage,
                   style: TextStyle(color: Colors.grey[600]),
                 ),
                 trailing: Icon(Icons.chevron_right, color: Colors.grey[400]),
@@ -1095,14 +1149,14 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Select Language'),
+        title: Text(AppLocalizations.of(context)!.selectLanguage),
         content: Container(
           width: double.maxFinite,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Choose your preferred language',
+                AppLocalizations.of(context)!.chooseYourPreferredLanguage,
                 style: TextStyle(fontSize: 14, color: Colors.grey[600]),
               ),
               const SizedBox(height: 20),
@@ -1114,7 +1168,7 @@ class _ProfilePageState extends State<ProfilePage> {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'Close',
+              AppLocalizations.of(context)!.close,
               style: TextStyle(color: const Color(0xFF7A54FF)),
             ),
           ),

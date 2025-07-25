@@ -777,7 +777,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get deleteChat => 'Delete Chat';
 
   @override
-  String get chatOptions => 'Chat Options';
+  String get chatOptions => 'チャットオプション';
 
   @override
   String get addCourse => 'コース追加';
@@ -1080,118 +1080,118 @@ class AppLocalizationsJa extends AppLocalizations {
   String get spanish => 'スペイン語';
 
   @override
-  String get aboutMe => 'About Me';
+  String get aboutMe => '自己紹介';
 
   @override
-  String get selfIntroduction => 'Self-introduction';
+  String get selfIntroduction => '自己紹介';
 
   @override
-  String get tellUsAboutYourself => 'Tell us about yourself...';
+  String get tellUsAboutYourself => '自己紹介をお聞かせください...';
 
   @override
-  String get editBio => 'Edit Bio';
+  String get editBio => 'プロフィール編集';
 
   @override
-  String get editImage => 'Edit Image';
+  String get editImage => '画像編集';
 
   @override
-  String get camera => 'Camera';
+  String get camera => 'カメラ';
 
   @override
-  String get gallery => 'Gallery';
+  String get gallery => 'ギャラリー';
 
   @override
-  String get takePhoto => 'Take Photo';
+  String get takePhoto => '写真を撮る';
 
   @override
-  String get selectFromGallery => 'Select from Gallery';
+  String get selectFromGallery => 'ギャラリーから選択';
 
   @override
-  String get native => 'Native';
+  String get native => '母語';
 
   @override
-  String get learning => 'Learning';
+  String get learning => '学習中';
 
   @override
-  String get addHobbies => 'Add Hobbies';
+  String get addHobbies => '趣味を追加';
 
   @override
-  String get selectHobbies => 'Select Hobbies';
+  String get selectHobbies => '趣味を選択';
 
   @override
-  String get personalInformation => 'Personal Information';
+  String get personalInformation => '個人情報';
 
   @override
-  String get selectGender => 'Select Gender';
+  String get selectGender => '性別を選択';
 
   @override
-  String get selectAge => 'Select Age';
+  String get selectAge => '年齢を選択';
 
   @override
-  String get birthday => 'Birthday';
+  String get birthday => '誕生日';
 
   @override
-  String get birthdayUpdatedSuccessfully => 'Birthday updated successfully!';
+  String get birthdayUpdatedSuccessfully => '誕生日が正常に更新されました！';
 
   @override
-  String get theme => 'Theme';
+  String get theme => 'テーマ';
 
   @override
-  String get themeMode => 'Theme Mode';
+  String get themeMode => 'テーマモード';
 
   @override
-  String get darkMode => 'Dark Mode';
+  String get darkMode => 'ダークモード';
 
   @override
-  String get lightMode => 'Light Mode';
+  String get lightMode => 'ライトモード';
 
   @override
-  String get movie => 'Movie';
+  String get movie => '映画';
 
   @override
-  String get anime => 'Anime';
+  String get anime => 'アニメ';
 
   @override
-  String get cosplay => 'Cosplay';
+  String get cosplay => 'コスプレ';
 
   @override
-  String get reading => 'Reading';
+  String get reading => '読書';
 
   @override
-  String get sports => 'Sports';
+  String get sports => 'スポーツ';
 
   @override
-  String get dancing => 'Dancing';
+  String get dancing => 'ダンス';
 
   @override
-  String get videoCallFeature => 'Video call feature coming soon!';
+  String get videoCallFeature => 'ビデオ通話機能が近日公開予定です！';
 
   @override
-  String get messageTranslated => 'Message translated!';
+  String get messageTranslated => 'メッセージが翻訳されました！';
 
   @override
-  String get originalMessage => 'Original:';
+  String get originalMessage => '元のメッセージ:';
 
   @override
-  String get correctionMessage => 'Correction:';
+  String get correctionMessage => '修正:';
 
   @override
-  String get correctMessage => 'Correct Message';
+  String get correctMessage => 'メッセージを修正';
 
   @override
-  String get sendAttachment => 'Send Attachment';
+  String get sendAttachment => '添付ファイルを送信';
 
   @override
-  String get photo => 'Photo';
+  String get photo => '写真';
 
   @override
-  String get voice => 'Voice';
+  String get voice => '音声';
 
   @override
-  String get document => 'Document';
+  String get document => 'ドキュメント';
 
   @override
-  String get location => 'Location';
+  String get location => '位置情報';
 
   @override
   String attachmentComingSoon(String attachment) {
@@ -1204,23 +1204,82 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get followers => 'Followers';
+  String get followers => 'フォロワー';
 
   @override
-  String get sharedInterests => 'Shared Interests';
+  String get sharedInterests => '共通の興味';
 
   @override
-  String get interestsAndHobbies => 'Interests & Hobbies';
+  String get interestsAndHobbies => '興味と趣味';
 
   @override
-  String get showLess => 'Show less';
+  String get showLess => '短く表示';
 
   @override
-  String get showMore => 'Show more';
+  String get showMore => 'もっと見る';
 
   @override
-  String get messageButton => 'Message';
+  String get messageButton => 'メッセージ';
 
   @override
-  String get callButton => 'Call';
+  String get callButton => '通話';
+
+  @override
+  String get cameraFeatureComingSoon => 'カメラ機能が近日公開予定です！';
+
+  @override
+  String get galleryFeatureComingSoon => 'ギャラリー機能が近日公開予定です！';
+
+  @override
+  String get bioUpdatedSuccessfully => 'プロフィールが正常に更新されました！';
+
+  @override
+  String get hobbiesUpdatedSuccessfully => '趣味が正常に更新されました！';
+
+  @override
+  String genderUpdatedTo(String gender) {
+    return 'Gender updated to $gender';
+  }
+
+  @override
+  String ageUpdatedTo(int age) {
+    return 'Age updated to $age';
+  }
+
+  @override
+  String fieldUpdatedSuccessfully(String field) {
+    return '$field updated successfully!';
+  }
+
+  @override
+  String enterYourField(String field) {
+    return 'Enter your $field';
+  }
+
+  @override
+  String get colorMode => 'カラーモード';
+
+  @override
+  String get changeAppLanguage => 'アプリの言語を変更';
+
+  @override
+  String get chooseYourPreferredLanguage => 'お好みの言語を選択してください';
+
+  @override
+  String genderUpdated(String gender) {
+    return '性別が$genderに更新されました';
+  }
+
+  @override
+  String ageUpdated(int age) {
+    return '年齢が$ageに更新されました';
+  }
+
+  @override
+  String fieldUpdated(String field) {
+    return '$fieldが正常に更新されました！';
+  }
+
+  @override
+  String get enterCorrection => '修正を入力してください...';
 }

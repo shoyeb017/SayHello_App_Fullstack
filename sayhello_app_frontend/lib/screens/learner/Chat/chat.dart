@@ -885,9 +885,9 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             const SizedBox(height: 8),
             TextField(
               controller: correctionController,
-              decoration: const InputDecoration(
-                hintText: 'Enter correction...',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.enterCorrection,
+                border: const OutlineInputBorder(),
               ),
               maxLines: 3,
             ),

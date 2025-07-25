@@ -43,7 +43,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get language => 'Idioma';
 
   @override
-  String get selectLanguage => 'Seleccionar Idioma';
+  String get selectLanguage => 'Seleccionar idioma';
 
   @override
   String get learnerSignIn => 'Iniciar Sesión de Estudiante';
@@ -781,7 +781,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get deleteChat => 'Delete Chat';
 
   @override
-  String get chatOptions => 'Chat Options';
+  String get chatOptions => 'Opciones de chat';
 
   @override
   String get addCourse => 'Agregar Curso';
@@ -1088,73 +1088,74 @@ class AppLocalizationsEs extends AppLocalizations {
   String get spanish => 'Español';
 
   @override
-  String get aboutMe => 'About Me';
+  String get aboutMe => 'Acerca de mí';
 
   @override
-  String get selfIntroduction => 'Self-introduction';
+  String get selfIntroduction => 'Autopresentación';
 
   @override
-  String get tellUsAboutYourself => 'Tell us about yourself...';
+  String get tellUsAboutYourself => 'Cuéntanos sobre ti...';
 
   @override
-  String get editBio => 'Edit Bio';
+  String get editBio => 'Editar biografía';
 
   @override
-  String get editImage => 'Edit Image';
+  String get editImage => 'Editar imagen';
 
   @override
-  String get camera => 'Camera';
+  String get camera => 'Cámara';
 
   @override
-  String get gallery => 'Gallery';
+  String get gallery => 'Galería';
 
   @override
-  String get takePhoto => 'Take Photo';
+  String get takePhoto => 'Tomar foto';
 
   @override
-  String get selectFromGallery => 'Select from Gallery';
+  String get selectFromGallery => 'Seleccionar de galería';
 
   @override
-  String get native => 'Native';
+  String get native => 'Nativo';
 
   @override
-  String get learning => 'Learning';
+  String get learning => 'Aprendiendo';
 
   @override
-  String get addHobbies => 'Add Hobbies';
+  String get addHobbies => 'Agregar aficiones';
 
   @override
-  String get selectHobbies => 'Select Hobbies';
+  String get selectHobbies => 'Seleccionar aficiones';
 
   @override
-  String get personalInformation => 'Personal Information';
+  String get personalInformation => 'Información personal';
 
   @override
-  String get selectGender => 'Select Gender';
+  String get selectGender => 'Seleccionar género';
 
   @override
-  String get selectAge => 'Select Age';
+  String get selectAge => 'Seleccionar edad';
 
   @override
-  String get birthday => 'Birthday';
+  String get birthday => 'Cumpleaños';
 
   @override
-  String get birthdayUpdatedSuccessfully => 'Birthday updated successfully!';
+  String get birthdayUpdatedSuccessfully =>
+      '¡Cumpleaños actualizado exitosamente!';
 
   @override
-  String get theme => 'Theme';
+  String get theme => 'Tema';
 
   @override
-  String get themeMode => 'Theme Mode';
+  String get themeMode => 'Modo de tema';
 
   @override
-  String get darkMode => 'Dark Mode';
+  String get darkMode => 'Modo oscuro';
 
   @override
-  String get lightMode => 'Light Mode';
+  String get lightMode => 'Modo claro';
 
   @override
-  String get movie => 'Movie';
+  String get movie => 'Película';
 
   @override
   String get anime => 'Anime';
@@ -1163,43 +1164,43 @@ class AppLocalizationsEs extends AppLocalizations {
   String get cosplay => 'Cosplay';
 
   @override
-  String get reading => 'Reading';
+  String get reading => 'Lectura';
 
   @override
-  String get sports => 'Sports';
+  String get sports => 'Deportes';
 
   @override
-  String get dancing => 'Dancing';
+  String get dancing => 'Baile';
 
   @override
-  String get videoCallFeature => 'Video call feature coming soon!';
+  String get videoCallFeature => '¡La función de videollamada llegará pronto!';
 
   @override
-  String get messageTranslated => 'Message translated!';
+  String get messageTranslated => '¡Mensaje traducido!';
 
   @override
   String get originalMessage => 'Original:';
 
   @override
-  String get correctionMessage => 'Correction:';
+  String get correctionMessage => 'Corrección:';
 
   @override
-  String get correctMessage => 'Correct Message';
+  String get correctMessage => 'Corregir mensaje';
 
   @override
-  String get sendAttachment => 'Send Attachment';
+  String get sendAttachment => 'Enviar adjunto';
 
   @override
-  String get photo => 'Photo';
+  String get photo => 'Foto';
 
   @override
-  String get voice => 'Voice';
+  String get voice => 'Voz';
 
   @override
-  String get document => 'Document';
+  String get document => 'Documento';
 
   @override
-  String get location => 'Location';
+  String get location => 'Ubicación';
 
   @override
   String attachmentComingSoon(String attachment) {
@@ -1212,23 +1213,84 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get followers => 'Followers';
+  String get followers => 'Seguidores';
 
   @override
-  String get sharedInterests => 'Shared Interests';
+  String get sharedInterests => 'Intereses compartidos';
 
   @override
-  String get interestsAndHobbies => 'Interests & Hobbies';
+  String get interestsAndHobbies => 'Intereses y aficiones';
 
   @override
-  String get showLess => 'Show less';
+  String get showLess => 'Mostrar menos';
 
   @override
-  String get showMore => 'Show more';
+  String get showMore => 'Mostrar más';
 
   @override
-  String get messageButton => 'Message';
+  String get messageButton => 'Mensaje';
 
   @override
-  String get callButton => 'Call';
+  String get callButton => 'Llamar';
+
+  @override
+  String get cameraFeatureComingSoon => '¡La función de cámara llegará pronto!';
+
+  @override
+  String get galleryFeatureComingSoon =>
+      '¡La función de galería llegará pronto!';
+
+  @override
+  String get bioUpdatedSuccessfully => '¡Biografía actualizada exitosamente!';
+
+  @override
+  String get hobbiesUpdatedSuccessfully =>
+      '¡Aficiones actualizadas exitosamente!';
+
+  @override
+  String genderUpdatedTo(String gender) {
+    return 'Gender updated to $gender';
+  }
+
+  @override
+  String ageUpdatedTo(int age) {
+    return 'Age updated to $age';
+  }
+
+  @override
+  String fieldUpdatedSuccessfully(String field) {
+    return '$field updated successfully!';
+  }
+
+  @override
+  String enterYourField(String field) {
+    return 'Enter your $field';
+  }
+
+  @override
+  String get colorMode => 'Modo de color';
+
+  @override
+  String get changeAppLanguage => 'Cambiar idioma de la aplicación';
+
+  @override
+  String get chooseYourPreferredLanguage => 'Elige tu idioma preferido';
+
+  @override
+  String genderUpdated(String gender) {
+    return 'Género actualizado a $gender';
+  }
+
+  @override
+  String ageUpdated(int age) {
+    return 'Edad actualizada a $age';
+  }
+
+  @override
+  String fieldUpdated(String field) {
+    return '¡$field actualizado exitosamente!';
+  }
+
+  @override
+  String get enterCorrection => 'Ingresa la corrección...';
 }

@@ -2503,6 +2503,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Call'**
   String get callButton;
+
+  /// Camera feature notification
+  ///
+  /// In en, this message translates to:
+  /// **'Camera feature coming soon!'**
+  String get cameraFeatureComingSoon;
+
+  /// Gallery feature notification
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery feature coming soon!'**
+  String get galleryFeatureComingSoon;
+
+  /// Bio update success message
+  ///
+  /// In en, this message translates to:
+  /// **'Bio updated successfully!'**
+  String get bioUpdatedSuccessfully;
+
+  /// Hobbies update success message
+  ///
+  /// In en, this message translates to:
+  /// **'Hobbies updated successfully!'**
+  String get hobbiesUpdatedSuccessfully;
+
+  /// Gender update success message
+  ///
+  /// In en, this message translates to:
+  /// **'Gender updated to {gender}'**
+  String genderUpdatedTo(String gender);
+
+  /// Age update success message
+  ///
+  /// In en, this message translates to:
+  /// **'Age updated to {age}'**
+  String ageUpdatedTo(int age);
+
+  /// Field update success message
+  ///
+  /// In en, this message translates to:
+  /// **'{field} updated successfully!'**
+  String fieldUpdatedSuccessfully(String field);
+
+  /// Enter field placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your {field}'**
+  String enterYourField(String field);
+
+  /// Color mode setting label
+  ///
+  /// In en, this message translates to:
+  /// **'Color Mode'**
+  String get colorMode;
+
+  /// Change app language subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Change app language'**
+  String get changeAppLanguage;
+
+  /// Language selection description
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your preferred language'**
+  String get chooseYourPreferredLanguage;
+
+  /// Gender update success message
+  ///
+  /// In en, this message translates to:
+  /// **'Gender updated to {gender}'**
+  String genderUpdated(String gender);
+
+  /// Age update success message
+  ///
+  /// In en, this message translates to:
+  /// **'Age updated to {age}'**
+  String ageUpdated(int age);
+
+  /// Field update success message
+  ///
+  /// In en, this message translates to:
+  /// **'{field} updated successfully!'**
+  String fieldUpdated(String field);
+
+  /// No description provided for @enterCorrection.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter correction...'**
+  String get enterCorrection;
 }
 
 class _AppLocalizationsDelegate

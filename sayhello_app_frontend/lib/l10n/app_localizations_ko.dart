@@ -777,7 +777,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get deleteChat => 'Delete Chat';
 
   @override
-  String get chatOptions => 'Chat Options';
+  String get chatOptions => '채팅 옵션';
 
   @override
   String get addCourse => '코스 추가';
@@ -1080,118 +1080,118 @@ class AppLocalizationsKo extends AppLocalizations {
   String get spanish => '스페인어';
 
   @override
-  String get aboutMe => 'About Me';
+  String get aboutMe => '자기소개';
 
   @override
-  String get selfIntroduction => 'Self-introduction';
+  String get selfIntroduction => '자기소개';
 
   @override
-  String get tellUsAboutYourself => 'Tell us about yourself...';
+  String get tellUsAboutYourself => '자기소개를 해주세요...';
 
   @override
-  String get editBio => 'Edit Bio';
+  String get editBio => '프로필 편집';
 
   @override
-  String get editImage => 'Edit Image';
+  String get editImage => '이미지 편집';
 
   @override
-  String get camera => 'Camera';
+  String get camera => '카메라';
 
   @override
-  String get gallery => 'Gallery';
+  String get gallery => '갤러리';
 
   @override
-  String get takePhoto => 'Take Photo';
+  String get takePhoto => '사진 촬영';
 
   @override
-  String get selectFromGallery => 'Select from Gallery';
+  String get selectFromGallery => '갤러리에서 선택';
 
   @override
-  String get native => 'Native';
+  String get native => '모국어';
 
   @override
-  String get learning => 'Learning';
+  String get learning => '학습중';
 
   @override
-  String get addHobbies => 'Add Hobbies';
+  String get addHobbies => '취미 추가';
 
   @override
-  String get selectHobbies => 'Select Hobbies';
+  String get selectHobbies => '취미 선택';
 
   @override
-  String get personalInformation => 'Personal Information';
+  String get personalInformation => '개인정보';
 
   @override
-  String get selectGender => 'Select Gender';
+  String get selectGender => '성별 선택';
 
   @override
-  String get selectAge => 'Select Age';
+  String get selectAge => '나이 선택';
 
   @override
-  String get birthday => 'Birthday';
+  String get birthday => '생일';
 
   @override
-  String get birthdayUpdatedSuccessfully => 'Birthday updated successfully!';
+  String get birthdayUpdatedSuccessfully => '생일이 성공적으로 업데이트되었습니다!';
 
   @override
-  String get theme => 'Theme';
+  String get theme => '테마';
 
   @override
-  String get themeMode => 'Theme Mode';
+  String get themeMode => '테마 모드';
 
   @override
-  String get darkMode => 'Dark Mode';
+  String get darkMode => '다크 모드';
 
   @override
-  String get lightMode => 'Light Mode';
+  String get lightMode => '라이트 모드';
 
   @override
-  String get movie => 'Movie';
+  String get movie => '영화';
 
   @override
-  String get anime => 'Anime';
+  String get anime => '애니메이션';
 
   @override
-  String get cosplay => 'Cosplay';
+  String get cosplay => '코스프레';
 
   @override
-  String get reading => 'Reading';
+  String get reading => '독서';
 
   @override
-  String get sports => 'Sports';
+  String get sports => '스포츠';
 
   @override
-  String get dancing => 'Dancing';
+  String get dancing => '댄스';
 
   @override
-  String get videoCallFeature => 'Video call feature coming soon!';
+  String get videoCallFeature => '영상통화 기능이 곧 출시됩니다!';
 
   @override
-  String get messageTranslated => 'Message translated!';
+  String get messageTranslated => '메시지가 번역되었습니다!';
 
   @override
-  String get originalMessage => 'Original:';
+  String get originalMessage => '원본:';
 
   @override
-  String get correctionMessage => 'Correction:';
+  String get correctionMessage => '수정:';
 
   @override
-  String get correctMessage => 'Correct Message';
+  String get correctMessage => '메시지 수정';
 
   @override
-  String get sendAttachment => 'Send Attachment';
+  String get sendAttachment => '첨부파일 보내기';
 
   @override
-  String get photo => 'Photo';
+  String get photo => '사진';
 
   @override
-  String get voice => 'Voice';
+  String get voice => '음성';
 
   @override
-  String get document => 'Document';
+  String get document => '문서';
 
   @override
-  String get location => 'Location';
+  String get location => '위치';
 
   @override
   String attachmentComingSoon(String attachment) {
@@ -1204,23 +1204,82 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get followers => 'Followers';
+  String get followers => '팔로워';
 
   @override
-  String get sharedInterests => 'Shared Interests';
+  String get sharedInterests => '공통 관심사';
 
   @override
-  String get interestsAndHobbies => 'Interests & Hobbies';
+  String get interestsAndHobbies => '관심사 및 취미';
 
   @override
-  String get showLess => 'Show less';
+  String get showLess => '접기';
 
   @override
-  String get showMore => 'Show more';
+  String get showMore => '더보기';
 
   @override
-  String get messageButton => 'Message';
+  String get messageButton => '메시지';
 
   @override
-  String get callButton => 'Call';
+  String get callButton => '통화';
+
+  @override
+  String get cameraFeatureComingSoon => '카메라 기능이 곧 출시됩니다!';
+
+  @override
+  String get galleryFeatureComingSoon => '갤러리 기능이 곧 출시됩니다!';
+
+  @override
+  String get bioUpdatedSuccessfully => '프로필이 성공적으로 업데이트되었습니다!';
+
+  @override
+  String get hobbiesUpdatedSuccessfully => '취미가 성공적으로 업데이트되었습니다!';
+
+  @override
+  String genderUpdatedTo(String gender) {
+    return 'Gender updated to $gender';
+  }
+
+  @override
+  String ageUpdatedTo(int age) {
+    return 'Age updated to $age';
+  }
+
+  @override
+  String fieldUpdatedSuccessfully(String field) {
+    return '$field updated successfully!';
+  }
+
+  @override
+  String enterYourField(String field) {
+    return 'Enter your $field';
+  }
+
+  @override
+  String get colorMode => '컬러 모드';
+
+  @override
+  String get changeAppLanguage => '앱 언어 변경';
+
+  @override
+  String get chooseYourPreferredLanguage => '원하는 언어를 선택하세요';
+
+  @override
+  String genderUpdated(String gender) {
+    return '성별이 $gender(으)로 업데이트되었습니다';
+  }
+
+  @override
+  String ageUpdated(int age) {
+    return '나이가 $age로 업데이트되었습니다';
+  }
+
+  @override
+  String fieldUpdated(String field) {
+    return '$field이(가) 성공적으로 업데이트되었습니다!';
+  }
+
+  @override
+  String get enterCorrection => '수정 사항을 입력하세요...';
 }

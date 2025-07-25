@@ -388,7 +388,11 @@ class _OthersProfilePageState extends State<OthersProfilePage>
               isDark,
             ),
             _buildStatDivider(isDark),
-            _buildStatItem(followersCount.toString(), "Followers", isDark),
+            _buildStatItem(
+              followersCount.toString(),
+              AppLocalizations.of(context)!.followers,
+              isDark,
+            ),
           ],
         ),
       ],
@@ -479,7 +483,9 @@ class _OthersProfilePageState extends State<OthersProfilePage>
             child: Padding(
               padding: EdgeInsets.only(top: 4),
               child: Text(
-                isBioExpanded ? "Show less" : "more",
+                isBioExpanded
+                    ? AppLocalizations.of(context)!.showLess
+                    : AppLocalizations.of(context)!.showMore,
                 style: TextStyle(
                   color: Color(0xFF7A54FF),
                   fontWeight: FontWeight.w600,
@@ -510,7 +516,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
             unselectedLabelColor: Colors.grey,
             tabs: [
               Tab(text: AppLocalizations.of(context)!.profile),
-              Tab(text: "Feed"),
+              Tab(text: AppLocalizations.of(context)!.feed),
             ],
           ),
         ),
@@ -545,7 +551,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Shared Interests",
+          AppLocalizations.of(context)!.sharedInterests,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -667,7 +673,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                 child: Text(
                   isFollowing
                       ? AppLocalizations.of(context)!.following
-                      : "Follow",
+                      : AppLocalizations.of(context)!.follow,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),

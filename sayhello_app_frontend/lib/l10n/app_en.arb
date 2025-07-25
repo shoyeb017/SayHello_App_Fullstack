@@ -1779,5 +1779,104 @@
   "callButton": "Call",
   "@callButton": {
     "description": "Call button text"
-  }
+  },
+  "cameraFeatureComingSoon": "Camera feature coming soon!",
+  "@cameraFeatureComingSoon": {
+    "description": "Camera feature notification"
+  },
+  "galleryFeatureComingSoon": "Gallery feature coming soon!",
+  "@galleryFeatureComingSoon": {
+    "description": "Gallery feature notification"
+  },
+  "bioUpdatedSuccessfully": "Bio updated successfully!",
+  "@bioUpdatedSuccessfully": {
+    "description": "Bio update success message"
+  },
+  "hobbiesUpdatedSuccessfully": "Hobbies updated successfully!",
+  "@hobbiesUpdatedSuccessfully": {
+    "description": "Hobbies update success message"
+  },
+  "genderUpdatedTo": "Gender updated to {gender}",
+  "@genderUpdatedTo": {
+    "description": "Gender update success message",
+    "placeholders": {
+      "gender": {
+        "type": "String",
+        "example": "Male"
+      }
+    }
+  },
+  "ageUpdatedTo": "Age updated to {age}",
+  "@ageUpdatedTo": {
+    "description": "Age update success message",
+    "placeholders": {
+      "age": {
+        "type": "int",
+        "example": "25"
+      }
+    }
+  },
+  "fieldUpdatedSuccessfully": "{field} updated successfully!",
+  "@fieldUpdatedSuccessfully": {
+    "description": "Field update success message",
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "Name"
+      }
+    }
+  },
+  "enterYourField": "Enter your {field}",
+  "@enterYourField": {
+    "description": "Enter field placeholder",
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "name"
+      }
+    }
+  },
+  "colorMode": "Color Mode",
+  "@colorMode": {
+    "description": "Color mode setting label"
+  },
+  "changeAppLanguage": "Change app language",
+  "@changeAppLanguage": {
+    "description": "Change app language subtitle"
+  },
+  "chooseYourPreferredLanguage": "Choose your preferred language",
+  "@chooseYourPreferredLanguage": {
+    "description": "Language selection description"
+  },
+  "genderUpdated": "Gender updated to {gender}",
+  "@genderUpdated": {
+    "description": "Gender update success message",
+    "placeholders": {
+      "gender": {
+        "type": "String",
+        "example": "Male"
+      }
+    }
+  },
+  "ageUpdated": "Age updated to {age}",
+  "@ageUpdated": {
+    "description": "Age update success message", 
+    "placeholders": {
+      "age": {
+        "type": "int",
+        "example": "25"
+      }
+    }
+  },
+  "fieldUpdated": "{field} updated successfully!",
+  "@fieldUpdated": {
+    "description": "Field update success message",
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "Name"
+      }
+    }
+  },
+  "enterCorrection": "Enter correction..."
 }
