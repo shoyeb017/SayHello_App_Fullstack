@@ -1082,4 +1082,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get watched => 'Watched';
+
+  @override
+  String get spanish => 'Spanish';
 }

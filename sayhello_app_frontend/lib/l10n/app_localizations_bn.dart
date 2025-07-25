@@ -1082,4 +1082,7 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get watched => 'দেখা হয়েছে';
+
+  @override
+  String get spanish => 'স্প্যানিশ';
 }

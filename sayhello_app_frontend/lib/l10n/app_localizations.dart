@@ -2215,6 +2215,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Watched'**
   String get watched;
+
+  /// Spanish language option
+  ///
+  /// In en, this message translates to:
+  /// **'Spanish'**
+  String get spanish;
 }
 
 class _AppLocalizationsDelegate

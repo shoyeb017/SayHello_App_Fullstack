@@ -28,7 +28,7 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
   List<String> interests = [];
   File? profileImage;
 
-  final languageOptions = ['English', 'Arabic', 'Japanese', 'Bangla', 'Korean'];
+  final languageOptions = ['English', 'Spanish', 'Japanese', 'Bangla', 'Korean'];
 
   final genderOptionsKeys = ['Male', 'Female', 'Other'];
   List<String> get genderOptions => [

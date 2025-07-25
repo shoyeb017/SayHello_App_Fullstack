@@ -6,10 +6,9 @@ plugins {
 }
 
 android {
-    ndkVersion = "27.3.13750724"
     namespace = "com.example.sayhello_app_frontend"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.3.13750724" //flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

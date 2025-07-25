@@ -1075,4 +1075,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get watched => '시청 완료';
+
+  @override
+  String get spanish => '스페인어';
 }

@@ -1563,5 +1563,9 @@
   "watched": "Watched",
   "@watched": {
     "description": "Watched filter option"
+  },
+  "spanish": "Spanish",
+  "@spanish": {
+    "description": "Spanish language option"
   }
 }

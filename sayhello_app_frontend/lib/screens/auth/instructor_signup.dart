@@ -24,7 +24,7 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
 
   List<String> get languageOptions => [
     AppLocalizations.of(context)!.english,
-    AppLocalizations.of(context)!.arabic,
+    AppLocalizations.of(context)!.spanish,
     AppLocalizations.of(context)!.japanese,
     AppLocalizations.of(context)!.bangla,
     AppLocalizations.of(context)!.korean,

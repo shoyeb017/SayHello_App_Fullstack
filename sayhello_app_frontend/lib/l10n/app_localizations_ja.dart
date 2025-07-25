@@ -1075,4 +1075,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get watched => '視聴済み';
+
+  @override
+  String get spanish => 'スペイン語';
 }
