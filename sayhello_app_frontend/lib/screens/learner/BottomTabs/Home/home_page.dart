@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'search_people_in_home.dart';
 import 'chat_item.dart';
 import 'all_courses.dart';
@@ -139,11 +140,14 @@ class HomePage extends StatelessWidget {
                   themeProvider.toggleTheme(toDark);
                 },
               ),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Language Talks',
+                  AppLocalizations.of(context)!.appTitle,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                  ),
                 ),
               ),
               IconButton(icon: Icon(Icons.tune), onPressed: () {}),

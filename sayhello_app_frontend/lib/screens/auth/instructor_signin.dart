@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../l10n/app_localizations.dart';
 
 class InstructorSignInPage extends StatefulWidget {
   const InstructorSignInPage({super.key});
@@ -23,7 +24,7 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Instructor Sign In'),
+        title: Text(AppLocalizations.of(context)!.instructorSignIn),
         centerTitle: true,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
@@ -73,8 +74,8 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Welcome Instructor',
+                    Text(
+                      AppLocalizations.of(context)!.welcomeInstructor,
                       style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
@@ -82,7 +83,7 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Please sign in to manage your courses.',
+                      AppLocalizations.of(context)!.signInToManageCourses,
                       style: TextStyle(
                         color: isDark ? Colors.grey[400] : Colors.grey[700],
                         fontSize: 16,
@@ -97,7 +98,7 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                         color: isDark ? Colors.white : Colors.black,
                       ),
                       decoration: InputDecoration(
-                        labelText: 'Username',
+                        labelText: AppLocalizations.of(context)!.username,
                         labelStyle: TextStyle(
                           color: isDark ? Colors.grey[400] : Colors.grey[700],
                         ),
@@ -131,7 +132,7 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                         color: isDark ? Colors.white : Colors.black,
                       ),
                       decoration: InputDecoration(
-                        labelText: 'Password',
+                        labelText: AppLocalizations.of(context)!.password,
                         labelStyle: TextStyle(
                           color: isDark ? Colors.grey[400] : Colors.grey[700],
                         ),
@@ -184,8 +185,8 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                           Navigator.pushNamed(context, '/instructor-main');
                         },
                         icon: const Icon(Icons.login, color: Colors.white),
-                        label: const Text(
-                          'Sign In',
+                        label: Text(
+                          AppLocalizations.of(context)!.signIn,
                           style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -209,7 +210,7 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                         },
                         icon: Icon(Icons.person_add, color: primaryColor),
                         label: Text(
-                          'Sign Up',
+                          AppLocalizations.of(context)!.signUp,
                           style: TextStyle(color: primaryColor, fontSize: 16),
                         ),
                         style: OutlinedButton.styleFrom(

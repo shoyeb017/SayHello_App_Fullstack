@@ -106,5 +106,621 @@
   "alreadyHaveAccount": "Already have an account?",
   "@alreadyHaveAccount": {
     "description": "Link text to sign in page"
+  },
+  "welcomeInstructor": "Welcome Instructor",
+  "@welcomeInstructor": {
+    "description": "Welcome message for instructor"
+  },
+  "signInToManageCourses": "Please sign in to manage your courses.",
+  "@signInToManageCourses": {
+    "description": "Subtitle for instructor sign in"
+  },
+  "createYourAccount": "Create your account",
+  "@createYourAccount": {
+    "description": "Sign up page header"
+  },
+  "name": "Name",
+  "@name": {
+    "description": "Name field label"
+  },
+  "nativeLanguage": "Native Language",
+  "@nativeLanguage": {
+    "description": "Native language dropdown label"
+  },
+  "learningLanguage": "Learning Language",
+  "@learningLanguage": {
+    "description": "Learning language dropdown label"
+  },
+  "gender": "Gender",
+  "@gender": {
+    "description": "Gender dropdown label"
+  },
+  "country": "Country",
+  "@country": {
+    "description": "Country field label"
+  },
+  "bio": "Bio",
+  "@bio": {
+    "description": "Bio field label"
+  },
+  "male": "Male",
+  "@male": {
+    "description": "Male gender option"
+  },
+  "female": "Female",
+  "@female": {
+    "description": "Female gender option"
+  },
+  "other": "Other",
+  "@other": {
+    "description": "Other gender option"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+  "arabic": "Arabic",
+  "@arabic": {
+    "description": "Arabic language option"
+  },
+  "japanese": "Japanese",
+  "@japanese": {
+    "description": "Japanese language option"
+  },
+  "bangla": "Bangla",
+  "@bangla": {
+    "description": "Bangla language option"
+  },
+  "korean": "Korean",
+  "@korean": {
+    "description": "Korean language option"
+  },
+  "profilePhoto": "Profile Photo",
+  "@profilePhoto": {
+    "description": "Profile photo section title"
+  },
+  "tapToAddPhoto": "Tap to add photo",
+  "@tapToAddPhoto": {
+    "description": "Instruction to add profile photo"
+  },
+  "home": "SayHello",
+  "@home": {
+    "description": "Home tab label"
+  },
+  "connect": "Connect",
+  "@connect": {
+    "description": "Connect tab label"
+  },
+  "feed": "Feed",
+  "@feed": {
+    "description": "Feed tab label"
+  },
+  "learn": "Learn",
+  "@learn": {
+    "description": "Learn tab label"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile tab label"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button text"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings menu label"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  "step1PersonalInfo": "Step 1: Personal Information",
+  "@step1PersonalInfo": {
+    "description": "Step 1 title for personal information"
+  },
+  "step2LanguageBio": "Step 2: Language & Bio",
+  "@step2LanguageBio": {
+    "description": "Step 2 title for language and bio"
+  },
+  "step3AdditionalInfo": "Step 3: Additional Info",
+  "@step3AdditionalInfo": {
+    "description": "Step 3 title for additional information"
+  },
+  "fullName": "Full Name",
+  "@fullName": {
+    "description": "Full name field label"
+  },
+  "dateOfBirth": "Date of Birth",
+  "@dateOfBirth": {
+    "description": "Date of birth field label"
+  },
+  "chooseDOB": "Choose DOB",
+  "@chooseDOB": {
+    "description": "Choose date of birth button text"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "Next button text"
+  },
+  "back": "Back",
+  "@back": {
+    "description": "Back button text"
+  },
+  "submit": "Submit",
+  "@submit": {
+    "description": "Submit button text"
+  },
+  "required": "Required",
+  "@required": {
+    "description": "Required field validation message"
+  },
+  "teachingLanguage": "Teaching Language",
+  "@teachingLanguage": {
+    "description": "Teaching language dropdown label"
+  },
+  "bioOptional": "Bio (Optional)",
+  "@bioOptional": {
+    "description": "Optional bio field label"
+  },
+  "instructorRegisteredSuccessfully": "Instructor Registered Successfully!",
+  "@instructorRegisteredSuccessfully": {
+    "description": "Success message for instructor registration"
+  },
+  "learnerRegisteredSuccessfully": "Learner Registered Successfully!",
+  "@learnerRegisteredSuccessfully": {
+    "description": "Success message for learner registration"
+  },
+  "skillLevel": "Skill Level",
+  "@skillLevel": {
+    "description": "Skill level label"
+  },
+  "beginner": "Beginner",
+  "@beginner": {
+    "description": "Beginner skill level"
+  },
+  "basic": "Basic",
+  "@basic": {
+    "description": "Basic skill level"
+  },
+  "intermediate": "Intermediate",
+  "@intermediate": {
+    "description": "Intermediate skill level"
+  },
+  "advanced": "Advanced",
+  "@advanced": {
+    "description": "Advanced skill level"
+  },
+  "fluent": "Fluent",
+  "@fluent": {
+    "description": "Fluent skill level"
+  },
+  "selectInterests": "Select Interests",
+  "@selectInterests": {
+    "description": "Select interests label"
+  },
+  "music": "Music",
+  "@music": {
+    "description": "Music interest"
+  },
+  "travel": "Travel",
+  "@travel": {
+    "description": "Travel interest"
+  },
+  "books": "Books",
+  "@books": {
+    "description": "Books interest"
+  },
+  "gaming": "Gaming",
+  "@gaming": {
+    "description": "Gaming interest"
+  },
+  "cooking": "Cooking",
+  "@cooking": {
+    "description": "Cooking interest"
+  },
+  "movies": "Movies",
+  "@movies": {
+    "description": "Movies interest"
+  },
+  "photography": "Photography",
+  "@photography": {
+    "description": "Photography interest"
+  },
+  "fitness": "Fitness",
+  "@fitness": {
+    "description": "Fitness interest"
+  },
+  "art": "Art",
+  "@art": {
+    "description": "Art interest"
+  },
+  "others": "Others",
+  "@others": {
+    "description": "Others option"
+  },
+  "bangladesh": "Bangladesh",
+  "@bangladesh": {
+    "description": "Bangladesh country option"
+  },
+  "usa": "USA",
+  "@usa": {
+    "description": "USA country option"
+  },
+  "uk": "UK",
+  "@uk": {
+    "description": "UK country option"
+  },
+  "india": "India",
+  "@india": {
+    "description": "India country option"
+  },
+  "japan": "Japan",
+  "@japan": {
+    "description": "Japan country option"
+  },
+  "korea": "Korea",
+  "@korea": {
+    "description": "Korea country option"
+  },
+  "saudiArabia": "Saudi Arabia",
+  "@saudiArabia": {
+    "description": "Saudi Arabia country option"
+  },
+  "step1PersonalInfo": "Step 1: Personal Info",
+  "@step1PersonalInfo": {
+    "description": "Step 1 title for personal information (short)"
+  },
+  "step2LanguageInfo": "Step 2: Language Info",
+  "@step2LanguageInfo": {
+    "description": "Step 2 title for language information"
+  },
+  "nativeLanguageShort": "Native Language",
+  "@nativeLanguageShort": {
+    "description": "Native language dropdown label (short)"
+  },
+  "learningLanguageShort": "Learning Language",
+  "@learningLanguageShort": {
+    "description": "Learning language dropdown label (short)"
+  },
+  "allCourses": "All Courses",
+  "@allCourses": {
+    "description": "All courses label"
+  },
+  "play": "Play",
+  "@play": {
+    "description": "Play button"
+  },
+  "translate": "Translate",
+  "@translate": {
+    "description": "Translate button"
+  },
+  "japaneseAi": "Japanese AI",
+  "@japaneseAi": {
+    "description": "Japanese AI label"
+  },
+  "more": "More",
+  "@more": {
+    "description": "More options"
+  },
+  "hello": "Hello",
+  "@hello": {
+    "description": "Hello greeting"
+  },
+  "howAreYou": "Hello, how are you?",
+  "@howAreYou": {
+    "description": "How are you greeting"
+  },
+  "hiNewHere": "Hi, I am new here!",
+  "@hiNewHere": {
+    "description": "New user greeting"
+  },
+  "youWavedAt": "You waved at",
+  "@youWavedAt": {
+    "description": "Waved interaction message"
+  },
+  "search": "Search",
+  "@search": {
+    "description": "Search button/label"
+  },
+  "searchPeople": "Search People",
+  "@searchPeople": {
+    "description": "Search people title"
+  },
+  "courses": "Courses",
+  "@courses": {
+    "description": "Courses label"
+  },
+  "chat": "Chat",
+  "@chat": {
+    "description": "Chat label"
+  },
+  "online": "Online",
+  "@online": {
+    "description": "Online status"
+  },
+  "offline": "Offline",
+  "@offline": {
+    "description": "Offline status"
+  },
+  "typing": "Typing...",
+  "@typing": {
+    "description": "Typing indicator"
+  },
+  "sendMessage": "Send message",
+  "@sendMessage": {
+    "description": "Send message placeholder"
+  },
+  "noMessages": "No messages yet",
+  "@noMessages": {
+    "description": "No messages placeholder"
+  },
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading indicator"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Error message"
+  },
+  "tryAgain": "Try Again",
+  "@tryAgain": {
+    "description": "Try again button"
+  },
+  "success": "Success",
+  "@success": {
+    "description": "Success message"
+  },
+  "failed": "Failed",
+  "@failed": {
+    "description": "Failed message"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button"
+  },
+  "yes": "Yes",
+  "@yes": {
+    "description": "Yes button"
+  },
+  "no": "No",
+  "@no": {
+    "description": "No button"
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "OK button"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button"
+  },
+  "open": "Open",
+  "@open": {
+    "description": "Open button"
+  },
+  "view": "View",
+  "@view": {
+    "description": "View button"
+  },
+  "add": "Add",
+  "@add": {
+    "description": "Add button"
+  },
+  "remove": "Remove",
+  "@remove": {
+    "description": "Remove button"
+  },
+  "update": "Update",
+  "@update": {
+    "description": "Update button"
+  },
+  "refresh": "Refresh",
+  "@refresh": {
+    "description": "Refresh button"
+  },
+  "share": "Share",
+  "@share": {
+    "description": "Share button"
+  },
+  "copy": "Copy",
+  "@copy": {
+    "description": "Copy button"
+  },
+  "paste": "Paste",
+  "@paste": {
+    "description": "Paste button"
+  },
+  "cut": "Cut",
+  "@cut": {
+    "description": "Cut button"
+  },
+  "selectAll": "Select All",
+  "@selectAll": {
+    "description": "Select all button"
+  },
+  "clear": "Clear",
+  "@clear": {
+    "description": "Clear button"
+  },
+  "reset": "Reset",
+  "@reset": {
+    "description": "Reset button"
+  },
+  "apply": "Apply",
+  "@apply": {
+    "description": "Apply button"
+  },
+  "send": "Send",
+  "@send": {
+    "description": "Send button"
+  },
+  "receive": "Receive",
+  "@receive": {
+    "description": "Receive button"
+  },
+  "upload": "Upload",
+  "@upload": {
+    "description": "Upload button"
+  },
+  "download": "Download",
+  "@download": {
+    "description": "Download button"
+  },
+  "importData": "Import",
+  "@importData": {
+    "description": "Import button"
+  },
+  "exportData": "Export",
+  "@exportData": {
+    "description": "Export button"
+  },
+  "print": "Print",
+  "@print": {
+    "description": "Print button"
+  },
+  "preview": "Preview",
+  "@preview": {
+    "description": "Preview button"
+  },
+  "continueButton": "Continue",
+  "@continueButton": {
+    "description": "Continue button"
+  },
+  "skip": "Skip",
+  "@skip": {
+    "description": "Skip button"
+  },
+  "finish": "Finish",
+  "@finish": {
+    "description": "Finish button"
+  },
+  "done": "Done",
+  "@done": {
+    "description": "Done button"
+  },
+  "complete": "Complete",
+  "@complete": {
+    "description": "Complete button"
+  },
+  "start": "Start",
+  "@start": {
+    "description": "Start button"
+  },
+  "stop": "Stop",
+  "@stop": {
+    "description": "Stop button"
+  },
+  "pause": "Pause",
+  "@pause": {
+    "description": "Pause button"
+  },
+  "resume": "Resume",
+  "@resume": {
+    "description": "Resume button"
+  },
+  "mute": "Mute",
+  "@mute": {
+    "description": "Mute button"
+  },
+  "unmute": "Unmute",
+  "@unmute": {
+    "description": "Unmute button"
+  },
+  "volume": "Volume",
+  "@volume": {
+    "description": "Volume control"
+  },
+  "brightness": "Brightness",
+  "@brightness": {
+    "description": "Brightness control"
+  },
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications label"
+  },
+  "privacy": "Privacy",
+  "@privacy": {
+    "description": "Privacy label"
+  },
+  "security": "Security",
+  "@security": {
+    "description": "Security label"
+  },
+  "account": "Account",
+  "@account": {
+    "description": "Account label"
+  },
+  "general": "General",
+  "@general": {
+    "description": "General settings"
+  },
+  "advanced": "Advanced",
+  "@advanced": {
+    "description": "Advanced settings"
+  },
+  "about": "About",
+  "@about": {
+    "description": "About section"
+  },
+  "help": "Help",
+  "@help": {
+    "description": "Help section"
+  },
+  "support": "Support",
+  "@support": {
+    "description": "Support section"
+  },
+  "feedback": "Feedback",
+  "@feedback": {
+    "description": "Feedback section"
+  },
+  "contact": "Contact",
+  "@contact": {
+    "description": "Contact section"
+  },
+  "version": "Version",
+  "@version": {
+    "description": "Version label"
+  },
+  "update": "Update",
+  "@update": {
+    "description": "Update label"
+  },
+  "changelog": "Changelog",
+  "@changelog": {
+    "description": "Changelog label"
+  },
+  "license": "License",
+  "@license": {
+    "description": "License label"
+  },
+  "legal": "Legal",
+  "@legal": {
+    "description": "Legal section"
+  },
+  "terms": "Terms",
+  "@terms": {
+    "description": "Terms label"
+  },
+  "disclaimer": "Disclaimer",
+  "@disclaimer": {
+    "description": "Disclaimer label"
+  },
+  "acknowledgments": "Acknowledgments",
+  "@acknowledgments": {
+    "description": "Acknowledgments section"
   }
 }

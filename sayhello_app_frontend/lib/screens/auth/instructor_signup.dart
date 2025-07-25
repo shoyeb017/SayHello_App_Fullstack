@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../l10n/app_localizations.dart';
 
 class InstructorSignupPage extends StatefulWidget {
   const InstructorSignupPage({super.key});
@@ -21,21 +22,27 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
   String nativeLanguage = '', learningLanguage = '';
   File? profileImage;
 
-  final List<String> languageOptions = [
-    'English',
-    'Arabic',
-    'Japanese',
-    'Bangla',
-    'Korean',
+  List<String> get languageOptions => [
+    AppLocalizations.of(context)!.english,
+    AppLocalizations.of(context)!.arabic,
+    AppLocalizations.of(context)!.japanese,
+    AppLocalizations.of(context)!.bangla,
+    AppLocalizations.of(context)!.korean,
   ];
-  final List<String> genderOptions = ['Male', 'Female', 'Other'];
-  final List<String> countryOptions = [
-    'Bangladesh',
-    'USA',
-    'UK',
-    'India',
-    'Japan',
-    'Others',
+
+  List<String> get genderOptions => [
+    AppLocalizations.of(context)!.male,
+    AppLocalizations.of(context)!.female,
+    AppLocalizations.of(context)!.other,
+  ];
+
+  List<String> get countryOptions => [
+    AppLocalizations.of(context)!.bangladesh,
+    AppLocalizations.of(context)!.usa,
+    AppLocalizations.of(context)!.uk,
+    AppLocalizations.of(context)!.india,
+    AppLocalizations.of(context)!.japan,
+    AppLocalizations.of(context)!.others,
   ];
 
   final Color primaryColor = const Color(0xFF7A54FF);
@@ -69,7 +76,11 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
     if (_formKeyStep2.currentState!.validate()) {
       _formKeyStep2.currentState!.save();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Instructor Registered Successfully!')),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.instructorRegisteredSuccessfully,
+          ),
+        ),
       );
     }
   }
@@ -133,9 +144,9 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            const Text(
-              "Step 1: Personal Information",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)!.step1PersonalInfo,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
 
@@ -164,11 +175,14 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
             ),
             const SizedBox(height: 16),
 
-            _inputField('Full Name', (val) => name = val ?? ''),
+            _inputField(
+              AppLocalizations.of(context)!.fullName,
+              (val) => name = val ?? '',
+            ),
             const SizedBox(height: 12),
 
             _dropdown(
-              'Gender',
+              AppLocalizations.of(context)!.gender,
               gender,
               genderOptions,
               (val) => setState(() => gender = val),
@@ -176,16 +190,16 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
             const SizedBox(height: 12),
 
             _dropdown(
-              'Country',
+              AppLocalizations.of(context)!.country,
               country,
               countryOptions,
               (val) => setState(() => country = val),
             ),
             const SizedBox(height: 12),
 
-            const Text(
-              'Date of Birth',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            Text(
+              AppLocalizations.of(context)!.dateOfBirth,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
             ),
             const SizedBox(height: 6),
             ElevatedButton.icon(
@@ -203,7 +217,7 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
               icon: Icon(Icons.calendar_today, size: 18, color: primaryColor),
               label: Text(
                 dateOfBirth == null
-                    ? 'Choose DOB'
+                    ? AppLocalizations.of(context)!.chooseDOB
                     : '${dateOfBirth!.day}/${dateOfBirth!.month}/${dateOfBirth!.year}',
                 style: TextStyle(color: primaryColor, fontSize: 14),
               ),
@@ -228,9 +242,9 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
                 ),
               ),
               onPressed: nextStep,
-              child: const Text(
-                'Next',
-                style: TextStyle(color: Colors.white, fontSize: 16),
+              child: Text(
+                AppLocalizations.of(context)!.next,
+                style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
           ],
@@ -261,14 +275,14 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            const Text(
-              "Step 2: Language & Bio",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)!.step2LanguageBio,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
 
             _dropdown(
-              'Native Language',
+              AppLocalizations.of(context)!.nativeLanguage,
               nativeLanguage,
               languageOptions,
               (val) => setState(() => nativeLanguage = val),
@@ -276,7 +290,7 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
             const SizedBox(height: 12),
 
             _dropdown(
-              'Teaching Language',
+              AppLocalizations.of(context)!.teachingLanguage,
               learningLanguage,
               languageOptions,
               (val) => setState(() => learningLanguage = val),
@@ -290,7 +304,7 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
                 color: isDark ? Colors.white : Colors.black,
               ),
               decoration: InputDecoration(
-                labelText: 'Bio (Optional)',
+                labelText: AppLocalizations.of(context)!.bioOptional,
                 labelStyle: TextStyle(
                   color: isDark ? Colors.grey[400] : Colors.grey[700],
                 ),
@@ -326,7 +340,10 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
                       borderRadius: BorderRadius.circular(24),
                     ),
                   ),
-                  child: const Text('Back', style: TextStyle(fontSize: 14)),
+                  child: Text(
+                    AppLocalizations.of(context)!.back,
+                    style: const TextStyle(fontSize: 14),
+                  ),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -340,9 +357,9 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
                     ),
                   ),
                   onPressed: submitForm,
-                  child: const Text(
-                    'Submit',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  child: Text(
+                    AppLocalizations.of(context)!.submit,
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
               ],
@@ -378,7 +395,9 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
         ),
       ),
       onSaved: onSave,
-      validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+      validator: (val) => val == null || val.isEmpty
+          ? AppLocalizations.of(context)!.required
+          : null,
     );
   }
 
@@ -426,7 +445,8 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
           )
           .toList(),
       onChanged: (val) => onChanged(val ?? ''),
-      validator: (val) => val == null ? 'Required' : null,
+      validator: (val) =>
+          val == null ? AppLocalizations.of(context)!.required : null,
     );
   }
 }

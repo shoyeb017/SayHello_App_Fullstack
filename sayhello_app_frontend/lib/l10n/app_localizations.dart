@@ -158,10 +158,10 @@ abstract class AppLocalizations {
   /// **'and'**
   String get and;
 
-  /// General greeting
+  /// Hello greeting
   ///
   /// In en, this message translates to:
-  /// **'Hello!'**
+  /// **'Hello'**
   String get hello;
 
   /// Language selector label
@@ -265,6 +265,906 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Already have an account?'**
   String get alreadyHaveAccount;
+
+  /// Welcome message for instructor
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome Instructor'**
+  String get welcomeInstructor;
+
+  /// Subtitle for instructor sign in
+  ///
+  /// In en, this message translates to:
+  /// **'Please sign in to manage your courses.'**
+  String get signInToManageCourses;
+
+  /// Sign up page header
+  ///
+  /// In en, this message translates to:
+  /// **'Create your account'**
+  String get createYourAccount;
+
+  /// Name field label
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// Native language dropdown label
+  ///
+  /// In en, this message translates to:
+  /// **'Native Language'**
+  String get nativeLanguage;
+
+  /// Learning language dropdown label
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Language'**
+  String get learningLanguage;
+
+  /// Gender dropdown label
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get gender;
+
+  /// Country field label
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get country;
+
+  /// Bio field label
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get bio;
+
+  /// Male gender option
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get male;
+
+  /// Female gender option
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get female;
+
+  /// Other gender option
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other;
+
+  /// English language option
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// Arabic language option
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get arabic;
+
+  /// Japanese language option
+  ///
+  /// In en, this message translates to:
+  /// **'Japanese'**
+  String get japanese;
+
+  /// Bangla language option
+  ///
+  /// In en, this message translates to:
+  /// **'Bangla'**
+  String get bangla;
+
+  /// Korean language option
+  ///
+  /// In en, this message translates to:
+  /// **'Korean'**
+  String get korean;
+
+  /// Profile photo section title
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Photo'**
+  String get profilePhoto;
+
+  /// Instruction to add profile photo
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to add photo'**
+  String get tapToAddPhoto;
+
+  /// Home tab label
+  ///
+  /// In en, this message translates to:
+  /// **'SayHello'**
+  String get home;
+
+  /// Connect tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get connect;
+
+  /// Feed tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Feed'**
+  String get feed;
+
+  /// Learn tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Learn'**
+  String get learn;
+
+  /// Profile tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// Save button text
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// Cancel button text
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// Edit button text
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// Delete button text
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// Settings menu label
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// Logout button text
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// Step 1 title for personal information (short)
+  ///
+  /// In en, this message translates to:
+  /// **'Step 1: Personal Info'**
+  String get step1PersonalInfo;
+
+  /// Step 2 title for language and bio
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2: Language & Bio'**
+  String get step2LanguageBio;
+
+  /// Step 3 title for additional information
+  ///
+  /// In en, this message translates to:
+  /// **'Step 3: Additional Info'**
+  String get step3AdditionalInfo;
+
+  /// Full name field label
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// Date of birth field label
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get dateOfBirth;
+
+  /// Choose date of birth button text
+  ///
+  /// In en, this message translates to:
+  /// **'Choose DOB'**
+  String get chooseDOB;
+
+  /// Next button text
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// Back button text
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// Submit button text
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// Required field validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get required;
+
+  /// Teaching language dropdown label
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching Language'**
+  String get teachingLanguage;
+
+  /// Optional bio field label
+  ///
+  /// In en, this message translates to:
+  /// **'Bio (Optional)'**
+  String get bioOptional;
+
+  /// Success message for instructor registration
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor Registered Successfully!'**
+  String get instructorRegisteredSuccessfully;
+
+  /// Success message for learner registration
+  ///
+  /// In en, this message translates to:
+  /// **'Learner Registered Successfully!'**
+  String get learnerRegisteredSuccessfully;
+
+  /// Skill level label
+  ///
+  /// In en, this message translates to:
+  /// **'Skill Level'**
+  String get skillLevel;
+
+  /// Beginner skill level
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get beginner;
+
+  /// Basic skill level
+  ///
+  /// In en, this message translates to:
+  /// **'Basic'**
+  String get basic;
+
+  /// Intermediate skill level
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate'**
+  String get intermediate;
+
+  /// Advanced settings
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get advanced;
+
+  /// Fluent skill level
+  ///
+  /// In en, this message translates to:
+  /// **'Fluent'**
+  String get fluent;
+
+  /// Select interests label
+  ///
+  /// In en, this message translates to:
+  /// **'Select Interests'**
+  String get selectInterests;
+
+  /// Music interest
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get music;
+
+  /// Travel interest
+  ///
+  /// In en, this message translates to:
+  /// **'Travel'**
+  String get travel;
+
+  /// Books interest
+  ///
+  /// In en, this message translates to:
+  /// **'Books'**
+  String get books;
+
+  /// Gaming interest
+  ///
+  /// In en, this message translates to:
+  /// **'Gaming'**
+  String get gaming;
+
+  /// Cooking interest
+  ///
+  /// In en, this message translates to:
+  /// **'Cooking'**
+  String get cooking;
+
+  /// Movies interest
+  ///
+  /// In en, this message translates to:
+  /// **'Movies'**
+  String get movies;
+
+  /// Photography interest
+  ///
+  /// In en, this message translates to:
+  /// **'Photography'**
+  String get photography;
+
+  /// Fitness interest
+  ///
+  /// In en, this message translates to:
+  /// **'Fitness'**
+  String get fitness;
+
+  /// Art interest
+  ///
+  /// In en, this message translates to:
+  /// **'Art'**
+  String get art;
+
+  /// Others option
+  ///
+  /// In en, this message translates to:
+  /// **'Others'**
+  String get others;
+
+  /// Bangladesh country option
+  ///
+  /// In en, this message translates to:
+  /// **'Bangladesh'**
+  String get bangladesh;
+
+  /// USA country option
+  ///
+  /// In en, this message translates to:
+  /// **'USA'**
+  String get usa;
+
+  /// UK country option
+  ///
+  /// In en, this message translates to:
+  /// **'UK'**
+  String get uk;
+
+  /// India country option
+  ///
+  /// In en, this message translates to:
+  /// **'India'**
+  String get india;
+
+  /// Japan country option
+  ///
+  /// In en, this message translates to:
+  /// **'Japan'**
+  String get japan;
+
+  /// Korea country option
+  ///
+  /// In en, this message translates to:
+  /// **'Korea'**
+  String get korea;
+
+  /// Saudi Arabia country option
+  ///
+  /// In en, this message translates to:
+  /// **'Saudi Arabia'**
+  String get saudiArabia;
+
+  /// Step 2 title for language information
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2: Language Info'**
+  String get step2LanguageInfo;
+
+  /// Native language dropdown label (short)
+  ///
+  /// In en, this message translates to:
+  /// **'Native Language'**
+  String get nativeLanguageShort;
+
+  /// Learning language dropdown label (short)
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Language'**
+  String get learningLanguageShort;
+
+  /// All courses label
+  ///
+  /// In en, this message translates to:
+  /// **'All Courses'**
+  String get allCourses;
+
+  /// Play button
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get play;
+
+  /// Translate button
+  ///
+  /// In en, this message translates to:
+  /// **'Translate'**
+  String get translate;
+
+  /// Japanese AI label
+  ///
+  /// In en, this message translates to:
+  /// **'Japanese AI'**
+  String get japaneseAi;
+
+  /// More options
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get more;
+
+  /// How are you greeting
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, how are you?'**
+  String get howAreYou;
+
+  /// New user greeting
+  ///
+  /// In en, this message translates to:
+  /// **'Hi, I am new here!'**
+  String get hiNewHere;
+
+  /// Waved interaction message
+  ///
+  /// In en, this message translates to:
+  /// **'You waved at'**
+  String get youWavedAt;
+
+  /// Search button/label
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// Search people title
+  ///
+  /// In en, this message translates to:
+  /// **'Search People'**
+  String get searchPeople;
+
+  /// Courses label
+  ///
+  /// In en, this message translates to:
+  /// **'Courses'**
+  String get courses;
+
+  /// Chat label
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get chat;
+
+  /// Online status
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get online;
+
+  /// Offline status
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get offline;
+
+  /// Typing indicator
+  ///
+  /// In en, this message translates to:
+  /// **'Typing...'**
+  String get typing;
+
+  /// Send message placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Send message'**
+  String get sendMessage;
+
+  /// No messages placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'No messages yet'**
+  String get noMessages;
+
+  /// Loading indicator
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
+  /// Error message
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// Try again button
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
+
+  /// Success message
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get success;
+
+  /// Failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get failed;
+
+  /// Confirm button
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// Yes button
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No button
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
+
+  /// OK button
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// Close button
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// Open button
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get open;
+
+  /// View button
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get view;
+
+  /// Add button
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// Remove button
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// Update label
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
+
+  /// Refresh button
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// Share button
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// Copy button
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copy;
+
+  /// Paste button
+  ///
+  /// In en, this message translates to:
+  /// **'Paste'**
+  String get paste;
+
+  /// Cut button
+  ///
+  /// In en, this message translates to:
+  /// **'Cut'**
+  String get cut;
+
+  /// Select all button
+  ///
+  /// In en, this message translates to:
+  /// **'Select All'**
+  String get selectAll;
+
+  /// Clear button
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// Reset button
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
+  /// Apply button
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// Send button
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// Receive button
+  ///
+  /// In en, this message translates to:
+  /// **'Receive'**
+  String get receive;
+
+  /// Upload button
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get upload;
+
+  /// Download button
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get download;
+
+  /// Import button
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get importData;
+
+  /// Export button
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get exportData;
+
+  /// Print button
+  ///
+  /// In en, this message translates to:
+  /// **'Print'**
+  String get print;
+
+  /// Preview button
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get preview;
+
+  /// Continue button
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueButton;
+
+  /// Skip button
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skip;
+
+  /// Finish button
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get finish;
+
+  /// Done button
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
+
+  /// Complete button
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get complete;
+
+  /// Start button
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get start;
+
+  /// Stop button
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get stop;
+
+  /// Pause button
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pause;
+
+  /// Resume button
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get resume;
+
+  /// Mute button
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get mute;
+
+  /// Unmute button
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute'**
+  String get unmute;
+
+  /// Volume control
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get volume;
+
+  /// Brightness control
+  ///
+  /// In en, this message translates to:
+  /// **'Brightness'**
+  String get brightness;
+
+  /// Notifications label
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// Privacy label
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get privacy;
+
+  /// Security label
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get security;
+
+  /// Account label
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// General settings
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get general;
+
+  /// About section
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// Help section
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get help;
+
+  /// Support section
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get support;
+
+  /// Feedback section
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get feedback;
+
+  /// Contact section
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contact;
+
+  /// Version label
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get version;
+
+  /// Changelog label
+  ///
+  /// In en, this message translates to:
+  /// **'Changelog'**
+  String get changelog;
+
+  /// License label
+  ///
+  /// In en, this message translates to:
+  /// **'License'**
+  String get license;
+
+  /// Legal section
+  ///
+  /// In en, this message translates to:
+  /// **'Legal'**
+  String get legal;
+
+  /// Terms label
+  ///
+  /// In en, this message translates to:
+  /// **'Terms'**
+  String get terms;
+
+  /// Disclaimer label
+  ///
+  /// In en, this message translates to:
+  /// **'Disclaimer'**
+  String get disclaimer;
+
+  /// Acknowledgments section
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledgments'**
+  String get acknowledgments;
 }
 
 class _AppLocalizationsDelegate
