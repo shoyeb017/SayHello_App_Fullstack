@@ -306,19 +306,19 @@ class AppLocalizationsBn extends AppLocalizations {
   String get learningLanguageShort => 'শেখার ভাষা';
 
   @override
-  String get allCourses => 'All Courses';
+  String get allCourses => 'সব কোর্স';
 
   @override
-  String get play => 'Play';
+  String get play => 'খেলা';
 
   @override
-  String get translate => 'Translate';
+  String get translate => 'অনুবাদ';
 
   @override
-  String get japaneseAi => 'Japanese AI';
+  String get japaneseAi => 'জাপানি এআই';
 
   @override
-  String get more => 'More';
+  String get more => 'আরও';
 
   @override
   String get howAreYou => 'Hello, how are you?';
@@ -330,10 +330,10 @@ class AppLocalizationsBn extends AppLocalizations {
   String get youWavedAt => 'You waved at';
 
   @override
-  String get search => 'Search';
+  String get search => 'খুঁজুন';
 
   @override
-  String get searchPeople => 'Search People';
+  String get searchPeople => 'লোকজন খুঁজুন';
 
   @override
   String get courses => 'Courses';
@@ -369,7 +369,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get success => 'Success';
 
   @override
-  String get failed => 'Failed';
+  String get failed => 'ব্যর্থ';
 
   @override
   String get confirm => 'Confirm';
@@ -462,7 +462,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get finish => 'Finish';
 
   @override
-  String get done => 'Done';
+  String get done => 'সম্পন্ন';
 
   @override
   String get complete => 'Complete';
@@ -541,4 +541,247 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get acknowledgments => 'Acknowledgments';
+
+  @override
+  String get languageTalks => 'ভাষা আলোচনা';
+
+  @override
+  String get lastSeen => 'শেষ দেখা';
+
+  @override
+  String get typeMessage => 'একটি বার্তা লিখুন...';
+
+  @override
+  String get justNow => 'এখনই';
+
+  @override
+  String get minutesAgo => 'মিনিট আগে';
+
+  @override
+  String get hoursAgo => 'ঘন্টা আগে';
+
+  @override
+  String get daysAgo => 'দিন আগে';
+
+  @override
+  String get yesterday => 'গতকাল';
+
+  @override
+  String get today => 'আজ';
+
+  @override
+  String get callStarted => 'কল শুরু হয়েছে';
+
+  @override
+  String get videoCall => 'ভিডিও কল';
+
+  @override
+  String get audioCall => 'অডিও কল';
+
+  @override
+  String get endCall => 'কল শেষ করুন';
+
+  @override
+  String get answerCall => 'কল উত্তর দিন';
+
+  @override
+  String get declineCall => 'কল প্রত্যাখ্যান করুন';
+
+  @override
+  String get calling => 'কল করা হচ্ছে...';
+
+  @override
+  String get connecting => 'সংযোগ করা হচ্ছে...';
+
+  @override
+  String get connected => 'সংযুক্ত';
+
+  @override
+  String get disconnected => 'সংযোগ বিচ্ছিন্ন';
+
+  @override
+  String get retry => 'পুনরায় চেষ্টা করুন';
+
+  @override
+  String get block => 'ব্লক করুন';
+
+  @override
+  String get unblock => 'আনব্লক করুন';
+
+  @override
+  String get report => 'রিপোর্ট করুন';
+
+  @override
+  String get reportUser => 'ব্যবহারকারীকে রিপোর্ট করুন';
+
+  @override
+  String get blockUser => 'ব্যবহারকারীকে ব্লক করুন';
+
+  @override
+  String get age => 'বয়স';
+
+  @override
+  String get interests => 'আগ্রহ';
+
+  @override
+  String get nativeLanguageLabel => 'মাতৃভাষা';
+
+  @override
+  String get learningLanguageLabel => 'শেখার ভাষা';
+
+  @override
+  String get wave => 'হাত নাড়ানো';
+
+  @override
+  String get waved => 'হাত নেড়েছেন';
+
+  @override
+  String get wavedAt => 'কে হাত নেড়েছেন';
+
+  @override
+  String get react => 'রিয়্যাক্ট করুন';
+
+  @override
+  String get reply => 'উত্তর দিন';
+
+  @override
+  String get forward => 'ফরওয়ার্ড করুন';
+
+  @override
+  String get messageInfo => 'বার্তার তথ্য';
+
+  @override
+  String get delivered => 'পৌঁছেছে';
+
+  @override
+  String get read => 'পড়া হয়েছে';
+
+  @override
+  String get sent => 'পাঠানো হয়েছে';
+
+  @override
+  String get sending => 'পাঠানো হচ্ছে';
+
+  @override
+  String get selectContact => 'যোগাযোগ নির্বাচন করুন';
+
+  @override
+  String get newMessage => 'নতুন';
+
+  @override
+  String get newGroup => 'নতুন গ্রুপ';
+
+  @override
+  String get createGroup => 'গ্রুপ তৈরি করুন';
+
+  @override
+  String get groupName => 'গ্রুপের নাম';
+
+  @override
+  String get addMembers => 'সদস্য যোগ করুন';
+
+  @override
+  String get members => 'সদস্যরা';
+
+  @override
+  String get admin => 'প্রশাসক';
+
+  @override
+  String get moderator => 'মডারেটর';
+
+  @override
+  String get member => 'সদস্য';
+
+  @override
+  String get leaveGroup => 'গ্রুপ ছেড়ে দিন';
+
+  @override
+  String get deleteGroup => 'গ্রুপ মুছে দিন';
+
+  @override
+  String get groupInfo => 'গ্রুপের তথ্য';
+
+  @override
+  String get editGroup => 'গ্রুপ সম্পাদনা করুন';
+
+  @override
+  String get addMember => 'সদস্য যোগ করুন';
+
+  @override
+  String get removeMember => 'সদস্য সরান';
+
+  @override
+  String get makeAdmin => 'প্রশাসক করুন';
+
+  @override
+  String get removeAdmin => 'প্রশাসক সরান';
+
+  @override
+  String get youLeft => 'আপনি চলে গেছেন';
+
+  @override
+  String get youJoined => 'আপনি যোগ দিয়েছেন';
+
+  @override
+  String get joined => 'যোগ দিয়েছেন';
+
+  @override
+  String get left => 'চলে গেছেন';
+
+  @override
+  String get wasRemoved => 'সরানো হয়েছে';
+
+  @override
+  String get wasAdded => 'যোগ করা হয়েছে';
+
+  @override
+  String get becameAdmin => 'প্রশাসক হয়েছেন';
+
+  @override
+  String get noLongerAdmin => 'আর প্রশাসক নেই';
+
+  @override
+  String get emojiPickerComingSoon => 'Emoji picker coming soon!';
+
+  @override
+  String get startingVideoCall => 'Starting video call...';
+
+  @override
+  String get messageSent => 'Message sent';
+
+  @override
+  String get viewProfile => 'View Profile';
+
+  @override
+  String get muteChat => 'Mute Chat';
+
+  @override
+  String get unmuteChat => 'Unmute Chat';
+
+  @override
+  String get clearChat => 'Clear Chat';
+
+  @override
+  String get deleteChat => 'Delete Chat';
+
+  @override
+  String get chatOptions => 'Chat Options';
+
+  @override
+  String get addCourse => 'কোর্স যোগ করুন';
+
+  @override
+  String get seePeoplesChats => 'লোকেদের চ্যাট দেখুন';
+
+  @override
+  String get searchCourses => 'কোর্স খুঁজুন...';
+
+  @override
+  String get popular => 'জনপ্রিয়';
+
+  @override
+  String get swapLanguages => 'ভাষা পরিবর্তন করুন';
+
+  @override
+  String get enterTextToTranslate => 'অনুবাদের জন্য টেক্সট লিখুন';
 }

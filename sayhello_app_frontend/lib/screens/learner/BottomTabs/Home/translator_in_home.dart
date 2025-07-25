@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class TranslatorInHome extends StatefulWidget {
   const TranslatorInHome({super.key});
@@ -96,7 +97,6 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
 
   @override
   Widget build(BuildContext context) {
-
     List<String> filteredLanguages = allLanguages
         .where(
           (lang) =>
@@ -114,8 +114,8 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
             Navigator.of(context).pop(); // goes back to the previous screen
           },
         ),
-        title: const Text(
-          'Translate',
+        title: Text(
+          AppLocalizations.of(context)!.translate,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -145,8 +145,8 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                   child: TextField(
                     controller: _searchController,
                     onChanged: (_) => setState(() {}),
-                    decoration: const InputDecoration(
-                      hintText: "Search",
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.search,
                       prefixIcon: Icon(Icons.search),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(
@@ -162,10 +162,10 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                 ),
               ),
 
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Text(
-                  "Popular",
+                  AppLocalizations.of(context)!.popular,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
@@ -237,8 +237,8 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text(
-                    "Done",
+                  child: Text(
+                    AppLocalizations.of(context)!.done,
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ),
@@ -318,7 +318,7 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                         IconButton(
                           onPressed: _swapLanguages,
                           icon: const Icon(Icons.swap_horiz),
-                          tooltip: "Swap languages",
+                          tooltip: AppLocalizations.of(context)!.swapLanguages,
                         ),
                         // Target Language Button
                         Expanded(
@@ -393,7 +393,9 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                             color: isDark ? Colors.white : Colors.black,
                           ),
                           decoration: InputDecoration.collapsed(
-                            hintText: "Input text",
+                            hintText: AppLocalizations.of(
+                              context,
+                            )!.enterTextToTranslate,
                             hintStyle: TextStyle(
                               color: hintColor,
                               fontWeight: FontWeight.w600,
@@ -410,7 +412,7 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                   ElevatedButton.icon(
                     onPressed: _translate,
                     icon: const Icon(Icons.translate),
-                    label: const Text("Translate"),
+                    label: Text(AppLocalizations.of(context)!.translate),
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(48),
                       backgroundColor: Colors.deepPurple,

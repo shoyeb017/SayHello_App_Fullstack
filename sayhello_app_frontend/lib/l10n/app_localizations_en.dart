@@ -541,4 +541,247 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get acknowledgments => 'Acknowledgments';
+
+  @override
+  String get languageTalks => 'Language Talks';
+
+  @override
+  String get lastSeen => 'Last seen';
+
+  @override
+  String get typeMessage => 'Type a message...';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String get minutesAgo => 'minutes ago';
+
+  @override
+  String get hoursAgo => 'hours ago';
+
+  @override
+  String get daysAgo => 'days ago';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get callStarted => 'Call started';
+
+  @override
+  String get videoCall => 'Video Call';
+
+  @override
+  String get audioCall => 'Audio Call';
+
+  @override
+  String get endCall => 'End Call';
+
+  @override
+  String get answerCall => 'Answer Call';
+
+  @override
+  String get declineCall => 'Decline Call';
+
+  @override
+  String get calling => 'Calling...';
+
+  @override
+  String get connecting => 'Connecting...';
+
+  @override
+  String get connected => 'Connected';
+
+  @override
+  String get disconnected => 'Disconnected';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get block => 'Block';
+
+  @override
+  String get unblock => 'Unblock';
+
+  @override
+  String get report => 'Report';
+
+  @override
+  String get reportUser => 'Report User';
+
+  @override
+  String get blockUser => 'Block User';
+
+  @override
+  String get age => 'Age';
+
+  @override
+  String get interests => 'Interests';
+
+  @override
+  String get nativeLanguageLabel => 'Native Language';
+
+  @override
+  String get learningLanguageLabel => 'Learning Language';
+
+  @override
+  String get wave => 'Wave';
+
+  @override
+  String get waved => 'Waved';
+
+  @override
+  String get wavedAt => 'waved at';
+
+  @override
+  String get react => 'React';
+
+  @override
+  String get reply => 'Reply';
+
+  @override
+  String get forward => 'Forward';
+
+  @override
+  String get messageInfo => 'Message Info';
+
+  @override
+  String get delivered => 'Delivered';
+
+  @override
+  String get read => 'Read';
+
+  @override
+  String get sent => 'Sent';
+
+  @override
+  String get sending => 'Sending';
+
+  @override
+  String get selectContact => 'Select Contact';
+
+  @override
+  String get newMessage => 'New';
+
+  @override
+  String get newGroup => 'New Group';
+
+  @override
+  String get createGroup => 'Create Group';
+
+  @override
+  String get groupName => 'Group Name';
+
+  @override
+  String get addMembers => 'Add Members';
+
+  @override
+  String get members => 'Members';
+
+  @override
+  String get admin => 'Admin';
+
+  @override
+  String get moderator => 'Moderator';
+
+  @override
+  String get member => 'Member';
+
+  @override
+  String get leaveGroup => 'Leave Group';
+
+  @override
+  String get deleteGroup => 'Delete Group';
+
+  @override
+  String get groupInfo => 'Group Info';
+
+  @override
+  String get editGroup => 'Edit Group';
+
+  @override
+  String get addMember => 'Add Member';
+
+  @override
+  String get removeMember => 'Remove Member';
+
+  @override
+  String get makeAdmin => 'Make Admin';
+
+  @override
+  String get removeAdmin => 'Remove Admin';
+
+  @override
+  String get youLeft => 'You left';
+
+  @override
+  String get youJoined => 'You joined';
+
+  @override
+  String get joined => 'joined';
+
+  @override
+  String get left => 'left';
+
+  @override
+  String get wasRemoved => 'was removed';
+
+  @override
+  String get wasAdded => 'was added';
+
+  @override
+  String get becameAdmin => 'became admin';
+
+  @override
+  String get noLongerAdmin => 'is no longer admin';
+
+  @override
+  String get emojiPickerComingSoon => 'Emoji picker coming soon!';
+
+  @override
+  String get startingVideoCall => 'Starting video call...';
+
+  @override
+  String get messageSent => 'Message sent';
+
+  @override
+  String get viewProfile => 'View Profile';
+
+  @override
+  String get muteChat => 'Mute Chat';
+
+  @override
+  String get unmuteChat => 'Unmute Chat';
+
+  @override
+  String get clearChat => 'Clear Chat';
+
+  @override
+  String get deleteChat => 'Delete Chat';
+
+  @override
+  String get chatOptions => 'Chat Options';
+
+  @override
+  String get addCourse => 'Add Course';
+
+  @override
+  String get seePeoplesChats => 'See People\'s Chats';
+
+  @override
+  String get searchCourses => 'Search courses...';
+
+  @override
+  String get popular => 'Popular';
+
+  @override
+  String get swapLanguages => 'Swap languages';
+
+  @override
+  String get enterTextToTranslate => 'Enter text to translate';
 }

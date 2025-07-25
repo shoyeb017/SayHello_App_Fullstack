@@ -692,31 +692,31 @@ abstract class AppLocalizations {
   /// **'Learning Language'**
   String get learningLanguageShort;
 
-  /// All courses label
+  /// All courses page title
   ///
   /// In en, this message translates to:
   /// **'All Courses'**
   String get allCourses;
 
-  /// Play button
+  /// Play category label
   ///
   /// In en, this message translates to:
   /// **'Play'**
   String get play;
 
-  /// Translate button
+  /// Translate page title and button
   ///
   /// In en, this message translates to:
   /// **'Translate'**
   String get translate;
 
-  /// Japanese AI label
+  /// Japanese AI category label
   ///
   /// In en, this message translates to:
   /// **'Japanese AI'**
   String get japaneseAi;
 
-  /// More options
+  /// More category label
   ///
   /// In en, this message translates to:
   /// **'More'**
@@ -740,13 +740,13 @@ abstract class AppLocalizations {
   /// **'You waved at'**
   String get youWavedAt;
 
-  /// Search button/label
+  /// Search text
   ///
   /// In en, this message translates to:
   /// **'Search'**
   String get search;
 
-  /// Search people title
+  /// Search placeholder for people
   ///
   /// In en, this message translates to:
   /// **'Search People'**
@@ -818,7 +818,7 @@ abstract class AppLocalizations {
   /// **'Success'**
   String get success;
 
-  /// Failed message
+  /// Message failed status
   ///
   /// In en, this message translates to:
   /// **'Failed'**
@@ -1004,7 +1004,7 @@ abstract class AppLocalizations {
   /// **'Finish'**
   String get finish;
 
-  /// Done button
+  /// Done button text
   ///
   /// In en, this message translates to:
   /// **'Done'**
@@ -1165,6 +1165,492 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Acknowledgments'**
   String get acknowledgments;
+
+  /// Language Talks app name
+  ///
+  /// In en, this message translates to:
+  /// **'Language Talks'**
+  String get languageTalks;
+
+  /// Last seen status
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen'**
+  String get lastSeen;
+
+  /// Message input placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Type a message...'**
+  String get typeMessage;
+
+  /// Just now time indicator
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
+
+  /// Minutes ago time indicator
+  ///
+  /// In en, this message translates to:
+  /// **'minutes ago'**
+  String get minutesAgo;
+
+  /// Hours ago time indicator
+  ///
+  /// In en, this message translates to:
+  /// **'hours ago'**
+  String get hoursAgo;
+
+  /// Days ago time indicator
+  ///
+  /// In en, this message translates to:
+  /// **'days ago'**
+  String get daysAgo;
+
+  /// Yesterday time indicator
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// Today time indicator
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// Call started notification
+  ///
+  /// In en, this message translates to:
+  /// **'Call started'**
+  String get callStarted;
+
+  /// Video call label
+  ///
+  /// In en, this message translates to:
+  /// **'Video Call'**
+  String get videoCall;
+
+  /// Audio call label
+  ///
+  /// In en, this message translates to:
+  /// **'Audio Call'**
+  String get audioCall;
+
+  /// End call button
+  ///
+  /// In en, this message translates to:
+  /// **'End Call'**
+  String get endCall;
+
+  /// Answer call button
+  ///
+  /// In en, this message translates to:
+  /// **'Answer Call'**
+  String get answerCall;
+
+  /// Decline call button
+  ///
+  /// In en, this message translates to:
+  /// **'Decline Call'**
+  String get declineCall;
+
+  /// Calling status
+  ///
+  /// In en, this message translates to:
+  /// **'Calling...'**
+  String get calling;
+
+  /// Connecting status
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting...'**
+  String get connecting;
+
+  /// Connected status
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get connected;
+
+  /// Disconnected status
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnected'**
+  String get disconnected;
+
+  /// Retry button
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// Block user button
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get block;
+
+  /// Unblock user button
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock'**
+  String get unblock;
+
+  /// Report user button
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get report;
+
+  /// Report user dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Report User'**
+  String get reportUser;
+
+  /// Block user dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Block User'**
+  String get blockUser;
+
+  /// Age label
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get age;
+
+  /// Interests label
+  ///
+  /// In en, this message translates to:
+  /// **'Interests'**
+  String get interests;
+
+  /// Native language label
+  ///
+  /// In en, this message translates to:
+  /// **'Native Language'**
+  String get nativeLanguageLabel;
+
+  /// Learning language label
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Language'**
+  String get learningLanguageLabel;
+
+  /// Wave action
+  ///
+  /// In en, this message translates to:
+  /// **'Wave'**
+  String get wave;
+
+  /// Waved past tense
+  ///
+  /// In en, this message translates to:
+  /// **'Waved'**
+  String get waved;
+
+  /// Waved at someone
+  ///
+  /// In en, this message translates to:
+  /// **'waved at'**
+  String get wavedAt;
+
+  /// React to message
+  ///
+  /// In en, this message translates to:
+  /// **'React'**
+  String get react;
+
+  /// Reply to message
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get reply;
+
+  /// Forward message
+  ///
+  /// In en, this message translates to:
+  /// **'Forward'**
+  String get forward;
+
+  /// Message info
+  ///
+  /// In en, this message translates to:
+  /// **'Message Info'**
+  String get messageInfo;
+
+  /// Message delivered status
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get delivered;
+
+  /// Message read status
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get read;
+
+  /// Message sent status
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get sent;
+
+  /// Message sending status
+  ///
+  /// In en, this message translates to:
+  /// **'Sending'**
+  String get sending;
+
+  /// Select contact title
+  ///
+  /// In en, this message translates to:
+  /// **'Select Contact'**
+  String get selectContact;
+
+  /// New message indicator
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get newMessage;
+
+  /// New group title
+  ///
+  /// In en, this message translates to:
+  /// **'New Group'**
+  String get newGroup;
+
+  /// Create group button
+  ///
+  /// In en, this message translates to:
+  /// **'Create Group'**
+  String get createGroup;
+
+  /// Group name field
+  ///
+  /// In en, this message translates to:
+  /// **'Group Name'**
+  String get groupName;
+
+  /// Add members button
+  ///
+  /// In en, this message translates to:
+  /// **'Add Members'**
+  String get addMembers;
+
+  /// Members label
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get members;
+
+  /// Admin role
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get admin;
+
+  /// Moderator role
+  ///
+  /// In en, this message translates to:
+  /// **'Moderator'**
+  String get moderator;
+
+  /// Member role
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get member;
+
+  /// Leave group button
+  ///
+  /// In en, this message translates to:
+  /// **'Leave Group'**
+  String get leaveGroup;
+
+  /// Delete group button
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Group'**
+  String get deleteGroup;
+
+  /// Group info title
+  ///
+  /// In en, this message translates to:
+  /// **'Group Info'**
+  String get groupInfo;
+
+  /// Edit group button
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Group'**
+  String get editGroup;
+
+  /// Add member button
+  ///
+  /// In en, this message translates to:
+  /// **'Add Member'**
+  String get addMember;
+
+  /// Remove member button
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Member'**
+  String get removeMember;
+
+  /// Make admin button
+  ///
+  /// In en, this message translates to:
+  /// **'Make Admin'**
+  String get makeAdmin;
+
+  /// Remove admin button
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Admin'**
+  String get removeAdmin;
+
+  /// You left group message
+  ///
+  /// In en, this message translates to:
+  /// **'You left'**
+  String get youLeft;
+
+  /// You joined group message
+  ///
+  /// In en, this message translates to:
+  /// **'You joined'**
+  String get youJoined;
+
+  /// Someone joined message
+  ///
+  /// In en, this message translates to:
+  /// **'joined'**
+  String get joined;
+
+  /// Someone left message
+  ///
+  /// In en, this message translates to:
+  /// **'left'**
+  String get left;
+
+  /// Someone was removed message
+  ///
+  /// In en, this message translates to:
+  /// **'was removed'**
+  String get wasRemoved;
+
+  /// Someone was added message
+  ///
+  /// In en, this message translates to:
+  /// **'was added'**
+  String get wasAdded;
+
+  /// Someone became admin message
+  ///
+  /// In en, this message translates to:
+  /// **'became admin'**
+  String get becameAdmin;
+
+  /// Someone is no longer admin message
+  ///
+  /// In en, this message translates to:
+  /// **'is no longer admin'**
+  String get noLongerAdmin;
+
+  /// Emoji picker feature notification
+  ///
+  /// In en, this message translates to:
+  /// **'Emoji picker coming soon!'**
+  String get emojiPickerComingSoon;
+
+  /// Starting video call notification
+  ///
+  /// In en, this message translates to:
+  /// **'Starting video call...'**
+  String get startingVideoCall;
+
+  /// Message sent notification
+  ///
+  /// In en, this message translates to:
+  /// **'Message sent'**
+  String get messageSent;
+
+  /// View profile action
+  ///
+  /// In en, this message translates to:
+  /// **'View Profile'**
+  String get viewProfile;
+
+  /// Mute chat action
+  ///
+  /// In en, this message translates to:
+  /// **'Mute Chat'**
+  String get muteChat;
+
+  /// Unmute chat action
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute Chat'**
+  String get unmuteChat;
+
+  /// Clear chat action
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Chat'**
+  String get clearChat;
+
+  /// Delete chat action
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Chat'**
+  String get deleteChat;
+
+  /// Chat options title
+  ///
+  /// In en, this message translates to:
+  /// **'Chat Options'**
+  String get chatOptions;
+
+  /// Add course tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Add Course'**
+  String get addCourse;
+
+  /// Search placeholder text for seeing other people's chats
+  ///
+  /// In en, this message translates to:
+  /// **'See People\'s Chats'**
+  String get seePeoplesChats;
+
+  /// Search placeholder for courses
+  ///
+  /// In en, this message translates to:
+  /// **'Search courses...'**
+  String get searchCourses;
+
+  /// Popular languages section
+  ///
+  /// In en, this message translates to:
+  /// **'Popular'**
+  String get popular;
+
+  /// Tooltip for swap languages button
+  ///
+  /// In en, this message translates to:
+  /// **'Swap languages'**
+  String get swapLanguages;
+
+  /// Placeholder for translation input
+  ///
+  /// In en, this message translates to:
+  /// **'Enter text to translate'**
+  String get enterTextToTranslate;
 }
 
 class _AppLocalizationsDelegate

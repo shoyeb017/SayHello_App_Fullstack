@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/app_localizations.dart';
 
 // Models for chat data
 class ChatUser {
@@ -190,8 +191,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   ),
                   Text(
                     widget.user.isOnline
-                        ? 'Online'
-                        : 'Last seen ${_formatLastSeen(widget.user.lastSeen)}',
+                        ? AppLocalizations.of(context)!.online
+                        : '${AppLocalizations.of(context)!.lastSeen} ${_formatLastSeen(widget.user.lastSeen)}',
                     style: TextStyle(
                       fontSize: 12,
                       color: isDark
@@ -210,7 +211,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: const Text('Starting video call...'),
+                  content: Text(AppLocalizations.of(context)!.callStarted),
                   backgroundColor: primaryPurple,
                 ),
               );
@@ -752,7 +753,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                           color: isDark ? Colors.white : Colors.black,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Type a message...',
+                          hintText: AppLocalizations.of(context)!.typeMessage,
                           hintStyle: TextStyle(
                             color: isDark
                                 ? Colors.grey.shade400

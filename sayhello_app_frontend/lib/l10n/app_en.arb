@@ -722,5 +722,1906 @@
   "acknowledgments": "Acknowledgments",
   "@acknowledgments": {
     "description": "Acknowledgments section"
+  },
+  "languageTalks": "Language Talks",
+  "@languageTalks": {
+    "description": "Language Talks app name"
+  },
+  "lastSeen": "Last seen",
+  "@lastSeen": {
+    "description": "Last seen status"
+  },
+  "typeMessage": "Type a message...",
+  "@typeMessage": {
+    "description": "Message input placeholder"
+  },
+  "justNow": "Just now",
+  "@justNow": {
+    "description": "Just now time indicator"
+  },
+  "minutesAgo": "minutes ago",
+  "@minutesAgo": {
+    "description": "Minutes ago time indicator"
+  },
+  "hoursAgo": "hours ago",
+  "@hoursAgo": {
+    "description": "Hours ago time indicator"
+  },
+  "daysAgo": "days ago",
+  "@daysAgo": {
+    "description": "Days ago time indicator"
+  },
+  "yesterday": "Yesterday",
+  "@yesterday": {
+    "description": "Yesterday time indicator"
+  },
+  "today": "Today",
+  "@today": {
+    "description": "Today time indicator"
+  },
+  "callStarted": "Call started",
+  "@callStarted": {
+    "description": "Call started notification"
+  },
+  "videoCall": "Video Call",
+  "@videoCall": {
+    "description": "Video call label"
+  },
+  "audioCall": "Audio Call",
+  "@audioCall": {
+    "description": "Audio call label"
+  },
+  "endCall": "End Call",
+  "@endCall": {
+    "description": "End call button"
+  },
+  "answerCall": "Answer Call",
+  "@answerCall": {
+    "description": "Answer call button"
+  },
+  "declineCall": "Decline Call",
+  "@declineCall": {
+    "description": "Decline call button"
+  },
+  "calling": "Calling...",
+  "@calling": {
+    "description": "Calling status"
+  },
+  "connecting": "Connecting...",
+  "@connecting": {
+    "description": "Connecting status"
+  },
+  "connected": "Connected",
+  "@connected": {
+    "description": "Connected status"
+  },
+  "disconnected": "Disconnected",
+  "@disconnected": {
+    "description": "Disconnected status"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button"
+  },
+  "block": "Block",
+  "@block": {
+    "description": "Block user button"
+  },
+  "unblock": "Unblock",
+  "@unblock": {
+    "description": "Unblock user button"
+  },
+  "report": "Report",
+  "@report": {
+    "description": "Report user button"
+  },
+  "reportUser": "Report User",
+  "@reportUser": {
+    "description": "Report user dialog title"
+  },
+  "blockUser": "Block User",
+  "@blockUser": {
+    "description": "Block user dialog title"
+  },
+  "age": "Age",
+  "@age": {
+    "description": "Age label"
+  },
+  "interests": "Interests",
+  "@interests": {
+    "description": "Interests label"
+  },
+  "nativeLanguageLabel": "Native Language",
+  "@nativeLanguageLabel": {
+    "description": "Native language label"
+  },
+  "learningLanguageLabel": "Learning Language",
+  "@learningLanguageLabel": {
+    "description": "Learning language label"
+  },
+  "wave": "Wave",
+  "@wave": {
+    "description": "Wave action"
+  },
+  "waved": "Waved",
+  "@waved": {
+    "description": "Waved past tense"
+  },
+  "wavedAt": "waved at",
+  "@wavedAt": {
+    "description": "Waved at someone"
+  },
+  "react": "React",
+  "@react": {
+    "description": "React to message"
+  },
+  "reply": "Reply",
+  "@reply": {
+    "description": "Reply to message"
+  },
+  "forward": "Forward",
+  "@forward": {
+    "description": "Forward message"
+  },
+  "messageInfo": "Message Info",
+  "@messageInfo": {
+    "description": "Message info"
+  },
+  "delivered": "Delivered",
+  "@delivered": {
+    "description": "Message delivered status"
+  },
+  "read": "Read",
+  "@read": {
+    "description": "Message read status"
+  },
+  "sent": "Sent",
+  "@sent": {
+    "description": "Message sent status"
+  },
+  "failed": "Failed",
+  "@failed": {
+    "description": "Message failed status"
+  },
+  "sending": "Sending",
+  "@sending": {
+    "description": "Message sending status"
+  },
+  "selectContact": "Select Contact",
+  "@selectContact": {
+    "description": "Select contact title"
+  },
+  "newMessage": "New Message",
+  "@newMessage": {
+    "description": "New message title"
+  },
+  "newGroup": "New Group",
+  "@newGroup": {
+    "description": "New group title"
+  },
+  "createGroup": "Create Group",
+  "@createGroup": {
+    "description": "Create group button"
+  },
+  "groupName": "Group Name",
+  "@groupName": {
+    "description": "Group name field"
+  },
+  "addMembers": "Add Members",
+  "@addMembers": {
+    "description": "Add members button"
+  },
+  "members": "Members",
+  "@members": {
+    "description": "Members label"
+  },
+  "admin": "Admin",
+  "@admin": {
+    "description": "Admin role"
+  },
+  "moderator": "Moderator",
+  "@moderator": {
+    "description": "Moderator role"
+  },
+  "member": "Member",
+  "@member": {
+    "description": "Member role"
+  },
+  "leaveGroup": "Leave Group",
+  "@leaveGroup": {
+    "description": "Leave group button"
+  },
+  "deleteGroup": "Delete Group",
+  "@deleteGroup": {
+    "description": "Delete group button"
+  },
+  "groupInfo": "Group Info",
+  "@groupInfo": {
+    "description": "Group info title"
+  },
+  "editGroup": "Edit Group",
+  "@editGroup": {
+    "description": "Edit group button"
+  },
+  "addMember": "Add Member",
+  "@addMember": {
+    "description": "Add member button"
+  },
+  "removeMember": "Remove Member",
+  "@removeMember": {
+    "description": "Remove member button"
+  },
+  "makeAdmin": "Make Admin",
+  "@makeAdmin": {
+    "description": "Make admin button"
+  },
+  "removeAdmin": "Remove Admin",
+  "@removeAdmin": {
+    "description": "Remove admin button"
+  },
+  "youLeft": "You left",
+  "@youLeft": {
+    "description": "You left group message"
+  },
+  "youJoined": "You joined",
+  "@youJoined": {
+    "description": "You joined group message"
+  },
+  "joined": "joined",
+  "@joined": {
+    "description": "Someone joined message"
+  },
+  "left": "left",
+  "@left": {
+    "description": "Someone left message"
+  },
+  "wasRemoved": "was removed",
+  "@wasRemoved": {
+    "description": "Someone was removed message"
+  },
+  "wasAdded": "was added",
+  "@wasAdded": {
+    "description": "Someone was added message"
+  },
+  "becameAdmin": "became admin",
+  "@becameAdmin": {
+    "description": "Someone became admin message"
+  },
+  "noLongerAdmin": "is no longer admin",
+  "@noLongerAdmin": {
+    "description": "Someone is no longer admin message"
+  },
+  "emojiPickerComingSoon": "Emoji picker coming soon!",
+  "@emojiPickerComingSoon": {
+    "description": "Emoji picker feature notification"
+  },
+  "startingVideoCall": "Starting video call...",
+  "@startingVideoCall": {
+    "description": "Starting video call notification"
+  },
+  "messageSent": "Message sent",
+  "@messageSent": {
+    "description": "Message sent notification"
+  },
+  "viewProfile": "View Profile",
+  "@viewProfile": {
+    "description": "View profile action"
+  },
+  "muteChat": "Mute Chat",
+  "@muteChat": {
+    "description": "Mute chat action"
+  },
+  "unmuteChat": "Unmute Chat",
+  "@unmuteChat": {
+    "description": "Unmute chat action"
+  },
+  "clearChat": "Clear Chat",
+  "@clearChat": {
+    "description": "Clear chat action"
+  },
+  "deleteChat": "Delete Chat",
+  "@deleteChat": {
+    "description": "Delete chat action"
+  },
+  "chatOptions": "Chat Options",
+  "@chatOptions": {
+    "description": "Chat options title"
+  },
+  "addCourse": "Add Course",
+  "@addCourse": {
+    "description": "Add course tab label"
+  },
+  "seePeoplesChats": "See People's Chats",
+  "@seePeoplesChats": {
+    "description": "Search placeholder text for seeing other people's chats"
+  },
+  "allCourses": "All Courses",
+  "@allCourses": {
+    "description": "All courses page title"
+  },
+  "searchCourses": "Search courses...",
+  "@searchCourses": {
+    "description": "Search placeholder for courses"
+  },
+  "searchPeople": "Search People",
+  "@searchPeople": {
+    "description": "Search placeholder for people"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "new": "New",
+  "@new": {
+    "description": "New message indicator"
+  },
+  "translate": "Translate",
+  "@translate": {
+    "description": "Translate page title and button"
+  },
+  "search": "Search",
+  "@search": {
+    "description": "Search text"
+  },
+  "popular": "Popular",
+  "@popular": {
+    "description": "Popular languages section"
+  },
+  "done": "Done",
+  "@done": {
+    "description": "Done button text"
+  },
+  "swapLanguages": "Swap languages",
+  "@swapLanguages": {
+    "description": "Tooltip for swap languages button"
+  },
+  "enterTextToTranslate": "Enter text to translate",
+  "@enterTextToTranslate": {
+    "description": "Placeholder for translation input"
+  },
+  "play": "Play",
+  "@play": {
+    "description": "Play category label"
+  },
+  "japaneseAi": "Japanese AI",
+  "@japaneseAi": {
+    "description": "Japanese AI category label"
+  },
+  "more": "More",
+  "@more": {
+    "description": "More category label"
   }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+  "appTitle": "SayHello",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "practiceLanguages": "Practice 5+ languages",
+  "@practiceLanguages": {
+    "description": "Subtitle about practicing languages"
+  },
+  "meetFriends": "Meet 50 million global friends",
+  "@meetFriends": {
+    "description": "Subtitle about meeting friends"
+  },
+  "iAmLearner": "I am a Learner",
+  "@iAmLearner": {
+    "description": "Button text for learner login"
+  },
+  "iAmInstructor": "I am an Instructor",
+  "@iAmInstructor": {
+    "description": "Button text for instructor login"
+  },
+  "termsOfService": "Terms of Service",
+  "@termsOfService": {
+    "description": "Terms of service link text"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Privacy policy link text"
+  },
+  "agreementText": "Your first login creates your account, and in doing so you agree to our",
+  "@agreementText": {
+    "description": "Agreement text before terms and privacy policy links"
+  },
+  "and": "and",
+  "@and": {
+    "description": "Conjunction word"
+  },
+  "hello": "Hello!",
+  "@hello": {
+    "description": "General greeting"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language selector label"
+  },
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Language selector popup title"
+  },
+  "learnerSignIn": "Learner Sign In",
+  "@learnerSignIn": {
+    "description": "Learner sign in page title"
+  },
+  "instructorSignIn": "Instructor Sign In",
+  "@instructorSignIn": {
+    "description": "Instructor sign in page title"
+  },
+  "welcomeBack": "Welcome Back",
+  "@welcomeBack": {
+    "description": "Welcome message on sign in page"
+  },
+  "signInToContinue": "Sign in to continue learning.",
+  "@signInToContinue": {
+    "description": "Sign in page subtitle"
+  },
+  "username": "Username",
+  "@username": {
+    "description": "Username field label"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Password field label"
+  },
+  "signIn": "Sign In",
+  "@signIn": {
+    "description": "Sign in button text"
+  },
+  "signUp": "Sign Up",
+  "@signUp": {
+    "description": "Sign up button text"
+  },
+  "learnerSignUp": "Learner Sign Up",
+  "@learnerSignUp": {
+    "description": "Learner sign up page title"
+  },
+  "instructorSignUp": "Instructor Sign Up",
+  "@instructorSignUp": {
+    "description": "Instructor sign up page title"
+  },
+  "createAccount": "Create Account",
+  "@createAccount": {
+    "description": "Create account header text"
+  },
+  "joinCommunity": "Join our learning community.",
+  "@joinCommunity": {
+    "description": "Sign up page subtitle"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Email field label"
+  },
+  "confirmPassword": "Confirm Password",
+  "@confirmPassword": {
+    "description": "Confirm password field label"
+  },
+  "alreadyHaveAccount": "Already have an account?",
+  "@alreadyHaveAccount": {
+    "description": "Link text to sign in page"
+  },
+  "welcomeInstructor": "Welcome Instructor",
+  "@welcomeInstructor": {
+    "description": "Welcome message for instructor"
+  },
+  "signInToManageCourses": "Please sign in to manage your courses.",
+  "@signInToManageCourses": {
+    "description": "Subtitle for instructor sign in"
+  },
+  "createYourAccount": "Create your account",
+  "@createYourAccount": {
+    "description": "Sign up page header"
+  },
+  "name": "Name",
+  "@name": {
+    "description": "Name field label"
+  },
+  "nativeLanguage": "Native Language",
+  "@nativeLanguage": {
+    "description": "Native language dropdown label"
+  },
+  "learningLanguage": "Learning Language",
+  "@learningLanguage": {
+    "description": "Learning language dropdown label"
+  },
+  "gender": "Gender",
+  "@gender": {
+    "description": "Gender dropdown label"
+  },
+  "country": "Country",
+  "@country": {
+    "description": "Country field label"
+  },
+  "bio": "Bio",
+  "@bio": {
+    "description": "Bio field label"
+  },
+  "male": "Male",
+  "@male": {
+    "description": "Male gender option"
+  },
+  "female": "Female",
+  "@female": {
+    "description": "Female gender option"
+  },
+  "other": "Other",
+  "@other": {
+    "description": "Other gender option"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+  "arabic": "Arabic",
+  "@arabic": {
+    "description": "Arabic language option"
+  },
+  "japanese": "Japanese",
+  "@japanese": {
+    "description": "Japanese language option"
+  },
+  "bangla": "Bangla",
+  "@bangla": {
+    "description": "Bangla language option"
+  },
+  "korean": "Korean",
+  "@korean": {
+    "description": "Korean language option"
+  },
+  "profilePhoto": "Profile Photo",
+  "@profilePhoto": {
+    "description": "Profile photo section title"
+  },
+  "tapToAddPhoto": "Tap to add photo",
+  "@tapToAddPhoto": {
+    "description": "Instruction to add profile photo"
+  },
+  "home": "SayHello",
+  "@home": {
+    "description": "Home tab label"
+  },
+  "connect": "Connect",
+  "@connect": {
+    "description": "Connect tab label"
+  },
+  "feed": "Feed",
+  "@feed": {
+    "description": "Feed tab label"
+  },
+  "learn": "Learn",
+  "@learn": {
+    "description": "Learn tab label"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile tab label"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button text"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings menu label"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  "step1PersonalInfo": "Step 1: Personal Information",
+  "@step1PersonalInfo": {
+    "description": "Step 1 title for personal information"
+  },
+  "step2LanguageBio": "Step 2: Language & Bio",
+  "@step2LanguageBio": {
+    "description": "Step 2 title for language and bio"
+  },
+  "step3AdditionalInfo": "Step 3: Additional Info",
+  "@step3AdditionalInfo": {
+    "description": "Step 3 title for additional information"
+  },
+  "fullName": "Full Name",
+  "@fullName": {
+    "description": "Full name field label"
+  },
+  "dateOfBirth": "Date of Birth",
+  "@dateOfBirth": {
+    "description": "Date of birth field label"
+  },
+  "chooseDOB": "Choose DOB",
+  "@chooseDOB": {
+    "description": "Choose date of birth button text"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "Next button text"
+  },
+  "back": "Back",
+  "@back": {
+    "description": "Back button text"
+  },
+  "submit": "Submit",
+  "@submit": {
+    "description": "Submit button text"
+  },
+  "required": "Required",
+  "@required": {
+    "description": "Required field validation message"
+  },
+  "teachingLanguage": "Teaching Language",
+  "@teachingLanguage": {
+    "description": "Teaching language dropdown label"
+  },
+  "bioOptional": "Bio (Optional)",
+  "@bioOptional": {
+    "description": "Optional bio field label"
+  },
+  "instructorRegisteredSuccessfully": "Instructor Registered Successfully!",
+  "@instructorRegisteredSuccessfully": {
+    "description": "Success message for instructor registration"
+  },
+  "learnerRegisteredSuccessfully": "Learner Registered Successfully!",
+  "@learnerRegisteredSuccessfully": {
+    "description": "Success message for learner registration"
+  },
+  "skillLevel": "Skill Level",
+  "@skillLevel": {
+    "description": "Skill level label"
+  },
+  "beginner": "Beginner",
+  "@beginner": {
+    "description": "Beginner skill level"
+  },
+  "basic": "Basic",
+  "@basic": {
+    "description": "Basic skill level"
+  },
+  "intermediate": "Intermediate",
+  "@intermediate": {
+    "description": "Intermediate skill level"
+  },
+  "advanced": "Advanced",
+  "@advanced": {
+    "description": "Advanced skill level"
+  },
+  "fluent": "Fluent",
+  "@fluent": {
+    "description": "Fluent skill level"
+  },
+  "selectInterests": "Select Interests",
+  "@selectInterests": {
+    "description": "Select interests label"
+  },
+  "music": "Music",
+  "@music": {
+    "description": "Music interest"
+  },
+  "travel": "Travel",
+  "@travel": {
+    "description": "Travel interest"
+  },
+  "books": "Books",
+  "@books": {
+    "description": "Books interest"
+  },
+  "gaming": "Gaming",
+  "@gaming": {
+    "description": "Gaming interest"
+  },
+  "cooking": "Cooking",
+  "@cooking": {
+    "description": "Cooking interest"
+  },
+  "movies": "Movies",
+  "@movies": {
+    "description": "Movies interest"
+  },
+  "photography": "Photography",
+  "@photography": {
+    "description": "Photography interest"
+  },
+  "fitness": "Fitness",
+  "@fitness": {
+    "description": "Fitness interest"
+  },
+  "art": "Art",
+  "@art": {
+    "description": "Art interest"
+  },
+  "others": "Others",
+  "@others": {
+    "description": "Others option"
+  },
+  "bangladesh": "Bangladesh",
+  "@bangladesh": {
+    "description": "Bangladesh country option"
+  },
+  "usa": "USA",
+  "@usa": {
+    "description": "USA country option"
+  },
+  "uk": "UK",
+  "@uk": {
+    "description": "UK country option"
+  },
+  "india": "India",
+  "@india": {
+    "description": "India country option"
+  },
+  "japan": "Japan",
+  "@japan": {
+    "description": "Japan country option"
+  },
+  "korea": "Korea",
+  "@korea": {
+    "description": "Korea country option"
+  },
+  "saudiArabia": "Saudi Arabia",
+  "@saudiArabia": {
+    "description": "Saudi Arabia country option"
+  },
+  "step1PersonalInfo": "Step 1: Personal Info",
+  "@step1PersonalInfo": {
+    "description": "Step 1 title for personal information (short)"
+  },
+  "step2LanguageInfo": "Step 2: Language Info",
+  "@step2LanguageInfo": {
+    "description": "Step 2 title for language information"
+  },
+  "nativeLanguageShort": "Native Language",
+  "@nativeLanguageShort": {
+    "description": "Native language dropdown label (short)"
+  },
+  "learningLanguageShort": "Learning Language",
+  "@learningLanguageShort": {
+    "description": "Learning language dropdown label (short)"
+  },
+  "allCourses": "All Courses",
+  "@allCourses": {
+    "description": "All courses label"
+  },
+  "play": "Play",
+  "@play": {
+    "description": "Play button"
+  },
+  "translate": "Translate",
+  "@translate": {
+    "description": "Translate button"
+  },
+  "japaneseAi": "Japanese AI",
+  "@japaneseAi": {
+    "description": "Japanese AI label"
+  },
+  "more": "More",
+  "@more": {
+    "description": "More options"
+  },
+  "hello": "Hello",
+  "@hello": {
+    "description": "Hello greeting"
+  },
+  "howAreYou": "Hello, how are you?",
+  "@howAreYou": {
+    "description": "How are you greeting"
+  },
+  "hiNewHere": "Hi, I am new here!",
+  "@hiNewHere": {
+    "description": "New user greeting"
+  },
+  "youWavedAt": "You waved at",
+  "@youWavedAt": {
+    "description": "Waved interaction message"
+  },
+  "search": "Search",
+  "@search": {
+    "description": "Search button/label"
+  },
+  "searchPeople": "Search People",
+  "@searchPeople": {
+    "description": "Search people title"
+  },
+  "courses": "Courses",
+  "@courses": {
+    "description": "Courses label"
+  },
+  "chat": "Chat",
+  "@chat": {
+    "description": "Chat label"
+  },
+  "online": "Online",
+  "@online": {
+    "description": "Online status"
+  },
+  "offline": "Offline",
+  "@offline": {
+    "description": "Offline status"
+  },
+  "typing": "Typing...",
+  "@typing": {
+    "description": "Typing indicator"
+  },
+  "sendMessage": "Send message",
+  "@sendMessage": {
+    "description": "Send message placeholder"
+  },
+  "noMessages": "No messages yet",
+  "@noMessages": {
+    "description": "No messages placeholder"
+  },
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading indicator"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Error message"
+  },
+  "tryAgain": "Try Again",
+  "@tryAgain": {
+    "description": "Try again button"
+  },
+  "success": "Success",
+  "@success": {
+    "description": "Success message"
+  },
+  "failed": "Failed",
+  "@failed": {
+    "description": "Failed message"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button"
+  },
+  "yes": "Yes",
+  "@yes": {
+    "description": "Yes button"
+  },
+  "no": "No",
+  "@no": {
+    "description": "No button"
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "OK button"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button"
+  },
+  "open": "Open",
+  "@open": {
+    "description": "Open button"
+  },
+  "view": "View",
+  "@view": {
+    "description": "View button"
+  },
+  "add": "Add",
+  "@add": {
+    "description": "Add button"
+  },
+  "remove": "Remove",
+  "@remove": {
+    "description": "Remove button"
+  },
+  "update": "Update",
+  "@update": {
+    "description": "Update button"
+  },
+  "refresh": "Refresh",
+  "@refresh": {
+    "description": "Refresh button"
+  },
+  "share": "Share",
+  "@share": {
+    "description": "Share button"
+  },
+  "copy": "Copy",
+  "@copy": {
+    "description": "Copy button"
+  },
+  "paste": "Paste",
+  "@paste": {
+    "description": "Paste button"
+  },
+  "cut": "Cut",
+  "@cut": {
+    "description": "Cut button"
+  },
+  "selectAll": "Select All",
+  "@selectAll": {
+    "description": "Select all button"
+  },
+  "clear": "Clear",
+  "@clear": {
+    "description": "Clear button"
+  },
+  "reset": "Reset",
+  "@reset": {
+    "description": "Reset button"
+  },
+  "apply": "Apply",
+  "@apply": {
+    "description": "Apply button"
+  },
+  "send": "Send",
+  "@send": {
+    "description": "Send button"
+  },
+  "receive": "Receive",
+  "@receive": {
+    "description": "Receive button"
+  },
+  "upload": "Upload",
+  "@upload": {
+    "description": "Upload button"
+  },
+  "download": "Download",
+  "@download": {
+    "description": "Download button"
+  },
+  "importData": "Import",
+  "@importData": {
+    "description": "Import button"
+  },
+  "exportData": "Export",
+  "@exportData": {
+    "description": "Export button"
+  },
+  "print": "Print",
+  "@print": {
+    "description": "Print button"
+  },
+  "preview": "Preview",
+  "@preview": {
+    "description": "Preview button"
+  },
+  "continueButton": "Continue",
+  "@continueButton": {
+    "description": "Continue button"
+  },
+  "skip": "Skip",
+  "@skip": {
+    "description": "Skip button"
+  },
+  "finish": "Finish",
+  "@finish": {
+    "description": "Finish button"
+  },
+  "done": "Done",
+  "@done": {
+    "description": "Done button"
+  },
+  "complete": "Complete",
+  "@complete": {
+    "description": "Complete button"
+  },
+  "start": "Start",
+  "@start": {
+    "description": "Start button"
+  },
+  "stop": "Stop",
+  "@stop": {
+    "description": "Stop button"
+  },
+  "pause": "Pause",
+  "@pause": {
+    "description": "Pause button"
+  },
+  "resume": "Resume",
+  "@resume": {
+    "description": "Resume button"
+  },
+  "mute": "Mute",
+  "@mute": {
+    "description": "Mute button"
+  },
+  "unmute": "Unmute",
+  "@unmute": {
+    "description": "Unmute button"
+  },
+  "volume": "Volume",
+  "@volume": {
+    "description": "Volume control"
+  },
+  "brightness": "Brightness",
+  "@brightness": {
+    "description": "Brightness control"
+  },
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications label"
+  },
+  "privacy": "Privacy",
+  "@privacy": {
+    "description": "Privacy label"
+  },
+  "security": "Security",
+  "@security": {
+    "description": "Security label"
+  },
+  "account": "Account",
+  "@account": {
+    "description": "Account label"
+  },
+  "general": "General",
+  "@general": {
+    "description": "General settings"
+  },
+  "advanced": "Advanced",
+  "@advanced": {
+    "description": "Advanced settings"
+  },
+  "about": "About",
+  "@about": {
+    "description": "About section"
+  },
+  "help": "Help",
+  "@help": {
+    "description": "Help section"
+  },
+  "support": "Support",
+  "@support": {
+    "description": "Support section"
+  },
+  "feedback": "Feedback",
+  "@feedback": {
+    "description": "Feedback section"
+  },
+  "contact": "Contact",
+  "@contact": {
+    "description": "Contact section"
+  },
+  "version": "Version",
+  "@version": {
+    "description": "Version label"
+  },
+  "update": "Update",
+  "@update": {
+    "description": "Update label"
+  },
+  "changelog": "Changelog",
+  "@changelog": {
+    "description": "Changelog label"
+  },
+  "license": "License",
+  "@license": {
+    "description": "License label"
+  },
+  "legal": "Legal",
+  "@legal": {
+    "description": "Legal section"
+  },
+  "terms": "Terms",
+  "@terms": {
+    "description": "Terms label"
+  },
+  "disclaimer": "Disclaimer",
+  "@disclaimer": {
+    "description": "Disclaimer label"
+  },
+  "acknowledgments": "Acknowledgments",
+  "@acknowledgments": {
+    "description": "Acknowledgments section"
+  },
+  "languageTalks": "Language Talks",
+  "@languageTalks": {
+    "description": "Language Talks app name"
+  },
+  "lastSeen": "Last seen",
+  "@lastSeen": {
+    "description": "Last seen status"
+  },
+  "typeMessage": "Type a message...",
+  "@typeMessage": {
+    "description": "Message input placeholder"
+  },
+  "justNow": "Just now",
+  "@justNow": {
+    "description": "Just now time indicator"
+  },
+  "minutesAgo": "minutes ago",
+  "@minutesAgo": {
+    "description": "Minutes ago time indicator"
+  },
+  "hoursAgo": "hours ago",
+  "@hoursAgo": {
+    "description": "Hours ago time indicator"
+  },
+  "daysAgo": "days ago",
+  "@daysAgo": {
+    "description": "Days ago time indicator"
+  },
+  "yesterday": "Yesterday",
+  "@yesterday": {
+    "description": "Yesterday time indicator"
+  },
+  "today": "Today",
+  "@today": {
+    "description": "Today time indicator"
+  },
+  "callStarted": "Call started",
+  "@callStarted": {
+    "description": "Call started notification"
+  },
+  "videoCall": "Video Call",
+  "@videoCall": {
+    "description": "Video call label"
+  },
+  "audioCall": "Audio Call",
+  "@audioCall": {
+    "description": "Audio call label"
+  },
+  "endCall": "End Call",
+  "@endCall": {
+    "description": "End call button"
+  },
+  "answerCall": "Answer Call",
+  "@answerCall": {
+    "description": "Answer call button"
+  },
+  "declineCall": "Decline Call",
+  "@declineCall": {
+    "description": "Decline call button"
+  },
+  "calling": "Calling...",
+  "@calling": {
+    "description": "Calling status"
+  },
+  "connecting": "Connecting...",
+  "@connecting": {
+    "description": "Connecting status"
+  },
+  "connected": "Connected",
+  "@connected": {
+    "description": "Connected status"
+  },
+  "disconnected": "Disconnected",
+  "@disconnected": {
+    "description": "Disconnected status"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button"
+  },
+  "block": "Block",
+  "@block": {
+    "description": "Block user button"
+  },
+  "unblock": "Unblock",
+  "@unblock": {
+    "description": "Unblock user button"
+  },
+  "report": "Report",
+  "@report": {
+    "description": "Report user button"
+  },
+  "reportUser": "Report User",
+  "@reportUser": {
+    "description": "Report user dialog title"
+  },
+  "blockUser": "Block User",
+  "@blockUser": {
+    "description": "Block user dialog title"
+  },
+  "age": "Age",
+  "@age": {
+    "description": "Age label"
+  },
+  "interests": "Interests",
+  "@interests": {
+    "description": "Interests label"
+  },
+  "nativeLanguageLabel": "Native Language",
+  "@nativeLanguageLabel": {
+    "description": "Native language label"
+  },
+  "learningLanguageLabel": "Learning Language",
+  "@learningLanguageLabel": {
+    "description": "Learning language label"
+  },
+  "wave": "Wave",
+  "@wave": {
+    "description": "Wave action"
+  },
+  "waved": "Waved",
+  "@waved": {
+    "description": "Waved past tense"
+  },
+  "wavedAt": "waved at",
+  "@wavedAt": {
+    "description": "Waved at someone"
+  },
+  "react": "React",
+  "@react": {
+    "description": "React to message"
+  },
+  "reply": "Reply",
+  "@reply": {
+    "description": "Reply to message"
+  },
+  "forward": "Forward",
+  "@forward": {
+    "description": "Forward message"
+  },
+  "messageInfo": "Message Info",
+  "@messageInfo": {
+    "description": "Message info"
+  },
+  "delivered": "Delivered",
+  "@delivered": {
+    "description": "Message delivered status"
+  },
+  "read": "Read",
+  "@read": {
+    "description": "Message read status"
+  },
+  "sent": "Sent",
+  "@sent": {
+    "description": "Message sent status"
+  },
+  "failed": "Failed",
+  "@failed": {
+    "description": "Message failed status"
+  },
+  "sending": "Sending",
+  "@sending": {
+    "description": "Message sending status"
+  },
+  "selectContact": "Select Contact",
+  "@selectContact": {
+    "description": "Select contact title"
+  },
+  "newMessage": "New Message",
+  "@newMessage": {
+    "description": "New message title"
+  },
+  "newGroup": "New Group",
+  "@newGroup": {
+    "description": "New group title"
+  },
+  "createGroup": "Create Group",
+  "@createGroup": {
+    "description": "Create group button"
+  },
+  "groupName": "Group Name",
+  "@groupName": {
+    "description": "Group name field"
+  },
+  "addMembers": "Add Members",
+  "@addMembers": {
+    "description": "Add members button"
+  },
+  "members": "Members",
+  "@members": {
+    "description": "Members label"
+  },
+  "admin": "Admin",
+  "@admin": {
+    "description": "Admin role"
+  },
+  "moderator": "Moderator",
+  "@moderator": {
+    "description": "Moderator role"
+  },
+  "member": "Member",
+  "@member": {
+    "description": "Member role"
+  },
+  "leaveGroup": "Leave Group",
+  "@leaveGroup": {
+    "description": "Leave group button"
+  },
+  "deleteGroup": "Delete Group",
+  "@deleteGroup": {
+    "description": "Delete group button"
+  },
+  "groupInfo": "Group Info",
+  "@groupInfo": {
+    "description": "Group info title"
+  },
+  "editGroup": "Edit Group",
+  "@editGroup": {
+    "description": "Edit group button"
+  },
+  "addMember": "Add Member",
+  "@addMember": {
+    "description": "Add member button"
+  },
+  "removeMember": "Remove Member",
+  "@removeMember": {
+    "description": "Remove member button"
+  },
+  "makeAdmin": "Make Admin",
+  "@makeAdmin": {
+    "description": "Make admin button"
+  },
+  "removeAdmin": "Remove Admin",
+  "@removeAdmin": {
+    "description": "Remove admin button"
+  },
+  "youLeft": "You left",
+  "@youLeft": {
+    "description": "You left group message"
+  },
+  "youJoined": "You joined",
+  "@youJoined": {
+    "description": "You joined group message"
+  },
+  "joined": "joined",
+  "@joined": {
+    "description": "Someone joined message"
+  },
+  "left": "left",
+  "@left": {
+    "description": "Someone left message"
+  },
+  "wasRemoved": "was removed",
+  "@wasRemoved": {
+    "description": "Someone was removed message"
+  },
+  "wasAdded": "was added",
+  "@wasAdded": {
+    "description": "Someone was added message"
+  },
+  "becameAdmin": "became admin",
+  "@becameAdmin": {
+    "description": "Someone became admin message"
+  },
+  "noLongerAdmin": "is no longer admin",
+  "@noLongerAdmin": {
+    "description": "Someone is no longer admin message"
+  },
+  "emojiPickerComingSoon": "Emoji picker coming soon!",
+  "@emojiPickerComingSoon": {
+    "description": "Emoji picker feature notification"
+  },
+  "startingVideoCall": "Starting video call...",
+  "@startingVideoCall": {
+    "description": "Starting video call notification"
+  },
+  "messageSent": "Message sent",
+  "@messageSent": {
+    "description": "Message sent notification"
+  },
+  "viewProfile": "View Profile",
+  "@viewProfile": {
+    "description": "View profile action"
+  },
+  "muteChat": "Mute Chat",
+  "@muteChat": {
+    "description": "Mute chat action"
+  },
+  "unmuteChat": "Unmute Chat",
+  "@unmuteChat": {
+    "description": "Unmute chat action"
+  },
+  "clearChat": "Clear Chat",
+  "@clearChat": {
+    "description": "Clear chat action"
+  },
+  "deleteChat": "Delete Chat",
+  "@deleteChat": {
+    "description": "Delete chat action"
+  },
+  "chatOptions": "Chat Options",
+  "@chatOptions": {
+    "description": "Chat options title"
+  },
+  "addCourse": "Add Course",
+  "@addCourse": {
+    "description": "Add course tab label"
+  },
+  "seePeoplesChats": "See People's Chats",
+  "@seePeoplesChats": {
+    "description": "Search placeholder text for seeing other people's chats"
+  },
+  "allCourses": "All Courses",
+  "@allCourses": {
+    "description": "All courses page title"
+  },
+  "searchCourses": "Search courses...",
+  "@searchCourses": {
+    "description": "Search placeholder for courses"
+  },
+  "searchPeople": "Search People",
+  "@searchPeople": {
+    "description": "Search placeholder for people"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "newMessage": "New",
+  "@newMessage": {
+    "description": "New message indicator"
+  },
+  "translate": "Translate",
+  "@translate": {
+    "description": "Translate page title and button"
+  },
+  "search": "Search",
+  "@search": {
+    "description": "Search text"
+  },
+  "popular": "Popular",
+  "@popular": {
+    "description": "Popular languages section"
+  },
+  "done": "Done",
+  "@done": {
+    "description": "Done button text"
+  },
+  "swapLanguages": "Swap languages",
+  "@swapLanguages": {
+    "description": "Tooltip for swap languages button"
+  },
+  "enterTextToTranslate": "Enter text to translate",
+  "@enterTextToTranslate": {
+    "description": "Placeholder for translation input"
+  },
+  "play": "Play",
+  "@play": {
+    "description": "Play category label"
+  },
+  "japaneseAi": "Japanese AI",
+  "@japaneseAi": {
+    "description": "Japanese AI category label"
+  },
+  "more": "More",
+  "@more": {
+    "description": "More category label"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+{
+  "appTitle": "SayHello",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "practiceLanguages": "Practice 5+ languages",
+  "@practiceLanguages": {
+    "description": "Subtitle about practicing languages"
+  },
+  "meetFriends": "Meet 50 million global friends",
+  "@meetFriends": {
+    "description": "Subtitle about meeting friends"
+  },
+  "iAmLearner": "I am a Learner",
+  "@iAmLearner": {
+    "description": "Button text for learner login"
+  },
+  "iAmInstructor": "I am an Instructor",
+  "@iAmInstructor": {
+    "description": "Button text for instructor login"
+  },
+  "termsOfService": "Terms of Service",
+  "@termsOfService": {
+    "description": "Terms of service link text"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Privacy policy link text"
+  },
+  "agreementText": "Your first login creates your account, and in doing so you agree to our",
+  "@agreementText": {
+    "description": "Agreement text before terms and privacy policy links"
+  },
+  "and": "and",
+  "@and": {
+    "description": "Conjunction word"
+  },
+  "hello": "Hello!",
+  "@hello": {
+    "description": "General greeting"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language selector label"
+  },
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Language selector popup title"
+  },
+  "learnerSignIn": "Learner Sign In",
+  "@learnerSignIn": {
+    "description": "Learner sign in page title"
+  },
+  "instructorSignIn": "Instructor Sign In",
+  "@instructorSignIn": {
+    "description": "Instructor sign in page title"
+  },
+  "welcomeBack": "Welcome Back",
+  "@welcomeBack": {
+    "description": "Welcome message on sign in page"
+  },
+  "signInToContinue": "Sign in to continue learning.",
+  "@signInToContinue": {
+    "description": "Sign in page subtitle"
+  },
+  "username": "Username",
+  "@username": {
+    "description": "Username field label"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Password field label"
+  },
+  "signIn": "Sign In",
+  "@signIn": {
+    "description": "Sign in button text"
+  },
+  "signUp": "Sign Up",
+  "@signUp": {
+    "description": "Sign up button text"
+  },
+  "learnerSignUp": "Learner Sign Up",
+  "@learnerSignUp": {
+    "description": "Learner sign up page title"
+  },
+  "instructorSignUp": "Instructor Sign Up",
+  "@instructorSignUp": {
+    "description": "Instructor sign up page title"
+  },
+  "createAccount": "Create Account",
+  "@createAccount": {
+    "description": "Create account header text"
+  },
+  "joinCommunity": "Join our learning community.",
+  "@joinCommunity": {
+    "description": "Sign up page subtitle"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Email field label"
+  },
+  "confirmPassword": "Confirm Password",
+  "@confirmPassword": {
+    "description": "Confirm password field label"
+  },
+  "alreadyHaveAccount": "Already have an account?",
+  "@alreadyHaveAccount": {
+    "description": "Link text to sign in page"
+  },
+  "welcomeInstructor": "Welcome Instructor",
+  "@welcomeInstructor": {
+    "description": "Welcome message for instructor"
+  },
+  "signInToManageCourses": "Please sign in to manage your courses.",
+  "@signInToManageCourses": {
+    "description": "Subtitle for instructor sign in"
+  },
+  "createYourAccount": "Create your account",
+  "@createYourAccount": {
+    "description": "Sign up page header"
+  },
+  "name": "Name",
+  "@name": {
+    "description": "Name field label"
+  },
+  "nativeLanguage": "Native Language",
+  "@nativeLanguage": {
+    "description": "Native language dropdown label"
+  },
+  "learningLanguage": "Learning Language",
+  "@learningLanguage": {
+    "description": "Learning language dropdown label"
+  },
+  "gender": "Gender",
+  "@gender": {
+    "description": "Gender dropdown label"
+  },
+  "country": "Country",
+  "@country": {
+    "description": "Country field label"
+  },
+  "bio": "Bio",
+  "@bio": {
+    "description": "Bio field label"
+  },
+  "male": "Male",
+  "@male": {
+    "description": "Male gender option"
+  },
+  "female": "Female",
+  "@female": {
+    "description": "Female gender option"
+  },
+  "other": "Other",
+  "@other": {
+    "description": "Other gender option"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+  "arabic": "Arabic",
+  "@arabic": {
+    "description": "Arabic language option"
+  },
+  "japanese": "Japanese",
+  "@japanese": {
+    "description": "Japanese language option"
+  },
+  "bangla": "Bangla",
+  "@bangla": {
+    "description": "Bangla language option"
+  },
+  "korean": "Korean",
+  "@korean": {
+    "description": "Korean language option"
+  },
+  "profilePhoto": "Profile Photo",
+  "@profilePhoto": {
+    "description": "Profile photo section title"
+  },
+  "tapToAddPhoto": "Tap to add photo",
+  "@tapToAddPhoto": {
+    "description": "Instruction to add profile photo"
+  },
+  "home": "SayHello",
+  "@home": {
+    "description": "Home tab label"
+  },
+  "connect": "Connect",
+  "@connect": {
+    "description": "Connect tab label"
+  },
+  "feed": "Feed",
+  "@feed": {
+    "description": "Feed tab label"
+  },
+  "learn": "Learn",
+  "@learn": {
+    "description": "Learn tab label"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile tab label"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button text"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings menu label"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  "step1PersonalInfo": "Step 1: Personal Information",
+  "@step1PersonalInfo": {
+    "description": "Step 1 title for personal information"
+  },
+  "step2LanguageBio": "Step 2: Language & Bio",
+  "@step2LanguageBio": {
+    "description": "Step 2 title for language and bio"
+  },
+  "step3AdditionalInfo": "Step 3: Additional Info",
+  "@step3AdditionalInfo": {
+    "description": "Step 3 title for additional information"
+  },
+  "fullName": "Full Name",
+  "@fullName": {
+    "description": "Full name field label"
+  },
+  "dateOfBirth": "Date of Birth",
+  "@dateOfBirth": {
+    "description": "Date of birth field label"
+  },
+  "chooseDOB": "Choose DOB",
+  "@chooseDOB": {
+    "description": "Choose date of birth button text"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "Next button text"
+  },
+  "back": "Back",
+  "@back": {
+    "description": "Back button text"
+  },
+  "submit": "Submit",
+  "@submit": {
+    "description": "Submit button text"
+  },
+  "required": "Required",
+  "@required": {
+    "description": "Required field validation message"
+  },
+  "teachingLanguage": "Teaching Language",
+  "@teachingLanguage": {
+    "description": "Teaching language dropdown label"
+  },
+  "bioOptional": "Bio (Optional)",
+  "@bioOptional": {
+    "description": "Optional bio field label"
+  },
+  "instructorRegisteredSuccessfully": "Instructor Registered Successfully!",
+  "@instructorRegisteredSuccessfully": {
+    "description": "Success message for instructor registration"
+  },
+  "learnerRegisteredSuccessfully": "Learner Registered Successfully!",
+  "@learnerRegisteredSuccessfully": {
+    "description": "Success message for learner registration"
+  },
+  "skillLevel": "Skill Level",
+  "@skillLevel": {
+    "description": "Skill level label"
+  },
+  "beginner": "Beginner",
+  "@beginner": {
+    "description": "Beginner skill level"
+  },
+  "basic": "Basic",
+  "@basic": {
+    "description": "Basic skill level"
+  },
+  "intermediate": "Intermediate",
+  "@intermediate": {
+    "description": "Intermediate skill level"
+  },
+  "advanced": "Advanced",
+  "@advanced": {
+    "description": "Advanced skill level"
+  },
+  "fluent": "Fluent",
+  "@fluent": {
+    "description": "Fluent skill level"
+  },
+  "selectInterests": "Select Interests",
+  "@selectInterests": {
+    "description": "Select interests label"
+  },
+  "music": "Music",
+  "@music": {
+    "description": "Music interest"
+  },
+  "travel": "Travel",
+  "@travel": {
+    "description": "Travel interest"
+  },
+  "books": "Books",
+  "@books": {
+    "description": "Books interest"
+  },
+  "gaming": "Gaming",
+  "@gaming": {
+    "description": "Gaming interest"
+  },
+  "cooking": "Cooking",
+  "@cooking": {
+    "description": "Cooking interest"
+  },
+  "movies": "Movies",
+  "@movies": {
+    "description": "Movies interest"
+  },
+  "photography": "Photography",
+  "@photography": {
+    "description": "Photography interest"
+  },
+  "fitness": "Fitness",
+  "@fitness": {
+    "description": "Fitness interest"
+  },
+  "art": "Art",
+  "@art": {
+    "description": "Art interest"
+  },
+  "others": "Others",
+  "@others": {
+    "description": "Others option"
+  },
+  "bangladesh": "Bangladesh",
+  "@bangladesh": {
+    "description": "Bangladesh country option"
+  },
+  "usa": "USA",
+  "@usa": {
+    "description": "USA country option"
+  },
+  "uk": "UK",
+  "@uk": {
+    "description": "UK country option"
+  },
+  "india": "India",
+  "@india": {
+    "description": "India country option"
+  },
+  "japan": "Japan",
+  "@japan": {
+    "description": "Japan country option"
+  },
+  "korea": "Korea",
+  "@korea": {
+    "description": "Korea country option"
+  },
+  "saudiArabia": "Saudi Arabia",
+  "@saudiArabia": {
+    "description": "Saudi Arabia country option"
+  },
+  "step1PersonalInfo": "Step 1: Personal Info",
+  "@step1PersonalInfo": {
+    "description": "Step 1 title for personal information (short)"
+  },
+  "step2LanguageInfo": "Step 2: Language Info",
+  "@step2LanguageInfo": {
+    "description": "Step 2 title for language information"
+  },
+  "nativeLanguageShort": "Native Language",
+  "@nativeLanguageShort": {
+    "description": "Native language dropdown label (short)"
+  },
+  "learningLanguageShort": "Learning Language",
+  "@learningLanguageShort": {
+    "description": "Learning language dropdown label (short)"
+  },
 }

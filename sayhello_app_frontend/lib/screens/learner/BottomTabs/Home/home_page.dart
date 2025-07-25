@@ -188,10 +188,10 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      const SizedBox(
+                      SizedBox(
                         width: 72,
                         child: Text(
-                          'All Courses',
+                          AppLocalizations.of(context)!.allCourses,
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 11),
                           maxLines: 1,
@@ -227,10 +227,10 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      const SizedBox(
+                      SizedBox(
                         width: 72,
                         child: Text(
-                          'Translate',
+                          AppLocalizations.of(context)!.translate,
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 11),
                           maxLines: 1,
@@ -271,10 +271,13 @@ class HomePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(40),
                 ),
                 child: Row(
-                  children: const [
+                  children: [
                     Icon(Icons.search, size: 20),
                     SizedBox(width: 10),
-                    Text("See People's Chats", style: TextStyle(fontSize: 16)),
+                    Text(
+                      AppLocalizations.of(context)!.seePeoplesChats,
+                      style: TextStyle(fontSize: 16),
+                    ),
                   ],
                 ),
               ),
@@ -418,7 +421,7 @@ class _ChatTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'New',
+                  AppLocalizations.of(context)!.newMessage,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: const Color(0xFF765ae3),
                     fontWeight: FontWeight.w600,

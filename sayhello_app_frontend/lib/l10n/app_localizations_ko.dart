@@ -303,19 +303,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get learningLanguageShort => '학습 언어';
 
   @override
-  String get allCourses => 'All Courses';
+  String get allCourses => '모든 코스';
 
   @override
-  String get play => 'Play';
+  String get play => '플레이';
 
   @override
-  String get translate => 'Translate';
+  String get translate => '번역';
 
   @override
-  String get japaneseAi => 'Japanese AI';
+  String get japaneseAi => '일본어 AI';
 
   @override
-  String get more => 'More';
+  String get more => '더보기';
 
   @override
   String get howAreYou => 'Hello, how are you?';
@@ -327,10 +327,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get youWavedAt => 'You waved at';
 
   @override
-  String get search => 'Search';
+  String get search => '검색';
 
   @override
-  String get searchPeople => 'Search People';
+  String get searchPeople => '사람 검색';
 
   @override
   String get courses => 'Courses';
@@ -366,7 +366,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get success => 'Success';
 
   @override
-  String get failed => 'Failed';
+  String get failed => '실패';
 
   @override
   String get confirm => 'Confirm';
@@ -459,7 +459,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get finish => 'Finish';
 
   @override
-  String get done => 'Done';
+  String get done => '완료';
 
   @override
   String get complete => 'Complete';
@@ -538,4 +538,247 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get acknowledgments => 'Acknowledgments';
+
+  @override
+  String get languageTalks => '언어 대화';
+
+  @override
+  String get lastSeen => '마지막 접속';
+
+  @override
+  String get typeMessage => '메시지를 입력하세요...';
+
+  @override
+  String get justNow => '방금 전';
+
+  @override
+  String get minutesAgo => '분 전';
+
+  @override
+  String get hoursAgo => '시간 전';
+
+  @override
+  String get daysAgo => '일 전';
+
+  @override
+  String get yesterday => '어제';
+
+  @override
+  String get today => '오늘';
+
+  @override
+  String get callStarted => '통화 시작됨';
+
+  @override
+  String get videoCall => '영상 통화';
+
+  @override
+  String get audioCall => '음성 통화';
+
+  @override
+  String get endCall => '통화 종료';
+
+  @override
+  String get answerCall => '통화 받기';
+
+  @override
+  String get declineCall => '통화 거절';
+
+  @override
+  String get calling => '통화 중...';
+
+  @override
+  String get connecting => '연결 중...';
+
+  @override
+  String get connected => '연결됨';
+
+  @override
+  String get disconnected => '연결 해제됨';
+
+  @override
+  String get retry => '다시 시도';
+
+  @override
+  String get block => '차단';
+
+  @override
+  String get unblock => '차단 해제';
+
+  @override
+  String get report => '신고';
+
+  @override
+  String get reportUser => '사용자 신고';
+
+  @override
+  String get blockUser => '사용자 차단';
+
+  @override
+  String get age => '나이';
+
+  @override
+  String get interests => '관심사';
+
+  @override
+  String get nativeLanguageLabel => '모국어';
+
+  @override
+  String get learningLanguageLabel => '학습 언어';
+
+  @override
+  String get wave => '손 흔들기';
+
+  @override
+  String get waved => '손을 흔들었습니다';
+
+  @override
+  String get wavedAt => '에게 손을 흔들었습니다';
+
+  @override
+  String get react => '반응';
+
+  @override
+  String get reply => '답장';
+
+  @override
+  String get forward => '전달';
+
+  @override
+  String get messageInfo => '메시지 정보';
+
+  @override
+  String get delivered => '전달됨';
+
+  @override
+  String get read => '읽음';
+
+  @override
+  String get sent => '전송됨';
+
+  @override
+  String get sending => '전송 중';
+
+  @override
+  String get selectContact => '연락처 선택';
+
+  @override
+  String get newMessage => '새로운';
+
+  @override
+  String get newGroup => '새 그룹';
+
+  @override
+  String get createGroup => '그룹 생성';
+
+  @override
+  String get groupName => '그룹 이름';
+
+  @override
+  String get addMembers => '멤버 추가';
+
+  @override
+  String get members => '멤버';
+
+  @override
+  String get admin => '관리자';
+
+  @override
+  String get moderator => '중재자';
+
+  @override
+  String get member => '멤버';
+
+  @override
+  String get leaveGroup => '그룹 나가기';
+
+  @override
+  String get deleteGroup => '그룹 삭제';
+
+  @override
+  String get groupInfo => '그룹 정보';
+
+  @override
+  String get editGroup => '그룹 편집';
+
+  @override
+  String get addMember => '멤버 추가';
+
+  @override
+  String get removeMember => '멤버 제거';
+
+  @override
+  String get makeAdmin => '관리자로 지정';
+
+  @override
+  String get removeAdmin => '관리자 해제';
+
+  @override
+  String get youLeft => '나갔습니다';
+
+  @override
+  String get youJoined => '참여했습니다';
+
+  @override
+  String get joined => '참여했습니다';
+
+  @override
+  String get left => '나갔습니다';
+
+  @override
+  String get wasRemoved => '제거되었습니다';
+
+  @override
+  String get wasAdded => '추가되었습니다';
+
+  @override
+  String get becameAdmin => '관리자가 되었습니다';
+
+  @override
+  String get noLongerAdmin => '더 이상 관리자가 아닙니다';
+
+  @override
+  String get emojiPickerComingSoon => 'Emoji picker coming soon!';
+
+  @override
+  String get startingVideoCall => 'Starting video call...';
+
+  @override
+  String get messageSent => 'Message sent';
+
+  @override
+  String get viewProfile => 'View Profile';
+
+  @override
+  String get muteChat => 'Mute Chat';
+
+  @override
+  String get unmuteChat => 'Unmute Chat';
+
+  @override
+  String get clearChat => 'Clear Chat';
+
+  @override
+  String get deleteChat => 'Delete Chat';
+
+  @override
+  String get chatOptions => 'Chat Options';
+
+  @override
+  String get addCourse => '코스 추가';
+
+  @override
+  String get seePeoplesChats => '사람들의 채팅 보기';
+
+  @override
+  String get searchCourses => '코스 검색...';
+
+  @override
+  String get popular => '인기';
+
+  @override
+  String get swapLanguages => '언어 바꾸기';
+
+  @override
+  String get enterTextToTranslate => '번역할 텍스트 입력';
 }

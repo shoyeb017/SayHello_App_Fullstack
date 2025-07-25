@@ -303,19 +303,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get learningLanguageShort => '学習言語';
 
   @override
-  String get allCourses => 'All Courses';
+  String get allCourses => '全コース';
 
   @override
-  String get play => 'Play';
+  String get play => 'プレイ';
 
   @override
-  String get translate => 'Translate';
+  String get translate => '翻訳';
 
   @override
-  String get japaneseAi => 'Japanese AI';
+  String get japaneseAi => '日本語AI';
 
   @override
-  String get more => 'More';
+  String get more => 'その他';
 
   @override
   String get howAreYou => 'Hello, how are you?';
@@ -327,10 +327,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get youWavedAt => 'You waved at';
 
   @override
-  String get search => 'Search';
+  String get search => '検索';
 
   @override
-  String get searchPeople => 'Search People';
+  String get searchPeople => '人を検索';
 
   @override
   String get courses => 'Courses';
@@ -366,7 +366,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get success => 'Success';
 
   @override
-  String get failed => 'Failed';
+  String get failed => '失敗';
 
   @override
   String get confirm => 'Confirm';
@@ -459,7 +459,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get finish => 'Finish';
 
   @override
-  String get done => 'Done';
+  String get done => '完了';
 
   @override
   String get complete => 'Complete';
@@ -538,4 +538,247 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get acknowledgments => 'Acknowledgments';
+
+  @override
+  String get languageTalks => '言語トーク';
+
+  @override
+  String get lastSeen => '最終接続';
+
+  @override
+  String get typeMessage => 'メッセージを入力...';
+
+  @override
+  String get justNow => 'たった今';
+
+  @override
+  String get minutesAgo => '分前';
+
+  @override
+  String get hoursAgo => '時間前';
+
+  @override
+  String get daysAgo => '日前';
+
+  @override
+  String get yesterday => '昨日';
+
+  @override
+  String get today => '今日';
+
+  @override
+  String get callStarted => '通話開始';
+
+  @override
+  String get videoCall => 'ビデオ通話';
+
+  @override
+  String get audioCall => '音声通話';
+
+  @override
+  String get endCall => '通話終了';
+
+  @override
+  String get answerCall => '応答';
+
+  @override
+  String get declineCall => '拒否';
+
+  @override
+  String get calling => '発信中...';
+
+  @override
+  String get connecting => '接続中...';
+
+  @override
+  String get connected => '接続済み';
+
+  @override
+  String get disconnected => '切断';
+
+  @override
+  String get retry => '再試行';
+
+  @override
+  String get block => 'ブロック';
+
+  @override
+  String get unblock => 'ブロック解除';
+
+  @override
+  String get report => '報告';
+
+  @override
+  String get reportUser => 'ユーザーを報告';
+
+  @override
+  String get blockUser => 'ユーザーをブロック';
+
+  @override
+  String get age => '年齢';
+
+  @override
+  String get interests => '興味';
+
+  @override
+  String get nativeLanguageLabel => '母国語';
+
+  @override
+  String get learningLanguageLabel => '学習言語';
+
+  @override
+  String get wave => '手を振る';
+
+  @override
+  String get waved => '手を振った';
+
+  @override
+  String get wavedAt => 'に手を振った';
+
+  @override
+  String get react => 'リアクション';
+
+  @override
+  String get reply => '返信';
+
+  @override
+  String get forward => '転送';
+
+  @override
+  String get messageInfo => 'メッセージ情報';
+
+  @override
+  String get delivered => '配信済み';
+
+  @override
+  String get read => '既読';
+
+  @override
+  String get sent => '送信済み';
+
+  @override
+  String get sending => '送信中';
+
+  @override
+  String get selectContact => '連絡先を選択';
+
+  @override
+  String get newMessage => '新規';
+
+  @override
+  String get newGroup => '新しいグループ';
+
+  @override
+  String get createGroup => 'グループ作成';
+
+  @override
+  String get groupName => 'グループ名';
+
+  @override
+  String get addMembers => 'メンバー追加';
+
+  @override
+  String get members => 'メンバー';
+
+  @override
+  String get admin => '管理者';
+
+  @override
+  String get moderator => 'モデレーター';
+
+  @override
+  String get member => 'メンバー';
+
+  @override
+  String get leaveGroup => 'グループを離れる';
+
+  @override
+  String get deleteGroup => 'グループを削除';
+
+  @override
+  String get groupInfo => 'グループ情報';
+
+  @override
+  String get editGroup => 'グループ編集';
+
+  @override
+  String get addMember => 'メンバー追加';
+
+  @override
+  String get removeMember => 'メンバー削除';
+
+  @override
+  String get makeAdmin => '管理者にする';
+
+  @override
+  String get removeAdmin => '管理者を削除';
+
+  @override
+  String get youLeft => 'あなたが退出しました';
+
+  @override
+  String get youJoined => 'あなたが参加しました';
+
+  @override
+  String get joined => 'が参加しました';
+
+  @override
+  String get left => 'が退出しました';
+
+  @override
+  String get wasRemoved => 'が削除されました';
+
+  @override
+  String get wasAdded => 'が追加されました';
+
+  @override
+  String get becameAdmin => 'が管理者になりました';
+
+  @override
+  String get noLongerAdmin => 'はもう管理者ではありません';
+
+  @override
+  String get emojiPickerComingSoon => 'Emoji picker coming soon!';
+
+  @override
+  String get startingVideoCall => 'Starting video call...';
+
+  @override
+  String get messageSent => 'Message sent';
+
+  @override
+  String get viewProfile => 'View Profile';
+
+  @override
+  String get muteChat => 'Mute Chat';
+
+  @override
+  String get unmuteChat => 'Unmute Chat';
+
+  @override
+  String get clearChat => 'Clear Chat';
+
+  @override
+  String get deleteChat => 'Delete Chat';
+
+  @override
+  String get chatOptions => 'Chat Options';
+
+  @override
+  String get addCourse => 'コース追加';
+
+  @override
+  String get seePeoplesChats => 'みんなのチャットを見る';
+
+  @override
+  String get searchCourses => 'コースを検索...';
+
+  @override
+  String get popular => '人気';
+
+  @override
+  String get swapLanguages => '言語を入れ替える';
+
+  @override
+  String get enterTextToTranslate => '翻訳するテキストを入力';
 }

@@ -310,7 +310,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get allCourses => 'Todos los Cursos';
 
   @override
-  String get play => 'Reproducir';
+  String get play => 'Jugar';
 
   @override
   String get translate => 'Traducir';
@@ -542,4 +542,247 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get acknowledgments => 'Reconocimientos';
+
+  @override
+  String get languageTalks => 'Conversaciones de Idiomas';
+
+  @override
+  String get lastSeen => 'Visto por última vez';
+
+  @override
+  String get typeMessage => 'Escribe un mensaje...';
+
+  @override
+  String get justNow => 'Ahora mismo';
+
+  @override
+  String get minutesAgo => 'minutos atrás';
+
+  @override
+  String get hoursAgo => 'horas atrás';
+
+  @override
+  String get daysAgo => 'días atrás';
+
+  @override
+  String get yesterday => 'Ayer';
+
+  @override
+  String get today => 'Hoy';
+
+  @override
+  String get callStarted => 'Llamada iniciada';
+
+  @override
+  String get videoCall => 'Videollamada';
+
+  @override
+  String get audioCall => 'Llamada de audio';
+
+  @override
+  String get endCall => 'Finalizar llamada';
+
+  @override
+  String get answerCall => 'Responder llamada';
+
+  @override
+  String get declineCall => 'Rechazar llamada';
+
+  @override
+  String get calling => 'Llamando...';
+
+  @override
+  String get connecting => 'Conectando...';
+
+  @override
+  String get connected => 'Conectado';
+
+  @override
+  String get disconnected => 'Desconectado';
+
+  @override
+  String get retry => 'Reintentar';
+
+  @override
+  String get block => 'Bloquear';
+
+  @override
+  String get unblock => 'Desbloquear';
+
+  @override
+  String get report => 'Reportar';
+
+  @override
+  String get reportUser => 'Reportar Usuario';
+
+  @override
+  String get blockUser => 'Bloquear Usuario';
+
+  @override
+  String get age => 'Edad';
+
+  @override
+  String get interests => 'Intereses';
+
+  @override
+  String get nativeLanguageLabel => 'Idioma Nativo';
+
+  @override
+  String get learningLanguageLabel => 'Idioma de Aprendizaje';
+
+  @override
+  String get wave => 'Saludar';
+
+  @override
+  String get waved => 'Saludó';
+
+  @override
+  String get wavedAt => 'saludó a';
+
+  @override
+  String get react => 'Reaccionar';
+
+  @override
+  String get reply => 'Responder';
+
+  @override
+  String get forward => 'Reenviar';
+
+  @override
+  String get messageInfo => 'Info del Mensaje';
+
+  @override
+  String get delivered => 'Entregado';
+
+  @override
+  String get read => 'Leído';
+
+  @override
+  String get sent => 'Enviado';
+
+  @override
+  String get sending => 'Enviando';
+
+  @override
+  String get selectContact => 'Seleccionar Contacto';
+
+  @override
+  String get newMessage => 'Nuevo';
+
+  @override
+  String get newGroup => 'Nuevo Grupo';
+
+  @override
+  String get createGroup => 'Crear Grupo';
+
+  @override
+  String get groupName => 'Nombre del Grupo';
+
+  @override
+  String get addMembers => 'Agregar Miembros';
+
+  @override
+  String get members => 'Miembros';
+
+  @override
+  String get admin => 'Administrador';
+
+  @override
+  String get moderator => 'Moderador';
+
+  @override
+  String get member => 'Miembro';
+
+  @override
+  String get leaveGroup => 'Abandonar Grupo';
+
+  @override
+  String get deleteGroup => 'Eliminar Grupo';
+
+  @override
+  String get groupInfo => 'Info del Grupo';
+
+  @override
+  String get editGroup => 'Editar Grupo';
+
+  @override
+  String get addMember => 'Agregar Miembro';
+
+  @override
+  String get removeMember => 'Eliminar Miembro';
+
+  @override
+  String get makeAdmin => 'Hacer Administrador';
+
+  @override
+  String get removeAdmin => 'Quitar Administrador';
+
+  @override
+  String get youLeft => 'Te fuiste';
+
+  @override
+  String get youJoined => 'Te uniste';
+
+  @override
+  String get joined => 'se unió';
+
+  @override
+  String get left => 'se fue';
+
+  @override
+  String get wasRemoved => 'fue eliminado';
+
+  @override
+  String get wasAdded => 'fue agregado';
+
+  @override
+  String get becameAdmin => 'se convirtió en administrador';
+
+  @override
+  String get noLongerAdmin => 'ya no es administrador';
+
+  @override
+  String get emojiPickerComingSoon => 'Emoji picker coming soon!';
+
+  @override
+  String get startingVideoCall => 'Starting video call...';
+
+  @override
+  String get messageSent => 'Message sent';
+
+  @override
+  String get viewProfile => 'View Profile';
+
+  @override
+  String get muteChat => 'Mute Chat';
+
+  @override
+  String get unmuteChat => 'Unmute Chat';
+
+  @override
+  String get clearChat => 'Clear Chat';
+
+  @override
+  String get deleteChat => 'Delete Chat';
+
+  @override
+  String get chatOptions => 'Chat Options';
+
+  @override
+  String get addCourse => 'Agregar Curso';
+
+  @override
+  String get seePeoplesChats => 'Ver Conversaciones de Personas';
+
+  @override
+  String get searchCourses => 'Buscar cursos...';
+
+  @override
+  String get popular => 'Popular';
+
+  @override
+  String get swapLanguages => 'Intercambiar idiomas';
+
+  @override
+  String get enterTextToTranslate => 'Ingresa texto para traducir';
 }

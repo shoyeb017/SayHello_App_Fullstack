@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 
 import 'chat_item.dart';
 
@@ -42,7 +43,7 @@ class _SearchPeopleInHomeState extends State<SearchPeopleInHome> {
                           vertical: 10,
                         ),
                         prefixIcon: const Icon(Icons.search, size: 20),
-                        hintText: "Search People",
+                        hintText: AppLocalizations.of(context)!.searchPeople,
                         hintStyle: const TextStyle(fontSize: 16),
                         filled: true,
                         fillColor: theme.brightness == Brightness.dark
@@ -57,7 +58,7 @@ class _SearchPeopleInHomeState extends State<SearchPeopleInHome> {
                   ),
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text("Cancel"),
+                    child: Text(AppLocalizations.of(context)!.cancel),
                   ),
                 ],
               ),
@@ -161,7 +162,7 @@ class _ChatTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'New',
+                  AppLocalizations.of(context)!.newMessage,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: const Color(0xFF765ae3),
                     fontWeight: FontWeight.w600,
