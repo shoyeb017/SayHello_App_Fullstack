@@ -165,43 +165,43 @@ class HomePage extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const AllCourses()),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF00C853).withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Icon(
-                          Icons.menu_book_outlined,
-                          size: 26,
-                          color: Color(0xFF00C853),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      SizedBox(
-                        width: 72,
-                        child: Text(
-                          AppLocalizations.of(context)!.allCourses,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 11),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
+                // GestureDetector(
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (_) => const AllCourses()),
+                //     );
+                //   },
+                //   child: Column(
+                //     children: [
+                //       Container(
+                //         width: 50,
+                //         height: 50,
+                //         decoration: BoxDecoration(
+                //           color: const Color(0xFF00C853).withOpacity(0.15),
+                //           borderRadius: BorderRadius.circular(16),
+                //         ),
+                //         child: const Icon(
+                //           Icons.menu_book_outlined,
+                //           size: 26,
+                //           color: Color(0xFF00C853),
+                //         ),
+                //       ),
+                //       const SizedBox(height: 4),
+                //       SizedBox(
+                //         width: 72,
+                //         child: Text(
+                //           AppLocalizations.of(context)!.allCourses,
+                //           textAlign: TextAlign.center,
+                //           style: TextStyle(fontSize: 11),
+                //           maxLines: 1,
+                //           overflow: TextOverflow.ellipsis,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // const SizedBox(width: 12),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(

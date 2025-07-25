@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../Feed/feed_page.dart';
+import '../../Chat/chat.dart';
 
 class OthersProfilePage extends StatefulWidget {
   final String userId;
@@ -32,6 +33,9 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -511,23 +515,16 @@ class _OthersProfilePageState extends State<OthersProfilePage>
           ),
         ),
 
-        // Tab content
-        Container(
-          height: 600,
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildProfileTab(isDark, primaryColor),
-              _buildFeedTab(isDark),
-            ],
-          ),
-        ),
+        // Tab content without fixed height
+        _tabController.index == 0
+            ? _buildProfileTab(isDark, primaryColor)
+            : _buildFeedTab(isDark),
       ],
     );
   }
 
   Widget _buildProfileTab(bool isDark, Color primaryColor) {
-    return SingleChildScrollView(
+    return Padding(
       padding: EdgeInsets.symmetric(vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -619,23 +616,23 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   }
 
   Widget _buildFeedTab(bool isDark) {
-    return ListView.builder(
+    return Padding(
       padding: EdgeInsets.symmetric(vertical: 16),
-      itemCount: userPosts.length,
-      itemBuilder: (context, index) {
-        final post = userPosts[index];
-        return Padding(
-          padding: EdgeInsets.only(bottom: 16),
-          child: FeedPostCard(
-            post: post,
-            comments: [], // Empty comments for profile view
-            likes: [], // Empty likes for profile view
-            onLikePressed: () {
-              // Handle like functionality
-            },
-          ),
-        );
-      },
+      child: Column(
+        children: userPosts.map((post) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: FeedPostCard(
+              post: post,
+              comments: [], // Empty comments for profile view
+              likes: [], // Empty likes for profile view
+              onLikePressed: () {
+                // Handle like functionality
+              },
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -683,8 +680,26 @@ class _OthersProfilePageState extends State<OthersProfilePage>
               child: ElevatedButton(
                 onPressed: () {
                   // Navigate to chat page
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Opening chat with ${widget.name}")),
+                  final chatUser = ChatUser(
+                    id: widget.userId,
+                    name: widget.name,
+                    avatarUrl: widget.avatar,
+                    country: location,
+                    flag: "🇯🇵",
+                    age: age,
+                    gender: gender,
+                    isOnline: true,
+                    lastSeen: DateTime.now().subtract(Duration(minutes: 5)),
+                    interests: interests,
+                    nativeLanguage: widget.nativeLanguage,
+                    learningLanguage: widget.learningLanguage,
+                  );
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatDetailPage(user: chatUser),
+                    ),
                   );
                 },
                 style: ElevatedButton.styleFrom(
