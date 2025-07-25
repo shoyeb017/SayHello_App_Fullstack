@@ -1,0 +1,110 @@
+{
+  "appTitle": "SayHello",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "practiceLanguages": "Practice 5+ languages",
+  "@practiceLanguages": {
+    "description": "Subtitle about practicing languages"
+  },
+  "meetFriends": "Meet 50 million global friends",
+  "@meetFriends": {
+    "description": "Subtitle about meeting friends"
+  },
+  "iAmLearner": "I am a Learner",
+  "@iAmLearner": {
+    "description": "Button text for learner login"
+  },
+  "iAmInstructor": "I am an Instructor",
+  "@iAmInstructor": {
+    "description": "Button text for instructor login"
+  },
+  "termsOfService": "Terms of Service",
+  "@termsOfService": {
+    "description": "Terms of service link text"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Privacy policy link text"
+  },
+  "agreementText": "Your first login creates your account, and in doing so you agree to our",
+  "@agreementText": {
+    "description": "Agreement text before terms and privacy policy links"
+  },
+  "and": "and",
+  "@and": {
+    "description": "Conjunction word"
+  },
+  "hello": "Hello!",
+  "@hello": {
+    "description": "General greeting"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language selector label"
+  },
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Language selector popup title"
+  },
+  "learnerSignIn": "Learner Sign In",
+  "@learnerSignIn": {
+    "description": "Learner sign in page title"
+  },
+  "instructorSignIn": "Instructor Sign In",
+  "@instructorSignIn": {
+    "description": "Instructor sign in page title"
+  },
+  "welcomeBack": "Welcome Back",
+  "@welcomeBack": {
+    "description": "Welcome message on sign in page"
+  },
+  "signInToContinue": "Sign in to continue learning.",
+  "@signInToContinue": {
+    "description": "Sign in page subtitle"
+  },
+  "username": "Username",
+  "@username": {
+    "description": "Username field label"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Password field label"
+  },
+  "signIn": "Sign In",
+  "@signIn": {
+    "description": "Sign in button text"
+  },
+  "signUp": "Sign Up",
+  "@signUp": {
+    "description": "Sign up button text"
+  },
+  "learnerSignUp": "Learner Sign Up",
+  "@learnerSignUp": {
+    "description": "Learner sign up page title"
+  },
+  "instructorSignUp": "Instructor Sign Up",
+  "@instructorSignUp": {
+    "description": "Instructor sign up page title"
+  },
+  "createAccount": "Create Account",
+  "@createAccount": {
+    "description": "Create account header text"
+  },
+  "joinCommunity": "Join our learning community.",
+  "@joinCommunity": {
+    "description": "Sign up page subtitle"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Email field label"
+  },
+  "confirmPassword": "Confirm Password",
+  "@confirmPassword": {
+    "description": "Confirm password field label"
+  },
+  "alreadyHaveAccount": "Already have an account?",
+  "@alreadyHaveAccount": {
+    "description": "Link text to sign in page"
+  }
+}

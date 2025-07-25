@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../widgets/language_selector.dart';
+import '../../l10n/app_localizations.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({Key? key}) : super(key: key);
@@ -94,7 +96,7 @@ class _LandingPageState extends State<LandingPage>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "SayHello",
+                          AppLocalizations.of(context)!.appTitle,
                           style: TextStyle(
                             fontSize: 36,
                             fontWeight: FontWeight.w700,
@@ -105,14 +107,14 @@ class _LandingPageState extends State<LandingPage>
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          "Practice 5+ languages",
+                          AppLocalizations.of(context)!.practiceLanguages,
                           style: TextStyle(
                             fontSize: 18,
                             color: isDark ? Colors.white : Colors.black,
                           ),
                         ),
                         Text(
-                          "Meet 50 million global friends",
+                          AppLocalizations.of(context)!.meetFriends,
                           style: TextStyle(
                             fontSize: 18,
                             color: isDark ? Colors.white : Colors.black,
@@ -121,6 +123,9 @@ class _LandingPageState extends State<LandingPage>
                       ],
                     ),
                   ),
+                  // Language selector
+                  const LanguageSelector(),
+                  // Theme toggle button
                   IconButton(
                     icon: Icon(
                       themeProvider.themeMode == ThemeMode.dark
@@ -176,8 +181,8 @@ class _LandingPageState extends State<LandingPage>
                       color: Colors.white,
                       size: 24,
                     ),
-                    label: const Text(
-                      "I am a Learner",
+                    label: Text(
+                      AppLocalizations.of(context)!.iAmLearner,
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     style: ElevatedButton.styleFrom(
@@ -198,8 +203,8 @@ class _LandingPageState extends State<LandingPage>
                       color: Color(0xFF7a54ff),
                       size: 24,
                     ),
-                    label: const Text(
-                      "I am an Instructor",
+                    label: Text(
+                      AppLocalizations.of(context)!.iAmInstructor,
                       style: TextStyle(color: Color(0xFF7a54ff), fontSize: 20),
                     ),
                     style: OutlinedButton.styleFrom(
@@ -216,24 +221,24 @@ class _LandingPageState extends State<LandingPage>
             ),
 
             const SizedBox(height: 24),
-            const Text.rich(
+            Text.rich(
               TextSpan(
-                text:
-                    'Your first login creates your account, and in doing so you agree to our ',
+                text: AppLocalizations.of(context)!.agreementText,
                 children: [
+                  const TextSpan(text: ' '),
                   TextSpan(
-                    text: 'Terms of Service',
-                    style: TextStyle(color: Colors.blue),
+                    text: AppLocalizations.of(context)!.termsOfService,
+                    style: const TextStyle(color: Colors.blue),
                   ),
-                  TextSpan(text: ' and '),
+                  TextSpan(text: ' ${AppLocalizations.of(context)!.and} '),
                   TextSpan(
-                    text: 'Privacy Policy',
-                    style: TextStyle(color: Colors.blue),
+                    text: AppLocalizations.of(context)!.privacyPolicy,
+                    style: const TextStyle(color: Colors.blue),
                   ),
                 ],
               ),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12),
+              style: const TextStyle(fontSize: 12),
             ),
             const SizedBox(height: 12),
           ],

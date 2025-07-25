@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/theme_provider.dart';
+import 'providers/language_provider.dart';
+import 'l10n/app_localizations.dart';
 
 import 'screens/auth/landing_page.dart';
 import 'package:sayhello_app_frontend/screens/auth/learner_signin.dart';
@@ -14,8 +17,11 @@ import 'screens/instructor/instructor_main_tab.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -50,15 +56,29 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final languageProvider = Provider.of<LanguageProvider>(context);
 
     return MaterialApp(
       title: 'SayHello App',
       debugShowCheckedModeBanner: false,
-      themeMode: themeProvider.themeMode,   // system / light / dark
-      theme: ThemeData.light(),             // light theme
-      darkTheme: customDarkTheme,           // custom dark theme
-      // home: const LearnerMainTab(),
-      // home: const LandingPage(),
+      themeMode: themeProvider.themeMode, // system / light / dark
+      theme: ThemeData.light(), // light theme
+      darkTheme: customDarkTheme, // custom dark theme
+      // Internationalization configuration
+      locale: languageProvider.currentLocale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''), // English
+        Locale('es', ''), // Spanish
+        Locale('ja', ''), // Japanese
+        Locale('bn', ''), // Bangla
+        Locale('ko', ''), // Korean
+      ],
 
       initialRoute: '/',
       routes: {
