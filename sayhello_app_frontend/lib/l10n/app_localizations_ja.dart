@@ -147,7 +147,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get tapToAddPhoto => 'タップして写真を追加';
 
   @override
-  String get home => 'SayHello';
+  String get home => 'ホーム';
 
   @override
   String get connect => 'つながる';
@@ -333,13 +333,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get searchPeople => '人を検索';
 
   @override
-  String get courses => 'Courses';
+  String get courses => 'コース';
 
   @override
   String get chat => 'Chat';
 
   @override
-  String get online => 'Online';
+  String get online => 'オンライン';
 
   @override
   String get offline => 'Offline';
@@ -387,7 +387,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get open => 'Open';
 
   @override
-  String get view => 'View';
+  String get view => '表示';
 
   @override
   String get add => 'Add';
@@ -420,7 +420,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get clear => 'Clear';
 
   @override
-  String get reset => 'Reset';
+  String get reset => 'リセット';
 
   @override
   String get apply => 'Apply';
@@ -435,7 +435,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get upload => 'Upload';
 
   @override
-  String get download => 'Download';
+  String get download => 'ダウンロード';
 
   @override
   String get importData => 'Import';
@@ -462,7 +462,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get done => '完了';
 
   @override
-  String get complete => 'Complete';
+  String get complete => '完了';
 
   @override
   String get start => 'Start';
@@ -559,6 +559,21 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get daysAgo => '日前';
+
+  @override
+  String daysAgoCount(int count) {
+    return '$count日前';
+  }
+
+  @override
+  String hoursAgoCount(int count) {
+    return '$count時間前';
+  }
+
+  @override
+  String minutesAgoCount(int count) {
+    return '$count分前';
+  }
 
   @override
   String get yesterday => '昨日';
@@ -663,7 +678,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get selectContact => '連絡先を選択';
 
   @override
-  String get newMessage => '新規';
+  String get newMessage => '新しいメッセージ';
 
   @override
   String get newGroup => '新しいグループ';
@@ -774,6 +789,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get searchCourses => 'コースを検索...';
 
   @override
+  String get newLabel => '新規';
+
+  @override
   String get popular => '人気';
 
   @override
@@ -781,4 +799,280 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get enterTextToTranslate => '翻訳するテキストを入力';
+
+  @override
+  String get recent => '最近';
+
+  @override
+  String get forYou => 'おすすめ';
+
+  @override
+  String get likes => 'いいね';
+
+  @override
+  String get comments => 'コメント';
+
+  @override
+  String viewAllComments(int count) {
+    return 'すべての$count件のコメントを見る';
+  }
+
+  @override
+  String get seeMore => 'もっと見る';
+
+  @override
+  String get seeLess => '少なく';
+
+  @override
+  String get translated => '翻訳済み';
+
+  @override
+  String get following => 'フォロー中';
+
+  @override
+  String get follow => 'フォロー';
+
+  @override
+  String get details => '詳細';
+
+  @override
+  String get likedBy => 'いいねしたユーザー';
+
+  @override
+  String get addComment => 'コメントを追加...';
+
+  @override
+  String get findPartners => 'パートナーを探す';
+
+  @override
+  String get all => 'すべて';
+
+  @override
+  String get seriousLearners => '真剣な学習者';
+
+  @override
+  String get nearby => '近く';
+
+  @override
+  String get languageLevel => '言語レベル';
+
+  @override
+  String get elementary => '初級';
+
+  @override
+  String get proficient => '上達';
+
+  @override
+  String get newUsers => '新規ユーザー';
+
+  @override
+  String get advancedSearch => '詳細検索';
+
+  @override
+  String get regionOfLanguagePartner => '言語パートナーの地域';
+
+  @override
+  String get cityOfLanguagePartner => '言語パートナーの都市';
+
+  @override
+  String commentsWithCount(int count) {
+    return 'コメント ($count)';
+  }
+
+  @override
+  String likesWithCount(int count) {
+    return '$count いいね >';
+  }
+
+  @override
+  String get noLikesYet => 'まだいいねがありません';
+
+  @override
+  String get now => 'たった今';
+
+  @override
+  String get you => 'あなた';
+
+  @override
+  String get languageLearn => '言語学習';
+
+  @override
+  String get enrolled => '受講中';
+
+  @override
+  String get otherCourses => 'その他のコース';
+
+  @override
+  String get students => '学生';
+
+  @override
+  String get completed => '完了';
+
+  @override
+  String get inProgress => '進行中';
+
+  @override
+  String get courseCompleted => 'コースが正常に完了しました！';
+
+  @override
+  String get viewAll => 'すべて表示';
+
+  @override
+  String get instructor => '講師';
+
+  @override
+  String get courseDescription => 'コース説明';
+
+  @override
+  String get duration => '期間';
+
+  @override
+  String get startDate => '開始日';
+
+  @override
+  String get endDate => '終了日';
+
+  @override
+  String get price => '価格';
+
+  @override
+  String get enrollFor => '申し込み';
+
+  @override
+  String get enrolledSuccessfully => '正常に登録されました！';
+
+  @override
+  String get courseDetails => 'コース詳細';
+
+  @override
+  String get onlineSessions => 'オンラインセッション';
+
+  @override
+  String get recordedClasses => '録画授業';
+
+  @override
+  String get studyMaterials => '学習教材';
+
+  @override
+  String get groupChat => 'グループチャット';
+
+  @override
+  String get progress => '進捗';
+
+  @override
+  String get yourLearningJourney => 'あなたの学習の旅';
+
+  @override
+  String get learningPortal => '学習ポータル';
+
+  @override
+  String get courseDiscussion => 'コースディスカッション';
+
+  @override
+  String get participants => '参加者';
+
+  @override
+  String get typeYourMessage => 'メッセージを入力...';
+
+  @override
+  String get completedLowercase => '完了済み';
+
+  @override
+  String get allEnrolledCourses => 'すべての受講コース';
+
+  @override
+  String get allOtherCourses => 'すべてのその他のコース';
+
+  @override
+  String get noCoursesFound => 'コースが見つかりませんでした';
+
+  @override
+  String get liveSessions => 'ライブセッション';
+
+  @override
+  String get joinInteractiveSessions => 'インストラクターとの対話型セッションに参加';
+
+  @override
+  String get totalSessions => '総セッション数';
+
+  @override
+  String get attended => '参加済み';
+
+  @override
+  String get scheduledSessions => '予定されたセッション';
+
+  @override
+  String get topicsCovered => '扱うトピック:';
+
+  @override
+  String get reminderSetFor => 'リマインダーを設定しました';
+
+  @override
+  String get joining => '参加中';
+
+  @override
+  String get loadingRecordingFor => '録画を読み込み中';
+
+  @override
+  String get joinSession => 'セッションに参加';
+
+  @override
+  String get setReminder => 'リマインダー設定';
+
+  @override
+  String get viewRecording => '録画を見る';
+
+  @override
+  String get sessionCancelled => 'セッションキャンセル';
+
+  @override
+  String get viewDetails => '詳細を見る';
+
+  @override
+  String get learningProgress => '学習進捗';
+
+  @override
+  String get trackYourLearningJourney => '学習の旅と成果を追跡';
+
+  @override
+  String get overallProgress => '全体の進捗';
+
+  @override
+  String get courseModules => 'コースモジュール';
+
+  @override
+  String get accessAllRecordedSessions => '録画されたセッションにいつでもアクセス';
+
+  @override
+  String get totalVideos => '総動画数';
+
+  @override
+  String get videoLibrary => '動画ライブラリ';
+
+  @override
+  String get newText => '新着';
+
+  @override
+  String get playing => '再生中';
+
+  @override
+  String get downloading => 'ダウンロード中';
+
+  @override
+  String get downloadAndAccessMaterials => 'コース教材をダウンロード・アクセス';
+
+  @override
+  String get totalMaterials => '総教材数';
+
+  @override
+  String get downloaded => 'ダウンロード済み';
+
+  @override
+  String get totalSize => '総サイズ';
+
+  @override
+  String get opening => '開いています';
+
+  @override
+  String get watched => '視聴済み';
 }

@@ -149,13 +149,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get tapToAddPhoto => 'Toca para agregar foto';
 
   @override
-  String get home => 'SayHello';
+  String get home => 'Inicio';
 
   @override
   String get connect => 'Conectar';
 
   @override
-  String get feed => 'Feed';
+  String get feed => 'Noticias';
 
   @override
   String get learn => 'Aprender';
@@ -343,7 +343,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get chat => 'Chat';
 
   @override
-  String get online => 'En línea';
+  String get online => 'en línea';
 
   @override
   String get offline => 'Desconectado';
@@ -466,7 +466,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get done => 'Hecho';
 
   @override
-  String get complete => 'Completar';
+  String get complete => 'Completo';
 
   @override
   String get start => 'Iniciar';
@@ -563,6 +563,21 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get daysAgo => 'días atrás';
+
+  @override
+  String daysAgoCount(int count) {
+    return 'hace ${count}d';
+  }
+
+  @override
+  String hoursAgoCount(int count) {
+    return 'hace ${count}h';
+  }
+
+  @override
+  String minutesAgoCount(int count) {
+    return 'hace ${count}m';
+  }
 
   @override
   String get yesterday => 'Ayer';
@@ -667,7 +682,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectContact => 'Seleccionar Contacto';
 
   @override
-  String get newMessage => 'Nuevo';
+  String get newMessage => 'Nuevo Mensaje';
 
   @override
   String get newGroup => 'Nuevo Grupo';
@@ -778,6 +793,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get searchCourses => 'Buscar cursos...';
 
   @override
+  String get newLabel => 'Nuevo';
+
+  @override
   String get popular => 'Popular';
 
   @override
@@ -785,4 +803,284 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get enterTextToTranslate => 'Ingresa texto para traducir';
+
+  @override
+  String get recent => 'Reciente';
+
+  @override
+  String get forYou => 'Para Ti';
+
+  @override
+  String get likes => 'Me gusta';
+
+  @override
+  String get comments => 'Comentarios';
+
+  @override
+  String viewAllComments(int count) {
+    return 'Ver todos los $count comentarios';
+  }
+
+  @override
+  String get seeMore => 'más';
+
+  @override
+  String get seeLess => 'menos';
+
+  @override
+  String get translated => 'Traducido';
+
+  @override
+  String get following => 'Siguiendo';
+
+  @override
+  String get follow => 'Seguir';
+
+  @override
+  String get details => 'Detalles';
+
+  @override
+  String get likedBy => 'Le gustó a';
+
+  @override
+  String get addComment => 'Agregar comentario...';
+
+  @override
+  String get findPartners => 'Encontrar Compañeros';
+
+  @override
+  String get all => 'Todos';
+
+  @override
+  String get seriousLearners => 'Estudiantes Serios';
+
+  @override
+  String get nearby => 'Cerca';
+
+  @override
+  String get languageLevel => 'Nivel de Idioma';
+
+  @override
+  String get elementary => 'Elemental';
+
+  @override
+  String get proficient => 'Competente';
+
+  @override
+  String get newUsers => 'Usuarios Nuevos';
+
+  @override
+  String get advancedSearch => 'Búsqueda Avanzada';
+
+  @override
+  String get regionOfLanguagePartner => 'Región del compañero de idioma';
+
+  @override
+  String get cityOfLanguagePartner => 'Ciudad del compañero de idioma';
+
+  @override
+  String commentsWithCount(int count) {
+    return 'Comentarios ($count)';
+  }
+
+  @override
+  String likesWithCount(int count) {
+    return '$count Me gusta >';
+  }
+
+  @override
+  String get noLikesYet => 'Sin me gusta todavía';
+
+  @override
+  String get now => 'ahora';
+
+  @override
+  String get you => 'Tú';
+
+  @override
+  String get languageLearn => 'Aprender Idiomas';
+
+  @override
+  String get enrolled => 'Inscrito';
+
+  @override
+  String get otherCourses => 'Otros Cursos';
+
+  @override
+  String get students => 'estudiantes';
+
+  @override
+  String get completed => 'Completado';
+
+  @override
+  String get inProgress => 'En Progreso';
+
+  @override
+  String get courseCompleted => '¡Curso completado exitosamente!';
+
+  @override
+  String get viewAll => 'Ver Todo';
+
+  @override
+  String get instructor => 'Instructor';
+
+  @override
+  String get courseDescription => 'Descripción del Curso';
+
+  @override
+  String get duration => 'Duración';
+
+  @override
+  String get startDate => 'Fecha de Inicio';
+
+  @override
+  String get endDate => 'Fecha de Fin';
+
+  @override
+  String get price => 'Precio';
+
+  @override
+  String get enrollFor => 'Inscribirse por';
+
+  @override
+  String get enrolledSuccessfully => '¡Inscripción exitosa!';
+
+  @override
+  String get courseDetails => 'Detalles del Curso';
+
+  @override
+  String get onlineSessions => 'Sesiones en Línea';
+
+  @override
+  String get recordedClasses => 'Clases Grabadas';
+
+  @override
+  String get studyMaterials => 'Material de Estudio';
+
+  @override
+  String get groupChat => 'Chat Grupal';
+
+  @override
+  String get progress => 'Progreso';
+
+  @override
+  String get yourLearningJourney => 'Tu Camino de Aprendizaje';
+
+  @override
+  String get learningPortal => 'Portal de Aprendizaje';
+
+  @override
+  String get courseDiscussion => 'Discusión del Curso';
+
+  @override
+  String get participants => 'participantes';
+
+  @override
+  String get typeYourMessage => 'Escribe tu mensaje...';
+
+  @override
+  String get completedLowercase => 'completado';
+
+  @override
+  String get allEnrolledCourses => 'Todos los Cursos Inscritos';
+
+  @override
+  String get allOtherCourses => 'Todos los Otros Cursos';
+
+  @override
+  String get noCoursesFound => 'No se encontraron cursos';
+
+  @override
+  String get liveSessions => 'Sesiones en Vivo';
+
+  @override
+  String get joinInteractiveSessions =>
+      'Únete a sesiones interactivas con tu instructor';
+
+  @override
+  String get totalSessions => 'Total de Sesiones';
+
+  @override
+  String get attended => 'Asistido';
+
+  @override
+  String get scheduledSessions => 'Sesiones Programadas';
+
+  @override
+  String get topicsCovered => 'Temas Cubiertos:';
+
+  @override
+  String get reminderSetFor => 'Recordatorio programado para';
+
+  @override
+  String get joining => 'Uniéndose';
+
+  @override
+  String get loadingRecordingFor => 'Cargando grabación para';
+
+  @override
+  String get joinSession => 'Unirse a Sesión';
+
+  @override
+  String get setReminder => 'Programar Recordatorio';
+
+  @override
+  String get viewRecording => 'Ver Grabación';
+
+  @override
+  String get sessionCancelled => 'Sesión Cancelada';
+
+  @override
+  String get viewDetails => 'Ver Detalles';
+
+  @override
+  String get learningProgress => 'Progreso de Aprendizaje';
+
+  @override
+  String get trackYourLearningJourney =>
+      'Rastrea tu camino de aprendizaje y logros';
+
+  @override
+  String get overallProgress => 'Progreso General';
+
+  @override
+  String get courseModules => 'Módulos del Curso';
+
+  @override
+  String get accessAllRecordedSessions =>
+      'Accede a todas las sesiones grabadas en cualquier momento';
+
+  @override
+  String get totalVideos => 'Total de Videos';
+
+  @override
+  String get videoLibrary => 'Biblioteca de Videos';
+
+  @override
+  String get newText => 'Nuevo';
+
+  @override
+  String get playing => 'Reproduciendo';
+
+  @override
+  String get downloading => 'Descargando';
+
+  @override
+  String get downloadAndAccessMaterials =>
+      'Descarga y accede a materiales del curso';
+
+  @override
+  String get totalMaterials => 'Total de Materiales';
+
+  @override
+  String get downloaded => 'Descargado';
+
+  @override
+  String get totalSize => 'Tamaño Total';
+
+  @override
+  String get opening => 'Abriendo';
+
+  @override
+  String get watched => 'Visto';
 }

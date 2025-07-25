@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class GroupChatTab extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -128,7 +129,7 @@ class _GroupChatTabState extends State<GroupChatTab> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Course Discussion',
+                      AppLocalizations.of(context)!.courseDiscussion,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -138,7 +139,7 @@ class _GroupChatTabState extends State<GroupChatTab> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      '$onlineCount online • ${_participants.length} participants',
+                      '${onlineCount} ${AppLocalizations.of(context)!.online} • ${_participants.length} ${AppLocalizations.of(context)!.participants}',
                       style: TextStyle(fontSize: 12, color: subTextColor),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -234,9 +235,9 @@ class _GroupChatTabState extends State<GroupChatTab> {
                                       color: Colors.purple.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(6),
                                     ),
-                                    child: const Text(
-                                      'Instructor',
-                                      style: TextStyle(
+                                    child: Text(
+                                      AppLocalizations.of(context)!.instructor,
+                                      style: const TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w600,
                                         color: Colors.purple,
@@ -325,7 +326,7 @@ class _GroupChatTabState extends State<GroupChatTab> {
                 child: TextField(
                   controller: _controller,
                   decoration: InputDecoration(
-                    hintText: 'Type your message...',
+                    hintText: AppLocalizations.of(context)!.typeYourMessage,
                     hintStyle: TextStyle(color: subTextColor),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(24),

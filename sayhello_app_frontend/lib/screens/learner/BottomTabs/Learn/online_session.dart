@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class OnlineSessionTab extends StatelessWidget {
   final Map<String, dynamic> course;
@@ -102,7 +103,7 @@ class OnlineSessionTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(
                       Icons.video_call,
@@ -113,7 +114,7 @@ class OnlineSessionTab extends StatelessWidget {
                     Expanded(
                       // Prevent overflow
                       child: Text(
-                        'Live Sessions',
+                        AppLocalizations.of(context)!.liveSessions,
                         style: TextStyle(
                           fontSize: 20, // Reduced font size
                           fontWeight: FontWeight.bold,
@@ -126,8 +127,8 @@ class OnlineSessionTab extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  'Join interactive sessions with your instructor',
+                Text(
+                  AppLocalizations.of(context)!.joinInteractiveSessions,
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.white70,
@@ -142,13 +143,13 @@ class OnlineSessionTab extends StatelessWidget {
                   runSpacing: 8,
                   children: [
                     _buildStatCard(
-                      'Total Sessions',
+                      AppLocalizations.of(context)!.totalSessions,
                       '${sessions.length}',
                       Icons.event,
                     ),
                     const SizedBox(width: 16),
                     _buildStatCard(
-                      'Attended',
+                      AppLocalizations.of(context)!.attended,
                       '${sessions.where((s) => s['status'] == 'completed').length}',
                       Icons.check_circle,
                     ),
@@ -162,7 +163,7 @@ class OnlineSessionTab extends StatelessWidget {
 
           // Sessions List
           Text(
-            'Scheduled Sessions',
+            AppLocalizations.of(context)!.scheduledSessions,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -306,7 +307,7 @@ class OnlineSessionTab extends StatelessWidget {
                             if (session['topics'] != null) ...[
                               const SizedBox(height: 16),
                               Text(
-                                'Topics Covered:',
+                                AppLocalizations.of(context)!.topicsCovered,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
@@ -371,7 +372,7 @@ class OnlineSessionTab extends StatelessWidget {
                                   }
                                 },
                                 child: Text(
-                                  _getButtonText(session['status']),
+                                  _getButtonText(session['status'], context),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
@@ -462,18 +463,18 @@ class OnlineSessionTab extends StatelessWidget {
     }
   }
 
-  String _getButtonText(String? status) {
+  String _getButtonText(String? status, BuildContext context) {
     switch (status) {
       case 'live':
-        return 'Join Session';
+        return AppLocalizations.of(context)!.joinSession;
       case 'upcoming':
-        return 'Set Reminder';
+        return AppLocalizations.of(context)!.setReminder;
       case 'completed':
-        return 'View Recording';
+        return AppLocalizations.of(context)!.viewRecording;
       case 'cancelled':
-        return 'Session Cancelled';
+        return AppLocalizations.of(context)!.sessionCancelled;
       default:
-        return 'View Details';
+        return AppLocalizations.of(context)!.viewDetails;
     }
   }
 
@@ -483,7 +484,9 @@ class OnlineSessionTab extends StatelessWidget {
   ) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Reminder set for ${session['title']}'),
+        content: Text(
+          '${AppLocalizations.of(context)!.reminderSetFor} ${session['title']}',
+        ),
         backgroundColor: Colors.purple.shade400,
       ),
     );
@@ -492,7 +495,9 @@ class OnlineSessionTab extends StatelessWidget {
   void _joinSession(BuildContext context, Map<String, dynamic> session) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Joining ${session['title']}...'),
+        content: Text(
+          '${AppLocalizations.of(context)!.joining} ${session['title']}...',
+        ),
         backgroundColor: Colors.purple.shade600,
       ),
     );
@@ -504,7 +509,9 @@ class OnlineSessionTab extends StatelessWidget {
   ) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Loading recording for ${session['title']}'),
+        content: Text(
+          '${AppLocalizations.of(context)!.loadingRecordingFor} ${session['title']}',
+        ),
         backgroundColor: Colors.purple,
       ),
     );

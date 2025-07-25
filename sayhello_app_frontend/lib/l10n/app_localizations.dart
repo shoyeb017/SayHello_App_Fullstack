@@ -302,7 +302,7 @@ abstract class AppLocalizations {
   /// **'Learning Language'**
   String get learningLanguage;
 
-  /// Gender dropdown label
+  /// Gender filter
   ///
   /// In en, this message translates to:
   /// **'Gender'**
@@ -350,7 +350,7 @@ abstract class AppLocalizations {
   /// **'Arabic'**
   String get arabic;
 
-  /// Japanese language option
+  /// Japanese language
   ///
   /// In en, this message translates to:
   /// **'Japanese'**
@@ -383,7 +383,7 @@ abstract class AppLocalizations {
   /// Home tab label
   ///
   /// In en, this message translates to:
-  /// **'SayHello'**
+  /// **'Home'**
   String get home;
 
   /// Connect tab label
@@ -536,7 +536,7 @@ abstract class AppLocalizations {
   /// **'Skill Level'**
   String get skillLevel;
 
-  /// Beginner skill level
+  /// Beginner level
   ///
   /// In en, this message translates to:
   /// **'Beginner'**
@@ -548,13 +548,13 @@ abstract class AppLocalizations {
   /// **'Basic'**
   String get basic;
 
-  /// Intermediate skill level
+  /// Intermediate level
   ///
   /// In en, this message translates to:
   /// **'Intermediate'**
   String get intermediate;
 
-  /// Advanced settings
+  /// Advanced level
   ///
   /// In en, this message translates to:
   /// **'Advanced'**
@@ -752,7 +752,7 @@ abstract class AppLocalizations {
   /// **'Search People'**
   String get searchPeople;
 
-  /// Courses label
+  /// Courses text
   ///
   /// In en, this message translates to:
   /// **'Courses'**
@@ -764,10 +764,10 @@ abstract class AppLocalizations {
   /// **'Chat'**
   String get chat;
 
-  /// Online status
+  /// Online status text
   ///
   /// In en, this message translates to:
-  /// **'Online'**
+  /// **'online'**
   String get online;
 
   /// Offline status
@@ -1010,7 +1010,7 @@ abstract class AppLocalizations {
   /// **'Done'**
   String get done;
 
-  /// Complete button
+  /// Complete status
   ///
   /// In en, this message translates to:
   /// **'Complete'**
@@ -1208,6 +1208,24 @@ abstract class AppLocalizations {
   /// **'days ago'**
   String get daysAgo;
 
+  /// Days ago with count
+  ///
+  /// In en, this message translates to:
+  /// **'{count}d ago'**
+  String daysAgoCount(int count);
+
+  /// Hours ago with count
+  ///
+  /// In en, this message translates to:
+  /// **'{count}h ago'**
+  String hoursAgoCount(int count);
+
+  /// Minutes ago with count
+  ///
+  /// In en, this message translates to:
+  /// **'{count}m ago'**
+  String minutesAgoCount(int count);
+
   /// Yesterday time indicator
   ///
   /// In en, this message translates to:
@@ -1316,7 +1334,7 @@ abstract class AppLocalizations {
   /// **'Block User'**
   String get blockUser;
 
-  /// Age label
+  /// Age filter
   ///
   /// In en, this message translates to:
   /// **'Age'**
@@ -1364,7 +1382,7 @@ abstract class AppLocalizations {
   /// **'React'**
   String get react;
 
-  /// Reply to message
+  /// Reply to comment
   ///
   /// In en, this message translates to:
   /// **'Reply'**
@@ -1412,10 +1430,10 @@ abstract class AppLocalizations {
   /// **'Select Contact'**
   String get selectContact;
 
-  /// New message indicator
+  /// New message title
   ///
   /// In en, this message translates to:
-  /// **'New'**
+  /// **'New Message'**
   String get newMessage;
 
   /// New group title
@@ -1628,11 +1646,17 @@ abstract class AppLocalizations {
   /// **'See People\'s Chats'**
   String get seePeoplesChats;
 
-  /// Search placeholder for courses
+  /// Search courses placeholder
   ///
   /// In en, this message translates to:
-  /// **'Search courses...'**
+  /// **'Search for courses...'**
   String get searchCourses;
+
+  /// New message indicator
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get newLabel;
 
   /// Popular languages section
   ///
@@ -1651,6 +1675,546 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter text to translate'**
   String get enterTextToTranslate;
+
+  /// Recent tab in feed
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get recent;
+
+  /// For You tab in feed
+  ///
+  /// In en, this message translates to:
+  /// **'For You'**
+  String get forYou;
+
+  /// Number of likes
+  ///
+  /// In en, this message translates to:
+  /// **'Likes'**
+  String get likes;
+
+  /// Number of comments
+  ///
+  /// In en, this message translates to:
+  /// **'Comments'**
+  String get comments;
+
+  /// View all comments button text
+  ///
+  /// In en, this message translates to:
+  /// **'View all {count} comments'**
+  String viewAllComments(int count);
+
+  /// See more text for expandable content
+  ///
+  /// In en, this message translates to:
+  /// **'more'**
+  String get seeMore;
+
+  /// See less text for expandable content
+  ///
+  /// In en, this message translates to:
+  /// **'less'**
+  String get seeLess;
+
+  /// Translated content indicator
+  ///
+  /// In en, this message translates to:
+  /// **'Translated'**
+  String get translated;
+
+  /// Following button state
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get following;
+
+  /// Follow button
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
+  String get follow;
+
+  /// Details page title
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// Liked by users text
+  ///
+  /// In en, this message translates to:
+  /// **'Liked by'**
+  String get likedBy;
+
+  /// Add comment placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Add a comment...'**
+  String get addComment;
+
+  /// Find partners page title
+  ///
+  /// In en, this message translates to:
+  /// **'Find Partners'**
+  String get findPartners;
+
+  /// All filter option
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// Serious learners filter
+  ///
+  /// In en, this message translates to:
+  /// **'Serious Learners'**
+  String get seriousLearners;
+
+  /// Nearby filter
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby'**
+  String get nearby;
+
+  /// Language level section
+  ///
+  /// In en, this message translates to:
+  /// **'Language Level'**
+  String get languageLevel;
+
+  /// Elementary level
+  ///
+  /// In en, this message translates to:
+  /// **'Elementary'**
+  String get elementary;
+
+  /// Proficient level
+  ///
+  /// In en, this message translates to:
+  /// **'Proficient'**
+  String get proficient;
+
+  /// New users filter
+  ///
+  /// In en, this message translates to:
+  /// **'New Users'**
+  String get newUsers;
+
+  /// Advanced search section
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Search'**
+  String get advancedSearch;
+
+  /// Region dropdown label
+  ///
+  /// In en, this message translates to:
+  /// **'Region of language partner'**
+  String get regionOfLanguagePartner;
+
+  /// City dropdown label
+  ///
+  /// In en, this message translates to:
+  /// **'City of language partner'**
+  String get cityOfLanguagePartner;
+
+  /// Comments section with count
+  ///
+  /// In en, this message translates to:
+  /// **'Comments ({count})'**
+  String commentsWithCount(int count);
+
+  /// Likes count text
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Likes >'**
+  String likesWithCount(int count);
+
+  /// No likes message
+  ///
+  /// In en, this message translates to:
+  /// **'No likes yet'**
+  String get noLikesYet;
+
+  /// Just now time indicator
+  ///
+  /// In en, this message translates to:
+  /// **'now'**
+  String get now;
+
+  /// You pronoun
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get you;
+
+  /// Language learning page title
+  ///
+  /// In en, this message translates to:
+  /// **'Language Learn'**
+  String get languageLearn;
+
+  /// Enrolled courses tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Enrolled'**
+  String get enrolled;
+
+  /// Other courses tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Other Courses'**
+  String get otherCourses;
+
+  /// Students count text
+  ///
+  /// In en, this message translates to:
+  /// **'students'**
+  String get students;
+
+  /// Completed status
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
+
+  /// In progress status
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get inProgress;
+
+  /// Course completion message
+  ///
+  /// In en, this message translates to:
+  /// **'Course completed successfully!'**
+  String get courseCompleted;
+
+  /// View all button text
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get viewAll;
+
+  /// Instructor role label
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor'**
+  String get instructor;
+
+  /// Course description header
+  ///
+  /// In en, this message translates to:
+  /// **'Course Description'**
+  String get courseDescription;
+
+  /// Course duration label
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get duration;
+
+  /// Course start date label
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get startDate;
+
+  /// Course end date label
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get endDate;
+
+  /// Course price label
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get price;
+
+  /// Enroll button prefix
+  ///
+  /// In en, this message translates to:
+  /// **'Enroll for'**
+  String get enrollFor;
+
+  /// Successful enrollment message
+  ///
+  /// In en, this message translates to:
+  /// **'Enrolled successfully!'**
+  String get enrolledSuccessfully;
+
+  /// Course details tab
+  ///
+  /// In en, this message translates to:
+  /// **'Course Details'**
+  String get courseDetails;
+
+  /// Online sessions tab
+  ///
+  /// In en, this message translates to:
+  /// **'Online Sessions'**
+  String get onlineSessions;
+
+  /// Recorded classes tab
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded Classes'**
+  String get recordedClasses;
+
+  /// Study materials tab
+  ///
+  /// In en, this message translates to:
+  /// **'Study Materials'**
+  String get studyMaterials;
+
+  /// Group chat tab
+  ///
+  /// In en, this message translates to:
+  /// **'Group Chat'**
+  String get groupChat;
+
+  /// Progress tab
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get progress;
+
+  /// Learning journey subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Your Learning Journey'**
+  String get yourLearningJourney;
+
+  /// Learning portal title
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Portal'**
+  String get learningPortal;
+
+  /// Course discussion header
+  ///
+  /// In en, this message translates to:
+  /// **'Course Discussion'**
+  String get courseDiscussion;
+
+  /// Participants count text
+  ///
+  /// In en, this message translates to:
+  /// **'participants'**
+  String get participants;
+
+  /// Message input placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Type your message...'**
+  String get typeYourMessage;
+
+  /// Completed status in lowercase
+  ///
+  /// In en, this message translates to:
+  /// **'completed'**
+  String get completedLowercase;
+
+  /// All enrolled courses title
+  ///
+  /// In en, this message translates to:
+  /// **'All Enrolled Courses'**
+  String get allEnrolledCourses;
+
+  /// All other courses title
+  ///
+  /// In en, this message translates to:
+  /// **'All Other Courses'**
+  String get allOtherCourses;
+
+  /// No courses found message
+  ///
+  /// In en, this message translates to:
+  /// **'No courses found'**
+  String get noCoursesFound;
+
+  /// Live sessions header
+  ///
+  /// In en, this message translates to:
+  /// **'Live Sessions'**
+  String get liveSessions;
+
+  /// Live sessions description
+  ///
+  /// In en, this message translates to:
+  /// **'Join interactive sessions with your instructor'**
+  String get joinInteractiveSessions;
+
+  /// Total sessions count label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Sessions'**
+  String get totalSessions;
+
+  /// Attended sessions label
+  ///
+  /// In en, this message translates to:
+  /// **'Attended'**
+  String get attended;
+
+  /// Scheduled sessions title
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled Sessions'**
+  String get scheduledSessions;
+
+  /// Topics covered label
+  ///
+  /// In en, this message translates to:
+  /// **'Topics Covered:'**
+  String get topicsCovered;
+
+  /// Reminder set message prefix
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder set for'**
+  String get reminderSetFor;
+
+  /// Joining session message
+  ///
+  /// In en, this message translates to:
+  /// **'Joining'**
+  String get joining;
+
+  /// Loading recording message prefix
+  ///
+  /// In en, this message translates to:
+  /// **'Loading recording for'**
+  String get loadingRecordingFor;
+
+  /// Join session button
+  ///
+  /// In en, this message translates to:
+  /// **'Join Session'**
+  String get joinSession;
+
+  /// Set reminder button
+  ///
+  /// In en, this message translates to:
+  /// **'Set Reminder'**
+  String get setReminder;
+
+  /// View recording button
+  ///
+  /// In en, this message translates to:
+  /// **'View Recording'**
+  String get viewRecording;
+
+  /// Session cancelled status
+  ///
+  /// In en, this message translates to:
+  /// **'Session Cancelled'**
+  String get sessionCancelled;
+
+  /// View details button
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetails;
+
+  /// Learning progress header
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Progress'**
+  String get learningProgress;
+
+  /// Learning progress description
+  ///
+  /// In en, this message translates to:
+  /// **'Track your learning journey and achievements'**
+  String get trackYourLearningJourney;
+
+  /// Overall progress label
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Progress'**
+  String get overallProgress;
+
+  /// Course modules title
+  ///
+  /// In en, this message translates to:
+  /// **'Course Modules'**
+  String get courseModules;
+
+  /// Recorded sessions description
+  ///
+  /// In en, this message translates to:
+  /// **'Access all recorded sessions anytime'**
+  String get accessAllRecordedSessions;
+
+  /// Total videos count label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Videos'**
+  String get totalVideos;
+
+  /// Video library title
+  ///
+  /// In en, this message translates to:
+  /// **'Video Library'**
+  String get videoLibrary;
+
+  /// New filter option
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get newText;
+
+  /// Playing video message
+  ///
+  /// In en, this message translates to:
+  /// **'Playing'**
+  String get playing;
+
+  /// Downloading message
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading'**
+  String get downloading;
+
+  /// Study materials description
+  ///
+  /// In en, this message translates to:
+  /// **'Download and access course materials'**
+  String get downloadAndAccessMaterials;
+
+  /// Total materials count label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Materials'**
+  String get totalMaterials;
+
+  /// Downloaded status
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded'**
+  String get downloaded;
+
+  /// Total size label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Size'**
+  String get totalSize;
+
+  /// Opening file message
+  ///
+  /// In en, this message translates to:
+  /// **'Opening'**
+  String get opening;
+
+  /// Watched filter option
+  ///
+  /// In en, this message translates to:
+  /// **'Watched'**
+  String get watched;
 }
 
 class _AppLocalizationsDelegate

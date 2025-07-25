@@ -142,7 +142,7 @@ class HomePage extends StatelessWidget {
               ),
               Expanded(
                 child: Text(
-                  AppLocalizations.of(context)!.appTitle,
+                  AppLocalizations.of(context)!.home,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,

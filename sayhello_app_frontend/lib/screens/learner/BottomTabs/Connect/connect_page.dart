@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../providers/theme_provider.dart';
 
 class Partner {
@@ -34,9 +35,14 @@ class ConnectPage extends StatefulWidget {
 }
 
 class _ConnectPageState extends State<ConnectPage> {
-  final List<String> topTabs = ['All', 'Serious Learners', 'Nearby', 'Gender'];
-
   int selectedTopTabIndex = 0;
+
+  List<String> get topTabs => [
+    AppLocalizations.of(context)!.all,
+    AppLocalizations.of(context)!.seriousLearners,
+    AppLocalizations.of(context)!.nearby,
+    AppLocalizations.of(context)!.gender,
+  ];
 
   final List<Partner> allPartners = [
     Partner(
@@ -150,9 +156,9 @@ class _ConnectPageState extends State<ConnectPage> {
                 themeProvider.toggleTheme(toDark);
               },
             ),
-            const Expanded(
+            Expanded(
               child: Text(
-                'Find Partners',
+                AppLocalizations.of(context)!.findPartners,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
               ),
@@ -498,6 +504,12 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
   bool _newUsersOnly = false;
   int _selectedGenderIndex = 0;
   final List<String> genders = ['All', 'Male', 'Female'];
+
+  List<String> get localizedGenders => [
+    AppLocalizations.of(context)!.all,
+    AppLocalizations.of(context)!.male,
+    AppLocalizations.of(context)!.female,
+  ];
   final List<String> regions = ['Asia', 'Europe', 'America'];
   final List<String> cities = ['Tokyo', 'Paris', 'New York'];
   String? _selectedRegion;
@@ -506,7 +518,6 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
 
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: MediaQuery.of(context).viewInsets,
       child: SingleChildScrollView(
@@ -539,14 +550,14 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
                         _selectedProficiency = 4;
                       });
                     },
-                    child: const Text('Reset'),
+                    child: Text(AppLocalizations.of(context)!.reset),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
               // Proficiency levels
-              const Text(
-                'Language Level',
+              Text(
+                AppLocalizations.of(context)!.languageLevel,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 16),
@@ -554,11 +565,11 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(5, (index) {
                   final titles = [
-                    'Beginner',
-                    'Elementary',
-                    'Intermediate',
-                    'Advanced',
-                    'Proficient',
+                    AppLocalizations.of(context)!.beginner,
+                    AppLocalizations.of(context)!.elementary,
+                    AppLocalizations.of(context)!.intermediate,
+                    AppLocalizations.of(context)!.advanced,
+                    AppLocalizations.of(context)!.proficient,
                   ];
                   return GestureDetector(
                     onTap: () => setState(() => _selectedProficiency = index),
@@ -586,15 +597,15 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
               SwitchListTile(
                 value: _newUsersOnly,
                 onChanged: (val) => setState(() => _newUsersOnly = val),
-                title: const Text(
-                  'New Users',
+                title: Text(
+                  AppLocalizations.of(context)!.newUsers,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 contentPadding: EdgeInsets.zero,
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Age',
+              Text(
+                AppLocalizations.of(context)!.age,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               Row(
@@ -619,9 +630,9 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
               ),
               const SizedBox(height: 16),
               Row(
-                children: const [
+                children: [
                   Text(
-                    'Advanced Search',
+                    AppLocalizations.of(context)!.advancedSearch,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   SizedBox(width: 6),
@@ -629,8 +640,10 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: 'Region of language partner',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(
+                    context,
+                  )!.regionOfLanguagePartner,
                   border: OutlineInputBorder(),
                 ),
                 value: _selectedRegion,
@@ -641,8 +654,10 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
               ),
               const SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: 'City of language partner',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(
+                    context,
+                  )!.cityOfLanguagePartner,
                   border: OutlineInputBorder(),
                 ),
                 value: _selectedCity,
@@ -652,8 +667,8 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
                 onChanged: (val) => setState(() => _selectedCity = val),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Gender',
+              Text(
+                AppLocalizations.of(context)!.gender,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 10),
@@ -699,7 +714,7 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            genders[index],
+                            localizedGenders[index],
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,

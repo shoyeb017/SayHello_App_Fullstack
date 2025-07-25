@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
+import '../../../../l10n/app_localizations.dart';
 
 import 'course_details.dart';
 import 'online_session.dart';
@@ -23,13 +24,28 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
   bool _showMiniSidebar = false;
   bool _showExpandedSidebar = false;
 
-  final List<_TabItem> _tabs = const [
-    _TabItem(icon: Icons.info_outline, label: 'Course Details'),
-    _TabItem(icon: Icons.video_call, label: 'Online Sessions'),
-    _TabItem(icon: Icons.ondemand_video, label: 'Recorded Classes'),
-    _TabItem(icon: Icons.description, label: 'Study Materials'),
-    _TabItem(icon: Icons.chat, label: 'Group Chat'),
-    _TabItem(icon: Icons.analytics, label: 'Progress'),
+  List<_TabItem> get _tabs => [
+    _TabItem(
+      icon: Icons.info_outline,
+      label: AppLocalizations.of(context)!.courseDetails,
+    ),
+    _TabItem(
+      icon: Icons.video_call,
+      label: AppLocalizations.of(context)!.onlineSessions,
+    ),
+    _TabItem(
+      icon: Icons.ondemand_video,
+      label: AppLocalizations.of(context)!.recordedClasses,
+    ),
+    _TabItem(
+      icon: Icons.description,
+      label: AppLocalizations.of(context)!.studyMaterials,
+    ),
+    _TabItem(icon: Icons.chat, label: AppLocalizations.of(context)!.groupChat),
+    _TabItem(
+      icon: Icons.analytics,
+      label: AppLocalizations.of(context)!.progress,
+    ),
   ];
 
   void _onTabTap(int index) {
@@ -97,7 +113,7 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Your Learning Journey',
+              AppLocalizations.of(context)!.yourLearningJourney,
               style: TextStyle(
                 fontSize: 12,
                 color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
@@ -331,8 +347,8 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
-                          const Text(
-                            'Learning Portal',
+                          Text(
+                            AppLocalizations.of(context)!.learningPortal,
                             style: TextStyle(
                               color: Colors.white70,
                               fontSize: 14,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class RecordedClassTab extends StatelessWidget {
   final Map<String, dynamic> course;
@@ -124,13 +125,13 @@ class RecordedClassTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.ondemand_video, color: Colors.white, size: 24),
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Recorded Classes',
+                        AppLocalizations.of(context)!.recordedClasses,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -143,8 +144,8 @@ class RecordedClassTab extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  'Access all recorded sessions anytime',
+                Text(
+                  AppLocalizations.of(context)!.accessAllRecordedSessions,
                   style: TextStyle(fontSize: 14, color: Colors.white70),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -155,17 +156,17 @@ class RecordedClassTab extends StatelessWidget {
                   runSpacing: 8,
                   children: [
                     _buildStatCard(
-                      'Total Videos',
+                      AppLocalizations.of(context)!.totalVideos,
                       '${recordings.length}',
                       Icons.video_library,
                     ),
                     _buildStatCard(
-                      'Watched',
+                      AppLocalizations.of(context)!.watched,
                       '$watchedCount/${recordings.length}',
                       Icons.check_circle,
                     ),
                     _buildStatCard(
-                      'Duration',
+                      AppLocalizations.of(context)!.duration,
                       '${(totalDuration / 60).toStringAsFixed(0)}h ${totalDuration % 60}m',
                       Icons.schedule,
                     ),
@@ -182,7 +183,7 @@ class RecordedClassTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Video Library',
+                AppLocalizations.of(context)!.videoLibrary,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -196,9 +197,21 @@ class RecordedClassTab extends StatelessWidget {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  _buildFilterChip('All', true, context),
-                  _buildFilterChip('Watched', false, context),
-                  _buildFilterChip('New', false, context),
+                  _buildFilterChip(
+                    AppLocalizations.of(context)!.all,
+                    true,
+                    context,
+                  ),
+                  _buildFilterChip(
+                    AppLocalizations.of(context)!.watched,
+                    false,
+                    context,
+                  ),
+                  _buildFilterChip(
+                    AppLocalizations.of(context)!.newText,
+                    false,
+                    context,
+                  ),
                 ],
               ),
             ],
@@ -579,7 +592,9 @@ class RecordedClassTab extends StatelessWidget {
   void _playVideo(BuildContext context, Map<String, dynamic> recording) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Playing: ${recording['title']}'),
+        content: Text(
+          '${AppLocalizations.of(context)!.playing}: ${recording['title']}',
+        ),
         backgroundColor: Colors.purple,
       ),
     );
@@ -588,7 +603,9 @@ class RecordedClassTab extends StatelessWidget {
   void _downloadVideo(BuildContext context, Map<String, dynamic> recording) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Downloading: ${recording['title']}'),
+        content: Text(
+          '${AppLocalizations.of(context)!.downloading}: ${recording['title']}',
+        ),
         backgroundColor: Colors.purple.shade600,
       ),
     );

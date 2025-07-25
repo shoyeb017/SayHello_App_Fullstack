@@ -147,7 +147,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tapToAddPhoto => '사진을 추가하려면 탭하세요';
 
   @override
-  String get home => 'SayHello';
+  String get home => '홈';
 
   @override
   String get connect => '연결';
@@ -333,13 +333,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get searchPeople => '사람 검색';
 
   @override
-  String get courses => 'Courses';
+  String get courses => '강좌';
 
   @override
   String get chat => 'Chat';
 
   @override
-  String get online => 'Online';
+  String get online => '온라인';
 
   @override
   String get offline => 'Offline';
@@ -387,7 +387,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get open => 'Open';
 
   @override
-  String get view => 'View';
+  String get view => '보기';
 
   @override
   String get add => 'Add';
@@ -420,7 +420,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get clear => 'Clear';
 
   @override
-  String get reset => 'Reset';
+  String get reset => '재설정';
 
   @override
   String get apply => 'Apply';
@@ -435,7 +435,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get upload => 'Upload';
 
   @override
-  String get download => 'Download';
+  String get download => '다운로드';
 
   @override
   String get importData => 'Import';
@@ -462,7 +462,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get done => '완료';
 
   @override
-  String get complete => 'Complete';
+  String get complete => '완료';
 
   @override
   String get start => 'Start';
@@ -561,6 +561,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get daysAgo => '일 전';
 
   @override
+  String daysAgoCount(int count) {
+    return '$count일 전';
+  }
+
+  @override
+  String hoursAgoCount(int count) {
+    return '$count시간 전';
+  }
+
+  @override
+  String minutesAgoCount(int count) {
+    return '$count분 전';
+  }
+
+  @override
   String get yesterday => '어제';
 
   @override
@@ -639,7 +654,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get react => '반응';
 
   @override
-  String get reply => '답장';
+  String get reply => '답글';
 
   @override
   String get forward => '전달';
@@ -663,7 +678,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get selectContact => '연락처 선택';
 
   @override
-  String get newMessage => '새로운';
+  String get newMessage => '새 메시지';
 
   @override
   String get newGroup => '새 그룹';
@@ -771,7 +786,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get seePeoplesChats => '사람들의 채팅 보기';
 
   @override
-  String get searchCourses => '코스 검색...';
+  String get searchCourses => '강좌 검색...';
+
+  @override
+  String get newLabel => '새로운';
 
   @override
   String get popular => '인기';
@@ -781,4 +799,280 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get enterTextToTranslate => '번역할 텍스트 입력';
+
+  @override
+  String get recent => '최근';
+
+  @override
+  String get forYou => '추천';
+
+  @override
+  String get likes => '좋아요';
+
+  @override
+  String get comments => '댓글';
+
+  @override
+  String viewAllComments(int count) {
+    return '모든 $count개 댓글 보기';
+  }
+
+  @override
+  String get seeMore => '더보기';
+
+  @override
+  String get seeLess => '줄이기';
+
+  @override
+  String get translated => '번역됨';
+
+  @override
+  String get following => '팔로잉';
+
+  @override
+  String get follow => '팔로우';
+
+  @override
+  String get details => '상세';
+
+  @override
+  String get likedBy => '좋아요 한 사람';
+
+  @override
+  String get addComment => '댓글 추가...';
+
+  @override
+  String get findPartners => '파트너 찾기';
+
+  @override
+  String get all => '전체';
+
+  @override
+  String get seriousLearners => '진지한 학습자';
+
+  @override
+  String get nearby => '근처';
+
+  @override
+  String get languageLevel => '언어 수준';
+
+  @override
+  String get elementary => '기초';
+
+  @override
+  String get proficient => '숙련';
+
+  @override
+  String get newUsers => '신규 사용자';
+
+  @override
+  String get advancedSearch => '고급 검색';
+
+  @override
+  String get regionOfLanguagePartner => '언어 파트너의 지역';
+
+  @override
+  String get cityOfLanguagePartner => '언어 파트너의 도시';
+
+  @override
+  String commentsWithCount(int count) {
+    return '댓글 ($count)';
+  }
+
+  @override
+  String likesWithCount(int count) {
+    return '$count 좋아요 >';
+  }
+
+  @override
+  String get noLikesYet => '아직 좋아요가 없습니다';
+
+  @override
+  String get now => '방금';
+
+  @override
+  String get you => '당신';
+
+  @override
+  String get languageLearn => '언어 학습';
+
+  @override
+  String get enrolled => '등록됨';
+
+  @override
+  String get otherCourses => '다른 강좌';
+
+  @override
+  String get students => '학생';
+
+  @override
+  String get completed => '완료됨';
+
+  @override
+  String get inProgress => '진행 중';
+
+  @override
+  String get courseCompleted => '강좌가 성공적으로 완료되었습니다!';
+
+  @override
+  String get viewAll => '모두 보기';
+
+  @override
+  String get instructor => '강사';
+
+  @override
+  String get courseDescription => '강좌 설명';
+
+  @override
+  String get duration => '기간';
+
+  @override
+  String get startDate => '시작일';
+
+  @override
+  String get endDate => '종료일';
+
+  @override
+  String get price => '가격';
+
+  @override
+  String get enrollFor => '등록하기';
+
+  @override
+  String get enrolledSuccessfully => '성공적으로 등록되었습니다!';
+
+  @override
+  String get courseDetails => '강좌 상세';
+
+  @override
+  String get onlineSessions => '온라인 세션';
+
+  @override
+  String get recordedClasses => '녹화 수업';
+
+  @override
+  String get studyMaterials => '학습 자료';
+
+  @override
+  String get groupChat => '그룹 채팅';
+
+  @override
+  String get progress => '진행 상황';
+
+  @override
+  String get yourLearningJourney => '당신의 학습 여정';
+
+  @override
+  String get learningPortal => '학습 포털';
+
+  @override
+  String get courseDiscussion => '강좌 토론';
+
+  @override
+  String get participants => '참가자';
+
+  @override
+  String get typeYourMessage => '메시지를 입력하세요...';
+
+  @override
+  String get completedLowercase => '완료됨';
+
+  @override
+  String get allEnrolledCourses => '모든 등록된 강좌';
+
+  @override
+  String get allOtherCourses => '모든 기타 강좌';
+
+  @override
+  String get noCoursesFound => '강좌를 찾을 수 없습니다';
+
+  @override
+  String get liveSessions => '라이브 세션';
+
+  @override
+  String get joinInteractiveSessions => '강사와 함께하는 대화형 세션에 참여하세요';
+
+  @override
+  String get totalSessions => '총 세션';
+
+  @override
+  String get attended => '참석함';
+
+  @override
+  String get scheduledSessions => '예정된 세션';
+
+  @override
+  String get topicsCovered => '다룬 주제:';
+
+  @override
+  String get reminderSetFor => '알림이 설정되었습니다';
+
+  @override
+  String get joining => '참여 중';
+
+  @override
+  String get loadingRecordingFor => '녹화 영상 로딩 중';
+
+  @override
+  String get joinSession => '세션 참여';
+
+  @override
+  String get setReminder => '알림 설정';
+
+  @override
+  String get viewRecording => '녹화 보기';
+
+  @override
+  String get sessionCancelled => '세션 취소됨';
+
+  @override
+  String get viewDetails => '상세 보기';
+
+  @override
+  String get learningProgress => '학습 진행상황';
+
+  @override
+  String get trackYourLearningJourney => '학습 여정과 성취를 추적하세요';
+
+  @override
+  String get overallProgress => '전체 진행률';
+
+  @override
+  String get courseModules => '강좌 모듈';
+
+  @override
+  String get accessAllRecordedSessions => '언제든지 모든 녹화된 세션에 접근하세요';
+
+  @override
+  String get totalVideos => '총 비디오';
+
+  @override
+  String get videoLibrary => '비디오 라이브러리';
+
+  @override
+  String get newText => '새로운';
+
+  @override
+  String get playing => '재생 중';
+
+  @override
+  String get downloading => '다운로드 중';
+
+  @override
+  String get downloadAndAccessMaterials => '강좌 자료를 다운로드하고 접근하세요';
+
+  @override
+  String get totalMaterials => '총 자료';
+
+  @override
+  String get downloaded => '다운로드됨';
+
+  @override
+  String get totalSize => '총 크기';
+
+  @override
+  String get opening => '열고 있습니다';
+
+  @override
+  String get watched => '시청 완료';
 }

@@ -148,7 +148,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get tapToAddPhoto => 'ছবি যোগ করতে ট্যাপ করুন';
 
   @override
-  String get home => 'SayHello';
+  String get home => 'হোম';
 
   @override
   String get connect => 'সংযোগ';
@@ -336,13 +336,13 @@ class AppLocalizationsBn extends AppLocalizations {
   String get searchPeople => 'লোকজন খুঁজুন';
 
   @override
-  String get courses => 'Courses';
+  String get courses => 'কোর্স';
 
   @override
   String get chat => 'Chat';
 
   @override
-  String get online => 'Online';
+  String get online => 'অনলাইন';
 
   @override
   String get offline => 'Offline';
@@ -390,7 +390,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get open => 'Open';
 
   @override
-  String get view => 'View';
+  String get view => 'দেখুন';
 
   @override
   String get add => 'Add';
@@ -423,7 +423,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get clear => 'Clear';
 
   @override
-  String get reset => 'Reset';
+  String get reset => 'রিসেট';
 
   @override
   String get apply => 'Apply';
@@ -438,7 +438,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get upload => 'Upload';
 
   @override
-  String get download => 'Download';
+  String get download => 'ডাউনলোড';
 
   @override
   String get importData => 'Import';
@@ -465,7 +465,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get done => 'সম্পন্ন';
 
   @override
-  String get complete => 'Complete';
+  String get complete => 'সম্পূর্ণ';
 
   @override
   String get start => 'Start';
@@ -564,6 +564,21 @@ class AppLocalizationsBn extends AppLocalizations {
   String get daysAgo => 'দিন আগে';
 
   @override
+  String daysAgoCount(int count) {
+    return '$count দিন আগে';
+  }
+
+  @override
+  String hoursAgoCount(int count) {
+    return '$count ঘন্টা আগে';
+  }
+
+  @override
+  String minutesAgoCount(int count) {
+    return '$count মিনিট আগে';
+  }
+
+  @override
   String get yesterday => 'গতকাল';
 
   @override
@@ -642,7 +657,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get react => 'রিয়্যাক্ট করুন';
 
   @override
-  String get reply => 'উত্তর দিন';
+  String get reply => 'উত্তর';
 
   @override
   String get forward => 'ফরওয়ার্ড করুন';
@@ -666,7 +681,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get selectContact => 'যোগাযোগ নির্বাচন করুন';
 
   @override
-  String get newMessage => 'নতুন';
+  String get newMessage => 'নতুন বার্তা';
 
   @override
   String get newGroup => 'নতুন গ্রুপ';
@@ -777,6 +792,9 @@ class AppLocalizationsBn extends AppLocalizations {
   String get searchCourses => 'কোর্স খুঁজুন...';
 
   @override
+  String get newLabel => 'নতুন';
+
+  @override
   String get popular => 'জনপ্রিয়';
 
   @override
@@ -784,4 +802,284 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get enterTextToTranslate => 'অনুবাদের জন্য টেক্সট লিখুন';
+
+  @override
+  String get recent => 'সাম্প্রতিক';
+
+  @override
+  String get forYou => 'আপনার জন্য';
+
+  @override
+  String get likes => 'পছন্দ';
+
+  @override
+  String get comments => 'মন্তব্য';
+
+  @override
+  String viewAllComments(int count) {
+    return 'সব $countটি মন্তব্য দেখুন';
+  }
+
+  @override
+  String get seeMore => 'আরো';
+
+  @override
+  String get seeLess => 'কম';
+
+  @override
+  String get translated => 'অনূদিত';
+
+  @override
+  String get following => 'অনুসরণ করছি';
+
+  @override
+  String get follow => 'অনুসরণ করুন';
+
+  @override
+  String get details => 'বিস্তারিত';
+
+  @override
+  String get likedBy => 'পছন্দ করেছেন';
+
+  @override
+  String get addComment => 'মন্তব্য যোগ করুন...';
+
+  @override
+  String get findPartners => 'সঙ্গী খুঁজুন';
+
+  @override
+  String get all => 'সকল';
+
+  @override
+  String get seriousLearners => 'গুরুতর শিক্ষার্থী';
+
+  @override
+  String get nearby => 'কাছাকাছি';
+
+  @override
+  String get languageLevel => 'ভাষার স্তর';
+
+  @override
+  String get elementary => 'প্রাথমিক';
+
+  @override
+  String get proficient => 'দক্ষ';
+
+  @override
+  String get newUsers => 'নতুন ব্যবহারকারী';
+
+  @override
+  String get advancedSearch => 'উন্নত অনুসন্ধান';
+
+  @override
+  String get regionOfLanguagePartner => 'ভাষা সঙ্গীর অঞ্চল';
+
+  @override
+  String get cityOfLanguagePartner => 'ভাষা সঙ্গীর শহর';
+
+  @override
+  String commentsWithCount(int count) {
+    return 'মন্তব্য ($count)';
+  }
+
+  @override
+  String likesWithCount(int count) {
+    return '$count পছন্দ >';
+  }
+
+  @override
+  String get noLikesYet => 'এখনো কোনো পছন্দ নেই';
+
+  @override
+  String get now => 'এখনই';
+
+  @override
+  String get you => 'আপনি';
+
+  @override
+  String get languageLearn => 'ভাষা শিক্ষা';
+
+  @override
+  String get enrolled => 'ভর্তি';
+
+  @override
+  String get otherCourses => 'অন্যান্য কোর্স';
+
+  @override
+  String get students => 'শিক্ষার্থী';
+
+  @override
+  String get completed => 'সম্পূর্ণ';
+
+  @override
+  String get inProgress => 'চলমান';
+
+  @override
+  String get courseCompleted => 'কোর্স সফলভাবে সম্পন্ন হয়েছে!';
+
+  @override
+  String get viewAll => 'সব দেখুন';
+
+  @override
+  String get instructor => 'প্রশিক্ষক';
+
+  @override
+  String get courseDescription => 'কোর্সের বিবরণ';
+
+  @override
+  String get duration => 'সময়কাল';
+
+  @override
+  String get startDate => 'শুরুর তারিখ';
+
+  @override
+  String get endDate => 'শেষের তারিখ';
+
+  @override
+  String get price => 'মূল্য';
+
+  @override
+  String get enrollFor => 'ভর্তি হন';
+
+  @override
+  String get enrolledSuccessfully => 'সফলভাবে ভর্তি হয়েছেন!';
+
+  @override
+  String get courseDetails => 'কোর্সের বিস্তারিত';
+
+  @override
+  String get onlineSessions => 'অনলাইন সেশন';
+
+  @override
+  String get recordedClasses => 'রেকর্ডকৃত ক্লাস';
+
+  @override
+  String get studyMaterials => 'অধ্যয়ন উপকরণ';
+
+  @override
+  String get groupChat => 'গ্রুপ চ্যাট';
+
+  @override
+  String get progress => 'অগ্রগতি';
+
+  @override
+  String get yourLearningJourney => 'আপনার শেখার যাত্রা';
+
+  @override
+  String get learningPortal => 'শিক্ষা পোর্টাল';
+
+  @override
+  String get courseDiscussion => 'কোর্স আলোচনা';
+
+  @override
+  String get participants => 'অংশগ্রহণকারী';
+
+  @override
+  String get typeYourMessage => 'আপনার বার্তা টাইপ করুন...';
+
+  @override
+  String get completedLowercase => 'সম্পন্ন';
+
+  @override
+  String get allEnrolledCourses => 'সব ভর্তিকৃত কোর্স';
+
+  @override
+  String get allOtherCourses => 'সব অন্যান্য কোর্স';
+
+  @override
+  String get noCoursesFound => 'কোনো কোর্স পাওয়া যায়নি';
+
+  @override
+  String get liveSessions => 'লাইভ সেশন';
+
+  @override
+  String get joinInteractiveSessions =>
+      'আপনার প্রশিক্ষকের সাথে ইন্টারঅ্যাক্টিভ সেশনে যোগ দিন';
+
+  @override
+  String get totalSessions => 'মোট সেশন';
+
+  @override
+  String get attended => 'উপস্থিত';
+
+  @override
+  String get scheduledSessions => 'নির্ধারিত সেশন';
+
+  @override
+  String get topicsCovered => 'আলোচিত বিষয়:';
+
+  @override
+  String get reminderSetFor => 'অনুস্মারক সেট করা হয়েছে';
+
+  @override
+  String get joining => 'যোগদান করছে';
+
+  @override
+  String get loadingRecordingFor => 'রেকর্ডিং লোড করছে';
+
+  @override
+  String get joinSession => 'সেশনে যোগ দিন';
+
+  @override
+  String get setReminder => 'অনুস্মারক সেট করুন';
+
+  @override
+  String get viewRecording => 'রেকর্ডিং দেখুন';
+
+  @override
+  String get sessionCancelled => 'সেশন বাতিল';
+
+  @override
+  String get viewDetails => 'বিস্তারিত দেখুন';
+
+  @override
+  String get learningProgress => 'শেখার অগ্রগতি';
+
+  @override
+  String get trackYourLearningJourney =>
+      'আপনার শেখার যাত্রা এবং অর্জন ট্র্যাক করুন';
+
+  @override
+  String get overallProgress => 'সার্বিক অগ্রগতি';
+
+  @override
+  String get courseModules => 'কোর্স মডিউল';
+
+  @override
+  String get accessAllRecordedSessions =>
+      'যেকোনো সময় সকল রেকর্ড করা সেশন অ্যাক্সেস করুন';
+
+  @override
+  String get totalVideos => 'মোট ভিডিও';
+
+  @override
+  String get videoLibrary => 'ভিডিও লাইব্রেরি';
+
+  @override
+  String get newText => 'নতুন';
+
+  @override
+  String get playing => 'চালানো হচ্ছে';
+
+  @override
+  String get downloading => 'ডাউনলোড করছে';
+
+  @override
+  String get downloadAndAccessMaterials =>
+      'কোর্স উপকরণ ডাউনলোড এবং অ্যাক্সেস করুন';
+
+  @override
+  String get totalMaterials => 'মোট উপকরণ';
+
+  @override
+  String get downloaded => 'ডাউনলোড করা হয়েছে';
+
+  @override
+  String get totalSize => 'মোট আকার';
+
+  @override
+  String get opening => 'খোলা হচ্ছে';
+
+  @override
+  String get watched => 'দেখা হয়েছে';
 }

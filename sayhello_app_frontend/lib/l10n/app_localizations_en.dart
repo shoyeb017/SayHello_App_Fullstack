@@ -148,7 +148,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tapToAddPhoto => 'Tap to add photo';
 
   @override
-  String get home => 'SayHello';
+  String get home => 'Home';
 
   @override
   String get connect => 'Connect';
@@ -342,7 +342,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chat => 'Chat';
 
   @override
-  String get online => 'Online';
+  String get online => 'online';
 
   @override
   String get offline => 'Offline';
@@ -564,6 +564,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get daysAgo => 'days ago';
 
   @override
+  String daysAgoCount(int count) {
+    return '${count}d ago';
+  }
+
+  @override
+  String hoursAgoCount(int count) {
+    return '${count}h ago';
+  }
+
+  @override
+  String minutesAgoCount(int count) {
+    return '${count}m ago';
+  }
+
+  @override
   String get yesterday => 'Yesterday';
 
   @override
@@ -666,7 +681,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectContact => 'Select Contact';
 
   @override
-  String get newMessage => 'New';
+  String get newMessage => 'New Message';
 
   @override
   String get newGroup => 'New Group';
@@ -774,7 +789,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get seePeoplesChats => 'See People\'s Chats';
 
   @override
-  String get searchCourses => 'Search courses...';
+  String get searchCourses => 'Search for courses...';
+
+  @override
+  String get newLabel => 'New';
 
   @override
   String get popular => 'Popular';
@@ -784,4 +802,284 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get enterTextToTranslate => 'Enter text to translate';
+
+  @override
+  String get recent => 'Recent';
+
+  @override
+  String get forYou => 'For You';
+
+  @override
+  String get likes => 'Likes';
+
+  @override
+  String get comments => 'Comments';
+
+  @override
+  String viewAllComments(int count) {
+    return 'View all $count comments';
+  }
+
+  @override
+  String get seeMore => 'more';
+
+  @override
+  String get seeLess => 'less';
+
+  @override
+  String get translated => 'Translated';
+
+  @override
+  String get following => 'Following';
+
+  @override
+  String get follow => 'Follow';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get likedBy => 'Liked by';
+
+  @override
+  String get addComment => 'Add a comment...';
+
+  @override
+  String get findPartners => 'Find Partners';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get seriousLearners => 'Serious Learners';
+
+  @override
+  String get nearby => 'Nearby';
+
+  @override
+  String get languageLevel => 'Language Level';
+
+  @override
+  String get elementary => 'Elementary';
+
+  @override
+  String get proficient => 'Proficient';
+
+  @override
+  String get newUsers => 'New Users';
+
+  @override
+  String get advancedSearch => 'Advanced Search';
+
+  @override
+  String get regionOfLanguagePartner => 'Region of language partner';
+
+  @override
+  String get cityOfLanguagePartner => 'City of language partner';
+
+  @override
+  String commentsWithCount(int count) {
+    return 'Comments ($count)';
+  }
+
+  @override
+  String likesWithCount(int count) {
+    return '$count Likes >';
+  }
+
+  @override
+  String get noLikesYet => 'No likes yet';
+
+  @override
+  String get now => 'now';
+
+  @override
+  String get you => 'You';
+
+  @override
+  String get languageLearn => 'Language Learn';
+
+  @override
+  String get enrolled => 'Enrolled';
+
+  @override
+  String get otherCourses => 'Other Courses';
+
+  @override
+  String get students => 'students';
+
+  @override
+  String get completed => 'Completed';
+
+  @override
+  String get inProgress => 'In Progress';
+
+  @override
+  String get courseCompleted => 'Course completed successfully!';
+
+  @override
+  String get viewAll => 'View All';
+
+  @override
+  String get instructor => 'Instructor';
+
+  @override
+  String get courseDescription => 'Course Description';
+
+  @override
+  String get duration => 'Duration';
+
+  @override
+  String get startDate => 'Start Date';
+
+  @override
+  String get endDate => 'End Date';
+
+  @override
+  String get price => 'Price';
+
+  @override
+  String get enrollFor => 'Enroll for';
+
+  @override
+  String get enrolledSuccessfully => 'Enrolled successfully!';
+
+  @override
+  String get courseDetails => 'Course Details';
+
+  @override
+  String get onlineSessions => 'Online Sessions';
+
+  @override
+  String get recordedClasses => 'Recorded Classes';
+
+  @override
+  String get studyMaterials => 'Study Materials';
+
+  @override
+  String get groupChat => 'Group Chat';
+
+  @override
+  String get progress => 'Progress';
+
+  @override
+  String get yourLearningJourney => 'Your Learning Journey';
+
+  @override
+  String get learningPortal => 'Learning Portal';
+
+  @override
+  String get courseDiscussion => 'Course Discussion';
+
+  @override
+  String get participants => 'participants';
+
+  @override
+  String get typeYourMessage => 'Type your message...';
+
+  @override
+  String get completedLowercase => 'completed';
+
+  @override
+  String get allEnrolledCourses => 'All Enrolled Courses';
+
+  @override
+  String get allOtherCourses => 'All Other Courses';
+
+  @override
+  String get noCoursesFound => 'No courses found';
+
+  @override
+  String get liveSessions => 'Live Sessions';
+
+  @override
+  String get joinInteractiveSessions =>
+      'Join interactive sessions with your instructor';
+
+  @override
+  String get totalSessions => 'Total Sessions';
+
+  @override
+  String get attended => 'Attended';
+
+  @override
+  String get scheduledSessions => 'Scheduled Sessions';
+
+  @override
+  String get topicsCovered => 'Topics Covered:';
+
+  @override
+  String get reminderSetFor => 'Reminder set for';
+
+  @override
+  String get joining => 'Joining';
+
+  @override
+  String get loadingRecordingFor => 'Loading recording for';
+
+  @override
+  String get joinSession => 'Join Session';
+
+  @override
+  String get setReminder => 'Set Reminder';
+
+  @override
+  String get viewRecording => 'View Recording';
+
+  @override
+  String get sessionCancelled => 'Session Cancelled';
+
+  @override
+  String get viewDetails => 'View Details';
+
+  @override
+  String get learningProgress => 'Learning Progress';
+
+  @override
+  String get trackYourLearningJourney =>
+      'Track your learning journey and achievements';
+
+  @override
+  String get overallProgress => 'Overall Progress';
+
+  @override
+  String get courseModules => 'Course Modules';
+
+  @override
+  String get accessAllRecordedSessions =>
+      'Access all recorded sessions anytime';
+
+  @override
+  String get totalVideos => 'Total Videos';
+
+  @override
+  String get videoLibrary => 'Video Library';
+
+  @override
+  String get newText => 'New';
+
+  @override
+  String get playing => 'Playing';
+
+  @override
+  String get downloading => 'Downloading';
+
+  @override
+  String get downloadAndAccessMaterials =>
+      'Download and access course materials';
+
+  @override
+  String get totalMaterials => 'Total Materials';
+
+  @override
+  String get downloaded => 'Downloaded';
+
+  @override
+  String get totalSize => 'Total Size';
+
+  @override
+  String get opening => 'Opening';
+
+  @override
+  String get watched => 'Watched';
 }

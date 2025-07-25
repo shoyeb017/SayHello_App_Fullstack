@@ -183,7 +183,7 @@
   "@tapToAddPhoto": {
     "description": "Instruction to add profile photo"
   },
-  "home": "SayHello",
+  "home": "Home",
   "@home": {
     "description": "Home tab label"
   },
@@ -751,6 +751,33 @@
   "@daysAgo": {
     "description": "Days ago time indicator"
   },
+  "daysAgoCount": "{count}d ago",
+  "@daysAgoCount": {
+    "description": "Days ago with count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgoCount": "{count}h ago",
+  "@hoursAgoCount": {
+    "description": "Hours ago with count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "minutesAgoCount": "{count}m ago",
+  "@minutesAgoCount": {
+    "description": "Minutes ago with count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "yesterday": "Yesterday",
   "@yesterday": {
     "description": "Yesterday time indicator"
@@ -1051,8 +1078,8 @@
   "@cancel": {
     "description": "Cancel button text"
   },
-  "new": "New",
-  "@new": {
+  "newLabel": "New",
+  "@newLabel": {
     "description": "New message indicator"
   },
   "translate": "Translate",
@@ -1090,5 +1117,451 @@
   "more": "More",
   "@more": {
     "description": "More category label"
+  },
+  "recent": "Recent",
+  "@recent": {
+    "description": "Recent tab in feed"
+  },
+  "forYou": "For You",
+  "@forYou": {
+    "description": "For You tab in feed"
+  },
+  "likes": "Likes",
+  "@likes": {
+    "description": "Number of likes"
+  },
+  "comments": "Comments",
+  "@comments": {
+    "description": "Number of comments"
+  },
+  "viewAllComments": "View all {count} comments",
+  "@viewAllComments": {
+    "description": "View all comments button text",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "seeMore": "more",
+  "@seeMore": {
+    "description": "See more text for expandable content"
+  },
+  "seeLess": "less",
+  "@seeLess": {
+    "description": "See less text for expandable content"
+  },
+  "translated": "Translated",
+  "@translated": {
+    "description": "Translated content indicator"
+  },
+  "following": "Following",
+  "@following": {
+    "description": "Following button state"
+  },
+  "follow": "Follow",
+  "@follow": {
+    "description": "Follow button"
+  },
+  "details": "Details",
+  "@details": {
+    "description": "Details page title"
+  },
+  "likedBy": "Liked by",
+  "@likedBy": {
+    "description": "Liked by users text"
+  },
+  "reply": "Reply",
+  "@reply": {
+    "description": "Reply to comment"
+  },
+  "addComment": "Add a comment...",
+  "@addComment": {
+    "description": "Add comment placeholder"
+  },
+  "findPartners": "Find Partners",
+  "@findPartners": {
+    "description": "Find partners page title"
+  },
+  "all": "All",
+  "@all": {
+    "description": "All filter option"
+  },
+  "seriousLearners": "Serious Learners",
+  "@seriousLearners": {
+    "description": "Serious learners filter"
+  },
+  "nearby": "Nearby",
+  "@nearby": {
+    "description": "Nearby filter"
+  },
+  "gender": "Gender",
+  "@gender": {
+    "description": "Gender filter"
+  },
+  "japanese": "Japanese",
+  "@japanese": {
+    "description": "Japanese language"
+  },
+  "languageLevel": "Language Level",
+  "@languageLevel": {
+    "description": "Language level section"
+  },
+  "beginner": "Beginner",
+  "@beginner": {
+    "description": "Beginner level"
+  },
+  "elementary": "Elementary",
+  "@elementary": {
+    "description": "Elementary level"
+  },
+  "intermediate": "Intermediate",
+  "@intermediate": {
+    "description": "Intermediate level"
+  },
+  "advanced": "Advanced",
+  "@advanced": {
+    "description": "Advanced level"
+  },
+  "proficient": "Proficient",
+  "@proficient": {
+    "description": "Proficient level"
+  },
+  "newUsers": "New Users",
+  "@newUsers": {
+    "description": "New users filter"
+  },
+  "age": "Age",
+  "@age": {
+    "description": "Age filter"
+  },
+  "advancedSearch": "Advanced Search",
+  "@advancedSearch": {
+    "description": "Advanced search section"
+  },
+  "regionOfLanguagePartner": "Region of language partner",
+  "@regionOfLanguagePartner": {
+    "description": "Region dropdown label"
+  },
+  "cityOfLanguagePartner": "City of language partner",
+  "@cityOfLanguagePartner": {
+    "description": "City dropdown label"
+  },
+  "male": "Male",
+  "@male": {
+    "description": "Male gender option"
+  },
+  "female": "Female",
+  "@female": {
+    "description": "Female gender option"
+  },
+  "reset": "Reset",
+  "@reset": {
+    "description": "Reset button"
+  },
+  "commentsWithCount": "Comments ({count})",
+  "@commentsWithCount": {
+    "description": "Comments section with count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "likesWithCount": "{count} Likes >",
+  "@likesWithCount": {
+    "description": "Likes count text",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "noLikesYet": "No likes yet",
+  "@noLikesYet": {
+    "description": "No likes message"
+  },
+  "now": "now",
+  "@now": {
+    "description": "Just now time indicator"
+  },
+  "you": "You",
+  "@you": {
+    "description": "You pronoun"
+  },
+  "languageLearn": "Language Learn",
+  "@languageLearn": {
+    "description": "Language learning page title"
+  },
+  "enrolled": "Enrolled",
+  "@enrolled": {
+    "description": "Enrolled courses tab label"
+  },
+  "otherCourses": "Other Courses",
+  "@otherCourses": {
+    "description": "Other courses tab label"
+  },
+  "students": "students",
+  "@students": {
+    "description": "Students count text"
+  },
+  "completed": "Completed",
+  "@completed": {
+    "description": "Completed status"
+  },
+  "inProgress": "In Progress",
+  "@inProgress": {
+    "description": "In progress status"
+  },
+  "courseCompleted": "Course completed successfully!",
+  "@courseCompleted": {
+    "description": "Course completion message"
+  },
+  "viewAll": "View All",
+  "@viewAll": {
+    "description": "View all button text"
+  },
+  "courses": "Courses",
+  "@courses": {
+    "description": "Courses text"
+  },
+  "instructor": "Instructor",
+  "@instructor": {
+    "description": "Instructor role label"
+  },
+  "searchCourses": "Search for courses...",
+  "@searchCourses": {
+    "description": "Search courses placeholder"
+  },
+  "courseDescription": "Course Description",
+  "@courseDescription": {
+    "description": "Course description header"
+  },
+  "duration": "Duration",
+  "@duration": {
+    "description": "Course duration label"
+  },
+  "startDate": "Start Date",
+  "@startDate": {
+    "description": "Course start date label"
+  },
+  "endDate": "End Date",
+  "@endDate": {
+    "description": "Course end date label"
+  },
+  "price": "Price",
+  "@price": {
+    "description": "Course price label"
+  },
+  "enrollFor": "Enroll for",
+  "@enrollFor": {
+    "description": "Enroll button prefix"
+  },
+  "enrolledSuccessfully": "Enrolled successfully!",
+  "@enrolledSuccessfully": {
+    "description": "Successful enrollment message"
+  },
+  "courseDetails": "Course Details",
+  "@courseDetails": {
+    "description": "Course details tab"
+  },
+  "onlineSessions": "Online Sessions",
+  "@onlineSessions": {
+    "description": "Online sessions tab"
+  },
+  "recordedClasses": "Recorded Classes",
+  "@recordedClasses": {
+    "description": "Recorded classes tab"
+  },
+  "studyMaterials": "Study Materials",
+  "@studyMaterials": {
+    "description": "Study materials tab"
+  },
+  "groupChat": "Group Chat",
+  "@groupChat": {
+    "description": "Group chat tab"
+  },
+  "progress": "Progress",
+  "@progress": {
+    "description": "Progress tab"
+  },
+  "yourLearningJourney": "Your Learning Journey",
+  "@yourLearningJourney": {
+    "description": "Learning journey subtitle"
+  },
+  "learningPortal": "Learning Portal",
+  "@learningPortal": {
+    "description": "Learning portal title"
+  },
+  "courseDiscussion": "Course Discussion",
+  "@courseDiscussion": {
+    "description": "Course discussion header"
+  },
+  "online": "online",
+  "@online": {
+    "description": "Online status text"
+  },
+  "participants": "participants",
+  "@participants": {
+    "description": "Participants count text"
+  },
+  "typeYourMessage": "Type your message...",
+  "@typeYourMessage": {
+    "description": "Message input placeholder"
+  },
+  "completedLowercase": "completed",
+  "@completedLowercase": {
+    "description": "Completed status in lowercase"
+  },
+  "allEnrolledCourses": "All Enrolled Courses",
+  "@allEnrolledCourses": {
+    "description": "All enrolled courses title"
+  },
+  "allOtherCourses": "All Other Courses",
+  "@allOtherCourses": {
+    "description": "All other courses title"
+  },
+  "noCoursesFound": "No courses found",
+  "@noCoursesFound": {
+    "description": "No courses found message"
+  },
+  "liveSessions": "Live Sessions",
+  "@liveSessions": {
+    "description": "Live sessions header"
+  },
+  "joinInteractiveSessions": "Join interactive sessions with your instructor",
+  "@joinInteractiveSessions": {
+    "description": "Live sessions description"
+  },
+  "totalSessions": "Total Sessions",
+  "@totalSessions": {
+    "description": "Total sessions count label"
+  },
+  "attended": "Attended",
+  "@attended": {
+    "description": "Attended sessions label"
+  },
+  "scheduledSessions": "Scheduled Sessions",
+  "@scheduledSessions": {
+    "description": "Scheduled sessions title"
+  },
+  "topicsCovered": "Topics Covered:",
+  "@topicsCovered": {
+    "description": "Topics covered label"
+  },
+  "reminderSetFor": "Reminder set for",
+  "@reminderSetFor": {
+    "description": "Reminder set message prefix"
+  },
+  "joining": "Joining",
+  "@joining": {
+    "description": "Joining session message"
+  },
+  "loadingRecordingFor": "Loading recording for",
+  "@loadingRecordingFor": {
+    "description": "Loading recording message prefix"
+  },
+  "joinSession": "Join Session",
+  "@joinSession": {
+    "description": "Join session button"
+  },
+  "setReminder": "Set Reminder",
+  "@setReminder": {
+    "description": "Set reminder button"
+  },
+  "viewRecording": "View Recording",
+  "@viewRecording": {
+    "description": "View recording button"
+  },
+  "sessionCancelled": "Session Cancelled",
+  "@sessionCancelled": {
+    "description": "Session cancelled status"
+  },
+  "viewDetails": "View Details",
+  "@viewDetails": {
+    "description": "View details button"
+  },
+  "learningProgress": "Learning Progress",
+  "@learningProgress": {
+    "description": "Learning progress header"
+  },
+  "trackYourLearningJourney": "Track your learning journey and achievements",
+  "@trackYourLearningJourney": {
+    "description": "Learning progress description"
+  },
+  "overallProgress": "Overall Progress",
+  "@overallProgress": {
+    "description": "Overall progress label"
+  },
+  "courseModules": "Course Modules",
+  "@courseModules": {
+    "description": "Course modules title"
+  },
+  "complete": "Complete",
+  "@complete": {
+    "description": "Complete status"
+  },
+  "accessAllRecordedSessions": "Access all recorded sessions anytime",
+  "@accessAllRecordedSessions": {
+    "description": "Recorded sessions description"
+  },
+  "totalVideos": "Total Videos",
+  "@totalVideos": {
+    "description": "Total videos count label"
+  },
+  "videoLibrary": "Video Library",
+  "@videoLibrary": {
+    "description": "Video library title"
+  },
+  "all": "All",
+  "@all": {
+    "description": "All filter option"
+  },
+  "newText": "New",
+  "@newText": {
+    "description": "New filter option"
+  },
+  "playing": "Playing",
+  "@playing": {
+    "description": "Playing video message"
+  },
+  "downloading": "Downloading",
+  "@downloading": {
+    "description": "Downloading message"
+  },
+  "downloadAndAccessMaterials": "Download and access course materials",
+  "@downloadAndAccessMaterials": {
+    "description": "Study materials description"
+  },
+  "totalMaterials": "Total Materials",
+  "@totalMaterials": {
+    "description": "Total materials count label"
+  },
+  "downloaded": "Downloaded",
+  "@downloaded": {
+    "description": "Downloaded status"
+  },
+  "totalSize": "Total Size",
+  "@totalSize": {
+    "description": "Total size label"
+  },
+  "view": "View",
+  "@view": {
+    "description": "View button"
+  },
+  "download": "Download",
+  "@download": {
+    "description": "Download button"
+  },
+  "opening": "Opening",
+  "@opening": {
+    "description": "Opening file message"
+  },
+  "watched": "Watched",
+  "@watched": {
+    "description": "Watched filter option"
   }
 }
