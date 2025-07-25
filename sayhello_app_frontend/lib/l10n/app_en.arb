@@ -1567,5 +1567,217 @@
   "spanish": "Spanish",
   "@spanish": {
     "description": "Spanish language option"
+  },
+  "aboutMe": "About Me",
+  "@aboutMe": {
+    "description": "About me section title"
+  },
+  "selfIntroduction": "Self-introduction",
+  "@selfIntroduction": {
+    "description": "Self introduction label"
+  },
+  "tellUsAboutYourself": "Tell us about yourself...",
+  "@tellUsAboutYourself": {
+    "description": "Bio edit placeholder"
+  },
+  "editBio": "Edit Bio",
+  "@editBio": {
+    "description": "Edit bio dialog title"
+  },
+  "editImage": "Edit Image",
+  "@editImage": {
+    "description": "Edit image dialog title"
+  },
+  "camera": "Camera",
+  "@camera": {
+    "description": "Camera option"
+  },
+  "gallery": "Gallery",
+  "@gallery": {
+    "description": "Gallery option"
+  },
+  "takePhoto": "Take Photo",
+  "@takePhoto": {
+    "description": "Take photo option"
+  },
+  "selectFromGallery": "Select from Gallery",
+  "@selectFromGallery": {
+    "description": "Select from gallery option"
+  },
+  "native": "Native",
+  "@native": {
+    "description": "Native language label"
+  },
+  "learning": "Learning",
+  "@learning": {
+    "description": "Learning language label"
+  },
+  "addHobbies": "Add Hobbies",
+  "@addHobbies": {
+    "description": "Add hobbies button text"
+  },
+  "selectHobbies": "Select Hobbies",
+  "@selectHobbies": {
+    "description": "Select hobbies dialog title"
+  },
+  "personalInformation": "Personal Information",
+  "@personalInformation": {
+    "description": "Personal information section title"
+  },
+  "selectGender": "Select Gender",
+  "@selectGender": {
+    "description": "Select gender dialog title"
+  },
+  "selectAge": "Select Age",
+  "@selectAge": {
+    "description": "Select age dialog title"
+  },
+  "birthday": "Birthday",
+  "@birthday": {
+    "description": "Birthday field label"
+  },
+  "birthdayUpdatedSuccessfully": "Birthday updated successfully!",
+  "@birthdayUpdatedSuccessfully": {
+    "description": "Birthday update success message"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme setting label"
+  },
+  "themeMode": "Theme Mode",
+  "@themeMode": {
+    "description": "Theme mode setting title"
+  },
+  "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "Dark mode label"
+  },
+  "lightMode": "Light Mode",
+  "@lightMode": {
+    "description": "Light mode label"
+  },
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Select language dialog title"
+  },
+  "movie": "Movie",
+  "@movie": {
+    "description": "Movie hobby"
+  },
+  "anime": "Anime",
+  "@anime": {
+    "description": "Anime hobby"
+  },
+  "cosplay": "Cosplay",
+  "@cosplay": {
+    "description": "Cosplay hobby"
+  },
+  "reading": "Reading",
+  "@reading": {
+    "description": "Reading hobby"
+  },
+  "sports": "Sports",
+  "@sports": {
+    "description": "Sports hobby"
+  },
+  "dancing": "Dancing",
+  "@dancing": {
+    "description": "Dancing hobby"
+  },
+  "chatOptions": "Chat Options",
+  "@chatOptions": {
+    "description": "Chat options title"
+  },
+  "videoCallFeature": "Video call feature coming soon!",
+  "@videoCallFeature": {
+    "description": "Video call feature notification"
+  },
+  "messageTranslated": "Message translated!",
+  "@messageTranslated": {
+    "description": "Message translated notification"
+  },
+  "originalMessage": "Original:",
+  "@originalMessage": {
+    "description": "Original message label"
+  },
+  "correctionMessage": "Correction:",
+  "@correctionMessage": {
+    "description": "Correction message label"
+  },
+  "correctMessage": "Correct Message",
+  "@correctMessage": {
+    "description": "Correct message dialog title"
+  },
+  "sendAttachment": "Send Attachment",
+  "@sendAttachment": {
+    "description": "Send attachment dialog title"
+  },
+  "photo": "Photo",
+  "@photo": {
+    "description": "Photo attachment option"
+  },
+  "voice": "Voice",
+  "@voice": {
+    "description": "Voice attachment option"
+  },
+  "document": "Document",
+  "@document": {
+    "description": "Document attachment option"
+  },
+  "location": "Location",
+  "@location": {
+    "description": "Location attachment option"
+  },
+  "attachmentComingSoon": "{attachment} attachment coming soon!",
+  "@attachmentComingSoon": {
+    "description": "Attachment feature notification",
+    "placeholders": {
+      "attachment": {
+        "type": "String",
+        "example": "Photo"
+      }
+    }
+  },
+  "featureComingSoon": "{feature} feature coming soon!",
+  "@featureComingSoon": {
+    "description": "Feature coming soon notification",
+    "placeholders": {
+      "feature": {
+        "type": "String",
+        "example": "View Profile"
+      }
+    }
+  },
+  "joined": "Joined",
+  "@joined": {
+    "description": "Joined days label"
+  },
+  "followers": "Followers",
+  "@followers": {
+    "description": "Followers count label"
+  },
+  "sharedInterests": "Shared Interests",
+  "@sharedInterests": {
+    "description": "Shared interests section title"
+  },
+  "interestsAndHobbies": "Interests & Hobbies",
+  "@interestsAndHobbies": {
+    "description": "Interests and hobbies section title"
+  },
+  "showLess": "Show less",
+  "@showLess": {
+    "description": "Show less button text"
+  },
+  "showMore": "Show more",
+  "@showMore": {
+    "description": "Show more button text"
+  },
+  "messageButton": "Message",
+  "@messageButton": {
+    "description": "Message button text"
+  },
+  "callButton": "Call",
+  "@callButton": {
+    "description": "Call button text"
   }
 }

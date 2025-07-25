@@ -1085,4 +1085,149 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get spanish => 'স্প্যানিশ';
+
+  @override
+  String get aboutMe => 'About Me';
+
+  @override
+  String get selfIntroduction => 'Self-introduction';
+
+  @override
+  String get tellUsAboutYourself => 'Tell us about yourself...';
+
+  @override
+  String get editBio => 'Edit Bio';
+
+  @override
+  String get editImage => 'Edit Image';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get takePhoto => 'Take Photo';
+
+  @override
+  String get selectFromGallery => 'Select from Gallery';
+
+  @override
+  String get native => 'Native';
+
+  @override
+  String get learning => 'Learning';
+
+  @override
+  String get addHobbies => 'Add Hobbies';
+
+  @override
+  String get selectHobbies => 'Select Hobbies';
+
+  @override
+  String get personalInformation => 'Personal Information';
+
+  @override
+  String get selectGender => 'Select Gender';
+
+  @override
+  String get selectAge => 'Select Age';
+
+  @override
+  String get birthday => 'Birthday';
+
+  @override
+  String get birthdayUpdatedSuccessfully => 'Birthday updated successfully!';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get themeMode => 'Theme Mode';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get lightMode => 'Light Mode';
+
+  @override
+  String get movie => 'Movie';
+
+  @override
+  String get anime => 'Anime';
+
+  @override
+  String get cosplay => 'Cosplay';
+
+  @override
+  String get reading => 'Reading';
+
+  @override
+  String get sports => 'Sports';
+
+  @override
+  String get dancing => 'Dancing';
+
+  @override
+  String get videoCallFeature => 'Video call feature coming soon!';
+
+  @override
+  String get messageTranslated => 'Message translated!';
+
+  @override
+  String get originalMessage => 'Original:';
+
+  @override
+  String get correctionMessage => 'Correction:';
+
+  @override
+  String get correctMessage => 'Correct Message';
+
+  @override
+  String get sendAttachment => 'Send Attachment';
+
+  @override
+  String get photo => 'Photo';
+
+  @override
+  String get voice => 'Voice';
+
+  @override
+  String get document => 'Document';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String attachmentComingSoon(String attachment) {
+    return '$attachment attachment coming soon!';
+  }
+
+  @override
+  String featureComingSoon(String feature) {
+    return '$feature feature coming soon!';
+  }
+
+  @override
+  String get followers => 'Followers';
+
+  @override
+  String get sharedInterests => 'Shared Interests';
+
+  @override
+  String get interestsAndHobbies => 'Interests & Hobbies';
+
+  @override
+  String get showLess => 'Show less';
+
+  @override
+  String get showMore => 'Show more';
+
+  @override
+  String get messageButton => 'Message';
+
+  @override
+  String get callButton => 'Call';
 }

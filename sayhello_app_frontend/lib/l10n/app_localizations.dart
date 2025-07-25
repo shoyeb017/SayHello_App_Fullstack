@@ -170,7 +170,7 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get language;
 
-  /// Language selector popup title
+  /// Select language dialog title
   ///
   /// In en, this message translates to:
   /// **'Select Language'**
@@ -1544,10 +1544,10 @@ abstract class AppLocalizations {
   /// **'You joined'**
   String get youJoined;
 
-  /// Someone joined message
+  /// Joined days label
   ///
   /// In en, this message translates to:
-  /// **'joined'**
+  /// **'Joined'**
   String get joined;
 
   /// Someone left message
@@ -2221,6 +2221,288 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Spanish'**
   String get spanish;
+
+  /// About me section title
+  ///
+  /// In en, this message translates to:
+  /// **'About Me'**
+  String get aboutMe;
+
+  /// Self introduction label
+  ///
+  /// In en, this message translates to:
+  /// **'Self-introduction'**
+  String get selfIntroduction;
+
+  /// Bio edit placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about yourself...'**
+  String get tellUsAboutYourself;
+
+  /// Edit bio dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Bio'**
+  String get editBio;
+
+  /// Edit image dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Image'**
+  String get editImage;
+
+  /// Camera option
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// Gallery option
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
+  /// Take photo option
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photo'**
+  String get takePhoto;
+
+  /// Select from gallery option
+  ///
+  /// In en, this message translates to:
+  /// **'Select from Gallery'**
+  String get selectFromGallery;
+
+  /// Native language label
+  ///
+  /// In en, this message translates to:
+  /// **'Native'**
+  String get native;
+
+  /// Learning language label
+  ///
+  /// In en, this message translates to:
+  /// **'Learning'**
+  String get learning;
+
+  /// Add hobbies button text
+  ///
+  /// In en, this message translates to:
+  /// **'Add Hobbies'**
+  String get addHobbies;
+
+  /// Select hobbies dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Select Hobbies'**
+  String get selectHobbies;
+
+  /// Personal information section title
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get personalInformation;
+
+  /// Select gender dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Select Gender'**
+  String get selectGender;
+
+  /// Select age dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Select Age'**
+  String get selectAge;
+
+  /// Birthday field label
+  ///
+  /// In en, this message translates to:
+  /// **'Birthday'**
+  String get birthday;
+
+  /// Birthday update success message
+  ///
+  /// In en, this message translates to:
+  /// **'Birthday updated successfully!'**
+  String get birthdayUpdatedSuccessfully;
+
+  /// Theme setting label
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// Theme mode setting title
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Mode'**
+  String get themeMode;
+
+  /// Dark mode label
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// Light mode label
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mode'**
+  String get lightMode;
+
+  /// Movie hobby
+  ///
+  /// In en, this message translates to:
+  /// **'Movie'**
+  String get movie;
+
+  /// Anime hobby
+  ///
+  /// In en, this message translates to:
+  /// **'Anime'**
+  String get anime;
+
+  /// Cosplay hobby
+  ///
+  /// In en, this message translates to:
+  /// **'Cosplay'**
+  String get cosplay;
+
+  /// Reading hobby
+  ///
+  /// In en, this message translates to:
+  /// **'Reading'**
+  String get reading;
+
+  /// Sports hobby
+  ///
+  /// In en, this message translates to:
+  /// **'Sports'**
+  String get sports;
+
+  /// Dancing hobby
+  ///
+  /// In en, this message translates to:
+  /// **'Dancing'**
+  String get dancing;
+
+  /// Video call feature notification
+  ///
+  /// In en, this message translates to:
+  /// **'Video call feature coming soon!'**
+  String get videoCallFeature;
+
+  /// Message translated notification
+  ///
+  /// In en, this message translates to:
+  /// **'Message translated!'**
+  String get messageTranslated;
+
+  /// Original message label
+  ///
+  /// In en, this message translates to:
+  /// **'Original:'**
+  String get originalMessage;
+
+  /// Correction message label
+  ///
+  /// In en, this message translates to:
+  /// **'Correction:'**
+  String get correctionMessage;
+
+  /// Correct message dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Correct Message'**
+  String get correctMessage;
+
+  /// Send attachment dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Send Attachment'**
+  String get sendAttachment;
+
+  /// Photo attachment option
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get photo;
+
+  /// Voice attachment option
+  ///
+  /// In en, this message translates to:
+  /// **'Voice'**
+  String get voice;
+
+  /// Document attachment option
+  ///
+  /// In en, this message translates to:
+  /// **'Document'**
+  String get document;
+
+  /// Location attachment option
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// Attachment feature notification
+  ///
+  /// In en, this message translates to:
+  /// **'{attachment} attachment coming soon!'**
+  String attachmentComingSoon(String attachment);
+
+  /// Feature coming soon notification
+  ///
+  /// In en, this message translates to:
+  /// **'{feature} feature coming soon!'**
+  String featureComingSoon(String feature);
+
+  /// Followers count label
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get followers;
+
+  /// Shared interests section title
+  ///
+  /// In en, this message translates to:
+  /// **'Shared Interests'**
+  String get sharedInterests;
+
+  /// Interests and hobbies section title
+  ///
+  /// In en, this message translates to:
+  /// **'Interests & Hobbies'**
+  String get interestsAndHobbies;
+
+  /// Show less button text
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get showLess;
+
+  /// Show more button text
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get showMore;
+
+  /// Message button text
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get messageButton;
+
+  /// Call button text
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get callButton;
 }
 
 class _AppLocalizationsDelegate
