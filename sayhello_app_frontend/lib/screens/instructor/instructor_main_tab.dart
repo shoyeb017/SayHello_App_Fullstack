@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../l10n/app_localizations.dart';
 import 'BottomTabs/Home/home_page.dart';
 import 'BottomTabs/AddCourse/add_course_page.dart';
 import 'BottomTabs/Profile/profile_page.dart';
@@ -42,9 +41,9 @@ class _InstructorMainTabState extends State<InstructorMainTab> {
             selectedLabelStyle: const TextStyle(fontSize: 11),
             unselectedLabelStyle: const TextStyle(fontSize: 11),
             items: [
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Icon(Icons.home),
-                label: AppLocalizations.of(context)!.home,
+                label: 'Home',
               ),
               BottomNavigationBarItem(
                 icon: Container(
@@ -61,11 +60,11 @@ class _InstructorMainTabState extends State<InstructorMainTab> {
                     color: _currentIndex == 1 ? Colors.white : Colors.grey[600],
                   ),
                 ),
-                label: AppLocalizations.of(context)!.addCourse,
+                label: 'Add Course',
               ),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Icon(Icons.person),
-                label: AppLocalizations.of(context)!.profile,
+                label: 'Profile',
               ),
             ],
           ),

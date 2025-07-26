@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
-import '../../../../l10n/app_localizations.dart';
 import 'feed_detail_page.dart';
 
 // Data Models for Backend Integration
@@ -314,9 +313,9 @@ class _FeedPageState extends State<FeedPage>
                 themeProvider.toggleTheme(toDark);
               },
             ),
-            Expanded(
+            const Expanded(
               child: Text(
-                AppLocalizations.of(context)!.feed,
+                'Moments',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
               ),
@@ -384,7 +383,7 @@ class _FeedPageState extends State<FeedPage>
                     ),
                     child: Center(
                       child: Text(
-                        AppLocalizations.of(context)!.recent,
+                        'Recent',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: _tabController.index == 0
@@ -414,7 +413,7 @@ class _FeedPageState extends State<FeedPage>
                     ),
                     child: Center(
                       child: Text(
-                        AppLocalizations.of(context)!.forYou,
+                        'For You',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: _tabController.index == 1
@@ -515,7 +514,7 @@ class _FeedPageState extends State<FeedPage>
               likeId: 'like_${DateTime.now().millisecondsSinceEpoch}',
               feedId: feedId,
               userId: 'user_current',
-              userName: AppLocalizations.of(context)!.you,
+              userName: 'You',
               userAvatar: 'https://i.pravatar.cc/150?img=15',
               createdAt: DateTime.now(),
             ),
@@ -558,15 +557,13 @@ class _FeedPostCardState extends State<FeedPostCard> {
     final difference = now.difference(dateTime);
 
     if (difference.inDays > 0) {
-      return AppLocalizations.of(context)!.daysAgoCount(difference.inDays);
+      return '${difference.inDays}d ago';
     } else if (difference.inHours > 0) {
-      return AppLocalizations.of(context)!.hoursAgoCount(difference.inHours);
+      return '${difference.inHours}h ago';
     } else if (difference.inMinutes > 0) {
-      return AppLocalizations.of(
-        context,
-      )!.minutesAgoCount(difference.inMinutes);
+      return '${difference.inMinutes}m ago';
     } else {
-      return AppLocalizations.of(context)!.now;
+      return 'now';
     }
   }
 
@@ -694,9 +691,7 @@ class _FeedPostCardState extends State<FeedPostCard> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  widget.post.isFollowing
-                      ? AppLocalizations.of(context)!.following
-                      : AppLocalizations.of(context)!.follow,
+                  widget.post.isFollowing ? 'Following' : 'Follow',
                   style: TextStyle(
                     color: widget.post.isFollowing
                         ? const Color(0xFF7758f3)
@@ -754,7 +749,7 @@ class _FeedPostCardState extends State<FeedPostCard> {
                 Icon(Icons.translate, size: 16, color: const Color(0xFF7d54fb)),
                 const SizedBox(width: 4),
                 Text(
-                  AppLocalizations.of(context)!.translated,
+                  'Translated',
                   style: TextStyle(
                     color: const Color(0xFF7d54fb),
                     fontSize: 12,
@@ -783,9 +778,7 @@ class _FeedPostCardState extends State<FeedPostCard> {
               }
             },
             child: Text(
-              _isExpanded
-                  ? AppLocalizations.of(context)!.seeLess
-                  : AppLocalizations.of(context)!.seeMore,
+              _isExpanded ? 'See more' : 'more',
               style: const TextStyle(
                 color: Color(0xFF7d54fb),
                 fontSize: 14,
@@ -951,9 +944,7 @@ class _FeedPostCardState extends State<FeedPostCard> {
         GestureDetector(
           onTap: _navigateToDetails,
           child: Text(
-            AppLocalizations.of(
-              context,
-            )!.viewAllComments(widget.comments.length),
+            'View all ${widget.comments.length} comments',
             style: const TextStyle(color: Color(0xFF7d54fb), fontSize: 14),
           ),
         ),

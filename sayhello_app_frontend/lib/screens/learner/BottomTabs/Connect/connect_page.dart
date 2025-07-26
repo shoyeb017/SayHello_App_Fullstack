@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../l10n/app_localizations.dart';
 import '../../../../providers/theme_provider.dart';
-import 'others_profile_page.dart';
 
 class Partner {
   final String name;
@@ -36,14 +34,9 @@ class ConnectPage extends StatefulWidget {
 }
 
 class _ConnectPageState extends State<ConnectPage> {
-  int selectedTopTabIndex = 0;
+  final List<String> topTabs = ['All', 'Serious Learners', 'Nearby', 'Gender'];
 
-  List<String> get topTabs => [
-    AppLocalizations.of(context)!.all,
-    AppLocalizations.of(context)!.seriousLearners,
-    AppLocalizations.of(context)!.nearby,
-    AppLocalizations.of(context)!.gender,
-  ];
+  int selectedTopTabIndex = 0;
 
   final List<Partner> allPartners = [
     Partner(
@@ -157,9 +150,9 @@ class _ConnectPageState extends State<ConnectPage> {
                 themeProvider.toggleTheme(toDark);
               },
             ),
-            Expanded(
+            const Expanded(
               child: Text(
-                AppLocalizations.of(context)!.findPartners,
+                'Find Partners',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
               ),
@@ -271,220 +264,202 @@ class _ConnectPageState extends State<ConnectPage> {
   }
 
   Widget partnerCard(Partner partner, {required bool isDark}) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OthersProfilePage(
-              userId: partner.name, // Using name as ID for demo
-              name: partner.name,
-              avatar: partner.avatar,
-              nativeLanguage: partner.nativeLanguage,
-              learningLanguage: partner.learningLanguage,
-            ),
-          ),
-        );
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Stack(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 28,
-                      backgroundImage: NetworkImage(partner.avatar),
-                    ),
-                    if (partner.recentlyActive || partner.activeNow)
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Stack(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundImage: NetworkImage(partner.avatar),
+                  ),
+                  if (partner.recentlyActive || partner.activeNow)
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: CircleAvatar(
+                        radius: 6,
+                        backgroundColor: isDark ? Colors.black : Colors.white,
                         child: CircleAvatar(
-                          radius: 6,
-                          backgroundColor: isDark ? Colors.black : Colors.white,
-                          child: CircleAvatar(
-                            radius: 4,
-                            backgroundColor: partner.recentlyActive
-                                ? Colors.red
-                                : Colors.green,
-                          ),
+                          radius: 4,
+                          backgroundColor: partner.recentlyActive
+                              ? Colors.red
+                              : Colors.green,
                         ),
                       ),
+                    ),
+                ],
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Name + VIP
+                    Row(
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: Text(
+                            partner.name,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                        if (partner.vip)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 6),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.orange,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Text(
+                                'NEW',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    // Languages
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.only(bottom: 2),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.green,
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              partner.nativeLanguage,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 6),
+                          child: Icon(
+                            Icons.sync_alt,
+                            size: 18,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.only(bottom: 2),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.purple,
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              partner.learningLanguage,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Message
+                    Text(
+                      partner.message,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: isDark
+                            ? Colors.grey.shade300
+                            : Colors.grey.shade500,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Tags
+                    Wrap(
+                      spacing: 4,
+                      runSpacing: -6,
+                      children: partner.tags.map((tag) {
+                        final isNew = tag.toLowerCase() == 'new';
+                        final bgColor = isNew
+                            ? Colors.orange.shade100
+                            : Colors.green.shade100;
+                        final textColor = isNew ? Colors.orange : Colors.green;
+
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: bgColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            tag,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: textColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Name + VIP
-                      Row(
-                        children: [
-                          Flexible(
-                            flex: 1,
-                            child: Text(
-                              partner.name,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: isDark ? Colors.white : Colors.black,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                          if (partner.vip)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 6),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Text(
-                                  'NEW',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 4),
-
-                      // Languages
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Container(
-                              padding: const EdgeInsets.only(bottom: 2),
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.green,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                              child: Text(
-                                partner.nativeLanguage,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 6),
-                            child: Icon(
-                              Icons.sync_alt,
-                              size: 18,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          Flexible(
-                            child: Container(
-                              padding: const EdgeInsets.only(bottom: 2),
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.purple,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                              child: Text(
-                                partner.learningLanguage,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 6),
-
-                      // Message
-                      Text(
-                        partner.message,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: isDark
-                              ? Colors.grey.shade300
-                              : Colors.grey.shade500,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-
-                      const SizedBox(height: 6),
-
-                      // Tags
-                      Wrap(
-                        spacing: 4,
-                        runSpacing: -6,
-                        children: partner.tags.map((tag) {
-                          final isNew = tag.toLowerCase() == 'new';
-                          final bgColor = isNew
-                              ? Colors.orange.shade100
-                              : Colors.green.shade100;
-                          final textColor = isNew
-                              ? Colors.orange
-                              : Colors.green;
-
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: bgColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              tag,
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: textColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            // Wave icon top-right
-            Positioned(
-              top: 28,
-              right: 10,
-              child: Icon(Icons.waving_hand, color: Colors.purple, size: 24),
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+          // Wave icon top-right
+          Positioned(
+            top: 28,
+            right: 10,
+            child: Icon(Icons.waving_hand, color: Colors.purple, size: 24),
+          ),
+        ],
       ),
     );
   }
@@ -523,12 +498,6 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
   bool _newUsersOnly = false;
   int _selectedGenderIndex = 0;
   final List<String> genders = ['All', 'Male', 'Female'];
-
-  List<String> get localizedGenders => [
-    AppLocalizations.of(context)!.all,
-    AppLocalizations.of(context)!.male,
-    AppLocalizations.of(context)!.female,
-  ];
   final List<String> regions = ['Asia', 'Europe', 'America'];
   final List<String> cities = ['Tokyo', 'Paris', 'New York'];
   String? _selectedRegion;
@@ -537,6 +506,7 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: MediaQuery.of(context).viewInsets,
       child: SingleChildScrollView(
@@ -569,14 +539,14 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
                         _selectedProficiency = 4;
                       });
                     },
-                    child: Text(AppLocalizations.of(context)!.reset),
+                    child: const Text('Reset'),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
               // Proficiency levels
-              Text(
-                AppLocalizations.of(context)!.languageLevel,
+              const Text(
+                'Language Level',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 16),
@@ -584,11 +554,11 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(5, (index) {
                   final titles = [
-                    AppLocalizations.of(context)!.beginner,
-                    AppLocalizations.of(context)!.elementary,
-                    AppLocalizations.of(context)!.intermediate,
-                    AppLocalizations.of(context)!.advanced,
-                    AppLocalizations.of(context)!.proficient,
+                    'Beginner',
+                    'Elementary',
+                    'Intermediate',
+                    'Advanced',
+                    'Proficient',
                   ];
                   return GestureDetector(
                     onTap: () => setState(() => _selectedProficiency = index),
@@ -616,15 +586,15 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
               SwitchListTile(
                 value: _newUsersOnly,
                 onChanged: (val) => setState(() => _newUsersOnly = val),
-                title: Text(
-                  AppLocalizations.of(context)!.newUsers,
+                title: const Text(
+                  'New Users',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 contentPadding: EdgeInsets.zero,
               ),
               const SizedBox(height: 8),
-              Text(
-                AppLocalizations.of(context)!.age,
+              const Text(
+                'Age',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               Row(
@@ -649,9 +619,9 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
               ),
               const SizedBox(height: 16),
               Row(
-                children: [
+                children: const [
                   Text(
-                    AppLocalizations.of(context)!.advancedSearch,
+                    'Advanced Search',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   SizedBox(width: 6),
@@ -659,10 +629,8 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(
-                    context,
-                  )!.regionOfLanguagePartner,
+                decoration: const InputDecoration(
+                  labelText: 'Region of language partner',
                   border: OutlineInputBorder(),
                 ),
                 value: _selectedRegion,
@@ -673,10 +641,8 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
               ),
               const SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(
-                    context,
-                  )!.cityOfLanguagePartner,
+                decoration: const InputDecoration(
+                  labelText: 'City of language partner',
                   border: OutlineInputBorder(),
                 ),
                 value: _selectedCity,
@@ -686,8 +652,8 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
                 onChanged: (val) => setState(() => _selectedCity = val),
               ),
               const SizedBox(height: 16),
-              Text(
-                AppLocalizations.of(context)!.gender,
+              const Text(
+                'Gender',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 10),
@@ -733,7 +699,7 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            localizedGenders[index],
+                            genders[index],
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,

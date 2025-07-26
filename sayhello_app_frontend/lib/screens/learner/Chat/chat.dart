@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../l10n/app_localizations.dart';
 
 // Models for chat data
 class ChatUser {
@@ -191,8 +190,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   ),
                   Text(
                     widget.user.isOnline
-                        ? AppLocalizations.of(context)!.online
-                        : '${AppLocalizations.of(context)!.lastSeen} ${_formatLastSeen(widget.user.lastSeen)}',
+                        ? 'Online'
+                        : 'Last seen ${_formatLastSeen(widget.user.lastSeen)}',
                     style: TextStyle(
                       fontSize: 12,
                       color: isDark
@@ -211,7 +210,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!.callStarted),
+                  content: const Text('Starting video call...'),
                   backgroundColor: primaryPurple,
                 ),
               );
@@ -753,7 +752,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                           color: isDark ? Colors.white : Colors.black,
                         ),
                         decoration: InputDecoration(
-                          hintText: AppLocalizations.of(context)!.typeMessage,
+                          hintText: 'Type a message...',
                           hintStyle: TextStyle(
                             color: isDark
                                 ? Colors.grey.shade400
@@ -885,9 +884,9 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             const SizedBox(height: 8),
             TextField(
               controller: correctionController,
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.enterCorrection,
-                border: const OutlineInputBorder(),
+              decoration: const InputDecoration(
+                hintText: 'Enter correction...',
+                border: OutlineInputBorder(),
               ),
               maxLines: 3,
             ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../l10n/app_localizations.dart';
 
 class CourseDetails extends StatelessWidget {
   final Map<String, dynamic> course;
@@ -408,7 +407,7 @@ class CourseDetails extends StatelessWidget {
                     Icon(Icons.description, color: Colors.purple, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      AppLocalizations.of(context)!.courseDescription,
+                      'Course Description',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -452,7 +451,7 @@ class CourseDetails extends StatelessWidget {
                 childAspectRatio: childAspectRatio,
                 children: [
                   _buildInfoCard(
-                    AppLocalizations.of(context)!.duration,
+                    'Duration',
                     course['duration'] ?? '4 weeks',
                     Icons.schedule,
                     Colors.purple,
@@ -462,7 +461,7 @@ class CourseDetails extends StatelessWidget {
                     subTextColor,
                   ),
                   _buildInfoCard(
-                    AppLocalizations.of(context)!.startDate,
+                    'Start Date',
                     startDate,
                     Icons.calendar_today,
                     Colors.purple.shade300,
@@ -472,7 +471,7 @@ class CourseDetails extends StatelessWidget {
                     subTextColor,
                   ),
                   _buildInfoCard(
-                    AppLocalizations.of(context)!.endDate,
+                    'End Date',
                     endDate,
                     Icons.event_available,
                     Colors.purple.shade400,
@@ -482,7 +481,7 @@ class CourseDetails extends StatelessWidget {
                     subTextColor,
                   ),
                   _buildInfoCard(
-                    AppLocalizations.of(context)!.price,
+                    'Price',
                     '\$${price.toStringAsFixed(2)}',
                     Icons.attach_money,
                     Colors.purple.shade600,
@@ -513,15 +512,11 @@ class CourseDetails extends StatelessWidget {
               ),
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)!.enrolledSuccessfully,
-                    ),
-                  ),
+                  const SnackBar(content: Text('Enrolled successfully!')),
                 );
               },
               child: Text(
-                '${AppLocalizations.of(context)!.enrollFor} \$${price.toStringAsFixed(2)}',
+                'Enroll for \$${price.toStringAsFixed(2)}',
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../l10n/app_localizations.dart';
 
 class StudyMaterialTab extends StatelessWidget {
   final Map<String, dynamic> course;
@@ -110,13 +109,13 @@ class StudyMaterialTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
                     Icon(Icons.description, color: Colors.white, size: 24),
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        AppLocalizations.of(context)!.studyMaterials,
+                        'Study Materials',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -129,8 +128,8 @@ class StudyMaterialTab extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  AppLocalizations.of(context)!.downloadAndAccessMaterials,
+                const Text(
+                  'Download and access course materials',
                   style: TextStyle(fontSize: 14, color: Colors.white70),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -141,17 +140,17 @@ class StudyMaterialTab extends StatelessWidget {
                   runSpacing: 8,
                   children: [
                     _buildStatCard(
-                      AppLocalizations.of(context)!.totalMaterials,
+                      'Total Materials',
                       '${materials.length}',
                       Icons.folder_outlined,
                     ),
                     _buildStatCard(
-                      AppLocalizations.of(context)!.downloaded,
+                      'Downloaded',
                       '$downloadedCount',
                       Icons.download_done,
                     ),
                     _buildStatCard(
-                      AppLocalizations.of(context)!.totalSize,
+                      'Total Size',
                       '${totalSize.toStringAsFixed(1)} MB',
                       Icons.storage,
                     ),
@@ -253,8 +252,8 @@ class StudyMaterialTab extends StatelessWidget {
                                 Icons.visibility,
                                 color: Colors.white,
                               ),
-                              label: Text(
-                                AppLocalizations.of(context)!.view,
+                              label: const Text(
+                                'View',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
@@ -284,8 +283,8 @@ class StudyMaterialTab extends StatelessWidget {
                               ),
                               label: Text(
                                 material['isDownloaded'] == true
-                                    ? AppLocalizations.of(context)!.downloaded
-                                    : AppLocalizations.of(context)!.download,
+                                    ? 'Downloaded'
+                                    : 'Download',
                                 style: TextStyle(
                                   color: Colors.purple,
                                   fontWeight: FontWeight.w600,
@@ -367,9 +366,7 @@ class StudyMaterialTab extends StatelessWidget {
   void _openMaterial(BuildContext context, Map<String, dynamic> material) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          '${AppLocalizations.of(context)!.opening}: ${material['title']}',
-        ),
+        content: Text('Opening: ${material['title']}'),
         backgroundColor: Colors.purple,
       ),
     );
@@ -378,9 +375,7 @@ class StudyMaterialTab extends StatelessWidget {
   void _downloadMaterial(BuildContext context, Map<String, dynamic> material) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          '${AppLocalizations.of(context)!.downloading}: ${material['title']}',
-        ),
+        content: Text('Downloading: ${material['title']}'),
         backgroundColor: Colors.purple.shade600,
       ),
     );

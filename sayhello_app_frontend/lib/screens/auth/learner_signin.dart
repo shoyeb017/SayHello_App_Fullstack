@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
-import '../../l10n/app_localizations.dart';
 
 class LearnerSignInPage extends StatefulWidget {
   const LearnerSignInPage({super.key});
@@ -24,7 +23,7 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.learnerSignIn),
+        title: const Text('Learner Sign In'),
         centerTitle: true,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
@@ -72,8 +71,8 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      AppLocalizations.of(context)!.welcomeBack,
+                    const Text(
+                      'Welcome Back',
                       style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
@@ -81,7 +80,7 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      AppLocalizations.of(context)!.signInToContinue,
+                      'Sign in to continue learning.',
                       style: TextStyle(
                         color: isDark ? Colors.grey[400] : Colors.grey[700],
                         fontSize: 16,
@@ -96,7 +95,7 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
                         color: isDark ? Colors.white : Colors.black,
                       ),
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.username,
+                        labelText: 'Username',
                         labelStyle: TextStyle(
                           color: isDark ? Colors.grey[400] : Colors.grey[700],
                         ),
@@ -130,7 +129,7 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
                         color: isDark ? Colors.white : Colors.black,
                       ),
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.password,
+                        labelText: 'Password',
                         labelStyle: TextStyle(
                           color: isDark ? Colors.grey[400] : Colors.grey[700],
                         ),
@@ -183,8 +182,8 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
                           Navigator.pushNamed(context, '/learner-main');
                         },
                         icon: const Icon(Icons.login, color: Colors.white),
-                        label: Text(
-                          AppLocalizations.of(context)!.signIn,
+                        label: const Text(
+                          'Sign In',
                           style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -208,7 +207,7 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
                         },
                         icon: Icon(Icons.person_add, color: primaryColor),
                         label: Text(
-                          AppLocalizations.of(context)!.signUp,
+                          'Sign Up',
                           style: TextStyle(color: primaryColor, fontSize: 16),
                         ),
                         style: OutlinedButton.styleFrom(

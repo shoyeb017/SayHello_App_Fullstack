@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
-import '../../../../l10n/app_localizations.dart';
 import 'search_people_in_home.dart';
 import 'chat_item.dart';
 import 'all_courses.dart';
@@ -140,14 +139,11 @@ class HomePage extends StatelessWidget {
                   themeProvider.toggleTheme(toDark);
                 },
               ),
-              Expanded(
+              const Expanded(
                 child: Text(
-                  AppLocalizations.of(context)!.home,
+                  'Language Talks',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                 ),
               ),
               IconButton(icon: Icon(Icons.tune), onPressed: () {}),
@@ -165,43 +161,43 @@ class HomePage extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               children: [
-                // GestureDetector(
-                //   onTap: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(builder: (_) => const AllCourses()),
-                //     );
-                //   },
-                //   child: Column(
-                //     children: [
-                //       Container(
-                //         width: 50,
-                //         height: 50,
-                //         decoration: BoxDecoration(
-                //           color: const Color(0xFF00C853).withOpacity(0.15),
-                //           borderRadius: BorderRadius.circular(16),
-                //         ),
-                //         child: const Icon(
-                //           Icons.menu_book_outlined,
-                //           size: 26,
-                //           color: Color(0xFF00C853),
-                //         ),
-                //       ),
-                //       const SizedBox(height: 4),
-                //       SizedBox(
-                //         width: 72,
-                //         child: Text(
-                //           AppLocalizations.of(context)!.allCourses,
-                //           textAlign: TextAlign.center,
-                //           style: TextStyle(fontSize: 11),
-                //           maxLines: 1,
-                //           overflow: TextOverflow.ellipsis,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // const SizedBox(width: 12),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const AllCourses()),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF00C853).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(
+                          Icons.menu_book_outlined,
+                          size: 26,
+                          color: Color(0xFF00C853),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const SizedBox(
+                        width: 72,
+                        child: Text(
+                          'All Courses',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 11),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -227,10 +223,10 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      SizedBox(
+                      const SizedBox(
                         width: 72,
                         child: Text(
-                          AppLocalizations.of(context)!.translate,
+                          'Translate',
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 11),
                           maxLines: 1,
@@ -271,13 +267,10 @@ class HomePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(40),
                 ),
                 child: Row(
-                  children: [
+                  children: const [
                     Icon(Icons.search, size: 20),
                     SizedBox(width: 10),
-                    Text(
-                      AppLocalizations.of(context)!.seePeoplesChats,
-                      style: TextStyle(fontSize: 16),
-                    ),
+                    Text("See People's Chats", style: TextStyle(fontSize: 16)),
                   ],
                 ),
               ),
@@ -421,7 +414,7 @@ class _ChatTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  AppLocalizations.of(context)!.newMessage,
+                  'New',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: const Color(0xFF765ae3),
                     fontWeight: FontWeight.w600,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../l10n/app_localizations.dart';
 import 'feed_page.dart'; // Import for data models
 
 class FeedDetailPage extends StatefulWidget {
@@ -43,7 +42,7 @@ class _FeedDetailPageState extends State<FeedDetailPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          AppLocalizations.of(context)!.details,
+          'Details',
           style: TextStyle(color: textColor, fontSize: 18),
         ),
       ),
@@ -64,9 +63,7 @@ class _FeedDetailPageState extends State<FeedDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          AppLocalizations.of(
-                            context,
-                          )!.commentsWithCount(widget.comments.length),
+                          'Comments (${widget.comments.length})',
                           style: TextStyle(
                             color: textColor,
                             fontSize: 18,
@@ -129,9 +126,7 @@ class _FeedDetailPageState extends State<FeedDetailPage> {
                               controller: _commentController,
                               style: TextStyle(color: textColor),
                               decoration: InputDecoration(
-                                hintText: AppLocalizations.of(
-                                  context,
-                                )!.addComment,
+                                hintText: 'Add a comment...',
                                 hintStyle: TextStyle(
                                   color: isDark
                                       ? Colors.grey[400]
@@ -304,9 +299,7 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  widget.post.isFollowing
-                      ? AppLocalizations.of(context)!.following
-                      : AppLocalizations.of(context)!.follow,
+                  widget.post.isFollowing ? 'Following' : 'Follow',
                   style: TextStyle(
                     color: widget.post.isFollowing
                         ? const Color(0xFF7758f3)
@@ -385,7 +378,7 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
                 Icon(Icons.translate, size: 16, color: const Color(0xFF7d54fb)),
                 const SizedBox(width: 4),
                 Text(
-                  AppLocalizations.of(context)!.translated,
+                  'Translated',
                   style: TextStyle(
                     color: const Color(0xFF7d54fb),
                     fontSize: 12,
@@ -511,7 +504,7 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
             _showLikedUsersList();
           },
           child: Text(
-            AppLocalizations.of(context)!.likesWithCount(widget.post.likeCount),
+            '${widget.post.likeCount} Likes >',
             style: const TextStyle(
               color: Color(0xFF7d54fb),
               fontSize: 14,
@@ -532,16 +525,16 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              AppLocalizations.of(context)!.likedBy,
+            const Text(
+              'Liked by',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             // List of users who liked using actual data
             if (widget.likes.isEmpty)
-              Padding(
+              const Padding(
                 padding: EdgeInsets.all(20),
-                child: Text(AppLocalizations.of(context)!.noLikesYet),
+                child: Text('No likes yet'),
               )
             else
               ...widget.likes
@@ -644,7 +637,7 @@ class CommentCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 16),
                     Text(
-                      AppLocalizations.of(context)!.reply,
+                      'Reply',
                       style: TextStyle(color: iconColor, fontSize: 12),
                     ),
                     const SizedBox(width: 16),

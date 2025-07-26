@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../l10n/app_localizations.dart';
 
 class ProgressTab extends StatelessWidget {
   final Map<String, dynamic> course;
@@ -214,12 +213,12 @@ class ProgressTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
                     Icon(Icons.insights, color: Colors.white, size: 28),
                     SizedBox(width: 12),
                     Text(
-                      AppLocalizations.of(context)!.learningProgress,
+                      'Learning Progress',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -229,8 +228,8 @@ class ProgressTab extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  AppLocalizations.of(context)!.trackYourLearningJourney,
+                const Text(
+                  'Track your learning journey and achievements',
                   style: TextStyle(fontSize: 16, color: Colors.white70),
                 ),
                 const SizedBox(height: 20),
@@ -242,8 +241,8 @@ class ProgressTab extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          AppLocalizations.of(context)!.overallProgress,
+                        const Text(
+                          'Overall Progress',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -324,7 +323,7 @@ class ProgressTab extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                AppLocalizations.of(context)!.courseModules,
+                'Course Modules',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -341,7 +340,7 @@ class ProgressTab extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
-                  '${(overallProgress * 100).toInt()}% ${AppLocalizations.of(context)!.complete}',
+                  '${(overallProgress * 100).toInt()}% Complete',
                   style: const TextStyle(
                     color: Colors.purple,
                     fontSize: 12,

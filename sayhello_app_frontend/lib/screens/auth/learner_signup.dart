@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
-import '../../l10n/app_localizations.dart';
 
 class LearnerSignupPage extends StatefulWidget {
   const LearnerSignupPage({super.key});
@@ -28,30 +27,15 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
   List<String> interests = [];
   File? profileImage;
 
-  final languageOptions = ['English', 'Spanish', 'Japanese', 'Bangla', 'Korean'];
-
-  final genderOptionsKeys = ['Male', 'Female', 'Other'];
-  List<String> get genderOptions => [
-    AppLocalizations.of(context)!.male,
-    AppLocalizations.of(context)!.female,
-    AppLocalizations.of(context)!.other,
-  ];
-
-  final countryOptionsKeys = [
+  final languageOptions = ['English', 'Arabic', 'Japanese', 'Bangla', 'Korean'];
+  final genderOptions = ['Male', 'Female', 'Other'];
+  final countryOptions = [
     'Bangladesh',
     'USA',
     'Japan',
     'Korea',
     'Saudi Arabia',
     'Other',
-  ];
-  List<String> get countryOptions => [
-    AppLocalizations.of(context)!.bangladesh,
-    AppLocalizations.of(context)!.usa,
-    AppLocalizations.of(context)!.japan,
-    AppLocalizations.of(context)!.korea,
-    AppLocalizations.of(context)!.saudiArabia,
-    AppLocalizations.of(context)!.other,
   ];
   final allInterests = [
     'Music',
@@ -66,32 +50,7 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
     'Others',
   ];
 
-  List<String> getLocalizedInterests() {
-    return [
-      AppLocalizations.of(context)!.music,
-      AppLocalizations.of(context)!.travel,
-      AppLocalizations.of(context)!.books,
-      AppLocalizations.of(context)!.gaming,
-      AppLocalizations.of(context)!.cooking,
-      AppLocalizations.of(context)!.movies,
-      AppLocalizations.of(context)!.photography,
-      AppLocalizations.of(context)!.fitness,
-      AppLocalizations.of(context)!.art,
-      AppLocalizations.of(context)!.others,
-    ];
-  }
-
   final Color primaryColor = const Color(0xFF7A54FF);
-
-  List<String> getSkillLevels() {
-    return [
-      AppLocalizations.of(context)!.beginner,
-      AppLocalizations.of(context)!.basic,
-      AppLocalizations.of(context)!.intermediate,
-      AppLocalizations.of(context)!.advanced,
-      AppLocalizations.of(context)!.fluent,
-    ];
-  }
 
   Color get grayBackground => Theme.of(context).brightness == Brightness.dark
       ? Colors.grey[800]!
@@ -116,11 +75,7 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
         key.currentState!.save();
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.learnerRegisteredSuccessfully,
-          ),
-        ),
+        const SnackBar(content: Text('Learner Registered Successfully!')),
       );
     }
   }
@@ -190,9 +145,9 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                       child: ListView(
                         shrinkWrap: true,
                         children: [
-                          Text(
-                            AppLocalizations.of(context)!.step1PersonalInfo,
-                            style: const TextStyle(
+                          const Text(
+                            'Step 1: Personal Info',
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -219,14 +174,14 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                           ),
                           const SizedBox(height: 12),
                           _inputField(
-                            AppLocalizations.of(context)!.name,
+                            'Full Name',
                             (val) => name = val ?? '',
                             Icons.person,
                             fontSize: 14,
                             paddingVertical: 8,
                           ),
                           _inputField(
-                            AppLocalizations.of(context)!.email,
+                            'Email',
                             (val) => email = val ?? '',
                             Icons.email,
                             inputType: TextInputType.emailAddress,
@@ -234,7 +189,7 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                             paddingVertical: 8,
                           ),
                           _inputField(
-                            AppLocalizations.of(context)!.username,
+                            'Username',
                             (val) => username = val ?? '',
                             Icons.account_circle,
                             fontSize: 14,
@@ -251,9 +206,9 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                               ),
                             ),
                             onPressed: nextStep,
-                            child: Text(
-                              AppLocalizations.of(context)!.next,
-                              style: const TextStyle(
+                            child: const Text(
+                              'Next',
+                              style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
                               ),
@@ -273,37 +228,43 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                       child: ListView(
                         shrinkWrap: true,
                         children: [
-                          Text(
-                            AppLocalizations.of(context)!.step2LanguageInfo,
-                            style: const TextStyle(
+                          const Text(
+                            'Step 2: Language Info',
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 12),
                           _dropdown(
-                            AppLocalizations.of(context)!.nativeLanguageShort,
+                            'Native Language',
                             nativeLanguage,
                             languageOptions,
                             (val) => setState(() => nativeLanguage = val),
                             fontSize: 14,
                           ),
                           _dropdown(
-                            AppLocalizations.of(context)!.learningLanguageShort,
+                            'Learning Language',
                             learningLanguage,
                             languageOptions,
                             (val) => setState(() => learningLanguage = val),
                             fontSize: 14,
                           ),
                           const SizedBox(height: 12),
-                          Text(
-                            AppLocalizations.of(context)!.skillLevel,
-                            style: const TextStyle(fontSize: 14),
+                          const Text(
+                            'Skill Level',
+                            style: TextStyle(fontSize: 14),
                           ),
                           Slider(
                             value: skillLevel,
                             divisions: 4,
-                            label: getSkillLevels()[skillLevel.toInt()],
+                            label: [
+                              'Beginner',
+                              'Basic',
+                              'Intermediate',
+                              'Advanced',
+                              'Fluent',
+                            ][skillLevel.toInt()],
                             onChanged: (val) =>
                                 setState(() => skillLevel = val),
                             min: 0,
@@ -327,9 +288,9 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
-                                child: Text(
-                                  AppLocalizations.of(context)!.back,
-                                  style: const TextStyle(fontSize: 14),
+                                child: const Text(
+                                  'Back',
+                                  style: TextStyle(fontSize: 14),
                                 ),
                               ),
                               ElevatedButton(
@@ -344,9 +305,9 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                                   ),
                                 ),
                                 onPressed: nextStep,
-                                child: Text(
-                                  AppLocalizations.of(context)!.next,
-                                  style: const TextStyle(
+                                child: const Text(
+                                  'Next',
+                                  style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
                                   ),
@@ -368,23 +329,23 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                       child: ListView(
                         shrinkWrap: true,
                         children: [
-                          Text(
-                            AppLocalizations.of(context)!.step3AdditionalInfo,
-                            style: const TextStyle(
+                          const Text(
+                            'Step 3: Additional Info',
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 12),
                           _dropdown(
-                            AppLocalizations.of(context)!.gender,
+                            'Gender',
                             gender,
                             genderOptions,
                             (val) => setState(() => gender = val),
                             fontSize: 14,
                           ),
                           _dropdown(
-                            AppLocalizations.of(context)!.country,
+                            'Country',
                             country,
                             countryOptions,
                             (val) => setState(() => country = val),
@@ -393,7 +354,7 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                           const SizedBox(height: 12),
                           TextFormField(
                             decoration: InputDecoration(
-                              labelText: AppLocalizations.of(context)!.bio,
+                              labelText: 'Bio',
                               filled: true,
                               fillColor: grayBackground,
                               isDense: true,
@@ -411,9 +372,9 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                             onSaved: (val) => bio = val ?? '',
                           ),
                           const SizedBox(height: 12),
-                          Text(
-                            AppLocalizations.of(context)!.dateOfBirth,
-                            style: const TextStyle(fontSize: 14),
+                          const Text(
+                            'Date of Birth',
+                            style: TextStyle(fontSize: 14),
                           ),
                           ElevatedButton.icon(
                             icon: Icon(
@@ -423,7 +384,7 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                             ),
                             label: Text(
                               dob == null
-                                  ? AppLocalizations.of(context)!.chooseDOB
+                                  ? 'Choose DOB'
                                   : '${dob!.day}/${dob!.month}/${dob!.year}',
                               style: TextStyle(
                                 color: primaryColor,
@@ -448,21 +409,17 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                             },
                           ),
                           const SizedBox(height: 12),
-                          Text(
-                            AppLocalizations.of(context)!.selectInterests,
-                            style: const TextStyle(fontSize: 14),
+                          const Text(
+                            'Select Interests',
+                            style: TextStyle(fontSize: 14),
                           ),
                           Wrap(
                             spacing: 8,
-                            children: allInterests.asMap().entries.map((entry) {
-                              final index = entry.key;
-                              final interest = entry.value;
-                              final localizedInterest =
-                                  getLocalizedInterests()[index];
+                            children: allInterests.map((interest) {
                               final selected = interests.contains(interest);
                               return FilterChip(
                                 label: Text(
-                                  localizedInterest,
+                                  interest,
                                   style: const TextStyle(fontSize: 13),
                                 ),
                                 selected: selected,
@@ -499,9 +456,9 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
-                                child: Text(
-                                  AppLocalizations.of(context)!.back,
-                                  style: const TextStyle(fontSize: 14),
+                                child: const Text(
+                                  'Back',
+                                  style: TextStyle(fontSize: 14),
                                 ),
                               ),
                               ElevatedButton(
@@ -516,9 +473,9 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                                   ),
                                 ),
                                 onPressed: submitForm,
-                                child: Text(
-                                  AppLocalizations.of(context)!.submit,
-                                  style: const TextStyle(
+                                child: const Text(
+                                  'Submit',
+                                  style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
                                   ),
@@ -580,9 +537,7 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
             ),
           ),
           onSaved: onSave,
-          validator: (val) => val == null || val.isEmpty
-              ? AppLocalizations.of(context)!.required
-              : null,
+          validator: (val) => val == null || val.isEmpty ? 'Required' : null,
         ),
       ),
     );
@@ -603,7 +558,7 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
               obscureText: _obscure,
               style: const TextStyle(fontSize: 14),
               decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.password,
+                labelText: 'Password',
                 prefixIcon: Icon(Icons.lock, color: primaryColor, size: 18),
                 border: InputBorder.none,
                 isDense: true,
@@ -620,9 +575,8 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                 ),
               ),
               onSaved: (val) => password = val ?? '',
-              validator: (val) => val == null || val.isEmpty
-                  ? AppLocalizations.of(context)!.required
-                  : null,
+              validator: (val) =>
+                  val == null || val.isEmpty ? 'Required' : null,
             ),
           ),
         );
@@ -679,9 +633,7 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
             )
             .toList(),
         onChanged: (val) => onChanged(val ?? ''),
-        validator: (val) => val == null || val.isEmpty
-            ? AppLocalizations.of(context)!.required
-            : null,
+        validator: (val) => val == null || val.isEmpty ? 'Required' : null,
       ),
     );
   }

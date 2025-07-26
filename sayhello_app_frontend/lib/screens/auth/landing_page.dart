@@ -221,24 +221,24 @@ class _LandingPageState extends State<LandingPage>
             ),
 
             const SizedBox(height: 24),
-            Text.rich(
+            const Text.rich(
               TextSpan(
-                text: AppLocalizations.of(context)!.agreementText,
+                text:
+                    'Your first login creates your account, and in doing so you agree to our ',
                 children: [
-                  const TextSpan(text: ' '),
                   TextSpan(
-                    text: AppLocalizations.of(context)!.termsOfService,
-                    style: const TextStyle(color: Colors.blue),
+                    text: 'Terms of Service',
+                    style: TextStyle(color: Colors.blue),
                   ),
-                  TextSpan(text: ' ${AppLocalizations.of(context)!.and} '),
+                  TextSpan(text: ' and '),
                   TextSpan(
-                    text: AppLocalizations.of(context)!.privacyPolicy,
-                    style: const TextStyle(color: Colors.blue),
+                    text: 'Privacy Policy',
+                    style: TextStyle(color: Colors.blue),
                   ),
                 ],
               ),
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12),
+              style: TextStyle(fontSize: 12),
             ),
             const SizedBox(height: 12),
           ],

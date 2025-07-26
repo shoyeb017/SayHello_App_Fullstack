@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../l10n/app_localizations.dart';
 
 // Dummy course model
 class Course {
@@ -78,8 +77,8 @@ class _AllCoursesState extends State<AllCourses> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context)!.allCourses,
+        title: const Text(
+          'All Courses',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         centerTitle: true,
@@ -99,7 +98,7 @@ class _AllCoursesState extends State<AllCourses> {
                 controller: _controller,
                 onChanged: (val) => setState(() => _query = val),
                 decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.searchCourses,
+                  hintText: "Search courses...",
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: theme.brightness == Brightness.dark

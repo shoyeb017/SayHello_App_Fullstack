@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'course_portal.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
-import '../../../../l10n/app_localizations.dart';
 
 class LearnPage extends StatefulWidget {
   const LearnPage({super.key});
@@ -280,11 +279,7 @@ class _LearnPageState extends State<LearnPage>
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
-                                  isCompleted
-                                      ? AppLocalizations.of(context)!.completed
-                                      : AppLocalizations.of(
-                                          context,
-                                        )!.inProgress,
+                                  isCompleted ? 'COMPLETED' : 'IN PROGRESS',
                                   style: const TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -356,9 +351,7 @@ class _LearnPageState extends State<LearnPage>
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                isCompleted
-                                    ? AppLocalizations.of(context)!.completed
-                                    : AppLocalizations.of(context)!.inProgress,
+                                isCompleted ? 'COMPLETED' : 'IN PROGRESS',
                                 style: const TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
@@ -478,7 +471,7 @@ class _LearnPageState extends State<LearnPage>
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${course['students']} ${AppLocalizations.of(context)!.students}',
+                        '${course['students']} students',
                         style: TextStyle(
                           fontSize: 12,
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -519,7 +512,7 @@ class _LearnPageState extends State<LearnPage>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${((course['progress'] ?? 0) * 100).toInt()}% ${AppLocalizations.of(context)!.completedLowercase}',
+                          '${((course['progress'] ?? 0) * 100).toInt()}% completed',
                           style: TextStyle(
                             fontSize: 12,
                             color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -557,7 +550,7 @@ class _LearnPageState extends State<LearnPage>
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            AppLocalizations.of(context)!.courseCompleted,
+                            'Course Completed!',
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.green,
@@ -607,9 +600,7 @@ class _LearnPageState extends State<LearnPage>
               width: double.infinity,
               child: OutlinedButton.icon(
                 icon: const Icon(Icons.visibility, size: 18),
-                label: Text(
-                  '${AppLocalizations.of(context)!.viewAll} ${courses.length} ${AppLocalizations.of(context)!.courses}',
-                ),
+                label: Text('View All ${courses.length} Courses'),
                 onPressed: onViewAll,
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -650,9 +641,9 @@ class _LearnPageState extends State<LearnPage>
                   themeProvider.toggleTheme(toDark);
                 },
               ),
-              Expanded(
+              const Expanded(
                 child: Text(
-                  AppLocalizations.of(context)!.languageLearn,
+                  'Language Learn',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                 ),
@@ -672,9 +663,9 @@ class _LearnPageState extends State<LearnPage>
                 ? Colors.grey.shade400
                 : Colors.grey.shade600,
             indicatorColor: Colors.purple,
-            tabs: [
-              Tab(text: AppLocalizations.of(context)!.enrolled),
-              Tab(text: AppLocalizations.of(context)!.otherCourses),
+            tabs: const [
+              Tab(text: 'Enrolled'),
+              Tab(text: 'Other Courses'),
             ],
           ),
           Expanded(
@@ -695,9 +686,7 @@ class _LearnPageState extends State<LearnPage>
                           MaterialPageRoute(
                             builder: (_) => AllCoursesPage(
                               courses: enrolledCourses,
-                              title: AppLocalizations.of(
-                                context,
-                              )!.allEnrolledCourses,
+                              title: 'All Enrolled Courses',
                             ),
                           ),
                         );
@@ -721,9 +710,7 @@ class _LearnPageState extends State<LearnPage>
                           MaterialPageRoute(
                             builder: (_) => AllCoursesPage(
                               courses: otherCourses,
-                              title: AppLocalizations.of(
-                                context,
-                              )!.allOtherCourses,
+                              title: 'All Other Courses',
                             ),
                           ),
                         );
@@ -819,7 +806,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${AppLocalizations.of(context)!.instructor}: ${course['instructor']}',
+                    'Instructor: ${course['instructor']}',
                     style: TextStyle(
                       fontSize: 12,
                       color: isDark
@@ -888,7 +875,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.searchCourses,
+                hintText: 'Search courses...',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -898,9 +885,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
           ),
           Expanded(
             child: filteredCourses.isEmpty
-                ? Center(
-                    child: Text(AppLocalizations.of(context)!.noCoursesFound),
-                  )
+                ? Center(child: Text('No courses found'))
                 : ListView.builder(
                     itemCount: filteredCourses.length,
                     itemBuilder: (context, index) {
