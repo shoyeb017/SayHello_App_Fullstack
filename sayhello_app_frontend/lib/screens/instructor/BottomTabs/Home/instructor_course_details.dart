@@ -16,16 +16,16 @@ class _InstructorCourseDetailsTabState
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Course data with fallback values
-    final title = widget.course['title'] ?? 'Course Title';
+    final title = widget.course['title'] ?? 'English Conversation Course';
     final description =
         widget.course['description'] ??
-        'This is a comprehensive course designed to help students master the subject with practical examples and expert guidance.';
+        'This comprehensive language course helps students master conversational skills through interactive sessions, practical exercises, and cultural immersion activities.';
     final startDate = widget.course['startDate'] ?? '2025-07-15';
     final endDate = widget.course['endDate'] ?? '2025-09-15';
     final rating = widget.course['rating'] ?? 4.8;
     final enrolledStudents = widget.course['students'] ?? 48;
     final price = widget.course['price'] ?? 79.99;
-    final category = widget.course['category'] ?? 'Programming';
+    final category = widget.course['category'] ?? 'English';
     final duration = widget.course['duration'] ?? '8 weeks';
     final level = widget.course['level'] ?? 'Intermediate';
 

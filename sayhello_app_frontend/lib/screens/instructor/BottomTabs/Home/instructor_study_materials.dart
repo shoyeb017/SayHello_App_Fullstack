@@ -15,8 +15,8 @@ class _InstructorStudyMaterialsTabState
   List<Map<String, dynamic>> _materials = [
     {
       'id': 'material_001',
-      'title': 'Flutter Development Guide',
-      'description': 'Comprehensive guide to Flutter development',
+      'title': 'English Grammar Reference Guide',
+      'description': 'Comprehensive guide to English grammar rules and usage',
       'type': 'pdf',
       'fileSize': '12.5 MB',
       'uploadDate': '2025-07-20',
@@ -25,8 +25,8 @@ class _InstructorStudyMaterialsTabState
     },
     {
       'id': 'material_002',
-      'title': 'Widget Reference Chart',
-      'description': 'Quick reference for commonly used Flutter widgets',
+      'title': 'Common Spanish Phrases Chart',
+      'description': 'Essential Spanish phrases for everyday conversation',
       'type': 'image',
       'fileSize': '2.3 MB',
       'uploadDate': '2025-07-18',
@@ -35,18 +35,18 @@ class _InstructorStudyMaterialsTabState
     },
     {
       'id': 'material_003',
-      'title': 'Code Examples Repository',
-      'description': 'Sample code and project files',
+      'title': 'Japanese Hiragana Practice Sheets',
+      'description': 'Printable worksheets for hiragana writing practice',
       'type': 'zip',
       'fileSize': '45.7 MB',
       'uploadDate': '2025-07-22',
       'downloads': 32,
-      'category': 'Code',
+      'category': 'Worksheets',
     },
     {
       'id': 'material_004',
-      'title': 'Assignment Instructions',
-      'description': 'Week 1-4 assignment details and requirements',
+      'title': 'Language Learning Assignment Guidelines',
+      'description': 'Weekly speaking and writing assignment instructions',
       'type': 'doc',
       'fileSize': '1.8 MB',
       'uploadDate': '2025-07-19',
@@ -60,7 +60,7 @@ class _InstructorStudyMaterialsTabState
     'All',
     'Documentation',
     'Reference',
-    'Code',
+    'Worksheets',
     'Assignment',
   ];
 

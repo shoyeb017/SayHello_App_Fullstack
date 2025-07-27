@@ -15,7 +15,7 @@ class _InstructorOnlineSessionTabState
   List<Map<String, dynamic>> _sessions = [
     {
       'id': 'session_001',
-      'title': 'Introduction to Flutter Widgets',
+      'title': 'English Pronunciation Practice',
       'platform': 'Zoom',
       'date': '2025-07-25',
       'time': '6:00 PM',
@@ -27,7 +27,7 @@ class _InstructorOnlineSessionTabState
     },
     {
       'id': 'session_002',
-      'title': 'State Management Deep Dive',
+      'title': 'Spanish Conversation Club',
       'platform': 'Google Meet',
       'date': '2025-07-27',
       'time': '4:30 PM',
@@ -39,7 +39,7 @@ class _InstructorOnlineSessionTabState
     },
     {
       'id': 'session_003',
-      'title': 'Building Your First App',
+      'title': 'Japanese Grammar Fundamentals',
       'platform': 'Zoom',
       'date': '2025-07-20',
       'time': '6:00 PM',

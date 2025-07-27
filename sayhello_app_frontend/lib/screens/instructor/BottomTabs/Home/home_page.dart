@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
 import 'instructor_course_portal.dart';
+import '../Revenue/revenue_page.dart';
 
 class InstructorHomePage extends StatefulWidget {
   const InstructorHomePage({super.key});
@@ -18,9 +19,9 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   final List<Map<String, dynamic>> _allCourses = [
     {
       'id': 'course_001',
-      'title': 'Flutter Development Masterclass',
+      'title': 'English Conversation Masterclass',
       'description':
-          'Complete Flutter development course for beginners to advanced',
+          'Complete English speaking course from beginner to advanced level',
       'status': 'active',
       'enrolledStudents': 45,
       'totalSessions': 20,
@@ -30,13 +31,14 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
       'price': 299.99,
       'thumbnail': 'https://picsum.photos/300/200?random=1',
       'createdAt': DateTime.now().subtract(const Duration(days: 30)),
-      'category': 'Programming',
+      'category': 'English',
       'difficulty': 'Intermediate',
     },
     {
       'id': 'course_002',
-      'title': 'React Native for Mobile Apps',
-      'description': 'Build cross-platform mobile apps with React Native',
+      'title': 'Japanese for Beginners',
+      'description':
+          'Learn Japanese basics: hiragana, katakana, and essential vocabulary',
       'status': 'active',
       'enrolledStudents': 32,
       'totalSessions': 15,
@@ -46,13 +48,14 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
       'price': 249.99,
       'thumbnail': 'https://picsum.photos/300/200?random=2',
       'createdAt': DateTime.now().subtract(const Duration(days: 60)),
-      'category': 'Programming',
+      'category': 'Japanese',
       'difficulty': 'Beginner',
     },
     {
       'id': 'course_003',
-      'title': 'Advanced JavaScript Concepts',
-      'description': 'Deep dive into modern JavaScript and ES6+ features',
+      'title': 'Advanced Spanish Grammar',
+      'description':
+          'Master complex Spanish grammar rules and subjunctive mood',
       'status': 'completed',
       'enrolledStudents': 78,
       'totalSessions': 12,
@@ -62,14 +65,14 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
       'price': 199.99,
       'thumbnail': 'https://picsum.photos/300/200?random=3',
       'createdAt': DateTime.now().subtract(const Duration(days: 120)),
-      'category': 'Programming',
+      'category': 'Spanish',
       'difficulty': 'Advanced',
     },
     {
       'id': 'course_004',
-      'title': 'UI/UX Design Fundamentals',
+      'title': 'Korean Culture & Language',
       'description':
-          'Learn the principles of user interface and experience design',
+          'Learn Korean language while exploring Korean culture and traditions',
       'status': 'draft',
       'enrolledStudents': 0,
       'totalSessions': 18,
@@ -79,7 +82,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
       'price': 179.99,
       'thumbnail': 'https://picsum.photos/300/200?random=4',
       'createdAt': DateTime.now().subtract(const Duration(days: 5)),
-      'category': 'Design',
+      'category': 'Korean',
       'difficulty': 'Beginner',
     },
   ];
@@ -167,10 +170,23 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
               },
             ),
             IconButton(
+              icon: const Icon(Icons.monetization_on),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const InstructorRevenuePage(),
+                  ),
+                );
+              },
+              tooltip: 'Revenue Dashboard',
+            ),
+            IconButton(
               icon: const Icon(Icons.add),
               onPressed: () {
                 _showAddCourseDialog();
               },
+              tooltip: 'Add Course',
             ),
           ],
         ),

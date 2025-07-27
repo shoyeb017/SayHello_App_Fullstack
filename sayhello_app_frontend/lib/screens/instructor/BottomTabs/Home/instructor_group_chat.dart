@@ -19,7 +19,8 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
       'senderId': 'student_001',
       'senderName': 'Alice Johnson',
       'senderRole': 'student',
-      'message': 'Hello everyone! Excited to start this course 😊',
+      'message':
+          'Hello everyone! Excited to start learning English conversation 😊',
       'timestamp': DateTime.now().subtract(const Duration(hours: 2)),
       'isRead': true,
     },
@@ -29,7 +30,7 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
       'senderName': 'You',
       'senderRole': 'instructor',
       'message':
-          'Welcome Alice! Great to have you here. Feel free to ask any questions.',
+          'Welcome Alice! Great to have you here. Feel free to ask any questions about pronunciation or grammar.',
       'timestamp': DateTime.now().subtract(
         const Duration(hours: 1, minutes: 45),
       ),
@@ -40,7 +41,8 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
       'senderId': 'student_002',
       'senderName': 'Bob Wilson',
       'senderRole': 'student',
-      'message': 'When will the recorded session be available?',
+      'message':
+          'When will the pronunciation practice session recording be available?',
       'timestamp': DateTime.now().subtract(
         const Duration(hours: 1, minutes: 30),
       ),
@@ -52,7 +54,7 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
       'senderName': 'You',
       'senderRole': 'instructor',
       'message':
-          'Hi Bob! The recorded session will be uploaded within 24 hours after each live session.',
+          'Hi Bob! The pronunciation session recording will be uploaded within 24 hours after each live session.',
       'timestamp': DateTime.now().subtract(
         const Duration(hours: 1, minutes: 15),
       ),
@@ -63,7 +65,8 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
       'senderId': 'student_003',
       'senderName': 'Carol Smith',
       'senderRole': 'student',
-      'message': 'Thank you for the detailed explanation in today\'s session!',
+      'message':
+          'Thank you for the detailed explanation about irregular verbs in today\'s session!',
       'timestamp': DateTime.now().subtract(const Duration(minutes: 30)),
       'isRead': false,
     },

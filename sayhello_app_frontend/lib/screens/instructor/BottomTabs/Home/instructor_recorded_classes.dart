@@ -15,9 +15,9 @@ class _InstructorRecordedClassesTabState
   List<Map<String, dynamic>> _recordings = [
     {
       'id': 'recording_001',
-      'title': 'Flutter Widgets Overview',
+      'title': 'English Listening Comprehension',
       'description':
-          'Complete introduction to Flutter widgets and their properties',
+          'Improve your English listening skills with real-world conversations',
       'duration': '45:30',
       'uploadDate': '2025-07-20',
       'views': 156,
@@ -28,8 +28,9 @@ class _InstructorRecordedClassesTabState
     },
     {
       'id': 'recording_002',
-      'title': 'State Management Basics',
-      'description': 'Understanding state management in Flutter applications',
+      'title': 'Spanish Verb Conjugation Mastery',
+      'description':
+          'Learn Spanish verb conjugations through practical examples',
       'duration': '38:15',
       'uploadDate': '2025-07-18',
       'views': 203,
@@ -40,8 +41,9 @@ class _InstructorRecordedClassesTabState
     },
     {
       'id': 'recording_003',
-      'title': 'Navigation and Routing',
-      'description': 'Advanced navigation concepts and route management',
+      'title': 'Japanese Kanji Writing Practice',
+      'description':
+          'Step-by-step guide to writing common Japanese kanji characters',
       'duration': '52:40',
       'uploadDate': '2025-07-22',
       'views': 89,
