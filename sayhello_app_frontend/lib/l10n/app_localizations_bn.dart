@@ -142,6 +142,12 @@ class AppLocalizationsBn extends AppLocalizations {
   String get korean => 'কোরিয়ান';
 
   @override
+  String get bengali => 'বাংলা';
+
+  @override
+  String get languageChangedTo => 'ভাষা পরিবর্তন করা হয়েছে:';
+
+  @override
   String get profilePhoto => 'প্রোফাইল ছবি';
 
   @override

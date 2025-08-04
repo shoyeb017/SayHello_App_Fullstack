@@ -142,6 +142,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get korean => 'Korean';
 
   @override
+  String get bengali => 'Bengali';
+
+  @override
+  String get languageChangedTo => 'Language changed to';
+
+  @override
   String get profilePhoto => 'Profile Photo';
 
   @override

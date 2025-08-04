@@ -43,6 +43,8 @@
   "japanese": "日本語",
   "bangla": "ベンガル語",
   "korean": "韓国語",
+  "bengali": "ベンガル語",
+  "languageChangedTo": "言語を変更しました：",
   "profilePhoto": "プロフィール写真",
   "tapToAddPhoto": "タップして写真を追加",
   "home": "ホーム",

@@ -368,6 +368,18 @@ abstract class AppLocalizations {
   /// **'Korean'**
   String get korean;
 
+  /// Bengali language option
+  ///
+  /// In en, this message translates to:
+  /// **'Bengali'**
+  String get bengali;
+
+  /// Message when language is changed
+  ///
+  /// In en, this message translates to:
+  /// **'Language changed to'**
+  String get languageChangedTo;
+
   /// Profile photo section title
   ///
   /// In en, this message translates to:

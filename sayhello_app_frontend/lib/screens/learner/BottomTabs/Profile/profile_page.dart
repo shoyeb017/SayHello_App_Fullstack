@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
-import '../../../../widgets/language_selector.dart';
+import '../../../../providers/language_provider.dart';
 import '../../../../l10n/app_localizations.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -58,6 +58,8 @@ class _ProfilePageState extends State<ProfilePage> {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
+          // 🔧 SETTINGS ICON - This is the settings button in the app bar
+          // Click this to open the settings bottom sheet with theme and language options
           IconButton(
             icon: Icon(
               Icons.settings,
@@ -1024,7 +1026,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Settings bottom sheet
+  // 🔧 SETTINGS BOTTOM SHEET - This function shows the settings menu when you tap the settings icon
   void _showSettingsBottomSheet(
     BuildContext context,
     ThemeProvider themeProvider,
@@ -1068,7 +1070,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 20),
 
-            // Theme setting
+            // 🎨 THEME SETTING - This is the dark/light mode toggle in settings
             Container(
               decoration: BoxDecoration(
                 color: isDark ? Colors.grey[800] : Colors.grey[100],
@@ -1110,7 +1112,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             const SizedBox(height: 12),
 
-            // Language setting
+            // 🌐 LANGUAGE SETTING - This is the language selection option in settings
             Container(
               decoration: BoxDecoration(
                 color: isDark ? Colors.grey[800] : Colors.grey[100],
@@ -1144,24 +1146,241 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Language selector dialog
+  // 🌐 ENHANCED LANGUAGE SELECTOR - Shows languages with flags and native text
   void _showLanguageSelector(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(
+      context,
+      listen: false,
+    );
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Enhanced language list with flags and native names
+    final languages = [
+      {
+        'code': 'en',
+        'name': 'English',
+        'nativeName': 'English',
+        'flag': '🇺🇸',
+        'localized': AppLocalizations.of(context)!.english,
+      },
+      {
+        'code': 'es',
+        'name': 'Spanish',
+        'nativeName': 'Español',
+        'flag': '🇪🇸',
+        'localized': AppLocalizations.of(context)!.spanish,
+      },
+      {
+        'code': 'ja',
+        'name': 'Japanese',
+        'nativeName': '日本語',
+        'flag': '🇯🇵',
+        'localized': AppLocalizations.of(context)!.japanese,
+      },
+      {
+        'code': 'ko',
+        'name': 'Korean',
+        'nativeName': '한국어',
+        'flag': '🇰🇷',
+        'localized': AppLocalizations.of(context)!.korean,
+      },
+      {
+        'code': 'bn',
+        'name': 'Bengali',
+        'nativeName': 'বাংলা',
+        'flag': '🇧🇩',
+        'localized': AppLocalizations.of(context)!.bangla,
+      },
+    ];
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.selectLanguage),
+        backgroundColor: isDark ? Colors.grey[850] : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        contentPadding: const EdgeInsets.fromLTRB(
+          20,
+          16,
+          20,
+          8,
+        ), // Reduced padding
+        titlePadding: const EdgeInsets.fromLTRB(
+          20,
+          20,
+          20,
+          8,
+        ), // Reduced padding
+        actionsPadding: const EdgeInsets.fromLTRB(
+          20,
+          0,
+          20,
+          16,
+        ), // Custom actions padding
+        title: Row(
+          children: [
+            Icon(
+              Icons.language,
+              color: const Color(0xFF7A54FF),
+              size: 22, // Reduced from 24 to 22
+            ),
+            const SizedBox(width: 6), // Reduced from 8 to 6
+            Expanded(
+              // Wrap the text in Expanded to prevent overflow
+              child: Text(
+                AppLocalizations.of(context)!.selectLanguage,
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18, // Slightly reduced font size
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
         content: Container(
           width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.chooseYourPreferredLanguage,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-              const SizedBox(height: 20),
-              const LanguageSelector(), // Use the same widget as landing page
-            ],
+          child: SingleChildScrollView(
+            // Add scroll view as backup
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.chooseYourPreferredLanguage,
+                  style: TextStyle(
+                    fontSize: 12, // Reduced from 13 to 12
+                    color: Colors.grey[600],
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 12), // Reduced from 16 to 12
+                // Language selection list - All languages shown together without scrolling
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics:
+                      const NeverScrollableScrollPhysics(), // Disable scrolling
+                  itemCount: languages.length,
+                  separatorBuilder: (context, index) => Divider(
+                    color: isDark ? Colors.grey[700] : Colors.grey[200],
+                    height: 1,
+                  ),
+                  itemBuilder: (context, index) {
+                    final language = languages[index];
+                    final isSelected =
+                        languageProvider.currentLocale.languageCode ==
+                        language['code'];
+
+                    return InkWell(
+                      onTap: () {
+                        // Set the new language
+                        languageProvider.setLocale(Locale(language['code']!));
+                        Navigator.pop(context);
+
+                        // Show success message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                Text(language['flag']!),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '${AppLocalizations.of(context)!.languageChangedTo} ${language['localized']}',
+                                ),
+                              ],
+                            ),
+                            backgroundColor: Colors.green,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical:
+                              10, // Reduced from 12 to 10 for even more compact layout
+                          horizontal: 12,
+                        ),
+                        child: Row(
+                          children: [
+                            // Flag
+                            Text(
+                              language['flag']!,
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ), // Reduced from 22 to 20
+                            ),
+                            const SizedBox(width: 10), // Reduced from 12 to 10
+                            // Language names
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Localized name (in current app language)
+                                  Text(
+                                    language['localized']!,
+                                    style: TextStyle(
+                                      fontSize: 15, // Reduced from 16 to 15
+                                      fontWeight: isSelected
+                                          ? FontWeight.bold
+                                          : FontWeight.w500,
+                                      color: isSelected
+                                          ? const Color(0xFF7A54FF)
+                                          : (isDark
+                                                ? Colors.white
+                                                : Colors.black),
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+
+                                  // Native name (in the language itself)
+                                  if (language['nativeName'] !=
+                                      language['localized'])
+                                    Text(
+                                      language['nativeName']!,
+                                      style: TextStyle(
+                                        fontSize: 12, // Reduced from 13 to 12
+                                        color: isSelected
+                                            ? const Color(
+                                                0xFF7A54FF,
+                                              ).withOpacity(0.8)
+                                            : Colors.grey[600],
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                ],
+                              ),
+                            ),
+
+                            // Selection indicator
+                            if (isSelected)
+                              Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: const Color(
+                                    0xFF7A54FF,
+                                  ).withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.check,
+                                  color: Color(0xFF7A54FF),
+                                  size: 18,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
         actions: [

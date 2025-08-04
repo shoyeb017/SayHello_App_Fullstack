@@ -48,6 +48,8 @@
   "japanese": "일본어",
   "bangla": "벵골어",
   "korean": "한국어",
+  "bengali": "벵골어",
+  "languageChangedTo": "언어가 다음으로 변경됨:",
   "profilePhoto": "프로필 사진",
   "tapToAddPhoto": "사진을 추가하려면 탭하세요",
   "home": "홈",

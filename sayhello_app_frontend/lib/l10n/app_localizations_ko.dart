@@ -141,6 +141,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get korean => '한국어';
 
   @override
+  String get bengali => '벵골어';
+
+  @override
+  String get languageChangedTo => '언어가 다음으로 변경됨:';
+
+  @override
   String get profilePhoto => '프로필 사진';
 
   @override

@@ -175,6 +175,14 @@
   "@korean": {
     "description": "Korean language option"
   },
+  "bengali": "Bengali",
+  "@bengali": {
+    "description": "Bengali language option"
+  },
+  "languageChangedTo": "Language changed to",
+  "@languageChangedTo": {
+    "description": "Message when language is changed"
+  },
   "profilePhoto": "Profile Photo",
   "@profilePhoto": {
     "description": "Profile photo section title"

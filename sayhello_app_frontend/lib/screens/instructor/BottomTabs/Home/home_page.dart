@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
 import 'instructor_course_portal.dart';
+import '../Revenue/revenue_page.dart';
 
 class InstructorHomePage extends StatefulWidget {
   const InstructorHomePage({super.key});
@@ -154,6 +155,18 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                 'Instructor Dashboard',
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
               ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.monetization_on),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const InstructorRevenuePage(),
+                  ),
+                );
+              },
+              tooltip: 'Revenue Dashboard',
             ),
             IconButton(
               icon: Icon(
