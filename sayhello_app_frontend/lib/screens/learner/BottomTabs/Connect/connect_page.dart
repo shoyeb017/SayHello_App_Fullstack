@@ -25,7 +25,7 @@ class Partner {
     required this.learningLanguage,
     required this.region,
     required this.city,
-  });
+  }); 
 }
 
 class ConnectPage extends StatefulWidget {

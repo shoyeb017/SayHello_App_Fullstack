@@ -48,13 +48,58 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   final String bio =
       "Hello! I'm learning English and love anime, manga, and traveling. Let's practice languages together! 🌟 よろしくお願いします！I enjoy meeting new people from different cultures and sharing experiences.";
   final String location = "Japan";
-  final String currentTime = "9:06 PM";
+  final String country = "Japan"; // Added country field
   final int age = 24;
   final String gender = "Female";
   final String username = "yukiko_san";
   final int joinedDays = 32;
   final int followingCount = 8;
   final int followersCount = 16;
+
+  // Helper method to get map image provider based on country
+  ImageProvider getMapImage(String country) {
+    switch (country) {
+      case 'USA':
+        return const AssetImage('lib/image/Map/USA.jpeg');
+      case 'Spain':
+        return const AssetImage('lib/image/Map/Spain.jpeg');
+      case 'Japan':
+        return const AssetImage('lib/image/Map/Japan.jpeg');
+      case 'Korea':
+        return const AssetImage('lib/image/Map/Korea.jpeg');
+      case 'Bangladesh':
+        return const AssetImage('lib/image/Map/Bangladesh.jpeg');
+      default:
+        return const NetworkImage(
+          'https://picsum.photos/400/200',
+        ); // fallback to random image
+    }
+  }
+
+  // Helper method to get current time for the country
+  String getCurrentTimeForCountry(String country) {
+    final now = DateTime.now();
+
+    // Time zone offsets from UTC
+    const Map<String, int> timeZoneOffsets = {
+      'USA': -5, // EST (Eastern Standard Time)
+      'Spain': 1, // CET (Central European Time)
+      'Japan': 9, // JST (Japan Standard Time)
+      'Korea': 9, // KST (Korea Standard Time)
+      'Bangladesh': 6, // BST (Bangladesh Standard Time)
+    };
+
+    final offset = timeZoneOffsets[country] ?? 0;
+    final countryTime = now.toUtc().add(Duration(hours: offset));
+
+    // Format time as 12-hour format with AM/PM
+    final hour = countryTime.hour;
+    final minute = countryTime.minute;
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final displayHour = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+
+    return '${displayHour}:${minute.toString().padLeft(2, '0')} $period';
+  }
 
   final List<String> sharedInterests = ["漫画", "Anime"];
   final List<String> interests = [
@@ -142,12 +187,17 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                           colors: [primaryColor.withOpacity(0.8), primaryColor],
                         ),
                         image: DecorationImage(
-                          image: NetworkImage('https://picsum.photos/400/200'),
+                          image: getMapImage(country),
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(
                             primaryColor.withOpacity(0.6),
                             BlendMode.overlay,
                           ),
+                          onError: (exception, stackTrace) {
+                            print(
+                              'Error loading map image for $country: $exception',
+                            );
+                          },
                         ),
                       ),
                       child: Stack(
@@ -163,20 +213,6 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                                 size: 24,
                               ),
                               onPressed: () => Navigator.pop(context),
-                            ),
-                          ),
-
-                          // More button positioned over cover image
-                          Positioned(
-                            top: 50,
-                            right: 16,
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.more_vert,
-                                color: Colors.white,
-                                size: 24,
-                              ),
-                              onPressed: () {},
                             ),
                           ),
 
@@ -203,7 +239,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                                   ),
                                   SizedBox(width: 4),
                                   Text(
-                                    "$location $currentTime",
+                                    "$location ${getCurrentTimeForCountry(country)}",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 12,

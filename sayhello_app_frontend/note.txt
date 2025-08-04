@@ -1,0 +1,32 @@
+
+login:
+login_id
+learner_id
+username/email
+Password
+
+learner user:
+learner_id
+profile_image (link)
+name
+email
+birthday
+gender (male,female)
+nativeLanguage (english,spanish,japanese,korean,bangla)
+learningLanguage (english,spanish,japanese,korean,bangla)
+languageLevel (beginner,elementary,intermediate,advanced,proficient)
+Bio
+interest (Art, Music ,Reading,Writing,Sports,Gaming,Travel,Cooking,Fashion,Photography,Crafting,Gardening,Fitness,Movies,Technology,Nature,Animals,Science,Socializing)
+country (USA,Spain,Japan,Korea, Bangladesh)
+joined
+
+followers:
+learner_id
+followers_id(learner_id)
+
+following:
+learner_id
+followers_id(learner_id)
+
+
+
