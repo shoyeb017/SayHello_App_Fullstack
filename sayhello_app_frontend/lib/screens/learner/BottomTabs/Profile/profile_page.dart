@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../../providers/theme_provider.dart';
 import '../../../../providers/settings_provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../Notifications/notifications.dart';
@@ -13,36 +11,69 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // Mock user data
+  // Mock user data - all editable fields
   final String userName = "Alex Johnson";
   final String userBio =
       "Language enthusiast 📚 Love traveling and meeting new people from different cultures! 🌍✈️";
   final String userAvatar = "https://i.pravatar.cc/150?img=1";
+  final String email = "alex.johnson@example.com";
+  final String birthday = "March 15, 1999";
+  final int age = 25;
+  final String gender = "Male";
+  final String country = "USA"; // Added country field
   final String nativeLanguage = "English";
-  final String learningLanguage = "Japanese - Intermediate";
-  final List<String> selectedInterests = ["Movie", "Music", "Anime", "Cosplay"];
-  final List<String> availableInterests = [
-    "Movie",
+  final String learningLanguage = "Japanese";
+  final String languageLevel = "Intermediate";
+  final int joinedDays = 45;
+
+  final List<String> selectedInterests = [
+    "Art",
     "Music",
-    "Anime",
-    "Cosplay",
     "Travel",
     "Photography",
-    "Reading",
-    "Gaming",
-    "Cooking",
-    "Sports",
-    "Art",
-    "Dancing",
   ];
-  final String email = "alex.johnson@example.com";
-  final String gender = "Male";
-  final int age = 25;
-  final String birthday = "March 15, 1999";
+  final List<String> availableInterests = [
+    "Art",
+    "Music",
+    "Reading",
+    "Writing",
+    "Sports",
+    "Gaming",
+    "Travel",
+    "Cooking",
+    "Fashion",
+    "Photography",
+    "Crafting",
+    "Gardening",
+    "Fitness",
+    "Movies",
+    "Technology",
+    "Nature",
+    "Animals",
+    "Science",
+    "Socializing",
+  ];
+
+  // Helper method to get map image provider based on country
+  ImageProvider getMapImage(String country) {
+    switch (country) {
+      case 'USA':
+        return const AssetImage('lib/image/Map/USA.jpeg');
+      case 'Spain':
+        return const AssetImage('lib/image/Map/Spain.jpeg');
+      case 'Japan':
+        return const AssetImage('lib/image/Map/Japan.jpeg');
+      case 'Korea':
+        return const AssetImage('lib/image/Map/Korea.jpeg');
+      case 'Bangladesh':
+        return const AssetImage('lib/image/Map/Bangladesh.jpeg');
+      default:
+        return const NetworkImage('https://picsum.photos/400/200');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = const Color(0xFF7A54FF);
 
@@ -66,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
 
               Expanded(
-                child: Text( 
+                child: Text(
                   AppLocalizations.of(context)!.profile,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
@@ -114,7 +145,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ],
               ),
-              
             ],
           ),
         ),
@@ -124,6 +154,11 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             // Profile Banner Section
             _buildProfileBanner(context, isDark, primaryColor),
+
+            const SizedBox(height: 16),
+
+            // Country and joined info
+            _buildCountrySection(context, isDark, primaryColor),
 
             const SizedBox(height: 16),
 
@@ -158,33 +193,66 @@ class _ProfilePageState extends State<ProfilePage> {
     Color primaryColor,
   ) {
     return Container(
-      height: 220, // Reduced height since no completion progress
+      height: 220,
       child: Stack(
         children: [
-          // World map background
+          // Map background based on country
           Container(
-            height: 160, // Reduced height
+            height: 160,
             width: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  primaryColor.withOpacity(0.8),
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [primaryColor.withOpacity(0.8), primaryColor],
+              ),
+              image: DecorationImage(
+                image: getMapImage(country),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
                   primaryColor.withOpacity(0.6),
-                ],
+                  BlendMode.overlay,
+                ),
+                onError: (exception, stackTrace) {
+                  print('Error loading map image for $country: $exception');
+                },
               ),
             ),
             child: Stack(
               children: [
-                // World map pattern overlay
-                Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(
-                        'https://picsum.photos/400/160?random=1',
+                // Country info in top right
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: GestureDetector(
+                    onTap: () =>
+                        _showCountrySelectionDialog(context, primaryColor),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
                       ),
-                      fit: BoxFit.cover,
+                      decoration: BoxDecoration(
+                        color: Colors.black26,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.public, color: Colors.white, size: 14),
+                          SizedBox(width: 4),
+                          Text(
+                            country,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(width: 4),
+                          Icon(Icons.edit, color: Colors.white, size: 12),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -224,6 +292,70 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCountrySection(
+    BuildContext context,
+    bool isDark,
+    Color primaryColor,
+  ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[800] : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.public, color: primaryColor, size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.country,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  country,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: primaryColor.withOpacity(0.3)),
+            ),
+            child: Text(
+              "${joinedDays}d joined",
+              style: TextStyle(
+                color: primaryColor,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -392,7 +524,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
           const SizedBox(height: 12),
 
-          // Learning language
+          // Learning language with level
           Text(
             AppLocalizations.of(context)!.learning,
             style: TextStyle(
@@ -406,10 +538,11 @@ class _ProfilePageState extends State<ProfilePage> {
           _buildLanguageItem(
             context,
             '',
-            learningLanguage,
+            '$learningLanguage - $languageLevel',
             '🇯🇵',
             isDark,
             primaryColor,
+            onTap: () => _showLearningLanguageDialog(context, primaryColor),
           ),
         ],
       ),
@@ -424,54 +557,59 @@ class _ProfilePageState extends State<ProfilePage> {
     bool isDark,
     Color primaryColor, {
     bool isNative = false,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[700] : Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Text(flag, style: const TextStyle(fontSize: 20)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (label.isNotEmpty)
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.grey[700] : Colors.grey[50],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Text(flag, style: const TextStyle(fontSize: 20)),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (label.isNotEmpty)
+                    Text(
+                      label,
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                    ),
                   Text(
-                    label,
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                    language,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
                   ),
-                Text(
-                  language,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (isNative)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.green,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                AppLocalizations.of(context)!.native,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
+                ],
               ),
             ),
-        ],
+            if (isNative)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.native,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            if (onTap != null) Icon(Icons.edit, color: primaryColor, size: 16),
+          ],
+        ),
       ),
     );
   }
@@ -1069,6 +1207,99 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             },
             child: Text(AppLocalizations.of(context)!.save),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Country selection dialog
+  void _showCountrySelectionDialog(BuildContext context, Color primaryColor) {
+    final countries = ['USA', 'Spain', 'Japan', 'Korea', 'Bangladesh'];
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Select Country'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: countries
+              .map(
+                (c) => ListTile(
+                  leading: Icon(Icons.public, color: primaryColor),
+                  title: Text(c),
+                  onTap: () {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Country updated to $c')),
+                    );
+                  },
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    );
+  }
+
+  // Learning language and level dialog
+  void _showLearningLanguageDialog(BuildContext context, Color primaryColor) {
+    final languages = ['English', 'Spanish', 'Japanese', 'Korean', 'Bangla'];
+    final levels = [
+      'Beginner',
+      'Elementary',
+      'Intermediate',
+      'Advanced',
+      'Proficient',
+    ];
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Select Learning Language & Level'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            DropdownButtonFormField<String>(
+              decoration: InputDecoration(labelText: 'Language'),
+              value: learningLanguage,
+              items: languages
+                  .map(
+                    (lang) => DropdownMenuItem(value: lang, child: Text(lang)),
+                  )
+                  .toList(),
+              onChanged: (value) {},
+            ),
+            SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              decoration: InputDecoration(labelText: 'Level'),
+              value: languageLevel,
+              items: levels
+                  .map(
+                    (level) =>
+                        DropdownMenuItem(value: level, child: Text(level)),
+                  )
+                  .toList(),
+              onChanged: (value) {},
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Language settings updated')),
+              );
+            },
+            child: Text(
+              AppLocalizations.of(context)!.save,
+              style: TextStyle(color: primaryColor),
+            ),
           ),
         ],
       ),
