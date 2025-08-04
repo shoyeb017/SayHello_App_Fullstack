@@ -155,7 +155,7 @@ class _HomePageState extends State<HomePage> {
           scrolledUnderElevation: 0,
           title: Row(
             children: [
-              // 🔧 SETTINGS ICON - This is the settings button in the app bar
+              // SETTINGS ICON - This is the settings button in the app bar
               // Click this to open the settings bottom sheet with theme and language options
               IconButton(
                 icon: Icon(

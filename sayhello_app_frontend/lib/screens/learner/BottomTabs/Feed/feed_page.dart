@@ -302,10 +302,9 @@ class _FeedPageState extends State<FeedPage>
         child: AppBar(
           automaticallyImplyLeading: false,
           scrolledUnderElevation: 0,
-        title: Row(
-          children: [
-
- // 🔧 SETTINGS ICON - This is the settings button in the app bar
+          title: Row(
+            children: [
+              // 🔧 SETTINGS ICON - This is the settings button in the app bar
               // Click this to open the settings bottom sheet with theme and language options
               IconButton(
                 icon: Icon(
@@ -365,87 +364,85 @@ class _FeedPageState extends State<FeedPage>
                   ),
                 ],
               ),
-              
-            
-          ],
-        ),
-    
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(40),
-          child: Container(
-            height: 40,
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            child: TabBar(
-              controller: _tabController,
-              indicator: const BoxDecoration(),
-              labelPadding: EdgeInsets.zero,
-              dividerColor: Colors.transparent,
-              tabs: [
-                Tab(
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _tabController.index == 0
-                          ? (isDark
-                                ? const Color(0xFF311c85)
-                                : const Color(0xFFefecff))
-                          : (isDark
-                                ? Colors.grey.shade800
-                                : Colors.grey.shade200),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        AppLocalizations.of(context)!.recent,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: _tabController.index == 0
-                              ? const Color(0xFF7758f3)
-                              : (isDark ? Colors.white : Colors.black),
+            ],
+          ),
+
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(40),
+            child: Container(
+              height: 40,
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              child: TabBar(
+                controller: _tabController,
+                indicator: const BoxDecoration(),
+                labelPadding: EdgeInsets.zero,
+                dividerColor: Colors.transparent,
+                tabs: [
+                  Tab(
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _tabController.index == 0
+                            ? (isDark
+                                  ? const Color(0xFF311c85)
+                                  : const Color(0xFFefecff))
+                            : (isDark
+                                  ? Colors.grey.shade800
+                                  : Colors.grey.shade200),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.recent,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: _tabController.index == 0
+                                ? const Color(0xFF7758f3)
+                                : (isDark ? Colors.white : Colors.black),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Tab(
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 8),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _tabController.index == 1
-                          ? (isDark
-                                ? const Color(0xFF311c85)
-                                : const Color(0xFFefecff))
-                          : (isDark
-                                ? Colors.grey.shade800
-                                : Colors.grey.shade200),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        AppLocalizations.of(context)!.forYou,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: _tabController.index == 1
-                              ? const Color(0xFF7758f3)
-                              : (isDark ? Colors.white : Colors.black),
+                  Tab(
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _tabController.index == 1
+                            ? (isDark
+                                  ? const Color(0xFF311c85)
+                                  : const Color(0xFFefecff))
+                            : (isDark
+                                  ? Colors.grey.shade800
+                                  : Colors.grey.shade200),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.forYou,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: _tabController.index == 1
+                                ? const Color(0xFF7758f3)
+                                : (isDark ? Colors.white : Colors.black),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
       ),
       body: TabBarView(
         controller: _tabController,

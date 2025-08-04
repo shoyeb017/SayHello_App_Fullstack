@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../providers/settings_provider.dart';
 
 class TranslatorInHome extends StatefulWidget {
   const TranslatorInHome({super.key});
@@ -18,40 +19,99 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
   String selectedLang = "";
   bool isSelectingSource = true;
 
-  final Map<String, String> fakeTranslations = {
-    "hello": "こんにちは",
-    "goodbye": "さようなら",
-    "thank you": "ありがとう",
-    "yes": "はい",
-    "no": "いいえ",
+  final Map<String, Map<String, String>> translations = {
+    "hello": {
+      "English": "Hello",
+      "Spanish": "Hola",
+      "Japanese": "こんにちは",
+      "Korean": "안녕하세요",
+      "Bengali": "হ্যালো",
+    },
+    "goodbye": {
+      "English": "Goodbye",
+      "Spanish": "Adiós",
+      "Japanese": "さようなら",
+      "Korean": "안녕히 가세요",
+      "Bengali": "বিদায়",
+    },
+    "thank you": {
+      "English": "Thank you",
+      "Spanish": "Gracias",
+      "Japanese": "ありがとう",
+      "Korean": "감사합니다",
+      "Bengali": "ধন্যবাদ",
+    },
+    "yes": {
+      "English": "Yes",
+      "Spanish": "Sí",
+      "Japanese": "はい",
+      "Korean": "네",
+      "Bengali": "হ্যাঁ",
+    },
+    "no": {
+      "English": "No",
+      "Spanish": "No",
+      "Japanese": "いいえ",
+      "Korean": "아니요",
+      "Bengali": "না",
+    },
+    "please": {
+      "English": "Please",
+      "Spanish": "Por favor",
+      "Japanese": "お願いします",
+      "Korean": "부탁합니다",
+      "Bengali": "অনুগ্রহ করে",
+    },
+    "excuse me": {
+      "English": "Excuse me",
+      "Spanish": "Disculpe",
+      "Japanese": "すみません",
+      "Korean": "실례합니다",
+      "Bengali": "দুঃখিত",
+    },
+    "good morning": {
+      "English": "Good morning",
+      "Spanish": "Buenos días",
+      "Japanese": "おはようございます",
+      "Korean": "좋은 아침",
+      "Bengali": "সুপ্রভাত",
+    },
+    "good night": {
+      "English": "Good night",
+      "Spanish": "Buenas noches",
+      "Japanese": "おやすみなさい",
+      "Korean": "안녕히 주무세요",
+      "Bengali": "শুভ রাত্রি",
+    },
+    "how are you": {
+      "English": "How are you?",
+      "Spanish": "¿Cómo estás?",
+      "Japanese": "元気ですか？",
+      "Korean": "어떻게 지내세요?",
+      "Bengali": "আপনি কেমন আছেন?",
+    },
   };
 
   final List<String> allLanguages = [
     "English",
-    "Chinese Simplified",
+    "Spanish",
     "Japanese",
     "Korean",
-    "Spanish",
-    "French",
-    "Portuguese",
+    "Bengali",
   ];
 
   String _getSubtitle(String lang) {
     switch (lang) {
       case "English":
         return "English";
-      case "Chinese Simplified":
-        return "中文(简体)";
+      case "Spanish":
+        return "Español";
       case "Japanese":
         return "日本語";
       case "Korean":
         return "한국어";
-      case "Spanish":
-        return "Español";
-      case "French":
-        return "Français";
-      case "Portuguese":
-        return "Português";
+      case "Bengali":
+        return "বাংলা";
       default:
         return "";
     }
@@ -60,8 +120,12 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
   void _translate() {
     String text = _inputController.text.trim().toLowerCase();
     setState(() {
-      translatedText =
-          fakeTranslations[text] ?? "Translation not available (dummy)";
+      if (translations.containsKey(text)) {
+        translatedText =
+            translations[text]![targetLang] ?? "Translation not available";
+      } else {
+        translatedText = "Translation not available for this phrase";
+      }
     });
   }
 
@@ -97,6 +161,7 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     List<String> filteredLanguages = allLanguages
         .where(
           (lang) =>
@@ -120,7 +185,15 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
         ),
         centerTitle: true,
         actions: [
-          IconButton(icon: const Icon(Icons.bookmark_border), onPressed: () {}),
+          // 🔧 SETTINGS ICON - This is the settings button in the app bar
+          // Click this to open the settings bottom sheet with theme and language options
+          IconButton(
+            icon: Icon(
+              Icons.settings,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            onPressed: () => SettingsProvider.showSettingsBottomSheet(context),
+          ),
         ], // forces NO icons on the right
       ),
 
