@@ -118,12 +118,6 @@ class _FeedDetailPageState extends State<FeedDetailPage> {
                       child: Row(
                         children: [
                           const SizedBox(width: 12),
-                          Icon(
-                            Icons.emoji_emotions_outlined,
-                            color: isDark ? Colors.grey[400] : Colors.grey[600],
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
                           Expanded(
                             child: TextField(
                               controller: _commentController,
@@ -141,12 +135,6 @@ class _FeedDetailPageState extends State<FeedDetailPage> {
                               ),
                             ),
                           ),
-                          Icon(
-                            Icons.translate,
-                            color: isDark ? Colors.grey[400] : Colors.grey[600],
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
                           IconButton(
                             icon: const Icon(
                               Icons.send,
@@ -455,9 +443,6 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
             size: 20,
           ),
         ),
-        const SizedBox(width: 16),
-        // Share button
-        Icon(Icons.share, color: iconColor, size: 20),
       ],
     );
   }
@@ -577,11 +562,21 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
   }
 }
 
-class CommentCard extends StatelessWidget {
+class CommentCard extends StatefulWidget {
   final FeedComment comment;
   final int index;
 
   const CommentCard({super.key, required this.comment, required this.index});
+
+  @override
+  State<CommentCard> createState() => _CommentCardState();
+}
+
+class _CommentCardState extends State<CommentCard> {
+  bool _isTranslated = false;
+
+  // Dummy translation for comments
+  String get _dummyTranslation => 'これはコメントのダミー翻訳です。実際の翻訳APIを使用して翻訳されます。';
 
   @override
   Widget build(BuildContext context) {
@@ -596,7 +591,7 @@ class CommentCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 16,
-            backgroundImage: NetworkImage(comment.userAvatar),
+            backgroundImage: NetworkImage(widget.comment.userAvatar),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -606,7 +601,7 @@ class CommentCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      comment.userName,
+                      widget.comment.userName,
                       style: const TextStyle(
                         color: Color(0xFF7d54fb),
                         fontWeight: FontWeight.bold,
@@ -615,40 +610,76 @@ class CommentCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      _formatTimeAgo(comment.createdAt),
+                      _formatTimeAgo(widget.comment.createdAt),
                       style: TextStyle(color: iconColor, fontSize: 12),
                     ),
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  comment.comment,
-                  style: TextStyle(
-                    color: subtextColor,
-                    fontSize: 14,
-                    height: 1.3,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (_isTranslated) ...[
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        margin: const EdgeInsets.only(bottom: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF7d54fb).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: const Color(0xFF7d54fb).withOpacity(0.3),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.translate,
+                              size: 12,
+                              color: const Color(0xFF7d54fb),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              AppLocalizations.of(context)!.translated,
+                              style: TextStyle(
+                                color: const Color(0xFF7d54fb),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    Text(
+                      _isTranslated
+                          ? _dummyTranslation
+                          : widget.comment.comment,
+                      style: TextStyle(
+                        color: subtextColor,
+                        fontSize: 14,
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Row(
-                      children: [
-                        Icon(Icons.favorite_border, color: iconColor, size: 16),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${comment.likeCount}',
-                          style: TextStyle(color: iconColor, fontSize: 12),
-                        ),
-                      ],
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isTranslated = !_isTranslated;
+                        });
+                      },
+                      child: Icon(
+                        Icons.translate,
+                        color: _isTranslated
+                            ? const Color(0xFF7d54fb)
+                            : iconColor,
+                        size: 16,
+                      ),
                     ),
-                    const SizedBox(width: 16),
-                    Text(
-                      AppLocalizations.of(context)!.reply,
-                      style: TextStyle(color: iconColor, fontSize: 12),
-                    ),
-                    const SizedBox(width: 16),
-                    const Text('😊 ❤️ 👍', style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ],

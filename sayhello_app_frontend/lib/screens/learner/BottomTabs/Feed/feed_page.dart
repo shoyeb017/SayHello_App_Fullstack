@@ -922,9 +922,9 @@ class _FeedPostCardState extends State<FeedPostCard> {
             size: 20,
           ),
         ),
-        const SizedBox(width: 16),
+        // const SizedBox(width: 16),
         // Share button
-        Icon(Icons.share, color: iconColor, size: 20),
+        // Icon(Icons.share, color: iconColor, size: 20),
       ],
     );
   }
