@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../providers/settings_provider.dart';
+import '../../../../services/azure_translator_service.dart';
 
 class TranslatorInHome extends StatefulWidget {
   const TranslatorInHome({super.key});
@@ -16,81 +18,25 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
   String sourceLang = "English";
   String targetLang = "Japanese";
   String translatedText = "";
+  String transliteratedText = "";
   String selectedLang = "";
   bool isSelectingSource = true;
+  bool isTranslating = false;
+  bool isDetectingLanguage = false;
+  bool isAzureConfigured = false;
 
-  final Map<String, Map<String, String>> translations = {
-    "hello": {
-      "English": "Hello",
-      "Spanish": "Hola",
-      "Japanese": "こんにちは",
-      "Korean": "안녕하세요",
-      "Bengali": "হ্যালো",
-    },
-    "goodbye": {
-      "English": "Goodbye",
-      "Spanish": "Adiós",
-      "Japanese": "さようなら",
-      "Korean": "안녕히 가세요",
-      "Bengali": "বিদায়",
-    },
-    "thank you": {
-      "English": "Thank you",
-      "Spanish": "Gracias",
-      "Japanese": "ありがとう",
-      "Korean": "감사합니다",
-      "Bengali": "ধন্যবাদ",
-    },
-    "yes": {
-      "English": "Yes",
-      "Spanish": "Sí",
-      "Japanese": "はい",
-      "Korean": "네",
-      "Bengali": "হ্যাঁ",
-    },
-    "no": {
-      "English": "No",
-      "Spanish": "No",
-      "Japanese": "いいえ",
-      "Korean": "아니요",
-      "Bengali": "না",
-    },
-    "please": {
-      "English": "Please",
-      "Spanish": "Por favor",
-      "Japanese": "お願いします",
-      "Korean": "부탁합니다",
-      "Bengali": "অনুগ্রহ করে",
-    },
-    "excuse me": {
-      "English": "Excuse me",
-      "Spanish": "Disculpe",
-      "Japanese": "すみません",
-      "Korean": "실례합니다",
-      "Bengali": "দুঃখিত",
-    },
-    "good morning": {
-      "English": "Good morning",
-      "Spanish": "Buenos días",
-      "Japanese": "おはようございます",
-      "Korean": "좋은 아침",
-      "Bengali": "সুপ্রভাত",
-    },
-    "good night": {
-      "English": "Good night",
-      "Spanish": "Buenas noches",
-      "Japanese": "おやすみなさい",
-      "Korean": "안녕히 주무세요",
-      "Bengali": "শুভ রাত্রি",
-    },
-    "how are you": {
-      "English": "How are you?",
-      "Spanish": "¿Cómo estás?",
-      "Japanese": "元気ですか？",
-      "Korean": "어떻게 지내세요?",
-      "Bengali": "আপনি কেমন আছেন?",
-    },
-  };
+  @override
+  void initState() {
+    super.initState();
+    _checkAzureConfiguration();
+  }
+
+  Future<void> _checkAzureConfiguration() async {
+    final configured = await AzureTranslatorService.isConfigured();
+    setState(() {
+      isAzureConfigured = configured;
+    });
+  }
 
   final List<String> allLanguages = [
     "English",
@@ -117,16 +63,103 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
     }
   }
 
-  void _translate() {
-    String text = _inputController.text.trim().toLowerCase();
+  void _translate() async {
+    String text = _inputController.text.trim();
+
+    if (text.isEmpty) {
+      setState(() {
+        translatedText = "";
+        transliteratedText = "";
+      });
+      return;
+    }
+
     setState(() {
-      if (translations.containsKey(text)) {
-        translatedText =
-            translations[text]![targetLang] ?? "Translation not available";
-      } else {
-        translatedText = "Translation not available for this phrase";
-      }
+      isTranslating = true;
+      translatedText = "";
+      transliteratedText = "";
     });
+
+    try {
+      // Get translation
+      final result = await AzureTranslatorService.translateText(
+        text: text,
+        sourceLanguage: sourceLang,
+        targetLanguage: targetLang,
+      );
+
+      // Get transliteration if available
+      String? transliteration;
+      try {
+        transliteration = await AzureTranslatorService.transliterateText(
+          text: result,
+          language: targetLang,
+        );
+      } catch (e) {
+        // Transliteration failed, but translation succeeded
+        transliteration = null;
+      }
+
+      setState(() {
+        translatedText = result;
+        transliteratedText = transliteration ?? "";
+        isTranslating = false;
+      });
+    } catch (e) {
+      setState(() {
+        translatedText = "Translation failed: ${e.toString()}";
+        transliteratedText = "";
+        isTranslating = false;
+      });
+    }
+  }
+
+  void _detectLanguage() async {
+    String text = _inputController.text.trim();
+
+    if (text.isEmpty) return;
+
+    setState(() {
+      isDetectingLanguage = true;
+    });
+
+    try {
+      final detectedLang = await AzureTranslatorService.detectLanguage(text);
+
+      if (detectedLang != 'Unknown' && allLanguages.contains(detectedLang)) {
+        setState(() {
+          sourceLang = detectedLang;
+          isDetectingLanguage = false;
+        });
+
+        // Show snackbar to inform user
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Detected language: $detectedLang'),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      } else {
+        setState(() {
+          isDetectingLanguage = false;
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Could not detect language'),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      setState(() {
+        isDetectingLanguage = false;
+      });
+    }
   }
 
   void _swapLanguages() {
@@ -135,6 +168,7 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
       sourceLang = targetLang;
       targetLang = temp;
       translatedText = "";
+      transliteratedText = "";
       _inputController.clear();
     });
   }
@@ -157,6 +191,17 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
       }
     });
     Navigator.pop(context);
+  }
+
+  void _copyToClipboard(String text, String type) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$type copied to clipboard'),
+        duration: const Duration(seconds: 1),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override
@@ -337,6 +382,36 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Service Status Indicator
+                  if (!isAzureConfigured)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      margin: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.orange.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.info, color: Colors.orange, size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Demo mode: Using fallback translations. Configure Azure credentials in the service code for full functionality.',
+                              style: TextStyle(
+                                color: Colors.orange.shade700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
                   // Language Selector Row
                   Container(
                     decoration: BoxDecoration(
@@ -450,12 +525,47 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          sourceLang,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.black,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              sourceLang,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                            // Detect Language Button
+                            TextButton.icon(
+                              onPressed: isDetectingLanguage
+                                  ? null
+                                  : _detectLanguage,
+                              icon: isDetectingLanguage
+                                  ? SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.deepPurple,
+                                            ),
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.auto_awesome,
+                                      size: 16,
+                                      color: Colors.deepPurple,
+                                    ),
+                              label: Text(
+                                'Detect',
+                                style: TextStyle(
+                                  color: Colors.deepPurple,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 8),
                         TextField(
@@ -483,9 +593,24 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
 
                   // Translate Button
                   ElevatedButton.icon(
-                    onPressed: _translate,
-                    icon: const Icon(Icons.translate),
-                    label: Text(AppLocalizations.of(context)!.translate),
+                    onPressed: isTranslating ? null : _translate,
+                    icon: isTranslating
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                        : const Icon(Icons.translate),
+                    label: Text(
+                      isTranslating
+                          ? 'Translating...'
+                          : AppLocalizations.of(context)!.translate,
+                    ),
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(48),
                       backgroundColor: Colors.deepPurple,
@@ -500,22 +625,175 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
 
                   // Translated Text Output
                   if (translatedText.isNotEmpty)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: boxColor,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        translatedText,
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: isDark ? Colors.white : Colors.black,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Translation Container
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: boxColor,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Header with language and copy button
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    targetLang,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () => _copyToClipboard(
+                                      translatedText,
+                                      'Translation',
+                                    ),
+                                    icon: Icon(
+                                      Icons.copy,
+                                      size: 20,
+                                      color: Colors.deepPurple,
+                                    ),
+                                    tooltip: 'Copy translation',
+                                  ),
+                                ],
+                              ),
+                              // Translation text
+                              Text(
+                                translatedText,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: isDark ? Colors.white : Colors.black,
+                                ),
+                                softWrap: true,
+                                overflow: TextOverflow.visible,
+                              ),
+                            ],
+                          ),
                         ),
-                        softWrap: true,
-                        overflow: TextOverflow.visible,
-                      ),
+
+                        // Transliteration Container (if available)
+                        if (transliteratedText.isNotEmpty) ...[
+                          const SizedBox(height: 12),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.deepPurple.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.deepPurple.withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Header with label and copy button
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.record_voice_over,
+                                          size: 16,
+                                          color: Colors.deepPurple,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'Pronunciation',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.deepPurple,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    IconButton(
+                                      onPressed: () => _copyToClipboard(
+                                        transliteratedText,
+                                        'Pronunciation',
+                                      ),
+                                      icon: Icon(
+                                        Icons.copy,
+                                        size: 16,
+                                        color: Colors.deepPurple,
+                                      ),
+                                      tooltip: 'Copy pronunciation',
+                                    ),
+                                  ],
+                                ),
+                                // Transliteration text
+                                Text(
+                                  transliteratedText,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.deepPurple.shade700,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                  softWrap: true,
+                                  overflow: TextOverflow.visible,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+
+                        // Transliteration unavailable message (when translation exists but no transliteration)
+                        if (translatedText.isNotEmpty &&
+                            transliteratedText.isEmpty &&
+                            isAzureConfigured &&
+                            !translatedText.startsWith('Translation failed') &&
+                            !translatedText.contains(
+                              'Azure credentials not configured',
+                            )) ...[
+                          const SizedBox(height: 12),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.grey.withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.info_outline,
+                                  size: 16,
+                                  color: Colors.grey.shade600,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Pronunciation guide not available for this language',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                 ],
               ),
