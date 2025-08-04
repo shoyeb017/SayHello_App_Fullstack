@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../providers/settings_provider.dart';
 import '../../../../services/azure_translator_service.dart';
+import '../../../../services/azure_speech_service.dart';
 
 class TranslatorInHome extends StatefulWidget {
   const TranslatorInHome({super.key});
@@ -24,11 +25,16 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
   bool isTranslating = false;
   bool isDetectingLanguage = false;
   bool isAzureConfigured = false;
+  bool isSpeakingInput = false;
+  bool isSpeakingOutput = false;
 
   @override
   void initState() {
     super.initState();
     _checkAzureConfiguration();
+    _inputController.addListener(() {
+      setState(() {}); // Update UI when text changes
+    });
   }
 
   Future<void> _checkAzureConfiguration() async {
@@ -202,6 +208,109 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
         behavior: SnackBarBehavior.floating,
       ),
     );
+  }
+
+  Future<void> _speakInputText() async {
+    final text = _inputController.text.trim();
+    if (text.isEmpty) return;
+
+    setState(() {
+      isSpeakingInput = true;
+    });
+
+    try {
+      final success = await AzureSpeechService.speakText(
+        text: text,
+        language: sourceLang,
+      );
+
+      if (!success) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to play speech'),
+              duration: const Duration(seconds: 2),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Speech error: ${e.toString()}'),
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isSpeakingInput = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _speakOutputText() async {
+    if (translatedText.isEmpty ||
+        translatedText.startsWith('Translation failed'))
+      return;
+
+    setState(() {
+      isSpeakingOutput = true;
+    });
+
+    try {
+      final success = await AzureSpeechService.speakText(
+        text: translatedText,
+        language: targetLang,
+      );
+
+      if (!success) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to play speech'),
+              duration: const Duration(seconds: 2),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Speech error: ${e.toString()}'),
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isSpeakingOutput = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _stopSpeech() async {
+    await AzureSpeechService.stopSpeaking();
+    setState(() {
+      isSpeakingInput = false;
+      isSpeakingOutput = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    AzureSpeechService.dispose();
+    super.dispose();
   }
 
   @override
@@ -585,6 +694,48 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 12),
+                        // Listen to input text button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              onPressed:
+                                  (_inputController.text.trim().isEmpty ||
+                                      isSpeakingInput)
+                                  ? null
+                                  : (isSpeakingOutput
+                                        ? _stopSpeech
+                                        : _speakInputText),
+                              icon: isSpeakingInput
+                                  ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.deepPurple,
+                                            ),
+                                      ),
+                                    )
+                                  : Icon(
+                                      isSpeakingOutput
+                                          ? Icons.stop
+                                          : Icons.volume_up,
+                                      color:
+                                          _inputController.text.trim().isEmpty
+                                          ? Colors.grey
+                                          : Colors.deepPurple,
+                                    ),
+                              tooltip: isSpeakingInput
+                                  ? 'Speaking...'
+                                  : isSpeakingOutput
+                                  ? 'Stop speech'
+                                  : 'Listen to text',
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -677,6 +828,54 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                                 ),
                                 softWrap: true,
                                 overflow: TextOverflow.visible,
+                              ),
+                              const SizedBox(height: 12),
+                              // Listen to output text button
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    onPressed:
+                                        (translatedText.isEmpty ||
+                                            translatedText.startsWith(
+                                              'Translation failed',
+                                            ) ||
+                                            isSpeakingOutput)
+                                        ? null
+                                        : (isSpeakingInput
+                                              ? _stopSpeech
+                                              : _speakOutputText),
+                                    icon: isSpeakingOutput
+                                        ? SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                    Colors.deepPurple,
+                                                  ),
+                                            ),
+                                          )
+                                        : Icon(
+                                            isSpeakingInput
+                                                ? Icons.stop
+                                                : Icons.volume_up,
+                                            color:
+                                                (translatedText.isEmpty ||
+                                                    translatedText.startsWith(
+                                                      'Translation failed',
+                                                    ))
+                                                ? Colors.grey
+                                                : Colors.deepPurple,
+                                          ),
+                                    tooltip: isSpeakingOutput
+                                        ? 'Speaking...'
+                                        : isSpeakingInput
+                                        ? 'Stop speech'
+                                        : 'Listen to translation',
+                                  ),
+                                ],
                               ),
                             ],
                           ),
