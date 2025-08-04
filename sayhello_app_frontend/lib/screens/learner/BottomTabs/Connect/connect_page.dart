@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../providers/theme_provider.dart';
 import 'others_profile_page.dart';
+import '../../Notifications/notifications.dart';
+import '../../../../providers/settings_provider.dart';
 
 class Partner {
   final String name;
@@ -137,34 +139,76 @@ class _ConnectPageState extends State<ConnectPage> {
     final dividerColor = isDark ? Colors.grey.shade800 : Colors.grey.shade300;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        scrolledUnderElevation: 0,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(52),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          scrolledUnderElevation: 0,
         title: Row(
           children: [
-            const SizedBox(width: 10),
-            // Theme toggle button
-            // Use the theme provider to toggle dark/light mode
-            IconButton(
-              icon: Icon(
-                themeProvider.themeMode == ThemeMode.dark
-                    ? Icons
-                          .light_mode // Currently dark → show light icon
-                    : Icons.dark_mode, // Currently light → show dark icon
+ // 🔧 SETTINGS ICON - This is the settings button in the app bar
+              // Click this to open the settings bottom sheet with theme and language options
+              IconButton(
+                icon: Icon(
+                  Icons.settings,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+                onPressed: () =>
+                    SettingsProvider.showSettingsBottomSheet(context),
               ),
-              onPressed: () {
-                bool toDark = themeProvider.themeMode != ThemeMode.dark;
-                themeProvider.toggleTheme(toDark);
-              },
-            ),
-            Expanded(
-              child: Text(
-                AppLocalizations.of(context)!.findPartners,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+            
+            const SizedBox(width: 40),
+
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.findPartners,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                ),
               ),
-            ),
-            // IconButton(icon: Icon(Icons.flash_on, color: textColor), onPressed: () {}),
+
+              // 🔔 NOTIFICATION ICON - This is the notification button in the app bar
+              Stack(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.notifications_outlined,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NotificationsPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  // Red dot for unread notifications
+                  Positioned(
+                    right: 11,
+                    top: 11,
+                    child: Container(
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      constraints: BoxConstraints(minWidth: 12, minHeight: 12),
+                      child: Text(
+                        '3', // Number of unread notifications
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              
             IconButton(
               icon: Icon(Icons.more_vert, color: textColor),
               onPressed: () {
@@ -174,6 +218,8 @@ class _ConnectPageState extends State<ConnectPage> {
           ],
         ),
       ),
+      ),
+      
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

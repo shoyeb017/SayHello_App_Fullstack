@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
 import '../../../../l10n/app_localizations.dart';
-import 'search_people_in_home.dart';
-import 'chat_item.dart';
-import 'all_courses.dart';
 import 'translator_in_home.dart';
 import '../../Chat/chat.dart'; // Import our new chat interface
+import '../../Notifications/notifications.dart';
+import 'package:sayhello_app_frontend/providers/settings_provider.dart';
 
 void main() {
   runApp(const LanguageTalksApp());
@@ -39,9 +38,40 @@ class Category {
   const Category(this.icon, this.label, this.background);
 }
 
+class ChatItem {
+  final String avatarUrl;
+  final String name;
+  final String lastMessage;
+  final String dateLabel;
+  final bool myTurn;
+
+  const ChatItem({
+    required this.avatarUrl,
+    required this.name,
+    required this.lastMessage,
+    required this.dateLabel,
+    required this.myTurn,
+  });
+}
+
 // ──────────────────────────────────────────────────────────────────────────────
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearching = false;
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   // Dummy categories (top pill buttons)
   // static const _categories = <Category>[
@@ -114,6 +144,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
@@ -124,33 +155,66 @@ class HomePage extends StatelessWidget {
           scrolledUnderElevation: 0,
           title: Row(
             children: [
-              const SizedBox(width: 10),
-
-              // Theme toggle button
-              // Use the theme provider to toggle dark/light mode
+              // 🔧 SETTINGS ICON - This is the settings button in the app bar
+              // Click this to open the settings bottom sheet with theme and language options
               IconButton(
                 icon: Icon(
-                  themeProvider.themeMode == ThemeMode.dark
-                      ? Icons
-                            .light_mode // Currently dark → show light icon
-                      : Icons.dark_mode, // Currently light → show dark icon
+                  Icons.settings,
+                  color: isDark ? Colors.white : Colors.black,
                 ),
-                onPressed: () {
-                  bool toDark = themeProvider.themeMode != ThemeMode.dark;
-                  themeProvider.toggleTheme(toDark);
-                },
+                onPressed: () =>
+                    SettingsProvider.showSettingsBottomSheet(context),
               ),
+
               Expanded(
                 child: Text(
                   AppLocalizations.of(context)!.home,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                 ),
               ),
-              IconButton(icon: Icon(Icons.tune), onPressed: () {}),
+
+              // 🔔 NOTIFICATION ICON - This is the notification button in the app bar
+              Stack(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.notifications_outlined,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NotificationsPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  // Red dot for unread notifications
+                  Positioned(
+                    right: 11,
+                    top: 11,
+                    child: Container(
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      constraints: BoxConstraints(minWidth: 12, minHeight: 12),
+                      child: Text(
+                        '3', // Number of unread notifications
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -165,43 +229,7 @@ class HomePage extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               children: [
-                // GestureDetector(
-                //   onTap: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(builder: (_) => const AllCourses()),
-                //     );
-                //   },
-                //   child: Column(
-                //     children: [
-                //       Container(
-                //         width: 50,
-                //         height: 50,
-                //         decoration: BoxDecoration(
-                //           color: const Color(0xFF00C853).withOpacity(0.15),
-                //           borderRadius: BorderRadius.circular(16),
-                //         ),
-                //         child: const Icon(
-                //           Icons.menu_book_outlined,
-                //           size: 26,
-                //           color: Color(0xFF00C853),
-                //         ),
-                //       ),
-                //       const SizedBox(height: 4),
-                //       SizedBox(
-                //         width: 72,
-                //         child: Text(
-                //           AppLocalizations.of(context)!.allCourses,
-                //           textAlign: TextAlign.center,
-                //           style: TextStyle(fontSize: 11),
-                //           maxLines: 1,
-                //           overflow: TextOverflow.ellipsis,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // const SizedBox(width: 12),
+                // Translate option
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -240,6 +268,82 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
+
+                const SizedBox(width: 12),
+
+                // Color Mode option
+                GestureDetector(
+                  onTap: () {
+                    bool toDark = themeProvider.themeMode != ThemeMode.dark;
+                    themeProvider.toggleTheme(toDark);
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF7A54FF).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Icon(
+                          themeProvider.themeMode == ThemeMode.dark
+                              ? Icons.light_mode
+                              : Icons.dark_mode,
+                          size: 26,
+                          color: const Color(0xFF7A54FF),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        width: 72,
+                        child: Text(
+                          AppLocalizations.of(context)!.colorMode,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 11),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+
+                // Language Settings option
+                GestureDetector(
+                  onTap: () {
+                    SettingsProvider.showLanguageSelector(context);
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF00C853).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(
+                          Icons.language,
+                          size: 26,
+                          color: Color(0xFF00C853),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        width: 72,
+                        child: Text(
+                          AppLocalizations.of(context)!.language,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 11),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -247,69 +351,121 @@ class HomePage extends StatelessWidget {
           // Search bar for chats
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(40),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => SearchPeopleInHome(
-                      allChats: _chats,
-                    ), // pass your chat list
-                  ),
-                );
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 16,
-                ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.grey.shade800
-                      : Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(40),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.search, size: 20),
-                    SizedBox(width: 10),
-                    Text(
-                      AppLocalizations.of(context)!.seePeoplesChats,
-                      style: TextStyle(fontSize: 16),
+            child: _isSearching
+                ? Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          autofocus: true,
+                          onChanged: (value) =>
+                              setState(() => _searchQuery = value),
+                          style: const TextStyle(fontSize: 14),
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                            ),
+                            prefixIcon: const Icon(Icons.search, size: 20),
+                            hintText: AppLocalizations.of(
+                              context,
+                            )!.searchPeople,
+                            hintStyle: const TextStyle(fontSize: 16),
+                            filled: true,
+                            fillColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey.shade800
+                                : Colors.grey.shade200,
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _isSearching = false;
+                            _searchQuery = '';
+                            _searchController.clear();
+                          });
+                        },
+                        child: Text(AppLocalizations.of(context)!.cancel),
+                      ),
+                    ],
+                  )
+                : InkWell(
+                    borderRadius: BorderRadius.circular(40),
+                    onTap: () {
+                      setState(() {
+                        _isSearching = true;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey.shade800
+                            : Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.search, size: 20),
+                          SizedBox(width: 10),
+                          Text(
+                            AppLocalizations.of(context)!.seePeoplesChats,
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
           ),
 
           // const Divider(height: 1),
 
           // Chat list
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(
-                vertical: 8,
-              ), // Add some top/bottom padding
-              itemCount: _chats.length,
-              itemBuilder: (context, index) {
-                final chat = _chats[index];
-                return Column(
-                  children: [
-                    _ChatTile(chat: chat),
-                    // Partial width divider with indent and endIndent
-                    if (index != _chats.length)
-                      Divider(
-                        indent: 90, // same as avatar + padding approx
-                        endIndent: 20, // to stop short of right edge
-                        height: 1,
-                        thickness: 0.7,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.grey.shade700
-                            : Colors.grey.shade400,
-                      ),
-                  ],
+            child: Builder(
+              builder: (context) {
+                // Filter chats based on search query
+                final filteredChats = _searchQuery.isEmpty
+                    ? _chats
+                    : _chats
+                          .where(
+                            (chat) => chat.name.toLowerCase().contains(
+                              _searchQuery.toLowerCase(),
+                            ),
+                          )
+                          .toList();
+
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  itemCount: filteredChats.length,
+                  itemBuilder: (context, index) {
+                    final chat = filteredChats[index];
+                    return Column(
+                      children: [
+                        _ChatTile(chat: chat),
+                        // Partial width divider with indent and endIndent
+                        if (index != filteredChats.length - 1)
+                          Divider(
+                            indent: 90, // same as avatar + padding approx
+                            endIndent: 20, // to stop short of right edge
+                            height: 1,
+                            thickness: 0.7,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey.shade700
+                                : Colors.grey.shade400,
+                          ),
+                      ],
+                    );
+                  },
                 );
               },
             ),
@@ -388,7 +544,7 @@ class _ChatTile extends StatelessWidget {
                 width: 14, // a bit bigger to match avatar
                 height: 14,
                 decoration: BoxDecoration(
-                  color: Colors.red,
+                  color: Colors.purple,
                   border: Border.all(color: Colors.white, width: 1.5),
                   shape: BoxShape.circle,
                 ),
