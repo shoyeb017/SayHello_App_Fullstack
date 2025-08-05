@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../Enrolled/course_portal.dart';
 
 class CoursePaymentPage extends StatefulWidget {
