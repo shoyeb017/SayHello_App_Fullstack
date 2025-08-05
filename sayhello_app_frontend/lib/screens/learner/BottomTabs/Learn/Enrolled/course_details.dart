@@ -39,7 +39,7 @@ class CourseDetails extends StatelessWidget {
     final cardColor = isDark ? Colors.grey[800] : Colors.white;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12), // Reduced from 16
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -58,8 +58,7 @@ class CourseDetails extends StatelessWidget {
             cardColor,
           ),
 
-          const SizedBox(height: 20),
-
+          const SizedBox(height: 16), // Reduced from 20
           // Rating and Enrollment Stats
           _buildStatsSection(
             rating,
@@ -73,8 +72,7 @@ class CourseDetails extends StatelessWidget {
             cardColor,
           ),
 
-          const SizedBox(height: 20),
-
+          const SizedBox(height: 16), // Reduced from 20
           // Course Description
           _buildDescriptionSection(
             description,
@@ -85,8 +83,7 @@ class CourseDetails extends StatelessWidget {
             cardColor,
           ),
 
-          const SizedBox(height: 20),
-
+          const SizedBox(height: 16), // Reduced from 20
           // Course Details Grid
           _buildDetailsGrid(
             startDate,
@@ -102,8 +99,7 @@ class CourseDetails extends StatelessWidget {
             cardColor,
           ),
 
-          const SizedBox(height: 20),
-
+          const SizedBox(height: 16), // Reduced from 20
           // Enrollment Status
           _buildEnrollmentStatus(status, primaryColor),
         ],
@@ -128,12 +124,12 @@ class CourseDetails extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: cardColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16), // Reduced from 20
         boxShadow: [
           BoxShadow(
             color: primaryColor.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 8, // Reduced from 10
+            offset: const Offset(0, 3), // Reduced from 4
           ),
         ],
       ),
@@ -141,12 +137,12 @@ class CourseDetails extends StatelessWidget {
         children: [
           // Thumbnail Section
           Container(
-            height: 200,
+            height: 160, // Reduced from 200
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+                topLeft: Radius.circular(16), // Reduced from 20
+                topRight: Radius.circular(16), // Reduced from 20
               ),
               gradient: thumbnail.isEmpty
                   ? LinearGradient(
@@ -174,23 +170,25 @@ class CourseDetails extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(12), // Reduced from 16
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(50),
+                            borderRadius: BorderRadius.circular(
+                              40,
+                            ), // Reduced from 50
                           ),
                           child: Icon(
                             Icons.school,
-                            size: 48,
+                            size: 36, // Reduced from 48
                             color: Colors.white,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8), // Reduced from 12
                         Text(
                           category,
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
+                            fontSize: 15, // Reduced from 18
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -200,29 +198,31 @@ class CourseDetails extends StatelessWidget {
 
                 // Status Badge
                 Positioned(
-                  top: 16,
-                  right: 16,
+                  top: 12, // Reduced from 16
+                  right: 12, // Reduced from 16
                   child: _buildStatusBadge(status),
                 ),
 
                 // Level Badge
                 Positioned(
-                  top: 16,
-                  left: 16,
+                  top: 12, // Reduced from 16
+                  left: 12, // Reduced from 16
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
+                      horizontal: 8, // Reduced from 12
+                      vertical: 4, // Reduced from 6
                     ),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        10,
+                      ), // Reduced from 12
                     ),
                     child: Text(
                       level,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 12,
+                        fontSize: 10, // Reduced from 12
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -231,12 +231,12 @@ class CourseDetails extends StatelessWidget {
 
                 // Duration Badge
                 Positioned(
-                  bottom: 16,
-                  left: 16,
+                  bottom: 12, // Reduced from 16
+                  left: 12, // Reduced from 16
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
+                      horizontal: 8, // Reduced from 10
+                      vertical: 4, // Reduced from 6
                     ),
                     decoration: BoxDecoration(
                       color: primaryColor.withOpacity(0.9),
@@ -247,15 +247,15 @@ class CourseDetails extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.access_time,
-                          size: 14,
+                          size: 12, // Reduced from 14
                           color: Colors.white,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 3), // Reduced from 4
                         Text(
                           duration,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 12,
+                            fontSize: 10, // Reduced from 12
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -269,14 +269,14 @@ class CourseDetails extends StatelessWidget {
 
           // Course Title and Instructor
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16), // Reduced from 20
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 20, // Reduced from 24
                     fontWeight: FontWeight.bold,
                     color: textColor,
                     height: 1.2,
@@ -284,16 +284,20 @@ class CourseDetails extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6), // Reduced from 8
                 Row(
                   children: [
-                    Icon(Icons.person, size: 18, color: primaryColor),
-                    const SizedBox(width: 6),
+                    Icon(
+                      Icons.person,
+                      size: 16,
+                      color: primaryColor,
+                    ), // Reduced from 18
+                    const SizedBox(width: 5), // Reduced from 6
                     Expanded(
                       child: Text(
                         'by $instructor',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14, // Reduced from 16
                           color: primaryColor,
                           fontWeight: FontWeight.w600,
                         ),
@@ -334,21 +338,24 @@ class CourseDetails extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 5,
+      ), // Reduced from 10, 6
       decoration: BoxDecoration(
         color: statusColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10), // Reduced from 12
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(statusIcon, size: 14, color: Colors.white),
-          const SizedBox(width: 4),
+          Icon(statusIcon, size: 12, color: Colors.white), // Reduced from 14
+          const SizedBox(width: 3), // Reduced from 4
           Text(
             status.toUpperCase(),
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 11,
+              fontSize: 9, // Reduced from 11
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -370,15 +377,15 @@ class CourseDetails extends StatelessWidget {
   ) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16), // Reduced from 20
       decoration: BoxDecoration(
         color: cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12), // Reduced from 16
         boxShadow: [
           BoxShadow(
             color: isDark ? Colors.black26 : Colors.grey.shade200,
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+            blurRadius: 6, // Reduced from 8
+            offset: const Offset(0, 2), // Reduced from 3
           ),
         ],
       ),
@@ -391,23 +398,27 @@ class CourseDetails extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.star, color: Colors.amber, size: 20),
-                    const SizedBox(width: 4),
+                    Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                      size: 16,
+                    ), // Reduced from 20
+                    const SizedBox(width: 3), // Reduced from 4
                     Text(
                       rating.toStringAsFixed(1),
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 15, // Reduced from 18
                         fontWeight: FontWeight.bold,
                         color: textColor,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3), // Reduced from 4
                 Text(
                   'Rating',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 10, // Reduced from 12
                     color: subTextColor,
                     fontWeight: FontWeight.w500,
                   ),
@@ -416,8 +427,11 @@ class CourseDetails extends StatelessWidget {
             ),
           ),
 
-          Container(height: 40, width: 1, color: Colors.grey.shade300),
-
+          Container(
+            height: 35,
+            width: 1,
+            color: Colors.grey.shade300,
+          ), // Reduced height from 40
           // Students
           Expanded(
             child: Column(
@@ -425,16 +439,16 @@ class CourseDetails extends StatelessWidget {
                 Text(
                   enrolledStudents.toString(),
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 15, // Reduced from 18
                     fontWeight: FontWeight.bold,
                     color: primaryColor,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3), // Reduced from 4
                 Text(
                   'Students',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 10, // Reduced from 12
                     color: subTextColor,
                     fontWeight: FontWeight.w500,
                   ),
@@ -443,8 +457,11 @@ class CourseDetails extends StatelessWidget {
             ),
           ),
 
-          Container(height: 40, width: 1, color: Colors.grey.shade300),
-
+          Container(
+            height: 35,
+            width: 1,
+            color: Colors.grey.shade300,
+          ), // Reduced height from 40
           // Price
           Expanded(
             child: Column(
@@ -452,16 +469,16 @@ class CourseDetails extends StatelessWidget {
                 Text(
                   '\$${price.toStringAsFixed(0)}',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 15, // Reduced from 18
                     fontWeight: FontWeight.bold,
                     color: Colors.green,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3), // Reduced from 4
                 Text(
                   'Price',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 10, // Reduced from 12
                     color: subTextColor,
                     fontWeight: FontWeight.w500,
                   ),
@@ -470,18 +487,25 @@ class CourseDetails extends StatelessWidget {
             ),
           ),
 
-          Container(height: 40, width: 1, color: Colors.grey.shade300),
-
+          Container(
+            height: 35,
+            width: 1,
+            color: Colors.grey.shade300,
+          ), // Reduced height from 40
           // Language
           Expanded(
             child: Column(
               children: [
-                Icon(Icons.language, color: primaryColor, size: 20),
-                const SizedBox(height: 4),
+                Icon(
+                  Icons.language,
+                  color: primaryColor,
+                  size: 16,
+                ), // Reduced from 20
+                const SizedBox(height: 3), // Reduced from 4
                 Text(
                   language,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 10, // Reduced from 12
                     color: subTextColor,
                     fontWeight: FontWeight.w500,
                   ),
@@ -506,15 +530,15 @@ class CourseDetails extends StatelessWidget {
   ) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16), // Reduced from 20
       decoration: BoxDecoration(
         color: cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12), // Reduced from 16
         boxShadow: [
           BoxShadow(
             color: isDark ? Colors.black26 : Colors.grey.shade200,
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+            blurRadius: 6, // Reduced from 8
+            offset: const Offset(0, 2), // Reduced from 3
           ),
         ],
       ),
@@ -523,22 +547,30 @@ class CourseDetails extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.description, color: primaryColor, size: 22),
-              const SizedBox(width: 8),
+              Icon(
+                Icons.description,
+                color: primaryColor,
+                size: 18,
+              ), // Reduced from 22
+              const SizedBox(width: 6), // Reduced from 8
               Text(
                 'Course Description',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 15, // Reduced from 18
                   fontWeight: FontWeight.bold,
                   color: textColor,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12), // Reduced from 16
           Text(
             description,
-            style: TextStyle(fontSize: 15, color: subTextColor, height: 1.5),
+            style: TextStyle(
+              fontSize: 13,
+              color: subTextColor,
+              height: 1.4,
+            ), // Reduced from 15, adjusted height
           ),
         ],
       ),
@@ -572,23 +604,23 @@ class CourseDetails extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 1.4,
+        crossAxisSpacing: 10, // Reduced from 12
+        mainAxisSpacing: 10, // Reduced from 12
+        childAspectRatio: 1.5, // Increased from 1.4 to make cards shorter
       ),
       itemCount: details.length,
       itemBuilder: (context, index) {
         final detail = details[index];
         return Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12), // Reduced from 16
           decoration: BoxDecoration(
             color: cardColor,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10), // Reduced from 12
             boxShadow: [
               BoxShadow(
                 color: isDark ? Colors.black26 : Colors.grey.shade200,
-                blurRadius: 6,
-                offset: const Offset(0, 2),
+                blurRadius: 4, // Reduced from 6
+                offset: const Offset(0, 1), // Reduced from 2
               ),
             ],
           ),
@@ -600,14 +632,14 @@ class CourseDetails extends StatelessWidget {
                   Icon(
                     detail['icon'] as IconData,
                     color: primaryColor,
-                    size: 20,
+                    size: 16, // Reduced from 20
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6), // Reduced from 8
                   Expanded(
                     child: Text(
                       detail['title'] as String,
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 11, // Reduced from 13
                         fontWeight: FontWeight.w600,
                         color: subTextColor,
                       ),
@@ -617,12 +649,12 @@ class CourseDetails extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6), // Reduced from 8
               Expanded(
                 child: Text(
                   detail['value'] as String,
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 13, // Reduced from 15
                     fontWeight: FontWeight.bold,
                     color: textColor,
                   ),
@@ -666,21 +698,21 @@ class CourseDetails extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 16), // Reduced from 20
       decoration: BoxDecoration(
         color: statusColor.withOpacity(0.1),
-        border: Border.all(color: statusColor, width: 2),
-        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: statusColor, width: 1.5), // Reduced from 2
+        borderRadius: BorderRadius.circular(12), // Reduced from 16
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(statusIcon, color: statusColor, size: 28),
-          const SizedBox(width: 12),
+          Icon(statusIcon, color: statusColor, size: 22), // Reduced from 28
+          const SizedBox(width: 8), // Reduced from 12
           Text(
             statusText,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 15, // Reduced from 18
               fontWeight: FontWeight.bold,
               color: statusColor,
             ),
