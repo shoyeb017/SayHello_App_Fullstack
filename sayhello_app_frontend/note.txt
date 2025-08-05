@@ -1,80 +1,149 @@
 
 login:
-login_id
-learner_id
-username/email
-Password
-user_type
+  login_id
+  learner_id
+  username/email
+  Password
+  user_type
 
 learner user:
-learner_id
-login_id
-profile_image (link)
-name
-email
-birthday
-gender (male,female)
-nativeLanguage (english,spanish,japanese,korean,bangla)
-learningLanguage (english,spanish,japanese,korean,bangla)
-languageLevel (beginner,elementary,intermediate,advanced,proficient)
-Bio
-interest (Art, Music ,Reading,Writing,Sports,Gaming,Travel,Cooking,Fashion,Photography,Crafting,Gardening,Fitness,Movies,Technology,Nature,Animals,Science,Socializing)
-country (USA,Spain,Japan,Korea, Bangladesh)
-created_at
-last_active
+  learner_id
+  login_id
+  profile_image (link)
+  name
+  email
+  birthday
+  gender (male,female)
+  nativeLanguage (english,spanish,japanese,korean,bangla)
+  learningLanguage (english,spanish,japanese,korean,bangla)
+  languageLevel (beginner,elementary,intermediate,advanced,proficient)
+  Bio
+  interest (Art, Music ,Reading,Writing,Sports,Gaming,Travel,Cooking,Fashion,Photography,Crafting,Gardening,Fitness,Movies,Technology,Nature,Animals,Science,Socializing)
+  country (USA,Spain,Japan,Korea, Bangladesh)
+  created_at
+  last_active
 
 
 followers:
-follower_id
-follower_user_id(learner_id)
-followed_user_id
+  follower_id
+  follower_user_id(learner_id)
+  followed_user_id
 
 chats:
-chat_id
-user1_id 
-user2_id 
-created_at
-updated_at 
+  chat_id
+  user1_id 
+  user2_id 
+  created_at
+  updated_at 
 
 messages:
-message_id
-chat_id
-sender_id
-content_text 
-type ('text', 'image') 
-sent_at 
-status(read,unread)
-correction
-translated_content
-parent_msg_id int
+  message_id
+  chat_id
+  sender_id
+  content_text 
+  type ('text', 'image') 
+  sent_at 
+  status(read,unread)
+  correction
+  translated_content
+  parent_msg_id int
 
 
 feed:
-feed_iduser_id
-contact_text
-content_image_url
-created_at
+  feed_iduser_id
+  contact_text
+  content_image_url
+  created_at
 
 feed_likes:
-feed_like_id
-feed_id
-user_id
-created_at
+  feed_like_id
+  feed_id
+  user_id
+  created_at
 
 feed_comments:
-feed_comment_id
-feed_id
-user_id
-content_text
-translated_content
-created_at
-parent_comment_id
+  feed_comment_id
+  feed_id
+  user_id
+  content_text
+  translated_content
+  created_at
+  parent_comment_id
+
+Table courses:
+  course_id 
+  instructor_id 
+  title         
+  description   
+  language (english,spanish,japanese,korean,bangla)
+  level  ('Beginner', 'Intermediate', 'Advanced')
+  price  
+  thumbnail_url
+  startDate
+  endDate  - duration
+  created_at
+
+Table course_enrollments:
+  enrollment_id  
+  course_id      
+  learner_id    
+  enrolled_at   
+  progress       
+  status     
+  // learner_rating int
+  // learner_feedback text
+
+  
+Table course_sessions:
+  session_id    
+  course_id    
+  session_name
+  session_description
+  session_date  
+  session_time
+  session_duration
+  session_link  
+  session_password
+  session_platform (meet, zoom)
+
+Table recorded_classes:
+  recorded_id    
+  course_id    
+  recorded_name
+  recorded_description
+  recorded_date  
+  recorded_time
+  recorded_duration
+  recorded_size
+  recorded_link  
 
 
+Table study_materials:
+  material_id   
+  course_id    
+  material_title         
+  material_description   
+  material_file      
+  material_type ('pdf', 'document' ,'image')
 
 
+Table group_chat:
+  group_chat_id    
+  course_id     
+  sender_id    
+  content_text  
+  parent_message_id
+  sent_at   
 
-
+Table feedback 
+  feedback_id    
+  course_id      
+  instructor_id  
+  learner_id  
+  feedback_type ('learner','instructor')   
+  feedback_text  text
+  rating        int
+  created_at    
 
 
 

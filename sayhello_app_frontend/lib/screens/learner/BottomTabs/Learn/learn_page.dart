@@ -31,7 +31,7 @@ class _LearnPageState extends State<LearnPage> {
       'rating': 4.6,
       'students': 120,
       'progress': 0.4,
-      'lectures': 24,
+      'sessions': 24,
       'completedLectures': 10,
       'icon': Icons.language,
       'thumbnail': '',
@@ -50,7 +50,7 @@ class _LearnPageState extends State<LearnPage> {
       'rating': 4.9,
       'students': 95,
       'progress': 0.75,
-      'lectures': 32,
+      'sessions': 32,
       'completedLectures': 24,
       'icon': Icons.chat,
       'thumbnail': '',
@@ -69,7 +69,7 @@ class _LearnPageState extends State<LearnPage> {
       'rating': 4.5,
       'students': 42,
       'progress': 1.0,
-      'lectures': 20,
+      'sessions': 20,
       'completedLectures': 20,
       'icon': Icons.book,
       'thumbnail': '',
@@ -92,7 +92,7 @@ class _LearnPageState extends State<LearnPage> {
       'rating': 4.2,
       'students': 60,
       'progress': 0.0,
-      'lectures': 15,
+      'sessions': 15,
       'icon': Icons.book,
       'thumbnail': '',
       'description':
@@ -101,7 +101,7 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '5 weeks',
       'level': 'Beginner',
       'category': 'Language',
-      'status': 'available',
+      'status': 'upcoming',
     },
     {
       'id': 'course_005',
@@ -110,7 +110,7 @@ class _LearnPageState extends State<LearnPage> {
       'rating': 4.5,
       'students': 55,
       'progress': 0.0,
-      'lectures': 12,
+      'sessions': 12,
       'icon': Icons.flight_takeoff,
       'thumbnail': '',
       'description':
@@ -119,7 +119,7 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '4 weeks',
       'level': 'Beginner',
       'category': 'Language',
-      'status': 'available',
+      'status': 'active',
     },
     {
       'id': 'course_006',
@@ -128,7 +128,7 @@ class _LearnPageState extends State<LearnPage> {
       'rating': 4.7,
       'students': 180,
       'progress': 0.0,
-      'lectures': 24,
+      'sessions': 24,
       'icon': Icons.business,
       'thumbnail': '',
       'description':
@@ -137,7 +137,7 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '8 weeks',
       'level': 'Intermediate',
       'category': 'Business',
-      'status': 'available',
+      'status': 'active',
     },
     {
       'id': 'course_007',
@@ -146,7 +146,7 @@ class _LearnPageState extends State<LearnPage> {
       'rating': 4.4,
       'students': 75,
       'progress': 0.0,
-      'lectures': 21,
+      'sessions': 21,
       'icon': Icons.translate,
       'thumbnail': '',
       'description':
@@ -155,7 +155,71 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '7 weeks',
       'level': 'Beginner',
       'category': 'Language',
-      'status': 'available',
+      'status': 'upcoming',
+    },
+  ];
+
+  // Completed courses (horizontal scroll)
+  final List<Map<String, dynamic>> completedCourses = [
+    {
+      'id': 'course_008',
+      'title': 'Russian Language Fundamentals',
+      'instructor': 'Dmitri Volkov',
+      'rating': 4.3,
+      'students': 85,
+      'progress': 1.0,
+      'sessions': 18,
+      'completedSessions': 18,
+      'icon': Icons.language,
+      'thumbnail': '',
+      'description':
+          'Complete Russian language course covering basics to intermediate level.',
+      'price': 65.99,
+      'duration': '6 weeks',
+      'level': 'Beginner',
+      'category': 'Language',
+      'status': 'completed',
+      'completionDate': '2024-01-15',
+    },
+    {
+      'id': 'course_009',
+      'title': 'Portuguese for Business',
+      'instructor': 'Ana Santos',
+      'rating': 4.6,
+      'students': 67,
+      'progress': 1.0,
+      'sessions': 22,
+      'completedSessions': 22,
+      'icon': Icons.business_center,
+      'thumbnail': '',
+      'description':
+          'Professional Portuguese for international business communication.',
+      'price': 79.99,
+      'duration': '8 weeks',
+      'level': 'Intermediate',
+      'category': 'Business',
+      'status': 'completed',
+      'completionDate': '2024-02-20',
+    },
+    {
+      'id': 'course_010',
+      'title': 'Korean Language Basics',
+      'instructor': 'Kim Min-jun',
+      'rating': 4.4,
+      'students': 92,
+      'progress': 1.0,
+      'sessions': 20,
+      'completedSessions': 20,
+      'icon': Icons.translate,
+      'thumbnail': '',
+      'description':
+          'Learn Korean alphabet, basic grammar, and essential vocabulary.',
+      'price': 54.99,
+      'duration': '7 weeks',
+      'level': 'Beginner',
+      'category': 'Language',
+      'status': 'completed',
+      'completionDate': '2024-03-10',
     },
   ];
 
@@ -282,6 +346,8 @@ class _LearnPageState extends State<LearnPage> {
           _buildTopCategorySection(isDark),
           const SizedBox(height: 30),
           _buildPopularCoursesSection(isDark),
+          const SizedBox(height: 30),
+          _buildCompletedCoursesSection(isDark),
           const SizedBox(height: 20),
         ],
       ),
@@ -389,7 +455,11 @@ class _LearnPageState extends State<LearnPage> {
             context,
             MaterialPageRoute(
               builder: (_) => SearchCoursesPage(
-                allCourses: [...enrolledCourses, ...popularCourses],
+                allCourses: [
+                  ...enrolledCourses,
+                  ...popularCourses,
+                  ...completedCourses,
+                ],
               ),
             ),
           );
@@ -571,9 +641,9 @@ class _LearnPageState extends State<LearnPage> {
 
                     const SizedBox(height: 6),
 
-                    // Lectures info
+                    // Sessions info
                     Text(
-                      '${course['lectures'] ?? 0} lectures',
+                      '${course['sessions'] ?? 0} Sessions',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.9),
                         fontSize: 13,
@@ -643,7 +713,7 @@ class _LearnPageState extends State<LearnPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Top Category',
+                'Level Category',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -656,7 +726,11 @@ class _LearnPageState extends State<LearnPage> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => SearchCoursesPage(
-                        allCourses: [...enrolledCourses, ...popularCourses],
+                        allCourses: [
+                          ...enrolledCourses,
+                          ...popularCourses,
+                          ...completedCourses,
+                        ],
                       ),
                     ),
                   );
@@ -674,7 +748,7 @@ class _LearnPageState extends State<LearnPage> {
           ),
           const SizedBox(height: 16),
           SizedBox(
-            height: 35,
+            height: 44,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: categories.length,
@@ -705,7 +779,7 @@ class _LearnPageState extends State<LearnPage> {
 
     return Container(
       margin: const EdgeInsets.only(right: 12),
-      height: 20,
+      // height: 20,
       // color: Colors.black,
       child: GestureDetector(
         onTap: () {
@@ -713,7 +787,11 @@ class _LearnPageState extends State<LearnPage> {
             context,
             MaterialPageRoute(
               builder: (_) => SearchCoursesPage(
-                allCourses: [...enrolledCourses, ...popularCourses],
+                allCourses: [
+                  ...enrolledCourses,
+                  ...popularCourses,
+                  ...completedCourses,
+                ],
                 initialFilter: category,
               ),
             ),
@@ -721,7 +799,7 @@ class _LearnPageState extends State<LearnPage> {
         },
 
         child: Container(
-          height: 20,
+          // height: 20,
           decoration: BoxDecoration(
             color: Color(0xFF7A54FF).withOpacity(0.2),
             borderRadius: BorderRadius.circular(24),
@@ -738,8 +816,8 @@ class _LearnPageState extends State<LearnPage> {
             children: [
               // Circular icon with deeper purple background
               Container(
-                width: 35,
-                height: 35,
+                width: 44,
+                height: 44,
                 margin: const EdgeInsets.only(right: 4),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
@@ -796,7 +874,11 @@ class _LearnPageState extends State<LearnPage> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => SearchCoursesPage(
-                        allCourses: [...enrolledCourses, ...popularCourses],
+                        allCourses: [
+                          ...enrolledCourses,
+                          ...popularCourses,
+                          ...completedCourses,
+                        ],
                         initialFilter: 'Popular',
                       ),
                     ),
@@ -921,7 +1003,7 @@ class _LearnPageState extends State<LearnPage> {
                         ),
                         const SizedBox(width: 2),
                         Text(
-                          '${course['lectures'] ?? 0}',
+                          '${course['sessions'] ?? 0}',
                           style: TextStyle(
                             fontSize: 11,
                             color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -947,6 +1029,232 @@ class _LearnPageState extends State<LearnPage> {
                     fontWeight: FontWeight.bold,
                     color: Colors.green,
                   ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompletedCoursesSection(bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Completed Courses',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SearchCoursesPage(
+                        allCourses: [
+                          ...enrolledCourses,
+                          ...popularCourses,
+                          ...completedCourses,
+                        ],
+                        initialFilter: 'Completed',
+                      ),
+                    ),
+                  );
+                },
+                child: const Text(
+                  'View All',
+                  style: TextStyle(
+                    color: Color(0xFF7A54FF),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 200,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: completedCourses.length,
+              itemBuilder: (context, index) {
+                return _buildCompletedCourseCard(
+                  completedCourses[index],
+                  isDark,
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompletedCourseCard(Map<String, dynamic> course, bool isDark) {
+    return Container(
+      width: 260,
+      margin: const EdgeInsets.only(right: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: () => _navigateToCourse(course),
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              colors: [
+                Colors.green.withOpacity(0.8),
+                Colors.green.withOpacity(0.9),
+                Colors.green,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Stack(
+            children: [
+              // Background gradient
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.green.withOpacity(0.8),
+                        Colors.green.withOpacity(0.9),
+                        Colors.green,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Content overlay
+              Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Course icon with completion badge
+                    Stack(
+                      children: [
+                        Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            course['icon'] ?? Icons.school,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                        ),
+                        Positioned(
+                          right: -2,
+                          top: -2,
+                          child: Container(
+                            width: 18,
+                            height: 18,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.green, width: 2),
+                            ),
+                            child: const Icon(
+                              Icons.check,
+                              color: Colors.green,
+                              size: 10,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const Spacer(),
+
+                    // Course title
+                    Text(
+                      course['title'] ?? '',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Sessions info
+                    Text(
+                      '${course['sessions'] ?? 0} Sessions',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 13,
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // Completed badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.verified,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 4),
+                          const Text(
+                            'Completed',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

@@ -104,8 +104,8 @@ class MyCoursesPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.purple.withOpacity(0.8),
-                      Colors.purple.shade600,
+                      Color(0xFF7A54FF).withOpacity(0.8),
+                      Color(0xFF7A54FF),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -186,7 +186,7 @@ class MyCoursesPage extends StatelessWidget {
                             ? Colors.grey[700]
                             : Colors.grey[300],
                         valueColor: const AlwaysStoppedAnimation<Color>(
-                          Colors.purple,
+                          Color(0xFF7A54FF),
                         ),
                         minHeight: 4,
                       ),
@@ -195,7 +195,7 @@ class MyCoursesPage extends StatelessWidget {
                         '${(progress * 100).toInt()}% completed',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.purple,
+                          color: Color(0xFF7A54FF),
                           fontWeight: FontWeight.w500,
                         ),
                       ),

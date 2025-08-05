@@ -20,14 +20,22 @@ class SearchCoursesPage extends StatefulWidget {
 class _SearchCoursesPageState extends State<SearchCoursesPage> {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _filteredCourses = [];
-  String _selectedFilter = 'All';
+  String _selectedLevelFilter = 'All';
+  String _selectedStatusFilter = 'All';
+  bool _showPopularOnly = false;
 
-  final List<String> _filters = [
+  final List<String> _levelFilters = [
     'All',
     'Beginner',
     'Intermediate',
     'Advanced',
-    'Popular',
+  ];
+
+  final List<String> _statusFilters = [
+    'All',
+    'Upcoming',
+    'Active',
+    'Completed',
   ];
 
   @override
@@ -35,7 +43,26 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
     super.initState();
     _filteredCourses = widget.allCourses;
     if (widget.initialFilter != null) {
-      _selectedFilter = widget.initialFilter!;
+      // Handle initial filter mapping
+      switch (widget.initialFilter!) {
+        case 'Beginner':
+        case 'Intermediate':
+        case 'Advanced':
+          _selectedLevelFilter = widget.initialFilter!;
+          break;
+        case 'Popular':
+          _showPopularOnly = true;
+          break;
+        case 'Completed':
+          _selectedStatusFilter = 'Completed';
+          break;
+        case 'Active':
+          _selectedStatusFilter = 'Active';
+          break;
+        case 'Upcoming':
+          _selectedStatusFilter = 'Upcoming';
+          break;
+      }
       _applyFilter();
     }
     _searchController.addListener(_onSearchChanged);
@@ -70,20 +97,28 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
               category.contains(query);
         }
 
-        // Category filter
-        bool matchesCategory = true;
-        if (_selectedFilter != 'All') {
-          if (_selectedFilter == 'Popular') {
-            // Assuming popular courses have rating >= 4.5 or high student count
-            matchesCategory =
-                (course['rating'] ?? 0) >= 4.5 ||
-                (course['students'] ?? 0) >= 100;
-          } else {
-            matchesCategory = course['level'] == _selectedFilter;
-          }
+        // Level filter
+        bool matchesLevel = true;
+        if (_selectedLevelFilter != 'All') {
+          matchesLevel = course['level'] == _selectedLevelFilter;
         }
 
-        return matchesSearch && matchesCategory;
+        // Status filter
+        bool matchesStatus = true;
+        if (_selectedStatusFilter != 'All') {
+          matchesStatus =
+              course['status'] == _selectedStatusFilter.toLowerCase();
+        }
+
+        // Popular filter
+        bool matchesPopular = true;
+        if (_showPopularOnly) {
+          matchesPopular =
+              (course['rating'] ?? 0) >= 4.5 ||
+              (course['students'] ?? 0) >= 100;
+        }
+
+        return matchesSearch && matchesLevel && matchesStatus && matchesPopular;
       }).toList();
     });
   }
@@ -175,66 +210,220 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
 
           // Filter chips
           Container(
-            height: 50,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _filters.length,
-              itemBuilder: (context, index) {
-                final filter = _filters[index];
-                final isSelected = _selectedFilter == filter;
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Level filter
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Level',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 32,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _levelFilters.length,
+                        itemBuilder: (context, index) {
+                          final filter = _levelFilters[index];
+                          final isSelected = _selectedLevelFilter == filter;
 
-                return Container(
-                  margin: const EdgeInsets.only(right: 12),
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        _selectedFilter = filter;
-                      });
-                      _applyFilter();
-                    },
-                    borderRadius: BorderRadius.circular(25),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? Colors.purple
-                            : (isDark ? Colors.grey[800] : Colors.white),
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(
-                          color: isSelected
-                              ? Colors.purple
-                              : (isDark
-                                    ? Colors.grey[600]!
-                                    : Colors.grey[300]!),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          if (!isDark)
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
+                          return Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _selectedLevelFilter = filter;
+                                });
+                                _applyFilter();
+                              },
+                              borderRadius: BorderRadius.circular(16),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? Color(0xFF7A54FF)
+                                      : (isDark
+                                            ? Colors.grey[800]
+                                            : Colors.white),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? Color(0xFF7A54FF)
+                                        : (isDark
+                                              ? Colors.grey[600]!
+                                              : Colors.grey[300]!),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  filter,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : (isDark
+                                              ? Colors.white
+                                              : Colors.black),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
                             ),
-                        ],
+                          );
+                        },
                       ),
-                      child: Text(
-                        filter,
-                        style: TextStyle(
-                          color: isSelected
-                              ? Colors.white
-                              : (isDark ? Colors.white : Colors.black),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Status filter
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Status',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 32,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _statusFilters.length,
+                        itemBuilder: (context, index) {
+                          final filter = _statusFilters[index];
+                          final isSelected = _selectedStatusFilter == filter;
+
+                          return Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _selectedStatusFilter = filter;
+                                });
+                                _applyFilter();
+                              },
+                              borderRadius: BorderRadius.circular(16),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? Color(0xFF7A54FF)
+                                      : (isDark
+                                            ? Colors.grey[800]
+                                            : Colors.white),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? Color(0xFF7A54FF)
+                                        : (isDark
+                                              ? Colors.grey[600]!
+                                              : Colors.grey[300]!),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  filter,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : (isDark
+                                              ? Colors.white
+                                              : Colors.black),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Popular filter toggle
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _showPopularOnly = !_showPopularOnly;
+                        });
+                        _applyFilter();
+                      },
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _showPopularOnly
+                              ? Color(0xFF7A54FF)
+                              : (isDark ? Colors.grey[800] : Colors.white),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: _showPopularOnly
+                                ? Color(0xFF7A54FF)
+                                : (isDark
+                                      ? Colors.grey[600]!
+                                      : Colors.grey[300]!),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.star,
+                              size: 14,
+                              color: _showPopularOnly
+                                  ? Colors.white
+                                  : Color(0xFF7A54FF),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Popular Only',
+                              style: TextStyle(
+                                color: _showPopularOnly
+                                    ? Colors.white
+                                    : (isDark ? Colors.white : Colors.black),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  ],
+                ),
+              ],
             ),
           ),
 
@@ -375,10 +564,13 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                         '${((course['progress'] ?? 0) * 100).toInt()}% completed',
                         style: const TextStyle(
                           fontSize: 10,
-                          color: Colors.purple,
+                          color: Color(0xFF7A54FF),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
+                    ] else ...[
+                      const SizedBox(height: 4),
+                      _buildStatusBadge(course['status'] ?? 'active'),
                     ],
                   ],
                 ),
@@ -411,7 +603,7 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.1),
+                    color: Colors.green.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Text(
@@ -419,12 +611,52 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: Colors.purple,
+                      color: Color(0xFF7A54FF),
                     ),
                   ),
                 ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(String status) {
+    Color badgeColor;
+    String displayText;
+
+    switch (status.toLowerCase()) {
+      case 'upcoming':
+        badgeColor = Colors.orange;
+        displayText = 'Upcoming';
+        break;
+      case 'active':
+        badgeColor = Colors.blue;
+        displayText = 'Active';
+        break;
+      case 'completed':
+        badgeColor = Colors.green;
+        displayText = 'Completed';
+        break;
+      default:
+        badgeColor = Colors.grey;
+        displayText = 'Unknown';
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: badgeColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: badgeColor.withOpacity(0.3), width: 0.5),
+      ),
+      child: Text(
+        displayText,
+        style: TextStyle(
+          fontSize: 9,
+          fontWeight: FontWeight.w600,
+          color: badgeColor,
         ),
       ),
     );
