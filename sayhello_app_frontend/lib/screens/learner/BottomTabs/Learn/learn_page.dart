@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'course_portal.dart';
+import 'Enrolled/course_portal.dart';
+import 'Unenrolled/unenrolled_course_details.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../providers/settings_provider.dart';
 import '../../Notifications/notifications.dart';
@@ -95,7 +96,7 @@ class _LearnPageState extends State<LearnPage>
       'instructor': 'Jean Dupont',
       'rating': 4.2,
       'students': 60,
-      'progress': 0.0,
+      'progress': 0.0, // Not enrolled
       'icon': Icons.book,
       'thumbnail': null, // Will show placeholder
       'description':
@@ -114,7 +115,7 @@ class _LearnPageState extends State<LearnPage>
       'instructor': 'Luca Bianchi',
       'rating': 4.5,
       'students': 55,
-      'progress': 0.0,
+      'progress': 0.0, // Not enrolled
       'icon': Icons.flight_takeoff,
       'thumbnail': null, // Will show placeholder
       'description':
@@ -133,7 +134,7 @@ class _LearnPageState extends State<LearnPage>
       'instructor': 'Sarah Johnson',
       'rating': 4.7,
       'students': 180,
-      'progress': 0.0,
+      'progress': 0.0, // Not enrolled
       'icon': Icons.business,
       'thumbnail': null, // Will show placeholder
       'description':
@@ -152,7 +153,7 @@ class _LearnPageState extends State<LearnPage>
       'instructor': 'Li Wei',
       'rating': 4.4,
       'students': 75,
-      'progress': 0.0,
+      'progress': 0.0, // Not enrolled
       'icon': Icons.translate,
       'thumbnail': null, // Will show placeholder
       'description':
@@ -186,10 +187,22 @@ class _LearnPageState extends State<LearnPage>
 
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => CoursePortalPage(course: course)),
-        );
+        // Check if course is enrolled (has progress > 0) or not
+        if (isEnrolled) {
+          // Navigate to course portal for enrolled courses
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => CoursePortalPage(course: course)),
+          );
+        } else {
+          // Navigate to unenrolled course details for payment
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => UnenrolledCourseDetailsPage(course: course),
+            ),
+          );
+        }
       },
       borderRadius: BorderRadius.circular(16),
       child: Container(
@@ -697,7 +710,6 @@ class _LearnPageState extends State<LearnPage>
                   ),
                 ],
               ),
-              
             ],
           ),
         ),
@@ -821,10 +833,24 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
   Widget _courseCard(Map<String, dynamic> course, bool isDark) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => CoursePortalPage(course: course)),
-        );
+        // Check if course is enrolled (has progress > 0) or not
+        final isEnrolled = course['progress'] != null && course['progress'] > 0;
+
+        if (isEnrolled) {
+          // Navigate to course portal for enrolled courses
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => CoursePortalPage(course: course)),
+          );
+        } else {
+          // Navigate to unenrolled course details for payment
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => UnenrolledCourseDetailsPage(course: course),
+            ),
+          );
+        }
       },
       borderRadius: BorderRadius.circular(12),
       child: Container(

@@ -4,9 +4,11 @@ login_id
 learner_id
 username/email
 Password
+user_type
 
 learner user:
 learner_id
+login_id
 profile_image (link)
 name
 email
@@ -18,15 +20,236 @@ languageLevel (beginner,elementary,intermediate,advanced,proficient)
 Bio
 interest (Art, Music ,Reading,Writing,Sports,Gaming,Travel,Cooking,Fashion,Photography,Crafting,Gardening,Fitness,Movies,Technology,Nature,Animals,Science,Socializing)
 country (USA,Spain,Japan,Korea, Bangladesh)
-joined
+created_at
+last_active
+
 
 followers:
-learner_id
-followers_id(learner_id)
+follower_id
+follower_user_id(learner_id)
+followed_user_id
 
-following:
-learner_id
-followers_id(learner_id)
+chats:
+chat_id
+user1_id 
+user2_id 
+created_at
+updated_at 
+
+messages:
+message_id
+chat_id
+sender_id
+content_text 
+type ('text', 'image') 
+sent_at 
+status(read,unread)
+correction
+translated_content
+parent_msg_id int
+
+
+feed:
+feed_iduser_id
+contact_text
+content_image_url
+created_at
+
+feed_likes:
+feed_like_id
+feed_id
+user_id
+created_at
+
+feed_comments:
+feed_comment_id
+feed_id
+user_id
+content_text
+translated_content
+created_at
+parent_comment_id
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------
+Table users {
+  user_id       int [pk, increment]
+  username      varchar [unique, not null]
+  email         varchar [unique, not null]
+  password varchar [not null]
+  user_type     enum('learner', 'instructor') [not null]
+  created_at    timestamp [default: `CURRENT_TIMESTAMP`]
+  // updated_at    timestamp
+}
+
+--------------------------------------------------
+Table learners {
+  learner_id       int [pk, ref: > users.user_id]
+  name             varchar
+  profile_picture  varchar
+  native_language_id int [ref: > languages.language_id]
+  learning_language_id int [ref: > languages.language_id]
+  date_of_birth    date
+  gender           varchar
+  country          varchar
+  bio              text
+  registration_date timestamp [default: `CURRENT_TIMESTAMP`]
+  last_active      timestamp
+}
+
+Table instructors {
+  instructor_id      int [pk, ref: > users.user_id]
+  name               varchar
+  profile_picture    varchar
+  date_of_birth      date
+  gender             varchar
+  country            varchar
+  bio                text
+  native_language_id int [ref: > languages.language_id]
+    learning_language_id int [ref: > languages.language_id]
+  years_of_experience int
+}
+
+--------------------------------------------------
+Table languages {
+  language_id   int [pk, increment]
+  name          varchar [not null]
+}
+
+--------------------------------------------------
+Table followers {
+  follower_id      int [pk, increment]
+  follower_user_id int [ref: > users.user_id]
+  followed_user_id int [ref: > users.user_id]
+  // followed_at      timestamp [default: `CURRENT_TIMESTAMP`]
+}
+--------------------------------------------------
+Table feed {
+  feed_id     int [pk, increment]
+  user_id       int [ref: > users.user_id]
+  content_text  text
+  content_image_url varchar
+  created_at    timestamp [default: `CURRENT_TIMESTAMP`]
+}
+--------------------------------------------------
+Table feed_likes {
+  feed_like_id int [pk, increment]
+  feed_id     int [ref: > feed.feed_id]
+  user_id       int [ref: > users.user_id]
+  created_at    timestamp [default: `CURRENT_TIMESTAMP`]
+}
+--------------------------------------------------
+Table feed_comments {
+  comment_id    int [pk, increment]
+  feed_id     int [ref: > feed.feed_id]
+  user_id       int [ref: > users.user_id]
+  content       text
+  created_at    timestamp [default: `CURRENT_TIMESTAMP`]
+}
+--------------------------------------------------
+Table chats {
+  chat_id      int [pk, increment]
+  user1_id     int [ref: > users.user_id]
+  user2_id     int [ref: > users.user_id]
+  created_at   timestamp [default: `CURRENT_TIMESTAMP`]
+  // updated_at   timestamp
+}
+--------------------------------------------------
+Table messages {
+  message_id    int [pk, increment]
+  chat_id       int [ref: > chats.chat_id]
+  sender_id     int [ref: > users.user_id]
+  content_text  text
+  type  enum('text', 'image', 'audio') [default: 'text']
+  translated_content text
+  parent_msg_id int
+  sent_at       timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+Table courses {
+  course_id     int [pk, increment]
+  instructor_id int [ref: > instructors.instructor_id]
+  title         varchar
+  description   text
+  language_id   int [ref: > languages.language_id]
+  level         enum('Beginner', 'Intermediate', 'Advanced')
+  price         decimal(10, 2)
+  thumbnail_url varchar
+  published     boolean [default: false]
+  created_at    timestamp [default: `CURRENT_TIMESTAMP`]
+  // updated_at    timestamp
+}
+
+Table course_materials {
+  material_id   int [pk, increment]
+  course_id     int [ref: > courses.course_id]
+  title         varchar
+  description   varchar
+  file_url      varchar
+  type enum('pdf', 'video', 'image')
+  uploaded_at   timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+Table course_sessions {
+  session_id    int [pk, increment]
+  course_id     int [ref: > courses.course_id]
+  session_date  datetime
+  session_link  varchar
+  description   varchar
+  created_at    timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+Table course_enrollments {
+  enrollment_id  int [pk, increment]
+  course_id      int [ref: > courses.course_id]
+  learner_id     int [ref: > learners.learner_id]
+  enrolled_at    timestamp [default: `CURRENT_TIMESTAMP`]
+  progress       decimal(5, 2) [default: 0]
+  completed      boolean [default: false]
+  // learner_rating int
+  // learner_feedback text
+}
+
+Table course_group_messages {
+  group_message_id    int [pk, increment]
+  course_id     int [ref: > courses.course_id]
+  sender_id     int [ref: > users.user_id]
+  content_text  text
+  parent_message_id int
+  sent_at       timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+Table performance_feedback {
+  feedback_id    int [pk, increment]
+  course_id      int [ref: > courses.course_id]
+  instructor_id  int [ref: > instructors.instructor_id]
+  learner_id     int [ref: > learners.learner_id]
+  feedback_text  text
+  rating        int
+  feedback_type enum('learner','instructor')
+  created_at    timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+Table notifications {
+  notification_id int [pk, increment]
+  user_id       int [ref: > users.user_id]
+  // notification_type varchar
+  content_text  text
+  is_read       boolean [default: false]
+  created_at    timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+
 
 
 

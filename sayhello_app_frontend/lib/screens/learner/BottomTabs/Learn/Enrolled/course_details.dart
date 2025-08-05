@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../l10n/app_localizations.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class CourseDetails extends StatelessWidget {
   final Map<String, dynamic> course;
@@ -498,36 +498,29 @@ class CourseDetails extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // Enroll button
-          SizedBox(
+          // Enrolled Status Indicator
+          Container(
             width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                backgroundColor: Colors.purple,
-                elevation: 5,
-                shadowColor: Colors.purpleAccent,
-              ),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)!.enrolledSuccessfully,
-                    ),
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            decoration: BoxDecoration(
+              color: Colors.green.withOpacity(0.1),
+              border: Border.all(color: Colors.green, width: 2),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.check_circle, color: Colors.green, size: 24),
+                const SizedBox(width: 8),
+                Text(
+                  'Already Enrolled',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
                   ),
-                );
-              },
-              child: Text(
-                '${AppLocalizations.of(context)!.enrollFor} \$${price.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
                 ),
-              ),
+              ],
             ),
           ),
         ],

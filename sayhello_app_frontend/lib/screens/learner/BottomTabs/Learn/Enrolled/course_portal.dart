@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../../providers/theme_provider.dart';
-import '../../../../l10n/app_localizations.dart';
+import '../../../../../../l10n/app_localizations.dart';
+import '../../../../../../providers/settings_provider.dart';
 
 import 'course_details.dart';
 import 'online_session.dart';
@@ -73,7 +72,6 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = widget.course['title'] ?? 'Course';
 
@@ -122,18 +120,14 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
           ],
         ),
         actions: [
+          // 🔧 SETTINGS ICON - This is the settings button in the app bar
+          // Click this to open the settings bottom sheet with theme and language options
           IconButton(
             icon: Icon(
-              themeProvider.themeMode == ThemeMode.dark
-                  ? Icons.light_mode
-                  : Icons.dark_mode,
+              Icons.settings,
+              color: isDark ? Colors.white : Colors.black,
             ),
-            onPressed: () {
-              themeProvider.toggleTheme(
-                themeProvider.themeMode == ThemeMode.light,
-              );
-            },
-            tooltip: 'Toggle Theme',
+            onPressed: () => SettingsProvider.showSettingsBottomSheet(context),
           ),
           IconButton(
             icon: const Icon(Icons.close),
