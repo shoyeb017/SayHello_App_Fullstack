@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../../../../providers/theme_provider.dart';
 import '../../../../../../l10n/app_localizations.dart';
 import '../../../../../../providers/settings_provider.dart';
 
@@ -21,6 +19,7 @@ class CoursePortalPage extends StatefulWidget {
 
 class _CoursePortalPageState extends State<CoursePortalPage> {
   final PageController _pageController = PageController();
+  final ScrollController _tabScrollController = ScrollController();
   int _selectedIndex = 0;
   bool _showMiniSidebar = false;
   bool _showExpandedSidebar = false;
@@ -58,92 +57,178 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
         curve: Curves.easeInOut,
       );
     });
+    _centerSelectedTab(index);
   }
 
   void _onPageChanged(int index) {
     setState(() {
       _selectedIndex = index;
     });
+    _centerSelectedTab(index);
+  }
+
+  void _centerSelectedTab(int index) {
+    // Calculate the scroll position to center the selected tab
+    const double tabWidth = 100.0; // Approximate tab width including margin
+    final double targetScrollOffset =
+        (index * tabWidth) -
+        (MediaQuery.of(context).size.width / 2) +
+        (tabWidth / 2);
+
+    _tabScrollController.animateTo(
+      targetScrollOffset.clamp(
+        0.0,
+        _tabScrollController.position.maxScrollExtent,
+      ),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _tabScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = widget.course['title'] ?? 'Course';
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        titleSpacing: 16,
-        centerTitle: false,
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            setState(() {
-              if (_showExpandedSidebar) {
-                _showExpandedSidebar = false;
-                _showMiniSidebar = true;
-              } else if (_showMiniSidebar) {
-                _showMiniSidebar = false;
-                _showExpandedSidebar = true;
-              } else {
-                _showMiniSidebar = true;
-              }
-            });
-          },
-          tooltip: 'Navigation Menu',
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              AppLocalizations.of(context)!.yourLearningJourney,
-              style: TextStyle(
-                fontSize: 12,
-                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(48),
+        child: AppBar(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          titleSpacing: 16,
+          centerTitle: false,
+          leading: IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              setState(() {
+                if (_showExpandedSidebar) {
+                  _showExpandedSidebar = false;
+                  _showMiniSidebar = true;
+                } else if (_showMiniSidebar) {
+                  _showMiniSidebar = false;
+                  _showExpandedSidebar = true;
+                } else {
+                  _showMiniSidebar = true;
+                }
+              });
+            },
+            tooltip: 'Navigation Menu',
+          ),
+          title: Text(
+            title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+          actions: [
+            // 🔧 SETTINGS ICON - This is the settings button in the app bar
+            // Click this to open the settings bottom sheet with theme and language options
+            IconButton(
+              icon: Icon(
+                Icons.settings,
+                color: isDark ? Colors.white : Colors.black,
               ),
+              onPressed: () =>
+                  SettingsProvider.showSettingsBottomSheet(context),
+            ),
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => Navigator.of(context).pop(),
+              tooltip: 'Close Course',
             ),
           ],
         ),
-        actions: [
-              // 🔧 SETTINGS ICON - This is the settings button in the app bar
-              // Click this to open the settings bottom sheet with theme and language options
-              IconButton(
-                icon: Icon(
-                  Icons.settings,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-                onPressed: () =>
-                    SettingsProvider.showSettingsBottomSheet(context),
-              ),
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.of(context).pop(),
-            tooltip: 'Close Course',
-          ),
-        ],
       ),
       body: Stack(
         children: [
+          // Current Tab Label - Horizontal Sliding Tabs
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 30,
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                border: Border(
+                  bottom: BorderSide(
+                    color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                    width: 0.5,
+                  ),
+                ),
+              ),
+              child: ListView.builder(
+                controller: _tabScrollController,
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: _tabs.length,
+                itemBuilder: (context, index) {
+                  final tab = _tabs[index];
+                  final isSelected = index == _selectedIndex;
+
+                  return GestureDetector(
+                    onTap: () => _onTabTap(index),
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              tab.label,
+                              style: TextStyle(
+                                fontSize: isSelected ? 11 : 10,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
+                                color: isSelected
+                                    ? Color(0xFF7A54FF)
+                                    : (isDark
+                                          ? Colors.grey[400]
+                                          : Colors.grey[600]),
+                                height: 1.0, // Reduce line height
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          // Underline indicator
+                          Container(
+                            height: 2,
+                            width: isSelected ? 30 : 0,
+                            decoration: BoxDecoration(
+                              color: Color(0xFF7A54FF),
+                              borderRadius: BorderRadius.circular(1),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+
           // Main Content
-          Positioned.fill(
+          Positioned(
+            top: 30, // Adjust top margin for the new tab bar height
+            left: 0,
+            right: 0,
+            bottom: 0,
             child: PageView(
               controller: _pageController,
               onPageChanged: _onPageChanged,
@@ -192,8 +277,8 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.purple,
-                            Colors.purple.withOpacity(0.8),
+                            Color(0xFF7A54FF),
+                            Color(0xFF7A54FF).withOpacity(0.8),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -241,14 +326,14 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
                                     color: isSelected
-                                        ? Colors.purple.withOpacity(0.1)
+                                        ? Color(0xFF7A54FF).withOpacity(0.1)
                                         : Colors.transparent,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Icon(
                                     tab.icon,
                                     color: isSelected
-                                        ? Colors.purple
+                                        ? Color(0xFF7A54FF)
                                         : (isDark
                                               ? Colors.grey[400]
                                               : Colors.grey[600]),
@@ -299,8 +384,8 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.purple,
-                            Colors.purple.withOpacity(0.8),
+                            Color(0xFF7A54FF),
+                            Color(0xFF7A54FF).withOpacity(0.8),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -382,7 +467,7 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
                                     color: isSelected
-                                        ? Colors.purple.withOpacity(0.1)
+                                        ? Color(0xFF7A54FF).withOpacity(0.1)
                                         : Colors.transparent,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -391,7 +476,7 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
                                       Icon(
                                         tab.icon,
                                         color: isSelected
-                                            ? Colors.purple
+                                            ? Color(0xFF7A54FF)
                                             : (isDark
                                                   ? Colors.grey[400]
                                                   : Colors.grey[600]),
@@ -403,7 +488,7 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
                                           tab.label,
                                           style: TextStyle(
                                             color: isSelected
-                                                ? Colors.purple
+                                                ? Color(0xFF7A54FF)
                                                 : (isDark
                                                       ? Colors.white
                                                       : Colors.black),
