@@ -1,126 +1,186 @@
 import 'package:flutter/material.dart';
 import '../../../../../../l10n/app_localizations.dart';
+import '../../../../../../services/video_metadata_service.dart';
+import 'record_class_video_player.dart';
 
-class RecordedClassTab extends StatelessWidget {
+class RecordedClassTab extends StatefulWidget {
   final Map<String, dynamic> course;
   const RecordedClassTab({super.key, required this.course});
 
   @override
+  State<RecordedClassTab> createState() => _RecordedClassTabState();
+}
+
+class _RecordedClassTabState extends State<RecordedClassTab> {
+  VideoSummary? _videoSummary;
+  bool _isLoading = true;
+  String? _error;
+  double _loadingProgress = 0.0;
+
+  // Video URLs for the course
+  final List<String> _videoUrls = [
+    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
+  ];
+
+  // Predefined titles for the videos
+  final List<String> _videoTitles = [
+    'Course Introduction & Welcome',
+    'Fundamentals & Basic Concepts',
+    'Advanced Techniques & Applications',
+    'Practice Session & Q&A',
+  ];
+
+  // Additional metadata
+  final List<Map<String, dynamic>> _additionalData = [
+    {
+      'description':
+          'Get familiar with the course structure and learning objectives.',
+      'uploaded': '2025-07-20',
+      'views': 156,
+      'likes': 24,
+      'topics': ['Course Overview', 'Learning Path', 'Resources'],
+      'thumbnail':
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg',
+      'isWatched': true,
+      'watchProgress': 1.0,
+      'lastWatched': '2025-07-21',
+    },
+    {
+      'description': 'Learn the essential building blocks and core principles.',
+      'uploaded': '2025-07-22',
+      'views': 98,
+      'likes': 31,
+      'topics': ['Basic Concepts', 'Terminology', 'Examples'],
+      'thumbnail':
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg',
+      'isWatched': true,
+      'watchProgress': 0.7,
+      'lastWatched': '2025-07-23',
+    },
+    {
+      'description':
+          'Dive deeper into advanced concepts with practical applications.',
+      'uploaded': '2025-07-23',
+      'views': 67,
+      'likes': 18,
+      'topics': ['Advanced Topics', 'Case Studies', 'Best Practices'],
+      'thumbnail':
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg',
+      'isWatched': false,
+      'watchProgress': 0.0,
+      'lastWatched': null,
+    },
+    {
+      'description':
+          'Interactive practice session with common questions answered.',
+      'uploaded': '2025-07-24',
+      'views': 42,
+      'likes': 12,
+      'topics': ['Practice Exercises', 'Q&A', 'Common Mistakes'],
+      'thumbnail':
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/SubaruOutbackOnStreetAndDirt.jpg',
+      'isWatched': false,
+      'watchProgress': 0.0,
+      'lastWatched': null,
+    },
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVideoMetadata();
+  }
+
+  Future<void> _loadVideoMetadata() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+        _loadingProgress = 0.0;
+      });
+
+      final videoMetadataList =
+          await VideoMetadataService.extractMultipleVideoMetadata(
+            _videoUrls,
+            titles: _videoTitles,
+            onProgress: (completed, total) {
+              if (mounted) {
+                setState(() {
+                  _loadingProgress = completed / total;
+                });
+              }
+            },
+          );
+
+      final summary = VideoMetadataService.calculateVideoSummary(
+        videoMetadataList,
+      );
+
+      if (mounted) {
+        setState(() {
+          _videoSummary = summary;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    // Consistent theme colors
+    final primaryColor = Color(0xFF7A54FF);
     final textColor =
         Theme.of(context).textTheme.bodyLarge?.color ??
         (isDark ? Colors.white : Colors.black);
     final subTextColor =
         Theme.of(context).textTheme.bodyMedium?.color ??
         (isDark ? Colors.grey.shade400 : Colors.grey.shade600);
-    final cardColor = Theme.of(context).cardColor;
+    final cardColor = isDark ? Colors.grey[800] : Colors.white;
 
-    // Enhanced dynamic recordings data
-    final recordings = [
-      {
-        'id': 'rec_1',
-        'title': 'Course Introduction & Welcome',
-        'description':
-            'Get familiar with the course structure and learning objectives.',
-        'instructor': course['instructor'] ?? 'John Doe',
-        'duration': '18:25',
-        'uploaded': '2025-07-20',
-        'views': 156,
-        'likes': 24,
-        'size': '245 MB',
-        'quality': '1080p',
-        'topics': ['Course Overview', 'Learning Path', 'Resources'],
-        'thumbnail': null,
-        'isWatched': true,
-        'watchProgress': 1.0,
-        'lastWatched': '2025-07-21',
-      },
-      {
-        'id': 'rec_2',
-        'title': 'Fundamentals & Basic Concepts',
-        'description':
-            'Learn the essential building blocks and core principles.',
-        'instructor': course['instructor'] ?? 'John Doe',
-        'duration': '32:45',
-        'uploaded': '2025-07-22',
-        'views': 98,
-        'likes': 31,
-        'size': '412 MB',
-        'quality': '1080p',
-        'topics': ['Basic Concepts', 'Terminology', 'Examples'],
-        'thumbnail': null,
-        'isWatched': true,
-        'watchProgress': 0.7,
-        'lastWatched': '2025-07-23',
-      },
-      {
-        'id': 'rec_3',
-        'title': 'Advanced Techniques & Applications',
-        'description':
-            'Dive deeper into advanced concepts with practical applications.',
-        'instructor': course['instructor'] ?? 'John Doe',
-        'duration': '45:30',
-        'uploaded': '2025-07-23',
-        'views': 67,
-        'likes': 18,
-        'size': '567 MB',
-        'quality': '1080p',
-        'topics': ['Advanced Topics', 'Case Studies', 'Best Practices'],
-        'thumbnail': null,
-        'isWatched': false,
-        'watchProgress': 0.0,
-        'lastWatched': null,
-      },
-      {
-        'id': 'rec_4',
-        'title': 'Practice Session & Q&A',
-        'description':
-            'Interactive practice session with common questions answered.',
-        'instructor': course['instructor'] ?? 'John Doe',
-        'duration': '28:15',
-        'uploaded': '2025-07-24',
-        'views': 42,
-        'likes': 12,
-        'size': '298 MB',
-        'quality': '720p',
-        'topics': ['Practice Exercises', 'Q&A', 'Common Mistakes'],
-        'thumbnail': null,
-        'isWatched': false,
-        'watchProgress': 0.0,
-        'lastWatched': null,
-      },
-    ];
+    if (_isLoading) {
+      return _buildLoadingState(primaryColor);
+    }
 
-    final watchedCount = recordings.where((r) => r['isWatched'] == true).length;
-    final totalDuration = recordings.fold<int>(0, (sum, r) {
-      final duration = r['duration'] as String;
-      final parts = duration.split(':');
-      return sum + int.parse(parts[0]) * 60 + int.parse(parts[1]);
-    });
+    if (_error != null) {
+      return _buildErrorState(primaryColor, textColor);
+    }
 
+    if (_videoSummary == null) {
+      return _buildEmptyState(primaryColor, textColor);
+    }
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Section
+          // Header Section with Real Metadata
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
-            constraints: const BoxConstraints(maxWidth: double.infinity),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Colors.purple.withOpacity(0.8),
-                  Colors.purple.shade600.withOpacity(0.6),
-                ],
+                colors: [primaryColor.withOpacity(0.8), primaryColor],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: primaryColor.withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,24 +211,64 @@ class RecordedClassTab extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+
+                // Success Rate Indicator
+                if (_videoSummary!.hasErrors)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.warning_amber,
+                          color: Colors.orange,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            '${_videoSummary!.failedVideos} of ${_videoSummary!.totalVideos} videos failed to load metadata',
+                            style: TextStyle(
+                              color: Colors.orange,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                // Statistics Cards with Real Data
+                Row(
                   children: [
-                    _buildStatCard(
-                      AppLocalizations.of(context)!.totalVideos,
-                      '${recordings.length}',
-                      Icons.video_library,
+                    Expanded(
+                      child: _buildStatCard(
+                        'Total Videos',
+                        '${_videoSummary!.validVideos}',
+                        Icons.video_library,
+                      ),
                     ),
-                    _buildStatCard(
-                      AppLocalizations.of(context)!.watched,
-                      '$watchedCount/${recordings.length}',
-                      Icons.check_circle,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildStatCard(
+                        'Total Duration',
+                        _videoSummary!.formattedTotalDuration,
+                        Icons.schedule,
+                      ),
                     ),
-                    _buildStatCard(
-                      AppLocalizations.of(context)!.duration,
-                      '${(totalDuration / 60).toStringAsFixed(0)}h ${totalDuration % 60}m',
-                      Icons.schedule,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildStatCard(
+                        'Total Size',
+                        _videoSummary!.formattedTotalSize,
+                        Icons.storage,
+                      ),
                     ),
                   ],
                 ),
@@ -178,95 +278,120 @@ class RecordedClassTab extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          // Filter and Sort Section
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.videoLibrary,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _buildFilterChip(
-                    AppLocalizations.of(context)!.all,
-                    true,
-                    context,
-                  ),
-                  _buildFilterChip(
-                    AppLocalizations.of(context)!.watched,
-                    false,
-                    context,
-                  ),
-                  _buildFilterChip(
-                    AppLocalizations.of(context)!.newText,
-                    false,
-                    context,
-                  ),
-                ],
-              ),
-            ],
+          // Video Library Section
+          Text(
+            AppLocalizations.of(context)!.videoLibrary,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
           ),
 
           const SizedBox(height: 16),
 
-          // Recordings List
-          ...recordings
-              .map(
-                (recording) => Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: cardColor,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: isDark ? Colors.black26 : Colors.grey.shade200,
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+          // Video List with Real Metadata
+          ..._videoSummary!.videos.asMap().entries.map((entry) {
+            final index = entry.key;
+            final videoMetadata = entry.value;
+            final additionalData = index < _additionalData.length
+                ? _additionalData[index]
+                : <String, dynamic>{};
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: cardColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: isDark ? Colors.black26 : Colors.grey.shade200,
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Video Thumbnail
-                      Container(
-                        width: double.infinity,
-                        height: 160,
-                        constraints: const BoxConstraints(maxHeight: 200),
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(16),
-                            topRight: Radius.circular(16),
-                          ),
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.purple.withOpacity(0.8),
-                              Colors.purple.shade600.withOpacity(0.6),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Video Thumbnail with Error Handling
+                  GestureDetector(
+                    onTap: videoMetadata.isValid
+                        ? () =>
+                              _playVideo(context, videoMetadata, additionalData)
+                        : null,
+                    child: Container(
+                      width: double.infinity,
+                      height: 160,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
                         ),
-                        child: Stack(
-                          children: [
-                            const Center(
-                              child: Icon(
-                                Icons.play_circle_outline,
-                                size: 48,
-                                color: Colors.white,
+                        image: additionalData['thumbnail'] != null
+                            ? DecorationImage(
+                                image: NetworkImage(
+                                  additionalData['thumbnail'],
+                                ),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                        gradient: additionalData['thumbnail'] == null
+                            ? LinearGradient(
+                                colors: [
+                                  primaryColor.withOpacity(0.8),
+                                  primaryColor,
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              )
+                            : null,
+                      ),
+                      child: Stack(
+                        children: [
+                          // Error overlay for failed videos
+                          if (!videoMetadata.isValid)
+                            Container(
+                              color: Colors.black.withOpacity(0.7),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.error_outline,
+                                      color: Colors.red,
+                                      size: 32,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Failed to load',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          else ...[
+                            // Play button overlay
+                            Center(
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.6),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.play_arrow,
+                                  size: 32,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                            // Duration badge
+                            // Duration badge with real data
                             Positioned(
                               bottom: 12,
                               right: 12,
@@ -280,7 +405,7 @@ class RecordedClassTab extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
-                                  recording['duration'] ?? '',
+                                  videoMetadata.formattedDuration,
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
@@ -289,243 +414,266 @@ class RecordedClassTab extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            // Quality badge
-                            Positioned(
-                              top: 12,
-                              right: 12,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Video Info
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                videoMetadata.title,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: textColor,
                                 ),
-                                decoration: BoxDecoration(
-                                  color: Colors.purple,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  recording['quality'] ?? 'HD',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            // Watched indicator
-                            if (recording['isWatched'] == true)
-                              const Positioned(
-                                top: 12,
-                                left: 12,
-                                child: Icon(
-                                  Icons.check_circle,
-                                  color: Colors.purple,
-                                  size: 24,
-                                ),
-                              ),
-                            // Progress bar
-                            if (recording['watchProgress'] > 0)
-                              Positioned(
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                child: LinearProgressIndicator(
-                                  value: recording['watchProgress'],
-                                  backgroundColor: Colors.grey.withOpacity(0.3),
-                                  valueColor:
-                                      const AlwaysStoppedAnimation<Color>(
-                                        Colors.purple,
-                                      ),
-                                  minHeight: 4,
-                                ),
+                            if (!videoMetadata.isValid)
+                              Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                                size: 20,
                               ),
                           ],
                         ),
-                      ),
+                        const SizedBox(height: 8),
 
-                      // Video Info
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              (recording['title'] ?? 'Untitled Recording')
-                                  .toString(),
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: textColor,
+                        Text(
+                          additionalData['description'] ??
+                              'No description available',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: subTextColor,
+                            height: 1.4,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+
+                        if (!videoMetadata.isValid &&
+                            videoMetadata.error != null) ...[
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: Colors.red.withOpacity(0.3),
                               ),
+                            ),
+                            child: Text(
+                              'Error: ${videoMetadata.error}',
+                              style: TextStyle(fontSize: 12, color: Colors.red),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              (recording['description'] ?? '').toString(),
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: subTextColor,
-                                height: 1.4,
+                          ),
+                        ],
+
+                        const SizedBox(height: 12),
+
+                        // Video Info with Real Metadata
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildInfoItem(
+                                Icons.calendar_today,
+                                additionalData['uploaded'] ?? 'Unknown',
+                                subTextColor,
                               ),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 12),
-
-                            // Video Stats
-                            Row(
-                              children: [
-                                _buildStatIcon(
-                                  Icons.remove_red_eye,
-                                  '${recording['views']}',
-                                  subTextColor,
-                                ),
-                                const SizedBox(width: 16),
-                                _buildStatIcon(
-                                  Icons.thumb_up,
-                                  '${recording['likes']}',
-                                  subTextColor,
-                                ),
-                                const SizedBox(width: 16),
-                                _buildStatIcon(
-                                  Icons.storage,
-                                  recording['size'] ?? '',
-                                  subTextColor,
-                                ),
-                                const Spacer(),
-                                Text(
-                                  'Uploaded: ${recording['uploaded']}',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: subTextColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            if (recording['topics'] != null) ...[
-                              const SizedBox(height: 12),
-                              Wrap(
-                                spacing: 6,
-                                runSpacing: 4,
-                                children: (recording['topics'] as List)
-                                    .map(
-                                      (topic) => Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.purple.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          topic,
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.purple,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
+                            Expanded(
+                              child: _buildInfoItem(
+                                Icons.access_time,
+                                videoMetadata.formattedDuration,
+                                subTextColor,
                               ),
-                            ],
-
-                            const SizedBox(height: 16),
-
-                            // Action Buttons
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: [
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width > 600
-                                      ? 150
-                                      : (MediaQuery.of(context).size.width -
-                                                64) /
-                                            2,
-                                  child: ElevatedButton.icon(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.purple,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 12,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                    onPressed: () =>
-                                        _playVideo(context, recording),
-                                    icon: Icon(
-                                      recording['watchProgress'] > 0
-                                          ? Icons.play_arrow
-                                          : Icons.play_circle_fill,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                    label: Text(
-                                      recording['watchProgress'] > 0
-                                          ? 'Continue'
-                                          : 'Watch Now',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width > 600
-                                      ? 120
-                                      : (MediaQuery.of(context).size.width -
-                                                64) /
-                                            3,
-                                  child: OutlinedButton.icon(
-                                    style: OutlinedButton.styleFrom(
-                                      side: const BorderSide(
-                                        color: Colors.purple,
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 12,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                    onPressed: () =>
-                                        _downloadVideo(context, recording),
-                                    icon: const Icon(
-                                      Icons.download,
-                                      color: Colors.purple,
-                                      size: 18,
-                                    ),
-                                    label: const Text(
-                                      'Download',
-                                      style: TextStyle(
-                                        color: Colors.purple,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildInfoItem(
+                                Icons.storage,
+                                videoMetadata.formattedSize,
+                                subTextColor,
+                              ),
+                            ),
+                            const Spacer(),
+                          ],
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Action Button
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: videoMetadata.isValid
+                                  ? primaryColor
+                                  : Colors.grey,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            onPressed: videoMetadata.isValid
+                                ? () => _playVideo(
+                                    context,
+                                    videoMetadata,
+                                    additionalData,
+                                  )
+                                : () => _retryVideoLoad(index),
+                            icon: Icon(
+                              videoMetadata.isValid
+                                  ? Icons.play_circle_fill
+                                  : Icons.refresh,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            label: Text(
+                              videoMetadata.isValid ? 'Watch Now' : 'Retry',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              )
-              .toList(),
+                ],
+              ),
+            );
+          }).toList(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingState(Color primaryColor) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              value: _loadingProgress > 0 ? _loadingProgress : null,
+              valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+              strokeWidth: 3,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Loading video metadata...',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+            ),
+            const SizedBox(height: 8),
+            if (_loadingProgress > 0)
+              Text(
+                '${(_loadingProgress * 100).toInt()}% Complete',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(Color primaryColor, Color textColor) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: Colors.red),
+            const SizedBox(height: 20),
+            Text(
+              'Failed to load video metadata',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _error!,
+              style: TextStyle(fontSize: 14, color: Colors.red),
+              textAlign: TextAlign.center,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: _loadVideoMetadata,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+              ),
+              icon: const Icon(Icons.refresh, color: Colors.white),
+              label: const Text('Retry', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(Color primaryColor, Color textColor) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.video_library_outlined, size: 64, color: Colors.grey),
+            const SizedBox(height: 20),
+            Text(
+              'No videos available',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Check back later for recorded classes',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -538,76 +686,185 @@ class RecordedClassTab extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: Colors.white, size: 20),
+          Icon(icon, color: Colors.white, size: 18),
           const SizedBox(height: 4),
           Text(
             value,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
           Text(
             label,
-            style: const TextStyle(fontSize: 10, color: Colors.white70),
+            style: const TextStyle(
+              fontSize: 9,
+              color: Colors.white70,
+              fontWeight: FontWeight.w500,
+            ),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFilterChip(String label, bool isSelected, BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: isSelected ? Colors.purple : Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.purple),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: isSelected ? Colors.white : Colors.purple,
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatIcon(IconData icon, String value, Color color) {
+  Widget _buildInfoItem(IconData icon, String value, Color color) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: color),
-        const SizedBox(width: 4),
-        Text(value, style: TextStyle(fontSize: 12, color: color)),
+        Icon(icon, size: 16, color: Color(0xFF7A54FF)),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 12,
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ],
     );
   }
 
-  void _playVideo(BuildContext context, Map<String, dynamic> recording) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${AppLocalizations.of(context)!.playing}: ${recording['title']}',
-        ),
-        backgroundColor: Colors.purple,
-      ),
-    );
+  Future<void> _retryVideoLoad(int index) async {
+    if (index >= _videoUrls.length) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final videoMetadata = await VideoMetadataService.extractVideoMetadata(
+        _videoUrls[index],
+        title: index < _videoTitles.length ? _videoTitles[index] : null,
+      );
+
+      if (mounted && _videoSummary != null) {
+        // Update the specific video metadata
+        final updatedVideos = List<VideoMetadata>.from(_videoSummary!.videos);
+        updatedVideos[index] = videoMetadata;
+
+        final updatedSummary = VideoMetadataService.calculateVideoSummary(
+          updatedVideos,
+        );
+
+        setState(() {
+          _videoSummary = updatedSummary;
+          _isLoading = false;
+        });
+
+        // Show success/failure message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              videoMetadata.isValid
+                  ? '✅ Video metadata loaded successfully'
+                  : '❌ Failed to load video metadata',
+            ),
+            backgroundColor: videoMetadata.isValid ? Colors.green : Colors.red,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Error: $e'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
-  void _downloadVideo(BuildContext context, Map<String, dynamic> recording) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${AppLocalizations.of(context)!.downloading}: ${recording['title']}',
+  void _playVideo(
+    BuildContext context,
+    VideoMetadata videoMetadata,
+    Map<String, dynamic> additionalData,
+  ) {
+    if (!videoMetadata.isValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('❌ Cannot play video: ${videoMetadata.error}'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
         ),
-        backgroundColor: Colors.purple.shade600,
-      ),
+      );
+      return;
+    }
+
+    // Show loading indicator briefly
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Color(0xFF7A54FF),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Loading Video Player...',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Duration: ${videoMetadata.formattedDuration}',
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+                Text(
+                  'Size: ${videoMetadata.formattedSize}',
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
+
+    // Close loading dialog and open video player
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      Navigator.of(context).pop(); // Close loading dialog
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => RecordClassVideoPlayer(
+            videoUrl: videoMetadata.url,
+            title: videoMetadata.title,
+            thumbnail: additionalData['thumbnail'] ?? '',
+            duration: videoMetadata.formattedDuration,
+          ),
+        ),
+      );
+    });
   }
 }
