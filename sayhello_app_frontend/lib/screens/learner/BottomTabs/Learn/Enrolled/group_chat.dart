@@ -23,8 +23,6 @@ class _GroupChatTabState extends State<GroupChatTab> {
           'Hi everyone! Excited to start this course journey with you all 🎉',
       'timestamp': '2025-07-20 10:30 AM',
       'avatar': null,
-      'reactions': ['👍', '🎉'],
-      'reactionCount': {'👍': 3, '🎉': 2},
     },
     {
       'id': 'msg_2',
@@ -34,8 +32,6 @@ class _GroupChatTabState extends State<GroupChatTab> {
           'Welcome everyone! I\'m thrilled to guide you through this learning experience.',
       'timestamp': '2025-07-20 10:45 AM',
       'avatar': null,
-      'reactions': ['❤️', '👨‍🏫'],
-      'reactionCount': {'❤️': 5, '👨‍🏫': 3},
     },
     {
       'id': 'msg_3',
@@ -45,17 +41,14 @@ class _GroupChatTabState extends State<GroupChatTab> {
           'Quick question - will the session recordings be available immediately?',
       'timestamp': '2025-07-22 2:15 PM',
       'avatar': null,
-      'reactions': ['🤔'],
-      'reactionCount': {'🤔': 2},
     },
   ];
 
-  final List<Map<String, dynamic>> _participants = [
+  final List<Map<String, dynamic>> _enrolledMembers = [
     {
       'id': 'instructor_1',
       'name': 'John Doe',
       'role': 'instructor',
-      'status': 'online',
       'avatar': null,
       'joinDate': '2025-07-15',
     },
@@ -63,7 +56,6 @@ class _GroupChatTabState extends State<GroupChatTab> {
       'id': 'learner_1',
       'name': 'Sarah Chen',
       'role': 'learner',
-      'status': 'online',
       'avatar': null,
       'joinDate': '2025-07-18',
     },
@@ -71,7 +63,6 @@ class _GroupChatTabState extends State<GroupChatTab> {
       'id': 'learner_2',
       'name': 'Alex Rodriguez',
       'role': 'learner',
-      'status': 'away',
       'avatar': null,
       'joinDate': '2025-07-19',
     },
@@ -80,6 +71,7 @@ class _GroupChatTabState extends State<GroupChatTab> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = Color(0xFF7A54FF);
 
     // Consistent theme colors
     final textColor =
@@ -90,15 +82,11 @@ class _GroupChatTabState extends State<GroupChatTab> {
         (isDark ? Colors.grey.shade400 : Colors.grey.shade600);
     final cardColor = Theme.of(context).cardColor;
 
-    final onlineCount = _participants
-        .where((p) => p['status'] == 'online')
-        .length;
-
     return Column(
       children: [
         // Chat Header
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           constraints: const BoxConstraints(maxWidth: double.infinity),
           decoration: BoxDecoration(
             color: cardColor,
@@ -111,19 +99,19 @@ class _GroupChatTabState extends State<GroupChatTab> {
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.purple.withOpacity(0.8),
-                      Colors.purple.withOpacity(0.6),
+                      primaryColor.withOpacity(0.8),
+                      primaryColor.withOpacity(0.6),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.chat, color: Colors.white, size: 20),
+                child: const Icon(Icons.chat, color: Colors.white, size: 16),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +119,7 @@ class _GroupChatTabState extends State<GroupChatTab> {
                     Text(
                       AppLocalizations.of(context)!.courseDiscussion,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: textColor,
                       ),
@@ -139,8 +127,8 @@ class _GroupChatTabState extends State<GroupChatTab> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      '${onlineCount} ${AppLocalizations.of(context)!.online} • ${_participants.length} ${AppLocalizations.of(context)!.participants}',
-                      style: TextStyle(fontSize: 12, color: subTextColor),
+                      '${_enrolledMembers.length} enrolled members',
+                      style: TextStyle(fontSize: 11, color: subTextColor),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -148,8 +136,8 @@ class _GroupChatTabState extends State<GroupChatTab> {
                 ),
               ),
               IconButton(
-                onPressed: () => _showParticipants(context),
-                icon: const Icon(Icons.people, color: Colors.purple),
+                onPressed: () => _showEnrolledMembers(context),
+                icon: Icon(Icons.people, color: primaryColor, size: 20),
               ),
             ],
           ),
@@ -159,7 +147,7 @@ class _GroupChatTabState extends State<GroupChatTab> {
         Expanded(
           child: ListView.builder(
             controller: _scrollController,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             itemCount: _messages.length,
             itemBuilder: (context, index) {
               final message = _messages[index];
@@ -167,38 +155,38 @@ class _GroupChatTabState extends State<GroupChatTab> {
               final isMe = message['name'] == 'You';
 
               return Container(
-                margin: const EdgeInsets.only(bottom: 12),
+                margin: const EdgeInsets.only(bottom: 10),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Avatar
                     CircleAvatar(
-                      radius: 16,
+                      radius: 14,
                       backgroundColor: isInstructor
-                          ? Colors.purple
-                          : Colors.purple.shade300,
+                          ? primaryColor
+                          : primaryColor.withOpacity(0.7),
                       child: Text(
                         (message['name'] as String)
                             .substring(0, 1)
                             .toUpperCase(),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 12,
+                          fontSize: 11,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
 
                     // Message Content
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: isMe
-                              ? Colors.purple.withOpacity(0.1)
+                              ? primaryColor.withOpacity(0.1)
                               : cardColor,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                           border: Border.all(
                             color: isDark
                                 ? Colors.grey.shade800
@@ -212,90 +200,78 @@ class _GroupChatTabState extends State<GroupChatTab> {
                             Row(
                               children: [
                                 Expanded(
-                                  child: Text(
-                                    message['name'].toString(),
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: isInstructor
-                                          ? Colors.purple
-                                          : textColor,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                  child: Row(
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          message['name'].toString(),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: isInstructor
+                                                ? primaryColor
+                                                : textColor,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      if (isInstructor) ...[
+                                        const SizedBox(width: 4),
+                                        Icon(
+                                          Icons.verified,
+                                          size: 14,
+                                          color: primaryColor,
+                                        ),
+                                      ],
+                                    ],
                                   ),
                                 ),
                                 if (isInstructor)
                                   Container(
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: 6,
-                                      vertical: 2,
+                                      horizontal: 4,
+                                      vertical: 1,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.purple.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(6),
+                                      color: primaryColor.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
-                                      AppLocalizations.of(context)!.instructor,
-                                      style: const TextStyle(
-                                        fontSize: 10,
+                                      'Instructor',
+                                      style: TextStyle(
+                                        fontSize: 8,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.purple,
+                                        color: primaryColor,
                                       ),
                                     ),
                                   ),
                               ],
                             ),
-                            const SizedBox(height: 6),
+                            const SizedBox(height: 4),
 
                             // Message Text
                             Text(
                               message['text'].toString(),
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 12,
                                 color: textColor,
-                                height: 1.4,
+                                height: 1.3,
                               ),
                             ),
 
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
 
-                            // Footer
+                            // Footer - Only timestamp
                             Row(
                               children: [
                                 Text(
                                   message['timestamp'].toString(),
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: 10,
                                     color: subTextColor,
                                   ),
                                 ),
-                                const Spacer(),
-                                if (message['reactions'] != null &&
-                                    (message['reactions'] as List).isNotEmpty)
-                                  Wrap(
-                                    spacing: 4,
-                                    children: (message['reactions'] as List).map((
-                                      reaction,
-                                    ) {
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 6,
-                                          vertical: 2,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey.withOpacity(0.2),
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          '$reaction ${message['reactionCount'][reaction] ?? 1}',
-                                          style: const TextStyle(fontSize: 10),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
                               ],
                             ),
                           ],
@@ -311,7 +287,7 @@ class _GroupChatTabState extends State<GroupChatTab> {
 
         // Input Section
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: cardColor,
             border: Border(
@@ -327,9 +303,9 @@ class _GroupChatTabState extends State<GroupChatTab> {
                   controller: _controller,
                   decoration: InputDecoration(
                     hintText: AppLocalizations.of(context)!.typeYourMessage,
-                    hintStyle: TextStyle(color: subTextColor),
+                    hintStyle: TextStyle(color: subTextColor, fontSize: 12),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide(
                         color: isDark
                             ? Colors.grey.shade700
@@ -337,7 +313,7 @@ class _GroupChatTabState extends State<GroupChatTab> {
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide(
                         color: isDark
                             ? Colors.grey.shade700
@@ -345,24 +321,24 @@ class _GroupChatTabState extends State<GroupChatTab> {
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24),
-                      borderSide: const BorderSide(color: Colors.purple),
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(color: primaryColor),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                      horizontal: 12,
+                      vertical: 6,
                     ),
                   ),
-                  style: TextStyle(color: textColor),
+                  style: TextStyle(color: textColor, fontSize: 12),
                   maxLines: null,
                   onSubmitted: (_) => _sendMessage(),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               FloatingActionButton.small(
                 onPressed: _sendMessage,
-                backgroundColor: Colors.purple,
-                child: const Icon(Icons.send, color: Colors.white, size: 18),
+                backgroundColor: primaryColor,
+                child: const Icon(Icons.send, color: Colors.white, size: 16),
               ),
             ],
           ),
@@ -382,8 +358,6 @@ class _GroupChatTabState extends State<GroupChatTab> {
         'text': _controller.text.trim(),
         'timestamp': _formatTimestamp(DateTime.now()),
         'avatar': null,
-        'reactions': [],
-        'reactionCount': {},
       });
       _controller.clear();
     });
@@ -404,42 +378,65 @@ class _GroupChatTabState extends State<GroupChatTab> {
     return '${dateTime.month}/${dateTime.day} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
-  void _showParticipants(BuildContext context) {
+  void _showEnrolledMembers(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Participants (${_participants.length})',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              'Enrolled Members (${_enrolledMembers.length})',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
-            ...(_participants
+            const SizedBox(height: 12),
+            ...(_enrolledMembers
                 .map(
-                  (participant) => ListTile(
+                  (member) => ListTile(
+                    dense: true,
                     leading: CircleAvatar(
-                      backgroundColor: participant['role'] == 'instructor'
-                          ? Colors.purple
-                          : Colors.purple.shade300,
+                      radius: 16,
+                      backgroundColor: member['role'] == 'instructor'
+                          ? Color(0xFF7A54FF)
+                          : Color(0xFF7A54FF).withOpacity(0.7),
                       child: Text(
-                        (participant['name'] as String)
+                        (member['name'] as String)
                             .substring(0, 1)
                             .toUpperCase(),
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
+                          fontSize: 12,
                         ),
                       ),
                     ),
-                    title: Text(participant['name'].toString()),
-                    subtitle: Text(participant['role'].toString()),
-                    trailing: Icon(
-                      Icons.circle,
-                      size: 12,
-                      color: _getStatusColor(participant['status']),
+                    title: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            member['name'].toString(),
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        if (member['role'] == 'instructor') ...[
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.verified,
+                            size: 14,
+                            color: Color(0xFF7A54FF),
+                          ),
+                        ],
+                      ],
+                    ),
+                    subtitle: Text(
+                      member['role'].toString(),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: member['role'] == 'instructor'
+                            ? Color(0xFF7A54FF)
+                            : Colors.grey,
+                      ),
                     ),
                   ),
                 )
@@ -448,19 +445,6 @@ class _GroupChatTabState extends State<GroupChatTab> {
         ),
       ),
     );
-  }
-
-  Color _getStatusColor(String? status) {
-    switch (status) {
-      case 'online':
-        return Colors.purple.shade600;
-      case 'away':
-        return Colors.purple.shade400;
-      case 'offline':
-        return Colors.grey;
-      default:
-        return Colors.grey;
-    }
   }
 
   @override

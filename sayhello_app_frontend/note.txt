@@ -42,7 +42,8 @@ messages:
   sender_id
   content_text 
   type ('text', 'image') 
-  sent_at 
+  sent_at_time
+  sent_at_date 
   status(read,unread)
   correction
   translated_content
@@ -131,7 +132,8 @@ Table study_materials:
 Table group_chat:
   group_chat_id    
   course_id     
-  sender_id    
+  sender_id  
+  type  
   content_text  
   parent_message_id
   sent_at   
