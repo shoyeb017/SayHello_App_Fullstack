@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../providers/theme_provider.dart';
 import 'instructor_course_portal.dart';
 import '../Revenue/revenue_page.dart';
 import '../../../../../providers/settings_provider.dart';
@@ -77,40 +79,6 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
       'duration': '10 weeks',
     },
     {
-      'id': 'course_005',
-      'title': 'Advanced JavaScript 1',
-      'description': 'Deep dive into modern JavaScript and ES6+ features',
-      'enrolledStudents': 78,
-      'totalSessions': 12,
-      'completedSessions': 12,
-      'rating': 4.9,
-      'price': 199.99,
-      'icon': Icons.code,
-      'thumbnail': '',
-      'category': 'Programming',
-      'level': 'Advanced',
-      'startDate': '2025-04-01',
-      'endDate': '2025-06-15',
-      'duration': '10 weeks',
-    },
-    {
-      'id': 'course_006',
-      'title': 'Advanced JavaScript 2',
-      'description': 'Deep dive into modern JavaScript and ES6+ features',
-      'enrolledStudents': 78,
-      'totalSessions': 12,
-      'completedSessions': 12,
-      'rating': 4.9,
-      'price': 199.99,
-      'icon': Icons.code,
-      'thumbnail': '',
-      'category': 'Programming',
-      'level': 'Advanced',
-      'startDate': '2025-04-01',
-      'endDate': '2025-06-15',
-      'duration': '10 weeks',
-    },
-    {
       'id': 'course_004',
       'title': 'UI/UX Design Fundamentals',
       'description':
@@ -167,69 +135,51 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
     }
   }
 
-  // Get courses by status for sections
-  List<Map<String, dynamic>> get _upcomingCourses {
-    if (_selectedStatusFilter == 'All' || _selectedStatusFilter == 'Upcoming') {
-      List<Map<String, dynamic>> courses = _allCourses
-          .where((course) => _getCourseStatus(course) == 'upcoming')
-          .toList();
-      return _applySearchFilter(courses);
-    }
-    return [];
-  }
-
-  List<Map<String, dynamic>> get _activeCourses {
-    if (_selectedStatusFilter == 'All' || _selectedStatusFilter == 'Active') {
-      List<Map<String, dynamic>> courses = _allCourses
-          .where((course) => _getCourseStatus(course) == 'active')
-          .toList();
-      return _applySearchFilter(courses);
-    }
-    return [];
-  }
-
-  List<Map<String, dynamic>> get _expiredCourses {
-    if (_selectedStatusFilter == 'All' || _selectedStatusFilter == 'Expired') {
-      List<Map<String, dynamic>> courses = _allCourses
-          .where((course) => _getCourseStatus(course) == 'expired')
-          .toList();
-      return _applySearchFilter(courses);
-    }
-    return [];
-  }
-
-  // Get all filtered courses for when a specific status is selected
   List<Map<String, dynamic>> get _filteredCourses {
-    List<Map<String, dynamic>> courses = _allCourses;
+    List<Map<String, dynamic>> filtered = _allCourses;
 
-    // Apply status filter
-    if (_selectedStatusFilter != 'All') {
-      courses = courses.where((course) {
-        final status = _getCourseStatus(course);
-        return status == _selectedStatusFilter.toLowerCase();
+    // Apply search filter
+    if (_searchQuery.isNotEmpty) {
+      filtered = filtered.where((course) {
+        final title = course['title'].toString().toLowerCase();
+        final description = course['description'].toString().toLowerCase();
+        final category = course['category'].toString().toLowerCase();
+        final query = _searchQuery.toLowerCase();
+
+        return title.contains(query) ||
+            description.contains(query) ||
+            category.contains(query);
       }).toList();
     }
 
-    // Apply search filter
-    return _applySearchFilter(courses);
+    // Apply status filter
+    if (_selectedStatusFilter != 'All') {
+      filtered = filtered.where((course) {
+        final calculatedStatus = _getCourseStatus(course);
+        return calculatedStatus == _selectedStatusFilter.toLowerCase();
+      }).toList();
+    }
+
+    return filtered;
   }
 
-  // Apply search filter to course list
-  List<Map<String, dynamic>> _applySearchFilter(
-    List<Map<String, dynamic>> courses,
-  ) {
-    if (_searchQuery.isEmpty) return courses;
+  // Get courses by status for sections
+  List<Map<String, dynamic>> get _upcomingCourses {
+    return _allCourses
+        .where((course) => _getCourseStatus(course) == 'upcoming')
+        .toList();
+  }
 
-    return courses.where((course) {
-      final title = course['title'].toString().toLowerCase();
-      final description = course['description'].toString().toLowerCase();
-      final category = course['category'].toString().toLowerCase();
-      final query = _searchQuery.toLowerCase();
+  List<Map<String, dynamic>> get _activeCourses {
+    return _allCourses
+        .where((course) => _getCourseStatus(course) == 'active')
+        .toList();
+  }
 
-      return title.contains(query) ||
-          description.contains(query) ||
-          category.contains(query);
-    }).toList();
+  List<Map<String, dynamic>> get _expiredCourses {
+    return _allCourses
+        .where((course) => _getCourseStatus(course) == 'expired')
+        .toList();
   }
 
   // Get quick stats
@@ -329,26 +279,6 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   }
 
   Widget _buildMainContent(bool isDark) {
-    // If a specific status filter is selected, show only those courses
-    if (_selectedStatusFilter != 'All') {
-      return SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildGreetingHeader(isDark),
-            const SizedBox(height: 20),
-            _buildSearchAndFilter(isDark),
-            const SizedBox(height: 24),
-            _buildQuickStats(isDark),
-            const SizedBox(height: 30),
-            _buildFilteredCoursesSection(isDark),
-            const SizedBox(height: 20),
-          ],
-        ),
-      );
-    }
-
-    // Show all sections when 'All' filter is selected
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -652,7 +582,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
           ),
           const SizedBox(height: 16),
           SizedBox(
-            height: 180, // Increased height from 160 to 180
+            height: 160,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: upcomingCourses.length > 3
@@ -756,7 +686,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
           ),
           const SizedBox(height: 16),
           SizedBox(
-            height: 180, // Increased height from 160 to 180
+            height: 160,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: expiredCourses.length > 3 ? 3 : expiredCourses.length,
@@ -774,88 +704,6 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
     );
   }
 
-  Widget _buildFilteredCoursesSection(bool isDark) {
-    final filteredCourses = _filteredCourses;
-    final statusTitle = _selectedStatusFilter == 'Expired'
-        ? 'Completed'
-        : _selectedStatusFilter;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '$statusTitle Courses',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    _selectedStatusFilter = 'All';
-                  });
-                },
-                child: const Text(
-                  'Show all sections',
-                  style: TextStyle(color: Color(0xFF7A54FF), fontSize: 14),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          if (filteredCourses.isEmpty)
-            Container(
-              height: 200,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.search_off,
-                      size: 64,
-                      color: isDark ? Colors.grey[600] : Colors.grey[400],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No courses found',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
-                      ),
-                    ),
-                    if (_searchQuery.isNotEmpty)
-                      Text(
-                        'Try adjusting your search terms',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isDark ? Colors.grey[500] : Colors.grey[500],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            )
-          else
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: filteredCourses.length,
-              itemBuilder: (context, index) {
-                return _buildCourseCard(filteredCourses[index], isDark);
-              },
-            ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildCourseCard(
     Map<String, dynamic> course,
     bool isDark, {
@@ -866,7 +714,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
 
     if (isHorizontal) {
       return Container(
-        width: 220, // Increased width to prevent overflow
+        width: 200,
         margin: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
           color: isDark ? Colors.grey[850] : Colors.white,
@@ -887,7 +735,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
             children: [
               // Course Header with Icon
               Container(
-                height: 85, // Increased height from 80 to 85
+                height: 80,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
@@ -908,12 +756,12 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                       child: Icon(
                         course['icon'] ?? Icons.school,
                         color: Colors.white,
-                        size: 28, // Reduced icon size from 32 to 28
+                        size: 32,
                       ),
                     ),
                     Positioned(
-                      top: 6, // Adjusted position
-                      right: 6, // Adjusted position
+                      top: 8,
+                      right: 8,
                       child: _buildStatusBadge(status),
                     ),
                   ],
@@ -923,27 +771,25 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
               // Course Details
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(
-                    10,
-                  ), // Reduced padding from 12 to 10
+                  padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         course['title'],
                         style: TextStyle(
-                          fontSize: 13, // Slightly smaller font
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: isDark ? Colors.white : Colors.black,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 3), // Reduced spacing
+                      const SizedBox(height: 4),
                       Text(
                         '${course['enrolledStudents']} students',
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 12,
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
                         ),
                       ),
@@ -951,20 +797,16 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Flexible(
-                            child: Text(
-                              '\$${course['price'].toStringAsFixed(0)}',
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF7A54FF),
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                          Text(
+                            '\$${course['price'].toStringAsFixed(0)}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF7A54FF),
                             ),
                           ),
                           if (course['rating'] > 0)
                             Row(
-                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Icon(
                                   Icons.star,
@@ -1011,13 +853,13 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
           onTap: () => _navigateToCourse(course),
           borderRadius: BorderRadius.circular(12),
           child: Padding(
-            padding: const EdgeInsets.all(10), // Reduced padding from 12 to 10
+            padding: const EdgeInsets.all(12),
             child: Row(
               children: [
                 // Course Icon
                 Container(
-                  width: 48, // Slightly smaller
-                  height: 48, // Slightly smaller
+                  width: 50,
+                  height: 50,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     gradient: LinearGradient(
@@ -1032,11 +874,12 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                   child: Icon(
                     course['icon'] ?? Icons.school,
                     color: Colors.white,
-                    size: 22, // Reduced icon size
+                    size: 24,
                   ),
                 ),
 
-                const SizedBox(width: 10), // Reduced spacing
+                const SizedBox(width: 12),
+
                 // Course Details
                 Expanded(
                   child: Column(
@@ -1059,7 +902,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                           _buildStatusBadge(status),
                         ],
                       ),
-                      const SizedBox(height: 3), // Reduced spacing
+                      const SizedBox(height: 4),
                       Text(
                         course['description'],
                         style: TextStyle(
@@ -1069,7 +912,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 6), // Reduced spacing
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           Icon(
@@ -1078,19 +921,16 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                             color: isDark ? Colors.grey[400] : Colors.grey[600],
                           ),
                           const SizedBox(width: 4),
-                          Flexible(
-                            child: Text(
-                              '${course['enrolledStudents']} students',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: isDark
-                                    ? Colors.grey[400]
-                                    : Colors.grey[600],
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                          Text(
+                            '${course['enrolledStudents']} students',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 16),
                           if (course['rating'] > 0) ...[
                             const Icon(
                               Icons.star,
@@ -1107,7 +947,6 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                                     : Colors.grey[600],
                               ),
                             ),
-                            const SizedBox(width: 12),
                           ],
                           const Spacer(),
                           Text(
@@ -1121,7 +960,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                         ],
                       ),
                       if (status == 'active' && progress > 0) ...[
-                        const SizedBox(height: 6), // Reduced spacing
+                        const SizedBox(height: 8),
                         LinearProgressIndicator(
                           value: progress,
                           backgroundColor: isDark
@@ -1135,7 +974,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                         Text(
                           'Progress: ${(progress * 100).toInt()}%',
                           style: TextStyle(
-                            fontSize: 9, // Reduced font size
+                            fontSize: 10,
                             color: isDark ? Colors.grey[400] : Colors.grey[600],
                           ),
                         ),
