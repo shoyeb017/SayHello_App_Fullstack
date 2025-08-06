@@ -157,7 +157,7 @@ class MyCoursesPage extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '${course['lectures'] ?? 0} lectures',
+                          '${course['sessions'] ?? 0} sessions',
                           style: TextStyle(
                             fontSize: 12,
                             color: isDark ? Colors.grey[400] : Colors.grey[600],

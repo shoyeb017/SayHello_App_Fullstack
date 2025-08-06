@@ -78,6 +78,7 @@ Table courses:
   description   
   language (english,spanish,japanese,korean,bangla)
   level  ('Beginner', 'Intermediate', 'Advanced')
+  total_Sessions
   price  
   thumbnail_url
   startDate
@@ -88,11 +89,8 @@ Table course_enrollments:
   enrollment_id  
   course_id      
   learner_id    
-  enrolled_at   
-  progress       
+  enrolled_at         
   status     
-  // learner_rating int
-  // learner_feedback text
 
 Color(0xFF7A54FF)
   
@@ -143,9 +141,10 @@ Table feedback
   course_id      
   instructor_id  
   learner_id  
-  feedback_type ('learner','instructor')   
-  feedback_text  text
-  rating        int
+  feedback_type ('learner','instructor','courses')   
+  feedback_text  
+  feedback_about
+  rating     
   created_at    
 
 

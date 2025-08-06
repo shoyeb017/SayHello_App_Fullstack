@@ -80,10 +80,10 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
   }
 
   void _applyFilter() {
-    final query = _searchController.text.toLowerCase();
+    final query = _searchController.text.toLowerCase().trim();
     setState(() {
       _filteredCourses = widget.allCourses.where((course) {
-        // Search filter
+        // Search filter - enhanced search functionality
         bool matchesSearch = true;
         if (query.isNotEmpty) {
           final title = (course['title'] ?? '').toString().toLowerCase();
@@ -91,10 +91,16 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
               .toString()
               .toLowerCase();
           final category = (course['category'] ?? '').toString().toLowerCase();
+          final description = (course['description'] ?? '')
+              .toString()
+              .toLowerCase();
+
+          // Search in multiple fields
           matchesSearch =
               title.contains(query) ||
               instructor.contains(query) ||
-              category.contains(query);
+              category.contains(query) ||
+              description.contains(query);
         }
 
         // Level filter
@@ -146,14 +152,15 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.grey[50],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: isDark ? Colors.black : Colors.grey[50],
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
           'Search Courses',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),
         ),
         leading: IconButton(
@@ -165,319 +172,326 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
         ),
         elevation: 0,
       ),
-      body: Column(
-        children: [
-          // Search bar
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Container(
-              decoration: BoxDecoration(
-                color: isDark ? Colors.grey[800] : Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Search bar
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.grey[800] : Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search by course name, instructor...',
+                    hintStyle: TextStyle(
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      fontSize: 14,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 16,
+                    ),
+                  ),
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
+
+            // Filter chips
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Level filter
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Level',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 32,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _levelFilters.length,
+                          itemBuilder: (context, index) {
+                            final filter = _levelFilters[index];
+                            final isSelected = _selectedLevelFilter == filter;
+
+                            return Container(
+                              margin: const EdgeInsets.only(right: 8),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedLevelFilter = filter;
+                                  });
+                                  _applyFilter();
+                                },
+                                borderRadius: BorderRadius.circular(16),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? Color(0xFF7A54FF)
+                                        : (isDark
+                                              ? Colors.grey[800]
+                                              : Colors.white),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? Color(0xFF7A54FF)
+                                          : (isDark
+                                                ? Colors.grey[600]!
+                                                : Colors.grey[300]!),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    filter,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? Colors.white
+                                          : (isDark
+                                                ? Colors.white
+                                                : Colors.black),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Status filter
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Status',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 32,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _statusFilters.length,
+                          itemBuilder: (context, index) {
+                            final filter = _statusFilters[index];
+                            final isSelected = _selectedStatusFilter == filter;
+
+                            return Container(
+                              margin: const EdgeInsets.only(right: 8),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedStatusFilter = filter;
+                                  });
+                                  _applyFilter();
+                                },
+                                borderRadius: BorderRadius.circular(16),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? Color(0xFF7A54FF)
+                                        : (isDark
+                                              ? Colors.grey[800]
+                                              : Colors.white),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? Color(0xFF7A54FF)
+                                          : (isDark
+                                                ? Colors.grey[600]!
+                                                : Colors.grey[300]!),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    filter,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? Colors.white
+                                          : (isDark
+                                                ? Colors.white
+                                                : Colors.black),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Popular filter toggle
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _showPopularOnly = !_showPopularOnly;
+                          });
+                          _applyFilter();
+                        },
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _showPopularOnly
+                                ? Color(0xFF7A54FF)
+                                : (isDark ? Colors.grey[800] : Colors.white),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: _showPopularOnly
+                                  ? Color(0xFF7A54FF)
+                                  : (isDark
+                                        ? Colors.grey[600]!
+                                        : Colors.grey[300]!),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.star,
+                                size: 14,
+                                color: _showPopularOnly
+                                    ? Colors.white
+                                    : Color(0xFF7A54FF),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Popular Only',
+                                style: TextStyle(
+                                  color: _showPopularOnly
+                                      ? Colors.white
+                                      : (isDark ? Colors.white : Colors.black),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search courses...',
-                  hintStyle: TextStyle(
+            ),
+
+            const SizedBox(height: 16),
+
+            // Results count
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '${_filteredCourses.length} course${_filteredCourses.length != 1 ? 's' : ''} found',
+                  style: TextStyle(
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
-                    fontSize: 16,
+                    fontSize: 14,
                   ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: isDark ? Colors.grey[400] : Colors.grey[600],
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 16,
-                  ),
-                ),
-                style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black,
-                  fontSize: 16,
                 ),
               ),
             ),
-          ),
 
-          // Filter chips
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Level filter
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Level',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      height: 32,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _levelFilters.length,
-                        itemBuilder: (context, index) {
-                          final filter = _levelFilters[index];
-                          final isSelected = _selectedLevelFilter == filter;
+            const SizedBox(height: 8),
 
-                          return Container(
-                            margin: const EdgeInsets.only(right: 8),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _selectedLevelFilter = filter;
-                                });
-                                _applyFilter();
-                              },
-                              borderRadius: BorderRadius.circular(16),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? Color(0xFF7A54FF)
-                                      : (isDark
-                                            ? Colors.grey[800]
-                                            : Colors.white),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? Color(0xFF7A54FF)
-                                        : (isDark
-                                              ? Colors.grey[600]!
-                                              : Colors.grey[300]!),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Text(
-                                  filter,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : (isDark
-                                              ? Colors.white
-                                              : Colors.black),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-
-                // Status filter
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Status',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      height: 32,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _statusFilters.length,
-                        itemBuilder: (context, index) {
-                          final filter = _statusFilters[index];
-                          final isSelected = _selectedStatusFilter == filter;
-
-                          return Container(
-                            margin: const EdgeInsets.only(right: 8),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _selectedStatusFilter = filter;
-                                });
-                                _applyFilter();
-                              },
-                              borderRadius: BorderRadius.circular(16),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? Color(0xFF7A54FF)
-                                      : (isDark
-                                            ? Colors.grey[800]
-                                            : Colors.white),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? Color(0xFF7A54FF)
-                                        : (isDark
-                                              ? Colors.grey[600]!
-                                              : Colors.grey[300]!),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Text(
-                                  filter,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : (isDark
-                                              ? Colors.white
-                                              : Colors.black),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-
-                // Popular filter toggle
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          _showPopularOnly = !_showPopularOnly;
-                        });
-                        _applyFilter();
-                      },
-                      borderRadius: BorderRadius.circular(16),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _showPopularOnly
-                              ? Color(0xFF7A54FF)
-                              : (isDark ? Colors.grey[800] : Colors.white),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: _showPopularOnly
-                                ? Color(0xFF7A54FF)
-                                : (isDark
-                                      ? Colors.grey[600]!
-                                      : Colors.grey[300]!),
-                            width: 1,
+            // Courses list
+            _filteredCourses.isEmpty
+                ? Container(
+                    height: 300,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.search_off,
+                            size: 64,
+                            color: isDark ? Colors.grey[600] : Colors.grey[400],
                           ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.star,
-                              size: 14,
-                              color: _showPopularOnly
-                                  ? Colors.white
-                                  : Color(0xFF7A54FF),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No courses found',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Popular Only',
-                              style: TextStyle(
-                                color: _showPopularOnly
-                                    ? Colors.white
-                                    : (isDark ? Colors.white : Colors.black),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Results count
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                '${_filteredCourses.length} course${_filteredCourses.length != 1 ? 's' : ''} found',
-                style: TextStyle(
-                  color: isDark ? Colors.grey[400] : Colors.grey[600],
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          // Courses list
-          Expanded(
-            child: _filteredCourses.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.search_off,
-                          size: 64,
-                          color: isDark ? Colors.grey[600] : Colors.grey[400],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No courses found',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: isDark ? Colors.grey[400] : Colors.grey[600],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   )
                 : ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
                     padding: const EdgeInsets.all(16),
                     itemCount: _filteredCourses.length,
                     itemBuilder: (context, index) {
                       return _buildCourseCard(_filteredCourses[index], isDark);
                     },
                   ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

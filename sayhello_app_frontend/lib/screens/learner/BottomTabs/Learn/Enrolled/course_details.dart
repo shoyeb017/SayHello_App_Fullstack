@@ -100,6 +100,17 @@ class CourseDetails extends StatelessWidget {
           ),
 
           const SizedBox(height: 16), // Reduced from 20
+          // Instructor Details Section
+          _buildInstructorSection(
+            instructor,
+            isDark,
+            primaryColor,
+            textColor,
+            subTextColor,
+            cardColor,
+          ),
+
+          const SizedBox(height: 16), // Reduced from 20
           // Enrollment Status
           _buildEnrollmentStatus(status, primaryColor),
         ],
@@ -666,6 +677,297 @@ class CourseDetails extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildInstructorSection(
+    String instructor,
+    bool isDark,
+    Color primaryColor,
+    Color textColor,
+    Color subTextColor,
+    Color? cardColor,
+  ) {
+    // Sample instructor data - in real app this would come from API
+    final instructorData = {
+      'name': instructor,
+      'bio':
+          'Experienced educator with over 8 years of teaching experience. Specializes in modern language learning techniques and interactive teaching methods.',
+      'rating': 4.8,
+      'totalStudents': 1250,
+      'coursesOffered': 12,
+      'experience': '8+ years',
+      'education': 'Master\'s in Education',
+      'specializations': [
+        'Language Teaching',
+        'Interactive Learning',
+        'Course Design',
+      ],
+      'avatar': '', // Would be URL in real app
+    };
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black26 : Colors.grey.shade200,
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Row(
+            children: [
+              Icon(Icons.person_outline, color: primaryColor, size: 18),
+              const SizedBox(width: 6),
+              Text(
+                'Meet Your Instructor',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Instructor Info
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Avatar
+              Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: instructorData['avatar']?.toString().isEmpty == true
+                    ? Icon(Icons.person, color: Colors.white, size: 30)
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(30),
+                        child: Image.network(
+                          instructorData['avatar']!.toString(),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Icon(Icons.person, color: Colors.white, size: 30),
+                        ),
+                      ),
+              ),
+              const SizedBox(width: 12),
+
+              // Instructor Details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Name and Verification
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            instructorData['name']!.toString(),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: textColor,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(Icons.verified, size: 16, color: primaryColor),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+
+                    // Rating
+                    Row(
+                      children: [
+                        Icon(Icons.star, color: Colors.amber, size: 14),
+                        const SizedBox(width: 2),
+                        Text(
+                          '${instructorData['rating']}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: textColor,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${instructorData['totalStudents']} students',
+                          style: TextStyle(fontSize: 11, color: subTextColor),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+
+                    // Experience and Education
+                    Text(
+                      '${instructorData['experience']} • ${instructorData['education']}',
+                      style: TextStyle(fontSize: 11, color: subTextColor),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // Bio
+          Text(
+            'About',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            instructorData['bio']!.toString(),
+            style: TextStyle(fontSize: 12, color: subTextColor, height: 1.4),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Stats Row
+          Row(
+            children: [
+              Expanded(
+                child: _buildInstructorStatCard(
+                  'Courses',
+                  '${instructorData['coursesOffered']}',
+                  Icons.book,
+                  primaryColor,
+                  isDark,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildInstructorStatCard(
+                  'Students',
+                  '${instructorData['totalStudents']}',
+                  Icons.people,
+                  primaryColor,
+                  isDark,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildInstructorStatCard(
+                  'Rating',
+                  '${instructorData['rating']}',
+                  Icons.star,
+                  Colors.amber,
+                  isDark,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // Specializations
+          Text(
+            'Specializations',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 6,
+            runSpacing: 4,
+            children: (instructorData['specializations'] as List<String>)
+                .map(
+                  (specialization) => Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: primaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: primaryColor.withOpacity(0.3)),
+                    ),
+                    child: Text(
+                      specialization,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        color: primaryColor,
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInstructorStatCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+    bool isDark,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 14),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 9,
+              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 

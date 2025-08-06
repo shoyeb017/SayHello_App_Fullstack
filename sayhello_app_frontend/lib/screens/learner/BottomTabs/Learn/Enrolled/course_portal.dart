@@ -7,7 +7,7 @@ import 'online_session.dart';
 import 'record_class.dart';
 import 'study_material.dart';
 import 'group_chat.dart';
-import 'progress.dart';
+import 'feedback.dart';
 
 class CoursePortalPage extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -42,10 +42,7 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
       label: AppLocalizations.of(context)!.studyMaterials,
     ),
     _TabItem(icon: Icons.chat, label: AppLocalizations.of(context)!.groupChat),
-    _TabItem(
-      icon: Icons.analytics,
-      label: AppLocalizations.of(context)!.progress,
-    ),
+    _TabItem(icon: Icons.feedback, label: 'Feedback'),
   ];
 
   void _onTabTap(int index) {
@@ -238,7 +235,7 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
                 RecordedClassTab(course: widget.course),
                 StudyMaterialTab(course: widget.course),
                 GroupChatTab(course: widget.course),
-                ProgressTab(course: widget.course),
+                FeedbackTab(course: widget.course),
               ],
             ),
           ),
