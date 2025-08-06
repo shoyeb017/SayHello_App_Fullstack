@@ -6,13 +6,13 @@ login:
   Password
   user_type
 
-learner user:
+learner:
   learner_id
   login_id
   profile_image (link)
   name
   email
-  birthday
+  date_of_birth
   gender (male,female)
   nativeLanguage (english,spanish,japanese,korean,bangla)
   learningLanguage (english,spanish,japanese,korean,bangla)
@@ -21,7 +21,21 @@ learner user:
   interest (Art, Music ,Reading,Writing,Sports,Gaming,Travel,Cooking,Fashion,Photography,Crafting,Gardening,Fitness,Movies,Technology,Nature,Animals,Science,Socializing)
   country (USA,Spain,Japan,Korea, Bangladesh)
   created_at
-  last_active
+
+Table instructors:
+  instructor_id
+  login_id      
+  name               
+  profile_image (link)
+  email
+  date_of_birth      
+  gender (male,female)        
+  country           
+  bio                
+  native_language (english,spanish,japanese,korean,bangla)
+  teaching_language (english,spanish,japanese,korean,bangla)
+  years_of_experience
+  created_at
 
 
 followers:
@@ -92,7 +106,6 @@ Table course_enrollments:
   enrolled_at         
   status     
 
-Color(0xFF7A54FF)
   
 Table course_sessions:
   session_id    
@@ -148,6 +161,7 @@ Table feedback
   created_at    
 
 
+Color(0xFF7A54FF)
 
 
 

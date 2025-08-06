@@ -697,12 +697,7 @@ class CourseDetails extends StatelessWidget {
       'totalStudents': 1250,
       'coursesOffered': 12,
       'experience': '8+ years',
-      'education': 'Master\'s in Education',
-      'specializations': [
-        'Language Teaching',
-        'Interactive Learning',
-        'Course Design',
-      ],
+      'education': 'Expert in ${course['language'] ?? 'English'} Language',
       'avatar': '', // Would be URL in real app
     };
 
@@ -886,46 +881,6 @@ class CourseDetails extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-
-          const SizedBox(height: 12),
-
-          // Specializations
-          Text(
-            'Specializations',
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Wrap(
-            spacing: 6,
-            runSpacing: 4,
-            children: (instructorData['specializations'] as List<String>)
-                .map(
-                  (specialization) => Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: primaryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: primaryColor.withOpacity(0.3)),
-                    ),
-                    child: Text(
-                      specialization,
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        color: primaryColor,
-                      ),
-                    ),
-                  ),
-                )
-                .toList(),
           ),
         ],
       ),

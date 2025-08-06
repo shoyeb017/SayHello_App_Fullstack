@@ -20,30 +20,40 @@ class _UnenrolledCourseDetailsPageState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Course data with fallback values
+    // Extract all course data with fallback values - matching course_details.dart
     final title = widget.course['title'] ?? 'Course Title';
     final description =
         widget.course['description'] ??
         'This is a comprehensive course designed to help you master the language.';
+    final language = widget.course['language'] ?? 'English';
+    final level = widget.course['level'] ?? 'Beginner';
     final instructor = widget.course['instructor'] ?? 'John Doe';
+    final startDate = widget.course['startDate'] ?? '2025-07-15';
+    final endDate = widget.course['endDate'] ?? '2025-09-15';
+    final duration = widget.course['duration'] ?? '4 weeks';
+    final status = widget.course['status'] ?? 'active';
     final rating = widget.course['rating'] ?? 4.7;
     final enrolledStudents = widget.course['students'] ?? 42;
     final price =
         double.tryParse(widget.course['price']?.toString() ?? '49.99') ?? 49.99;
-    final duration = widget.course['duration'] ?? '4 weeks';
-    final level = widget.course['level'] ?? 'Beginner';
+    final thumbnail = widget.course['thumbnail'] ?? '';
     final category = widget.course['category'] ?? 'Language';
     final totalSessions = widget.course['totalSessions'] ?? 20;
-    final totalLessons = widget.course['totalLessons'] ?? 40;
 
-    final textColor = isDark ? Colors.white : Colors.black;
-    final subTextColor = isDark ? Colors.grey[400] : Colors.grey[600];
+    // Consistent color scheme with new theme
+    final primaryColor = Color(0xFF7A54FF);
+    final textColor =
+        Theme.of(context).textTheme.bodyLarge?.color ??
+        (isDark ? Colors.white : Colors.black);
+    final subTextColor =
+        Theme.of(context).textTheme.bodyMedium?.color ??
+        (isDark ? Colors.grey.shade400 : Colors.grey.shade600);
     final cardColor = isDark ? Colors.grey[800] : Colors.white;
 
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.grey[50],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: textColor),
@@ -53,268 +63,557 @@ class _UnenrolledCourseDetailsPageState
           AppLocalizations.of(context)!.courseDetails,
           style: TextStyle(
             color: textColor,
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.share, color: textColor),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Share feature coming soon!')),
-              );
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [
           Expanded(
             child: SingleChildScrollView(
+              padding: const EdgeInsets.all(12),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Course Header with Image
-                  _buildCourseHeader(
+                  // Hero-style Course Header (Unique Design)
+                  _buildHeroCourseHeader(
                     title,
                     instructor,
-                    rating,
-                    enrolledStudents,
+                    thumbnail,
                     level,
+                    status,
                     category,
-                    isDark,
-                    textColor,
-                    subTextColor,
-                    cardColor,
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Course Stats
-                  _buildCourseStats(
                     duration,
-                    totalSessions,
-                    totalLessons,
+                    rating,
                     price,
                     isDark,
+                    primaryColor,
                     textColor,
-                    subTextColor,
                     cardColor,
                   ),
 
                   const SizedBox(height: 20),
-
-                  // Course Description
-                  _buildCourseDescription(
-                    description,
-                    isDark,
-                    textColor,
-                    subTextColor,
-                    cardColor,
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // What You'll Learn
-                  _buildWhatYoullLearn(
-                    isDark,
-                    textColor,
-                    subTextColor,
-                    cardColor,
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Course Curriculum
-                  _buildCourseCurriculum(
+                  // Quick Info Pills (Unique Layout)
+                  _buildQuickInfoPills(
+                    language,
                     totalSessions,
-                    totalLessons,
+                    enrolledStudents,
                     isDark,
+                    primaryColor,
                     textColor,
                     subTextColor,
                     cardColor,
                   ),
 
                   const SizedBox(height: 20),
+                  // Course Overview Card
+                  _buildCourseOverviewCard(
+                    description,
+                    startDate,
+                    endDate,
+                    duration,
+                    level,
+                    isDark,
+                    primaryColor,
+                    textColor,
+                    subTextColor,
+                    cardColor,
+                  ),
 
-                  // Instructor Info
-                  _buildInstructorInfo(
+                  const SizedBox(height: 20),
+                  // Instructor Spotlight (Different from course details)
+                  _buildInstructorSpotlight(
                     instructor,
                     isDark,
+                    primaryColor,
                     textColor,
                     subTextColor,
                     cardColor,
                   ),
 
                   const SizedBox(height: 20),
-
-                  // Reviews Section
-                  _buildReviewsSection(
+                  // Student Feedback Preview
+                  _buildStudentFeedbackPreview(
                     rating,
                     isDark,
+                    primaryColor,
                     textColor,
                     subTextColor,
                     cardColor,
                   ),
 
-                  const SizedBox(
-                    height: 100,
-                  ), // Extra space for floating button
+                  const SizedBox(height: 100), // Space for floating button
                 ],
               ),
             ),
           ),
 
-          // Floating Enroll Button
-          _buildEnrollButton(price, isDark),
+          // Enhanced Enrollment Action Bar
+          _buildEnhancedEnrollmentBar(price, isDark, primaryColor, textColor),
         ],
       ),
     );
   }
 
-  Widget _buildCourseHeader(
+  // Hero-style header with overlayed content (Unique Design)
+  Widget _buildHeroCourseHeader(
     String title,
     String instructor,
-    double rating,
-    int students,
+    String thumbnail,
     String level,
+    String status,
     String category,
+    String duration,
+    double rating,
+    double price,
     bool isDark,
+    Color primaryColor,
     Color textColor,
-    Color? subTextColor,
     Color? cardColor,
   ) {
     return Container(
-      margin: const EdgeInsets.all(16),
+      height: 280,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: thumbnail.isEmpty
+            ? LinearGradient(
+                colors: [
+                  primaryColor.withOpacity(0.8),
+                  primaryColor,
+                  primaryColor.withOpacity(0.6),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+            : null,
+        image: thumbnail.isNotEmpty
+            ? DecorationImage(
+                image: NetworkImage(thumbnail),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.4),
+                  BlendMode.darken,
+                ),
+              )
+            : null,
+        boxShadow: [
+          BoxShadow(
+            color: primaryColor.withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Floating status and level badges
+          Positioned(
+            top: 20,
+            left: 20,
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(status),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    status.toUpperCase(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white.withOpacity(0.3)),
+                  ),
+                  child: Text(
+                    level,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Price badge
+          Positioned(
+            top: 20,
+            right: 20,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: primaryColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: primaryColor.withOpacity(0.4),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Text(
+                '\$${price.toStringAsFixed(0)}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+
+          // Bottom content overlay
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.7),
+                    Colors.black.withOpacity(0.9),
+                  ],
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      height: 1.2,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.person,
+                        color: Colors.white.withOpacity(0.9),
+                        size: 14,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'by $instructor',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const Spacer(),
+                      Icon(Icons.star, color: Colors.amber, size: 16),
+                      const SizedBox(width: 4),
+                      Text(
+                        rating.toStringAsFixed(1),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time,
+                        color: Colors.white.withOpacity(0.8),
+                        size: 12,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        duration,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 10,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Icon(
+                        Icons.category,
+                        color: Colors.white.withOpacity(0.8),
+                        size: 12,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        category,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Quick info pills layout (Unique Design)
+  Widget _buildQuickInfoPills(
+    String language,
+    int totalSessions,
+    int enrolledStudents,
+    bool isDark,
+    Color primaryColor,
+    Color textColor,
+    Color subTextColor,
+    Color? cardColor,
+  ) {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildInfoPill(
+            'Language',
+            language,
+            Icons.language,
+            primaryColor,
+            isDark,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildInfoPill(
+            'Sessions',
+            totalSessions.toString(),
+            Icons.video_library,
+            Colors.blue,
+            isDark,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildInfoPill(
+            'Students',
+            enrolledStudents.toString(),
+            Icons.people,
+            Colors.orange,
+            isDark,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoPill(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+    bool isDark,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Course overview with timeline (Unique Design)
+  Widget _buildCourseOverviewCard(
+    String description,
+    String startDate,
+    String endDate,
+    String duration,
+    String level,
+    bool isDark,
+    Color primaryColor,
+    Color textColor,
+    Color subTextColor,
+    Color? cardColor,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: isDark ? Colors.black26 : Colors.grey.shade200,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Course Image
-          Container(
-            width: double.infinity,
-            height: 200,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-              gradient: LinearGradient(
-                colors: [
-                  Colors.purple.withOpacity(0.8),
-                  Colors.purple.shade600.withOpacity(0.6),
-                  Colors.purple.shade800.withOpacity(0.7),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Stack(
-              children: [
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        widget.course['icon'] ?? Icons.school,
-                        size: 60,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        category,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Level Badge
-                Positioned(
-                  top: 16,
-                  left: 16,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      level,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+          Text(
+            'Course Overview',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: textColor,
             ),
           ),
+          const SizedBox(height: 14),
+          Text(
+            description,
+            style: TextStyle(fontSize: 12, color: subTextColor, height: 1.5),
+          ),
+          const SizedBox(height: 18),
 
-          // Course Info
-          Padding(
-            padding: const EdgeInsets.all(20),
+          // Course timeline
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: primaryColor.withOpacity(0.2)),
+            ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'by $instructor',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.purple,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 16),
                 Row(
                   children: [
-                    Row(
-                      children: [
-                        Icon(Icons.star, color: Colors.amber, size: 20),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$rating',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: textColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 16),
+                    Icon(Icons.calendar_today, color: primaryColor, size: 18),
+                    const SizedBox(width: 8),
                     Text(
-                      '($students students)',
-                      style: TextStyle(fontSize: 14, color: subTextColor),
+                      'Course Timeline',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: textColor,
+                      ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Start Date',
+                            style: TextStyle(fontSize: 10, color: subTextColor),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            startDate,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: textColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 2,
+                      height: 30,
+                      color: primaryColor.withOpacity(0.3),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'End Date',
+                            style: TextStyle(fontSize: 10, color: subTextColor),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            endDate,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: textColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'Duration: $duration • Level: $level',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: primaryColor,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -323,113 +622,144 @@ class _UnenrolledCourseDetailsPageState
     );
   }
 
-  Widget _buildCourseStats(
-    String duration,
-    int totalSessions,
-    int totalLessons,
-    double price,
+  // Instructor spotlight with different layout
+  Widget _buildInstructorSpotlight(
+    String instructor,
     bool isDark,
+    Color primaryColor,
     Color textColor,
-    Color? subTextColor,
+    Color subTextColor,
     Color? cardColor,
   ) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
+      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: cardColor,
+        gradient: LinearGradient(
+          colors: [
+            primaryColor.withOpacity(0.1),
+            primaryColor.withOpacity(0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: primaryColor.withOpacity(0.2)),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: _buildStatItem(
-              Icons.schedule,
-              'Duration',
-              duration,
-              Colors.blue,
-              textColor,
-              subTextColor,
+          // Instructor avatar with decoration
+          Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [primaryColor, primaryColor.withOpacity(0.7)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(35),
+              boxShadow: [
+                BoxShadow(
+                  color: primaryColor.withOpacity(0.3),
+                  blurRadius: 15,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Icon(Icons.person, color: Colors.white, size: 35),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            instructor,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: textColor,
             ),
           ),
-          Container(width: 1, height: 60, color: Colors.grey[300]),
-          Expanded(
-            child: _buildStatItem(
-              Icons.video_library,
-              'Sessions',
-              '$totalSessions',
-              Colors.green,
-              textColor,
-              subTextColor,
+          const SizedBox(height: 6),
+          Text(
+            'Expert Language Instructor',
+            style: TextStyle(
+              fontSize: 12,
+              color: primaryColor,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          Container(width: 1, height: 60, color: Colors.grey[300]),
-          Expanded(
-            child: _buildStatItem(
-              Icons.menu_book,
-              'Lessons',
-              '$totalLessons',
-              Colors.orange,
-              textColor,
-              subTextColor,
-            ),
+          const SizedBox(height: 14),
+          Text(
+            'Experienced educator with over 8 years of teaching experience. Specializes in modern language learning techniques.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 11, color: subTextColor, height: 1.4),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildInstructorStat(
+                '8+',
+                'Years Exp.',
+                Icons.school,
+                primaryColor,
+              ),
+              _buildInstructorStat('4.8', 'Rating', Icons.star, Colors.amber),
+              _buildInstructorStat(
+                '1.2K',
+                'Students',
+                Icons.people,
+                Colors.blue,
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStatItem(
-    IconData icon,
-    String label,
+  Widget _buildInstructorStat(
     String value,
+    String label,
+    IconData icon,
     Color color,
-    Color textColor,
-    Color? subTextColor,
   ) {
     return Column(
       children: [
-        Icon(icon, color: color, size: 28),
-        const SizedBox(height: 8),
+        Icon(icon, color: color, size: 18),
+        const SizedBox(height: 3),
         Text(
           value,
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: textColor,
+            color: color,
           ),
         ),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 12, color: subTextColor)),
+        Text(label, style: const TextStyle(fontSize: 9, color: Colors.grey)),
       ],
     );
   }
 
-  Widget _buildCourseDescription(
-    String description,
+  // Student feedback preview with different design
+  Widget _buildStudentFeedbackPreview(
+    double rating,
     bool isDark,
+    Color primaryColor,
     Color textColor,
-    Color? subTextColor,
+    Color subTextColor,
     Color? cardColor,
   ) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
+      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: isDark ? Colors.black26 : Colors.grey.shade200,
             blurRadius: 10,
-            offset: const Offset(0, 2),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -438,12 +768,12 @@ class _UnenrolledCourseDetailsPageState
         children: [
           Row(
             children: [
-              Icon(Icons.description, color: Colors.purple, size: 24),
-              const SizedBox(width: 12),
+              Icon(Icons.feedback, color: Colors.amber, size: 20),
+              const SizedBox(width: 10),
               Text(
-                'Course Description',
+                'Student Feedback',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: textColor,
                 ),
@@ -451,244 +781,40 @@ class _UnenrolledCourseDetailsPageState
             ],
           ),
           const SizedBox(height: 16),
-          Text(
-            description,
-            style: TextStyle(fontSize: 15, color: subTextColor, height: 1.6),
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildWhatYoullLearn(
-    bool isDark,
-    Color textColor,
-    Color? subTextColor,
-    Color? cardColor,
-  ) {
-    final learningPoints = [
-      'Master fundamental concepts and vocabulary',
-      'Develop conversational skills for real-world situations',
-      'Understand grammar rules and sentence structures',
-      'Build confidence in speaking and listening',
-      'Practice with interactive exercises and quizzes',
-      'Access to downloadable resources and materials',
-    ];
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+          // Rating overview
           Row(
             children: [
-              Icon(Icons.lightbulb, color: Colors.amber, size: 24),
-              const SizedBox(width: 12),
-              Text(
-                'What You\'ll Learn',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ...learningPoints
-              .map(
-                (point) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.check_circle, color: Colors.green, size: 20),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          point,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: subTextColor,
-                            height: 1.4,
-                          ),
+                child: Column(
+                  children: [
+                    Text(
+                      rating.toStringAsFixed(1),
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(
+                        5,
+                        (index) => Icon(
+                          Icons.star,
+                          color: index < rating.floor()
+                              ? Colors.amber
+                              : Colors.grey[300],
+                          size: 14,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              )
-              .toList(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCourseCurriculum(
-    int totalSessions,
-    int totalLessons,
-    bool isDark,
-    Color textColor,
-    Color? subTextColor,
-    Color? cardColor,
-  ) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.list_alt, color: Colors.blue, size: 24),
-              const SizedBox(width: 12),
-              Text(
-                'Course Curriculum',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        '$totalSessions',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Live Sessions',
-                        style: TextStyle(fontSize: 12, color: subTextColor),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        '$totalLessons',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Total Lessons',
-                        style: TextStyle(fontSize: 12, color: subTextColor),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInstructorInfo(
-    String instructor,
-    bool isDark,
-    Color textColor,
-    Color? subTextColor,
-    Color? cardColor,
-  ) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.person, color: Colors.purple, size: 24),
-              const SizedBox(width: 12),
-              Text(
-                'Instructor',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.purple.withOpacity(0.2),
-                child: Text(
-                  instructor.split(' ').map((name) => name[0]).join(),
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.purple,
-                  ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(width: 16),
@@ -697,28 +823,39 @@ class _UnenrolledCourseDetailsPageState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      instructor,
+                      'Highly Rated Course',
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                         color: textColor,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Language Expert & Certified Instructor',
-                      style: TextStyle(fontSize: 14, color: subTextColor),
+                      'Based on 124+ student reviews',
+                      style: TextStyle(fontSize: 10, color: subTextColor),
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(Icons.star, color: Colors.amber, size: 16),
-                        const SizedBox(width: 4),
-                        Text(
-                          '4.8 instructor rating',
-                          style: TextStyle(fontSize: 12, color: subTextColor),
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: primaryColor.withOpacity(0.3),
                         ),
-                      ],
+                      ),
+                      child: Text(
+                        '95% Satisfaction Rate',
+                        style: TextStyle(
+                          fontSize: 9,
+                          color: primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -730,143 +867,112 @@ class _UnenrolledCourseDetailsPageState
     );
   }
 
-  Widget _buildReviewsSection(
-    double rating,
+  // Enhanced enrollment bar with better styling
+  Widget _buildEnhancedEnrollmentBar(
+    double price,
     bool isDark,
+    Color primaryColor,
     Color textColor,
-    Color? subTextColor,
-    Color? cardColor,
   ) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.reviews, color: Colors.amber, size: 24),
-              const SizedBox(width: 12),
-              Text(
-                'Student Reviews',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Text(
-                '$rating',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: List.generate(
-                      5,
-                      (index) => Icon(
-                        Icons.star,
-                        color: index < rating.floor()
-                            ? Colors.amber
-                            : Colors.grey[300],
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Based on 124 reviews',
-                    style: TextStyle(fontSize: 12, color: subTextColor),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEnrollButton(double price, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+            blurRadius: 15,
+            offset: const Offset(0, -5),
           ),
         ],
       ),
       child: SafeArea(
         child: Row(
           children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Course Price',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
-                Text(
-                  '\$${price.toStringAsFixed(2)}',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.purple,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          CoursePaymentPage(course: widget.course),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: primaryColor.withOpacity(0.3)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '\$${price.toStringAsFixed(0)}',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor,
                     ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
                   ),
-                  elevation: 4,
+                  Text(
+                    'One-time Payment',
+                    style: TextStyle(
+                      fontSize: 9,
+                      color: primaryColor.withOpacity(0.8),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [primaryColor, primaryColor.withOpacity(0.8)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.4),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
-                child: Text(
-                  'Enroll Now',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CoursePaymentPage(course: widget.course),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: Colors.white,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.school, size: 18),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Enroll Now',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -874,5 +980,17 @@ class _UnenrolledCourseDetailsPageState
         ),
       ),
     );
+  }
+
+  // Helper methods for status
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return Color(0xFF7A54FF);
+      case 'upcoming':
+        return Colors.orange;
+      default:
+        return Colors.green;
+    }
   }
 }
