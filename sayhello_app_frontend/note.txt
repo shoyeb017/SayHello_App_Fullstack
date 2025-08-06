@@ -93,6 +93,7 @@ Table course_enrollments:
   // learner_rating int
   // learner_feedback text
 
+Color(0xFF7A54FF)
   
 Table course_sessions:
   session_id    

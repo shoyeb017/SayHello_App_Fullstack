@@ -159,26 +159,26 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
       return _buildEmptyState(primaryColor, textColor);
     }
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Section with Real Metadata
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [primaryColor.withOpacity(0.8), primaryColor],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
               boxShadow: [
                 BoxShadow(
                   color: primaryColor.withOpacity(0.3),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -187,13 +187,13 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.ondemand_video, color: Colors.white, size: 24),
-                    SizedBox(width: 8),
+                    Icon(Icons.ondemand_video, color: Colors.white, size: 20),
+                    SizedBox(width: 6),
                     Expanded(
                       child: Text(
                         AppLocalizations.of(context)!.recordedClasses,
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -203,23 +203,23 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
                 Text(
                   AppLocalizations.of(context)!.accessAllRecordedSessions,
-                  style: TextStyle(fontSize: 14, color: Colors.white70),
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
 
                 // Success Rate Indicator
                 if (_videoSummary!.hasErrors)
                   Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       color: Colors.orange.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(6),
                       border: Border.all(color: Colors.orange.withOpacity(0.3)),
                     ),
                     child: Row(
@@ -227,15 +227,15 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                         Icon(
                           Icons.warning_amber,
                           color: Colors.orange,
-                          size: 16,
+                          size: 14,
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                         Expanded(
                           child: Text(
                             '${_videoSummary!.failedVideos} of ${_videoSummary!.totalVideos} videos failed to load metadata',
                             style: TextStyle(
                               color: Colors.orange,
-                              fontSize: 12,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -254,7 +254,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                         Icons.video_library,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     Expanded(
                       child: _buildStatCard(
                         'Total Duration',
@@ -262,7 +262,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                         Icons.schedule,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     Expanded(
                       child: _buildStatCard(
                         'Total Size',
@@ -276,19 +276,19 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // Video Library Section
           Text(
             AppLocalizations.of(context)!.videoLibrary,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: textColor,
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           // Video List with Real Metadata
           ..._videoSummary!.videos.asMap().entries.map((entry) {
@@ -299,15 +299,15 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                 : <String, dynamic>{};
 
             return Container(
-              margin: const EdgeInsets.only(bottom: 16),
+              margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
                 color: cardColor,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
                     color: isDark ? Colors.black26 : Colors.grey.shade200,
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
                   ),
                 ],
               ),
@@ -322,11 +322,11 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                         : null,
                     child: Container(
                       width: double.infinity,
-                      height: 160,
+                      height: 140,
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16),
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
                         ),
                         image: additionalData['thumbnail'] != null
                             ? DecorationImage(
@@ -360,14 +360,14 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                                     Icon(
                                       Icons.error_outline,
                                       color: Colors.red,
-                                      size: 32,
+                                      size: 28,
                                     ),
-                                    const SizedBox(height: 8),
+                                    const SizedBox(height: 6),
                                     Text(
                                       'Failed to load',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 12,
+                                        fontSize: 11,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -379,36 +379,36 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                             // Play button overlay
                             Center(
                               child: Container(
-                                padding: const EdgeInsets.all(12),
+                                padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   color: Colors.black.withOpacity(0.6),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
                                   Icons.play_arrow,
-                                  size: 32,
+                                  size: 28,
                                   color: Colors.white,
                                 ),
                               ),
                             ),
                             // Duration badge with real data
                             Positioned(
-                              bottom: 12,
-                              right: 12,
+                              bottom: 10,
+                              right: 10,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
+                                  horizontal: 6,
+                                  vertical: 3,
                                 ),
                                 decoration: BoxDecoration(
                                   color: Colors.black.withOpacity(0.7),
-                                  borderRadius: BorderRadius.circular(6),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
                                   videoMetadata.formattedDuration,
                                   style: const TextStyle(
                                     color: Colors.white,
-                                    fontSize: 12,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -422,7 +422,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
 
                   // Video Info
                   Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -432,7 +432,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                               child: Text(
                                 videoMetadata.title,
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                   color: textColor,
                                 ),
@@ -444,46 +444,46 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                               Icon(
                                 Icons.error_outline,
                                 color: Colors.red,
-                                size: 20,
+                                size: 18,
                               ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
 
                         Text(
                           additionalData['description'] ??
                               'No description available',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             color: subTextColor,
-                            height: 1.4,
+                            height: 1.3,
                           ),
-                          maxLines: 3,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
 
                         if (!videoMetadata.isValid &&
                             videoMetadata.error != null) ...[
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 6),
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               color: Colors.red.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                 color: Colors.red.withOpacity(0.3),
                               ),
                             ),
                             child: Text(
                               'Error: ${videoMetadata.error}',
-                              style: TextStyle(fontSize: 12, color: Colors.red),
+                              style: TextStyle(fontSize: 11, color: Colors.red),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
 
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 10),
 
                         // Video Info with Real Metadata
                         Row(
@@ -504,7 +504,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
                         Row(
                           children: [
                             Expanded(
@@ -518,7 +518,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                           ],
                         ),
 
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
 
                         // Action Button
                         SizedBox(
@@ -528,9 +528,9 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                               backgroundColor: videoMetadata.isValid
                                   ? primaryColor
                                   : Colors.grey,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                             ),
                             onPressed: videoMetadata.isValid
@@ -545,14 +545,14 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                                   ? Icons.play_circle_fill
                                   : Icons.refresh,
                               color: Colors.white,
-                              size: 18,
+                              size: 16,
                             ),
                             label: Text(
                               videoMetadata.isValid ? 'Watch Now' : 'Retry',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
-                                fontSize: 14,
+                                fontSize: 13,
                               ),
                             ),
                           ),
@@ -680,20 +680,20 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
 
   Widget _buildStatCard(String label, String value, IconData icon) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: Colors.white, size: 18),
-          const SizedBox(height: 4),
+          Icon(icon, color: Colors.white, size: 16),
+          const SizedBox(height: 3),
           Text(
             value,
             style: const TextStyle(
-              fontSize: 13,
+              fontSize: 11,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -701,7 +701,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
           Text(
             label,
             style: const TextStyle(
-              fontSize: 9,
+              fontSize: 8,
               color: Colors.white70,
               fontWeight: FontWeight.w500,
             ),
@@ -718,13 +718,13 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: Color(0xFF7A54FF)),
-        const SizedBox(width: 6),
+        Icon(icon, size: 14, color: Color(0xFF7A54FF)),
+        const SizedBox(width: 4),
         Expanded(
           child: Text(
             value,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 11,
               color: color,
               fontWeight: FontWeight.w500,
             ),

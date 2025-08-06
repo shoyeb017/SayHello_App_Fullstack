@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../../l10n/app_localizations.dart';
+import 'study_material_viewer.dart';
 
-class StudyMaterialTab extends StatelessWidget {
+class StudyMaterialTab extends StatefulWidget {
   final Map<String, dynamic> course;
   const StudyMaterialTab({super.key, required this.course});
 
   @override
+  State<StudyMaterialTab> createState() => _StudyMaterialTabState();
+}
+
+class _StudyMaterialTabState extends State<StudyMaterialTab> {
+  final Set<String> _expandedDescriptions = <String>{};
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = Color(0xFF7A54FF);
 
     // Consistent theme colors
     final textColor =
@@ -18,17 +29,16 @@ class StudyMaterialTab extends StatelessWidget {
         (isDark ? Colors.grey.shade400 : Colors.grey.shade600);
     final cardColor = Theme.of(context).cardColor;
 
-    // Enhanced dynamic study materials data
+    // Enhanced dynamic study materials data with online URLs
     final materials = [
       {
         'id': 'mat_1',
-        'title': 'Course Fundamentals Guide',
+        'title': 'Flutter Development Fundamentals',
         'description':
-            'Comprehensive guide covering all essential concepts and foundations.',
+            'Comprehensive guide covering all essential Flutter concepts, widgets, state management, and best practices. This document includes detailed explanations of Flutter architecture, widget tree concepts, lifecycle methods, and practical examples to help you master mobile app development with Flutter.',
         'type': 'pdf',
         'category': 'Guide',
         'uploaded': '2025-07-20',
-        'size': '2.4 MB',
         'pages': 24,
         'downloads': 156,
         'rating': 4.8,
@@ -36,16 +46,17 @@ class StudyMaterialTab extends StatelessWidget {
         'isFavorite': true,
         'tags': ['fundamentals', 'guide', 'essential'],
         'difficulty': 'Beginner',
+        'url':
+            'https://pdfs.semanticscholar.org/7980/8de858f8efe21868e782e42be1af624ffdb2.pdf', // Sample PDF URL
       },
       {
         'id': 'mat_2',
-        'title': 'Advanced Techniques Workbook',
+        'title': 'Advanced Dart Programming Workbook',
         'description':
-            'Interactive workbook with exercises and practical applications.',
+            'Interactive workbook with exercises and practical applications for advanced Dart programming concepts. Covers async programming, streams, isolates, and advanced object-oriented programming techniques with real-world examples and coding challenges.',
         'type': 'doc',
         'category': 'Workbook',
         'uploaded': '2025-07-22',
-        'size': '1.8 MB',
         'pages': 18,
         'downloads': 89,
         'rating': 4.6,
@@ -53,16 +64,17 @@ class StudyMaterialTab extends StatelessWidget {
         'isFavorite': true,
         'tags': ['advanced', 'workbook', 'exercises'],
         'difficulty': 'Advanced',
+        'url':
+            'https://docs.google.com/document/d/1dwPNGDiWvSZLcs9zKhKSMcKA9iQ80x8ZiW9ICu_n_Qs/preview', // Sample DOC URL
       },
       {
         'id': 'mat_3',
-        'title': 'Quick Reference Chart',
+        'title': 'Flutter Widget Reference Chart',
         'description':
-            'Handy reference chart for quick lookup of key concepts.',
+            'Handy visual reference chart for quick lookup of key Flutter widgets and their properties. Includes commonly used widgets, layout widgets, and material design components with visual examples and code snippets.',
         'type': 'image',
         'category': 'Reference',
         'uploaded': '2025-07-23',
-        'size': '854 KB',
         'pages': 2,
         'downloads': 203,
         'rating': 4.9,
@@ -70,55 +82,107 @@ class StudyMaterialTab extends StatelessWidget {
         'isFavorite': false,
         'tags': ['reference', 'quick', 'chart'],
         'difficulty': 'All Levels',
+        'url': 'https://picsum.photos/800/600?random=1', // Sample image URL
+      },
+      {
+        'id': 'mat_4',
+        'title': 'State Management Patterns PDF',
+        'description':
+            'Complete guide to state management in Flutter applications. Covers Provider, Bloc, Riverpod, and other popular state management solutions with detailed examples and comparisons to help you choose the right approach for your project.',
+        'type': 'pdf',
+        'category': 'Guide',
+        'uploaded': '2025-07-24',
+        'pages': 35,
+        'downloads': 124,
+        'rating': 4.7,
+        'isDownloaded': false,
+        'isFavorite': true,
+        'tags': ['state management', 'patterns', 'architecture'],
+        'difficulty': 'Intermediate',
+        'url':
+            'https://pdfs.semanticscholar.org/7980/8de858f8efe21868e782e42be1af624ffdb2.pdf', // Sample PDF URL
+      },
+      {
+        'id': 'mat_5',
+        'title': 'Flutter UI Design Inspiration',
+        'description':
+            'Collection of beautiful Flutter UI designs and inspirations. This visual guide showcases modern app design patterns, color schemes, typography choices, and animation examples to inspire your next Flutter project.',
+        'type': 'image',
+        'category': 'Design',
+        'uploaded': '2025-07-25',
+        'pages': 1,
+        'downloads': 87,
+        'rating': 4.5,
+        'isDownloaded': false,
+        'isFavorite': false,
+        'tags': ['design', 'ui', 'inspiration'],
+        'difficulty': 'All Levels',
+        'url': 'https://picsum.photos/1200/800?random=2', // Sample image URL
+      },
+      {
+        'id': 'mat_6',
+        'title': 'API Integration Documentation',
+        'description':
+            'Detailed documentation for integrating REST APIs in Flutter applications. Covers HTTP requests, JSON parsing, error handling, authentication, and best practices for network programming in mobile apps.',
+        'type': 'docx',
+        'category': 'Documentation',
+        'uploaded': '2025-07-26',
+        'pages': 28,
+        'downloads': 165,
+        'rating': 4.8,
+        'isDownloaded': true,
+        'isFavorite': true,
+        'tags': ['api', 'integration', 'networking'],
+        'difficulty': 'Intermediate',
+        'url':
+            'https://file-examples.com/storage/fe68c1c2fa66f2c6e958a5d/2017/10/file_example_DOC_100kB.doc', // Sample DOCX URL
       },
     ];
 
-    final downloadedCount = materials
-        .where((m) => m['isDownloaded'] == true)
+    // Calculate statistics
+    final totalMaterials = materials.length;
+    final pdfCount = materials.where((m) => m['type'] == 'pdf').length;
+    final imageCount = materials.where((m) => m['type'] == 'image').length;
+    final othersCount = materials
+        .where((m) => !['pdf', 'image'].contains(m['type']))
         .length;
-    final totalSize = materials.fold<double>(0, (sum, m) {
-      final sizeStr = m['size'] as String;
-      if (sizeStr.contains('MB')) {
-        return sum + double.parse(sizeStr.replaceAll(' MB', ''));
-      } else if (sizeStr.contains('KB')) {
-        return sum + double.parse(sizeStr.replaceAll(' KB', '')) / 1024;
-      }
-      return sum;
-    });
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Section
+          // Header Section with updated statistics
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
-            constraints: const BoxConstraints(maxWidth: double.infinity),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Colors.purple.withOpacity(0.8),
-                  Colors.purple.withOpacity(0.6),
-                ],
+                colors: [primaryColor.withOpacity(0.8), primaryColor],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: primaryColor.withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Icon(Icons.description, color: Colors.white, size: 24),
-                    SizedBox(width: 8),
+                    Icon(Icons.description, color: Colors.white, size: 20),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         AppLocalizations.of(context)!.studyMaterials,
-                        style: TextStyle(
-                          fontSize: 20,
+                        style: const TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -131,29 +195,45 @@ class StudyMaterialTab extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   AppLocalizations.of(context)!.downloadAndAccessMaterials,
-                  style: TextStyle(fontSize: 14, color: Colors.white70),
+                  style: const TextStyle(fontSize: 13, color: Colors.white70),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+
+                // Updated statistics - removed size, added file type counts
+                Row(
                   children: [
-                    _buildStatCard(
-                      AppLocalizations.of(context)!.totalMaterials,
-                      '${materials.length}',
-                      Icons.folder_outlined,
+                    Expanded(
+                      child: _buildStatCard(
+                        'Total',
+                        '$totalMaterials',
+                        Icons.folder_outlined,
+                      ),
                     ),
-                    _buildStatCard(
-                      AppLocalizations.of(context)!.downloaded,
-                      '$downloadedCount',
-                      Icons.download_done,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildStatCard(
+                        'PDFs',
+                        '$pdfCount',
+                        Icons.picture_as_pdf,
+                      ),
                     ),
-                    _buildStatCard(
-                      AppLocalizations.of(context)!.totalSize,
-                      '${totalSize.toStringAsFixed(1)} MB',
-                      Icons.storage,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildStatCard(
+                        'Images',
+                        '$imageCount',
+                        Icons.image,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildStatCard(
+                        'Others',
+                        '$othersCount',
+                        Icons.description,
+                      ),
                     ),
                   ],
                 ),
@@ -167,8 +247,8 @@ class StudyMaterialTab extends StatelessWidget {
           ...materials
               .map(
                 (material) => Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color: cardColor,
                     borderRadius: BorderRadius.circular(16),
@@ -186,20 +266,20 @@ class StudyMaterialTab extends StatelessWidget {
                       Row(
                         children: [
                           Container(
-                            width: 48,
-                            height: 48,
+                            width: 36,
+                            height: 36,
                             decoration: BoxDecoration(
                               color: _getTypeColor(
                                 material['type']?.toString(),
                               ).withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: Icon(
                               _getIcon(material['type']?.toString()),
                               color: _getTypeColor(
                                 material['type']?.toString(),
                               ),
-                              size: 24,
+                              size: 18,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -208,87 +288,87 @@ class StudyMaterialTab extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  (material['title'] ?? 'Untitled Material')
-                                      .toString(),
+                                  material['title']?.toString() ??
+                                      'Untitled Material',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     color: textColor,
                                   ),
-                                  maxLines: 2,
+                                  maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 4),
-                                Text(
-                                  (material['description'] ?? '').toString(),
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: subTextColor,
-                                    height: 1.4,
-                                  ),
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
+
+                                // Description with More/Less functionality (limited to 2 lines)
+                                _buildExpandableDescription(
+                                  material['id']?.toString() ?? '',
+                                  material['description']?.toString() ?? '',
+                                  subTextColor,
                                 ),
                               ],
                             ),
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 12),
+
+                      // Action buttons only
                       Row(
                         children: [
                           Expanded(
                             child: ElevatedButton.icon(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.purple,
+                                backgroundColor: primaryColor,
                                 padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
+                                  vertical: 8,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              onPressed: () => _openMaterial(context, material),
+                              onPressed: () => _viewMaterial(context, material),
                               icon: const Icon(
                                 Icons.visibility,
                                 color: Colors.white,
+                                size: 14,
                               ),
                               label: Text(
                                 AppLocalizations.of(context)!.view,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
+                                  fontSize: 12,
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 10),
                           Expanded(
                             child: OutlinedButton.icon(
                               style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: Colors.purple),
+                                side: BorderSide(color: primaryColor),
                                 padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
+                                  vertical: 8,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
                               onPressed: () =>
                                   _downloadMaterial(context, material),
                               icon: Icon(
-                                material['isDownloaded'] == true
-                                    ? Icons.download_done
-                                    : Icons.download,
-                                color: Colors.purple,
+                                Icons.open_in_new,
+                                color: primaryColor,
+                                size: 14,
                               ),
                               label: Text(
-                                material['isDownloaded'] == true
-                                    ? AppLocalizations.of(context)!.downloaded
-                                    : AppLocalizations.of(context)!.download,
+                                'Download',
                                 style: TextStyle(
-                                  color: Colors.purple,
+                                  color: primaryColor,
                                   fontWeight: FontWeight.w600,
+                                  fontSize: 12,
                                 ),
                               ),
                             ),
@@ -305,29 +385,83 @@ class StudyMaterialTab extends StatelessWidget {
     );
   }
 
+  Widget _buildExpandableDescription(
+    String materialId,
+    String description,
+    Color textColor,
+  ) {
+    final isExpanded = _expandedDescriptions.contains(materialId);
+    final shouldShowMoreLess =
+        description.length > 80; // Reduced from 100 to 80 for 2 lines
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          isExpanded || !shouldShowMoreLess
+              ? description
+              : '${description.substring(0, 80)}...', // Show first 80 characters for ~2 lines
+          style: TextStyle(fontSize: 12, color: textColor, height: 1.3),
+          maxLines: isExpanded ? null : 2, // Limit to 2 lines when collapsed
+          overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+        ),
+        if (shouldShowMoreLess)
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                if (isExpanded) {
+                  _expandedDescriptions.remove(materialId);
+                } else {
+                  _expandedDescriptions.add(materialId);
+                }
+              });
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                isExpanded ? 'Show Less' : 'Show More',
+                style: TextStyle(
+                  color: Color(0xFF7A54FF),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _buildStatCard(String label, String value, IconData icon) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white, size: 20),
-          const SizedBox(height: 4),
+          Icon(icon, color: Colors.white, size: 16),
+          const SizedBox(height: 3),
           Text(
             value,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 16,
+              fontSize: 12,
               fontWeight: FontWeight.bold,
             ),
           ),
           Text(
             label,
-            style: const TextStyle(color: Colors.white70, fontSize: 10),
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 9,
+              fontWeight: FontWeight.w500,
+            ),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -335,12 +469,17 @@ class StudyMaterialTab extends StatelessWidget {
   }
 
   IconData _getIcon(String? type) {
-    switch (type) {
+    switch (type?.toLowerCase()) {
       case 'pdf':
         return Icons.picture_as_pdf;
       case 'doc':
+      case 'docx':
         return Icons.description;
       case 'image':
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
         return Icons.image;
       case 'link':
         return Icons.link;
@@ -350,12 +489,17 @@ class StudyMaterialTab extends StatelessWidget {
   }
 
   Color _getTypeColor(String? type) {
-    switch (type) {
+    switch (type?.toLowerCase()) {
       case 'pdf':
         return Colors.red;
       case 'doc':
+      case 'docx':
         return Colors.blue;
       case 'image':
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
         return Colors.orange;
       case 'link':
         return Colors.teal;
@@ -364,25 +508,288 @@ class StudyMaterialTab extends StatelessWidget {
     }
   }
 
-  void _openMaterial(BuildContext context, Map<String, dynamic> material) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${AppLocalizations.of(context)!.opening}: ${material['title']}',
+  void _viewMaterial(BuildContext context, Map<String, dynamic> material) {
+    final url = material['url']?.toString();
+    if (url == null || url.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('❌ No URL available for this material'),
+          backgroundColor: Colors.red,
         ),
-        backgroundColor: Colors.purple,
-      ),
+      );
+      return;
+    }
+
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Color(0xFF7A54FF),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Opening ${material['type']?.toString().toUpperCase()}...',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
+
+    // Close loading dialog and open viewer
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      Navigator.of(context).pop(); // Close loading dialog
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => StudyMaterialViewer(
+            url: url,
+            title: material['title']?.toString() ?? 'Study Material',
+            type: material['type']?.toString() ?? 'file',
+          ),
+        ),
+      );
+    });
   }
 
-  void _downloadMaterial(BuildContext context, Map<String, dynamic> material) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${AppLocalizations.of(context)!.downloading}: ${material['title']}',
+  void _downloadMaterial(
+    BuildContext context,
+    Map<String, dynamic> material,
+  ) async {
+    final url = material['url']?.toString();
+    if (url == null || url.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('❌ No URL available for download'),
+          backgroundColor: Colors.red,
         ),
-        backgroundColor: Colors.purple.shade600,
-      ),
+      );
+      return;
+    }
+
+    // Show confirmation dialog first
+    final shouldDownload = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.download, color: Color(0xFF7A54FF)),
+              const SizedBox(width: 8),
+              Text('Download File'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('This will open the file in your browser for download.'),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Color(0xFF7A54FF).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      material['title']?.toString() ?? 'Unknown',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF7A54FF),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Type: ${material['type']?.toString().toUpperCase()}',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Your browser will handle the download to your default downloads folder.',
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('Cancel'),
+            ),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF7A54FF),
+              ),
+              onPressed: () => Navigator.of(context).pop(true),
+              icon: Icon(Icons.open_in_new, color: Colors.white, size: 16),
+              label: Text(
+                'Open in Browser',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
     );
+
+    if (shouldDownload != true) return;
+
+    try {
+      // Parse the URL
+      final uri = Uri.parse(url);
+
+      // Launch the URL in browser for download
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication, // Force external browser
+      );
+
+      if (launched) {
+        // Update material status (optional)
+        setState(() {
+          material['isDownloaded'] = true;
+        });
+      } else {
+        // Fallback: copy link to clipboard
+        await _copyUrlToClipboard(
+          context,
+          url,
+          material['title']?.toString() ?? 'File',
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not open browser. Link copied to clipboard.'),
+            backgroundColor: Colors.orange,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      // Error handling: copy link to clipboard as fallback
+      await _copyUrlToClipboard(
+        context,
+        url,
+        material['title']?.toString() ?? 'File',
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('❌ Failed to open browser'),
+              Text(
+                'Link copied to clipboard instead.',
+                style: TextStyle(fontSize: 12, color: Colors.white70),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 4),
+          action: SnackBarAction(
+            label: 'Retry',
+            textColor: Colors.white,
+            onPressed: () => _downloadMaterial(context, material),
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _copyUrlToClipboard(
+    BuildContext context,
+    String url,
+    String fileName,
+  ) async {
+    try {
+      await Clipboard.setData(ClipboardData(text: url));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('📎 Download link copied to clipboard'),
+          backgroundColor: Color(0xFF7A54FF),
+          duration: Duration(seconds: 2),
+          action: SnackBarAction(
+            label: 'Paste & Go',
+            textColor: Colors.white,
+            onPressed: () {
+              // Show instruction dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Download Instructions'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'The download link has been copied to your clipboard:',
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: SelectableText(
+                            url,
+                            style: TextStyle(
+                              fontFamily: 'monospace',
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text('To download:'),
+                        Text('1. Open your browser'),
+                        Text('2. Paste the link in the address bar'),
+                        Text('3. Press Enter to start download'),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text('Got it'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to copy link: $e'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }
