@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
 import 'instructor_course_portal.dart';
 import '../Revenue/revenue_page.dart';
+import '../../../../../providers/settings_provider.dart';
 
 class InstructorHomePage extends StatefulWidget {
   const InstructorHomePage({super.key});
@@ -145,47 +146,46 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        scrolledUnderElevation: 0,
-        title: Row(
-          children: [
-            const Expanded(
-              child: Text(
-                'Instructor Dashboard',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(52),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          scrolledUnderElevation: 0,
+          title: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.monetization_on),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const InstructorRevenuePage(),
+                    ),
+                  );
+                },
+                tooltip: 'Revenue Dashboard',
               ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.monetization_on),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const InstructorRevenuePage(),
-                  ),
-                );
-              },
-              tooltip: 'Revenue Dashboard',
-            ),
-            IconButton(
-              icon: Icon(
-                themeProvider.themeMode == ThemeMode.dark
-                    ? Icons.light_mode
-                    : Icons.dark_mode,
+
+              Expanded(
+                child: Text(
+                  'Instructor Dashboard',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                ),
               ),
-              onPressed: () {
-                bool toDark = themeProvider.themeMode != ThemeMode.dark;
-                themeProvider.toggleTheme(toDark);
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                _showAddCourseDialog();
-              },
-            ),
-          ],
+
+              // 🔧 SETTINGS ICON - This is the settings button in the app bar
+              // Click this to open the settings bottom sheet with theme and language options
+              IconButton(
+                icon: Icon(
+                  Icons.settings,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+                onPressed: () =>
+                    SettingsProvider.showSettingsBottomSheet(context),
+              ),
+            ],
+          ),
         ),
       ),
       body: Column(

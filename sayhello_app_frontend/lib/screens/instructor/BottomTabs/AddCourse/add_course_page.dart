@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../../providers/settings_provider.dart';
+import '../../instructor_main_tab.dart';
 
 class AddCoursePage extends StatefulWidget {
   const AddCoursePage({super.key});
@@ -65,18 +67,52 @@ class _AddCoursePageState extends State<AddCoursePage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0,
-        title: Text(
-          'Create New Course',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(52),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          scrolledUnderElevation: 0,
+          title: Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+                onPressed: () {
+                  // Navigate back to instructor main tab (homepage)
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const InstructorMainTab(),
+                    ),
+                  );
+                },
+              ),
+
+              Expanded(
+                child: Text(
+                  'Create New Course',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                ),
+              ),
+
+              // 🔧 SETTINGS ICON - This is the settings button in the app bar
+              // Click this to open the settings bottom sheet with theme and language options
+              IconButton(
+                icon: Icon(
+                  Icons.settings,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+                onPressed: () =>
+                    SettingsProvider.showSettingsBottomSheet(context),
+              ),
+            ],
           ),
         ),
-        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
+
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(

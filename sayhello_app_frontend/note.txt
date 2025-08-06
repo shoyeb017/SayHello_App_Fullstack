@@ -106,7 +106,7 @@ Table course_enrollments:
   learner_id    
   enrolled_at         
   status   
-
+  created_at
   
 Table course_sessions:
   session_id    
@@ -161,6 +161,15 @@ Table feedback
   rating     
   created_at    
 
+Table notifications 
+  notification_id 
+  learner_id 
+  courses_id
+  notification_type(session alert,feedback)
+  contenet_title
+  content_text
+  is_read
+  created_at
 
 Color(0xFF7A54FF)
 

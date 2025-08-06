@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../../providers/settings_provider.dart';
+import '../../instructor_main_tab.dart';
 
 class InstructorProfilePage extends StatefulWidget {
   const InstructorProfilePage({super.key});
@@ -13,12 +15,58 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Instructor Profile'),
-        backgroundColor: const Color(0xFF7A54FF),
-        foregroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(52),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          scrolledUnderElevation: 0,
+          title: Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+                onPressed: () {
+                  // Navigate back to instructor main tab (homepage)
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const InstructorMainTab(),
+                    ),
+                  );
+                },
+              ),
+
+              Expanded(
+                child: Text(
+                  'Profile',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                ),
+              ),
+
+              // 🔧 SETTINGS ICON - This is the settings button in the app bar
+              // Click this to open the settings bottom sheet with theme and language options
+              IconButton(
+                icon: Icon(
+                  Icons.settings,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+                onPressed: () =>
+                    SettingsProvider.showSettingsBottomSheet(context),
+              ),
+            ],
+          ),
+        ),
       ),
+
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
