@@ -97,6 +97,7 @@ Table courses:
   thumbnail_url
   startDate
   endDate  - duration
+  status (upcoming,active,expired)
   created_at
 
 Table course_enrollments:
@@ -104,7 +105,7 @@ Table course_enrollments:
   course_id      
   learner_id    
   enrolled_at         
-  status     
+  status   
 
   
 Table course_sessions:

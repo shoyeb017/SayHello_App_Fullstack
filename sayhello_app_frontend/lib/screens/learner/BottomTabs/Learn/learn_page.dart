@@ -41,7 +41,8 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '6 weeks',
       'level': 'Beginner',
       'category': 'Language',
-      'status': 'active',
+      'startDate': '2025-08-01',
+      'endDate': '2025-09-15',
     },
     {
       'id': 'course_002',
@@ -60,7 +61,8 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '8 weeks',
       'level': 'Intermediate',
       'category': 'Language',
-      'status': 'active',
+      'startDate': '2025-07-15',
+      'endDate': '2025-09-10',
     },
     {
       'id': 'course_003',
@@ -79,7 +81,8 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '10 weeks',
       'level': 'Advanced',
       'category': 'Language',
-      'status': 'completed',
+      'startDate': '2025-06-01',
+      'endDate': '2025-08-10',
     },
   ];
 
@@ -101,7 +104,8 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '5 weeks',
       'level': 'Beginner',
       'category': 'Language',
-      'status': 'upcoming',
+      'startDate': '2025-08-15',
+      'endDate': '2025-09-20',
     },
     {
       'id': 'course_005',
@@ -119,7 +123,8 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '4 weeks',
       'level': 'Beginner',
       'category': 'Language',
-      'status': 'active',
+      'startDate': '2025-08-01',
+      'endDate': '2025-09-01',
     },
     {
       'id': 'course_006',
@@ -137,7 +142,8 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '8 weeks',
       'level': 'Intermediate',
       'category': 'Business',
-      'status': 'active',
+      'startDate': '2025-08-10',
+      'endDate': '2025-10-05',
     },
     {
       'id': 'course_007',
@@ -155,11 +161,12 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '7 weeks',
       'level': 'Beginner',
       'category': 'Language',
-      'status': 'upcoming',
+      'startDate': '2025-08-20',
+      'endDate': '2025-10-10',
     },
   ];
 
-  // Completed courses (horizontal scroll)
+  // Completed courses (horizontal scroll) - These are deadline-over courses available for enrollment
   final List<Map<String, dynamic>> completedCourses = [
     {
       'id': 'course_008',
@@ -167,9 +174,8 @@ class _LearnPageState extends State<LearnPage> {
       'instructor': 'Dmitri Volkov',
       'rating': 4.3,
       'students': 85,
-      'progress': 1.0,
+      'progress': 0.0, // User not enrolled yet
       'sessions': 18,
-      'completedSessions': 18,
       'icon': Icons.language,
       'thumbnail': '',
       'description':
@@ -178,8 +184,8 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '6 weeks',
       'level': 'Beginner',
       'category': 'Language',
-      'status': 'completed',
-      'completionDate': '2024-01-15',
+      'startDate': '2024-01-01',
+      'endDate': '2024-01-15',
     },
     {
       'id': 'course_009',
@@ -187,9 +193,8 @@ class _LearnPageState extends State<LearnPage> {
       'instructor': 'Ana Santos',
       'rating': 4.6,
       'students': 67,
-      'progress': 1.0,
+      'progress': 0.0, // User not enrolled yet
       'sessions': 22,
-      'completedSessions': 22,
       'icon': Icons.business_center,
       'thumbnail': '',
       'description':
@@ -198,8 +203,8 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '8 weeks',
       'level': 'Intermediate',
       'category': 'Business',
-      'status': 'completed',
-      'completionDate': '2024-02-20',
+      'startDate': '2024-02-01',
+      'endDate': '2024-02-20',
     },
     {
       'id': 'course_010',
@@ -207,9 +212,8 @@ class _LearnPageState extends State<LearnPage> {
       'instructor': 'Kim Min-jun',
       'rating': 4.4,
       'students': 92,
-      'progress': 1.0,
+      'progress': 0.0, // User not enrolled yet
       'sessions': 20,
-      'completedSessions': 20,
       'icon': Icons.translate,
       'thumbnail': '',
       'description':
@@ -218,8 +222,8 @@ class _LearnPageState extends State<LearnPage> {
       'duration': '7 weeks',
       'level': 'Beginner',
       'category': 'Language',
-      'status': 'completed',
-      'completionDate': '2024-03-10',
+      'startDate': '2024-03-01',
+      'endDate': '2024-03-10',
     },
   ];
 
@@ -233,15 +237,38 @@ class _LearnPageState extends State<LearnPage> {
     super.dispose();
   }
 
-  void _navigateToCourse(Map<String, dynamic> course) {
-    final isEnrolled = course['progress'] != null && course['progress'] > 0;
+  // Method to calculate course status based on dates
+  String _getCourseStatus(Map<String, dynamic> course) {
+    final now = DateTime.now();
+    final startDate = DateTime.tryParse(course['startDate'] ?? '');
+    final endDate = DateTime.tryParse(course['endDate'] ?? '');
 
-    if (isEnrolled) {
+    if (startDate == null || endDate == null) {
+      return 'active'; // Default status if dates are missing
+    }
+
+    if (now.isBefore(startDate)) {
+      return 'upcoming';
+    } else if (now.isAfter(endDate)) {
+      return 'expired';
+    } else {
+      return 'active';
+    }
+  }
+
+  void _navigateToCourse(Map<String, dynamic> course) {
+    // Check if user is currently enrolled (has progress > 0)
+    final isCurrentlyEnrolled =
+        course['progress'] != null && course['progress'] > 0;
+
+    if (isCurrentlyEnrolled) {
+      // Navigate to course portal for enrolled courses
       Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => CoursePortalPage(course: course)),
       );
     } else {
+      // Navigate to course details for unenrolled courses (including completed/deadline-over courses)
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -553,7 +580,7 @@ class _LearnPageState extends State<LearnPage> {
 
   Widget _buildEnrolledCourseCard(Map<String, dynamic> course, bool isDark) {
     final progress = course['progress']?.toDouble() ?? 0.0;
-    final isCompleted = course['status'] == 'completed';
+    final status = _getCourseStatus(course);
 
     return Container(
       width: 260,
@@ -652,8 +679,30 @@ class _LearnPageState extends State<LearnPage> {
 
                     const SizedBox(height: 10),
 
-                    // Progress bar
-                    if (!isCompleted) ...[
+                    // Progress bar or status badge
+                    if (status == 'expired') ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.3),
+                          ),
+                        ),
+                        child: const Text(
+                          'Expired',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ] else ...[
                       LinearProgressIndicator(
                         value: progress,
                         backgroundColor: Colors.white.withOpacity(0.3),
@@ -668,28 +717,6 @@ class _LearnPageState extends State<LearnPage> {
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.9),
                           fontSize: 11,
-                        ),
-                      ),
-                    ] else ...[
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                          ),
-                        ),
-                        child: const Text(
-                          'Completed',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
                         ),
                       ),
                     ],
@@ -1014,23 +1041,6 @@ class _LearnPageState extends State<LearnPage> {
                   ],
                 ),
               ),
-
-              // Price badge
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  '\$${course['price']?.toStringAsFixed(0) ?? '0'}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
-                  ),
-                ),
-              ),
             ],
           ),
         ),
@@ -1048,7 +1058,7 @@ class _LearnPageState extends State<LearnPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Completed Courses',
+                'Expired Courses',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -1066,7 +1076,7 @@ class _LearnPageState extends State<LearnPage> {
                           ...popularCourses,
                           ...completedCourses,
                         ],
-                        initialFilter: 'Completed',
+                        initialFilter: 'Expired',
                       ),
                     ),
                   );
@@ -1102,6 +1112,8 @@ class _LearnPageState extends State<LearnPage> {
   }
 
   Widget _buildCompletedCourseCard(Map<String, dynamic> course, bool isDark) {
+    final status = _getCourseStatus(course);
+
     return Container(
       width: 260,
       margin: const EdgeInsets.only(right: 16),
@@ -1157,7 +1169,7 @@ class _LearnPageState extends State<LearnPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Course icon with completion badge
+                    // Course icon with expired badge
                     Stack(
                       children: [
                         Container(
@@ -1185,7 +1197,7 @@ class _LearnPageState extends State<LearnPage> {
                               border: Border.all(color: Colors.green, width: 2),
                             ),
                             child: const Icon(
-                              Icons.check,
+                              Icons.schedule,
                               color: Colors.green,
                               size: 10,
                             ),
@@ -1221,7 +1233,7 @@ class _LearnPageState extends State<LearnPage> {
 
                     const SizedBox(height: 10),
 
-                    // Completed badge
+                    // Expired badge
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -1238,13 +1250,13 @@ class _LearnPageState extends State<LearnPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(
-                            Icons.verified,
+                            Icons.schedule,
                             color: Colors.white,
                             size: 14,
                           ),
                           const SizedBox(width: 4),
                           const Text(
-                            'Completed',
+                            'Expired',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 11,
@@ -1255,6 +1267,30 @@ class _LearnPageState extends State<LearnPage> {
                       ),
                     ),
                   ],
+                ),
+              ),
+
+              // Price badge
+              Positioned(
+                top: 15,
+                right: 15,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '\$${course['price']?.toStringAsFixed(0) ?? '0'}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
                 ),
               ),
             ],

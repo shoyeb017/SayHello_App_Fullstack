@@ -31,12 +31,7 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
     'Advanced',
   ];
 
-  final List<String> _statusFilters = [
-    'All',
-    'Upcoming',
-    'Active',
-    'Completed',
-  ];
+  final List<String> _statusFilters = ['All', 'Upcoming', 'Active', 'Expired'];
 
   @override
   void initState() {
@@ -53,8 +48,8 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
         case 'Popular':
           _showPopularOnly = true;
           break;
-        case 'Completed':
-          _selectedStatusFilter = 'Completed';
+        case 'Expired':
+          _selectedStatusFilter = 'Expired';
           break;
         case 'Active':
           _selectedStatusFilter = 'Active';
@@ -77,6 +72,25 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
 
   void _onSearchChanged() {
     _applyFilter();
+  }
+
+  // Method to calculate course status based on dates
+  String _getCourseStatus(Map<String, dynamic> course) {
+    final now = DateTime.now();
+    final startDate = DateTime.tryParse(course['startDate'] ?? '');
+    final endDate = DateTime.tryParse(course['endDate'] ?? '');
+
+    if (startDate == null || endDate == null) {
+      return 'active'; // Default status if dates are missing
+    }
+
+    if (now.isBefore(startDate)) {
+      return 'upcoming';
+    } else if (now.isAfter(endDate)) {
+      return 'expired';
+    } else {
+      return 'active';
+    }
   }
 
   void _applyFilter() {
@@ -112,8 +126,9 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
         // Status filter
         bool matchesStatus = true;
         if (_selectedStatusFilter != 'All') {
+          final calculatedStatus = _getCourseStatus(course);
           matchesStatus =
-              course['status'] == _selectedStatusFilter.toLowerCase();
+              calculatedStatus == _selectedStatusFilter.toLowerCase();
         }
 
         // Popular filter
@@ -584,7 +599,7 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                       ),
                     ] else ...[
                       const SizedBox(height: 4),
-                      _buildStatusBadge(course['status'] ?? 'active'),
+                      _buildStatusBadge(_getCourseStatus(course)),
                     ],
                   ],
                 ),
@@ -649,9 +664,9 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
         badgeColor = Colors.blue;
         displayText = 'Active';
         break;
-      case 'completed':
+      case 'expired':
         badgeColor = Colors.green;
-        displayText = 'Completed';
+        displayText = 'Expired';
         break;
       default:
         badgeColor = Colors.grey;

@@ -41,10 +41,13 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
     final courseName = widget.course['title'] ?? 'Course';
     final instructor = widget.course['instructor'] ?? 'Instructor';
 
+    // Consistent color theme
+    final primaryColor = Color(0xFF7A54FF);
+
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.grey[50],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
@@ -57,7 +60,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
           'Complete Purchase',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -66,37 +69,43 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Course Summary Card
-                    _buildCourseSummary(courseName, instructor, price, isDark),
+                    _buildCourseSummary(
+                      courseName,
+                      instructor,
+                      price,
+                      isDark,
+                      primaryColor,
+                    ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
 
                     // Payment Method Selection
-                    _buildPaymentMethodSelection(isDark),
+                    _buildPaymentMethodSelection(isDark, primaryColor),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
 
                     // Payment Form
                     if (_selectedPaymentMethod == 'card') ...[
-                      _buildPaymentForm(isDark),
-                      const SizedBox(height: 24),
+                      _buildPaymentForm(isDark, primaryColor),
+                      const SizedBox(height: 20),
                     ],
 
                     // Billing Information
-                    _buildBillingInformation(isDark),
+                    _buildBillingInformation(isDark, primaryColor),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
 
                     // Order Summary
-                    _buildOrderSummary(price, isDark),
+                    _buildOrderSummary(price, isDark, primaryColor),
 
-                    const SizedBox(height: 100), // Space for floating button
+                    const SizedBox(height: 80), // Space for floating button
                   ],
                 ),
               ),
@@ -104,7 +113,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
           ),
 
           // Payment Button
-          _buildPaymentButton(price, isDark),
+          _buildPaymentButton(price, isDark, primaryColor),
         ],
       ),
     );
@@ -115,16 +124,17 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
     String instructor,
     double price,
     bool isDark,
+    Color primaryColor,
   ) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[800] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
@@ -132,23 +142,23 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
       child: Row(
         children: [
           Container(
-            width: 60,
-            height: 60,
+            width: 50,
+            height: 50,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.purple, Colors.purple.shade300],
+                colors: [primaryColor, primaryColor.withOpacity(0.7)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
               widget.course['icon'] ?? Icons.school,
               color: Colors.white,
-              size: 30,
+              size: 24,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,29 +166,29 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                 Text(
                   courseName,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3),
                 Text(
                   'by $instructor',
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.purple,
+                    fontSize: 12,
+                    color: primaryColor,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Text(
                   '\$${price.toStringAsFixed(2)}',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green,
+                    color: primaryColor,
                   ),
                 ),
               ],
@@ -189,16 +199,16 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
     );
   }
 
-  Widget _buildPaymentMethodSelection(bool isDark) {
+  Widget _buildPaymentMethodSelection(bool isDark, Color primaryColor) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[800] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
@@ -209,26 +219,26 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
           Text(
             'Payment Method',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
           // Credit/Debit Card Option
           GestureDetector(
             onTap: () => setState(() => _selectedPaymentMethod = 'card'),
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 border: Border.all(
                   color: _selectedPaymentMethod == 'card'
-                      ? Colors.purple
+                      ? primaryColor
                       : Colors.grey[300]!,
                   width: 2,
                 ),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Row(
                 children: [
@@ -237,15 +247,15 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                     groupValue: _selectedPaymentMethod,
                     onChanged: (value) =>
                         setState(() => _selectedPaymentMethod = value!),
-                    activeColor: Colors.purple,
+                    activeColor: primaryColor,
                   ),
-                  const SizedBox(width: 12),
-                  Icon(Icons.credit_card, color: Colors.purple, size: 24),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
+                  Icon(Icons.credit_card, color: primaryColor, size: 20),
+                  const SizedBox(width: 10),
                   Text(
                     'Credit/Debit Card',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: isDark ? Colors.white : Colors.black,
                     ),
@@ -255,21 +265,21 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
 
-          // PayPal Option (Disabled for demo)
+          // PayPal Option (Now Available)
           GestureDetector(
             onTap: () => setState(() => _selectedPaymentMethod = 'paypal'),
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 border: Border.all(
                   color: _selectedPaymentMethod == 'paypal'
-                      ? Colors.purple
+                      ? primaryColor
                       : Colors.grey[300]!,
                   width: 2,
                 ),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Row(
                 children: [
@@ -278,36 +288,21 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                     groupValue: _selectedPaymentMethod,
                     onChanged: (value) =>
                         setState(() => _selectedPaymentMethod = value!),
-                    activeColor: Colors.purple,
+                    activeColor: primaryColor,
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   Icon(
                     Icons.account_balance_wallet,
                     color: Colors.blue,
-                    size: 24,
+                    size: 20,
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   Text(
                     'PayPal',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'Coming Soon',
-                      style: TextStyle(fontSize: 10, color: Colors.grey[600]),
                     ),
                   ),
                 ],
@@ -319,16 +314,16 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
     );
   }
 
-  Widget _buildPaymentForm(bool isDark) {
+  Widget _buildPaymentForm(bool isDark, Color primaryColor) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[800] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
@@ -339,22 +334,37 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
           Text(
             'Card Information',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
           // Card Number
           TextFormField(
             controller: _cardNumberController,
+            style: TextStyle(fontSize: 14),
             decoration: InputDecoration(
               labelText: 'Card Number',
+              labelStyle: TextStyle(fontSize: 12),
               hintText: '1234 5678 9012 3456',
-              prefixIcon: Icon(Icons.credit_card),
+              hintStyle: TextStyle(fontSize: 12),
+              prefixIcon: Icon(
+                Icons.credit_card,
+                size: 18,
+                color: primaryColor,
+              ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: primaryColor, width: 2),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
               ),
             ),
             keyboardType: TextInputType.number,
@@ -374,7 +384,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             },
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
           Row(
             children: [
@@ -382,18 +392,32 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
               Expanded(
                 child: TextFormField(
                   controller: _expiryController,
+                  style: TextStyle(fontSize: 14),
                   decoration: InputDecoration(
                     labelText: 'Expiry Date',
+                    labelStyle: TextStyle(fontSize: 12),
                     hintText: 'MM/YY',
-                    prefixIcon: Icon(Icons.calendar_today),
+                    hintStyle: TextStyle(fontSize: 12),
+                    prefixIcon: Icon(
+                      Icons.calendar_today,
+                      size: 18,
+                      color: primaryColor,
+                    ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: primaryColor, width: 2),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
                     ),
                   ),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.datetime,
                   inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(4),
+                    LengthLimitingTextInputFormatter(5),
                     _ExpiryDateFormatter(),
                   ],
                   validator: (value) {
@@ -408,18 +432,29 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                 ),
               ),
 
-              const SizedBox(width: 16),
+              const SizedBox(width: 14),
 
               // CVV
               Expanded(
                 child: TextFormField(
                   controller: _cvvController,
+                  style: TextStyle(fontSize: 14),
                   decoration: InputDecoration(
                     labelText: 'CVV',
+                    labelStyle: TextStyle(fontSize: 12),
                     hintText: '123',
-                    prefixIcon: Icon(Icons.lock),
+                    hintStyle: TextStyle(fontSize: 12),
+                    prefixIcon: Icon(Icons.lock, size: 18, color: primaryColor),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: primaryColor, width: 2),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
                     ),
                   ),
                   keyboardType: TextInputType.number,
@@ -445,16 +480,16 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
     );
   }
 
-  Widget _buildBillingInformation(bool isDark) {
+  Widget _buildBillingInformation(bool isDark, Color primaryColor) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[800] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
@@ -465,22 +500,33 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
           Text(
             'Billing Information',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
           // Cardholder Name
           TextFormField(
             controller: _nameController,
+            style: TextStyle(fontSize: 14),
             decoration: InputDecoration(
               labelText: 'Cardholder Name',
+              labelStyle: TextStyle(fontSize: 12),
               hintText: 'John Doe',
-              prefixIcon: Icon(Icons.person),
+              hintStyle: TextStyle(fontSize: 12),
+              prefixIcon: Icon(Icons.person, size: 18, color: primaryColor),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: primaryColor, width: 2),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
               ),
             ),
             validator: (value) {
@@ -491,17 +537,28 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             },
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
           // Email
           TextFormField(
             controller: _emailController,
+            style: TextStyle(fontSize: 14),
             decoration: InputDecoration(
               labelText: 'Email Address',
+              labelStyle: TextStyle(fontSize: 12),
               hintText: 'john@example.com',
-              prefixIcon: Icon(Icons.email),
+              hintStyle: TextStyle(fontSize: 12),
+              prefixIcon: Icon(Icons.email, size: 18, color: primaryColor),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: primaryColor, width: 2),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
               ),
             ),
             keyboardType: TextInputType.emailAddress,
@@ -520,19 +577,19 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
     );
   }
 
-  Widget _buildOrderSummary(double price, bool isDark) {
+  Widget _buildOrderSummary(double price, bool isDark, Color primaryColor) {
     final tax = price * 0.1; // 10% tax
     final total = price + tax;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[800] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
@@ -543,12 +600,12 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
           Text(
             'Order Summary',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -556,14 +613,14 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
               Text(
                 'Course Price',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   color: isDark ? Colors.grey[300] : Colors.grey[700],
                 ),
               ),
               Text(
                 '\$${price.toStringAsFixed(2)}',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: isDark ? Colors.white : Colors.black,
                 ),
@@ -579,14 +636,14 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
               Text(
                 'Tax (10%)',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   color: isDark ? Colors.grey[300] : Colors.grey[700],
                 ),
               ),
               Text(
                 '\$${tax.toStringAsFixed(2)}',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: isDark ? Colors.white : Colors.black,
                 ),
@@ -594,9 +651,9 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             ],
           ),
 
-          const SizedBox(height: 16),
-          Divider(color: Colors.grey[400]),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
+          Divider(color: primaryColor.withOpacity(0.3)),
+          const SizedBox(height: 12),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -604,17 +661,17 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
               Text(
                 'Total',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: primaryColor,
                 ),
               ),
               Text(
                 '\$${total.toStringAsFixed(2)}',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.green,
+                  color: primaryColor,
                 ),
               ),
             ],
@@ -624,7 +681,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
     );
   }
 
-  Widget _buildPaymentButton(double price, bool isDark) {
+  Widget _buildPaymentButton(double price, bool isDark, Color primaryColor) {
     final tax = price * 0.1;
     final total = price + tax;
 
@@ -634,8 +691,8 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
         color: isDark ? Colors.grey[900] : Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
             offset: const Offset(0, -2),
           ),
         ],
@@ -646,21 +703,21 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
           child: ElevatedButton(
             onPressed: _isProcessing ? null : _processPayment,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
+              backgroundColor: primaryColor,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
-              elevation: 4,
+              elevation: 3,
             ),
             child: _isProcessing
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: 20,
-                        height: 20,
+                        width: 18,
+                        height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
@@ -668,13 +725,13 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Text('Processing...'),
+                      const SizedBox(width: 10),
+                      Text('Processing...', style: TextStyle(fontSize: 15)),
                     ],
                   )
                 : Text(
                     'Pay \$${total.toStringAsFixed(2)}',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
           ),
         ),
@@ -686,10 +743,11 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
     if (_selectedPaymentMethod == 'paypal') {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('PayPal integration coming soon!'),
-          backgroundColor: Colors.orange,
+          content: Text('Processing PayPal payment...'),
+          backgroundColor: Color(0xFF7A54FF),
         ),
       );
+      // Add PayPal payment processing logic here
       return;
     }
 
@@ -800,15 +858,25 @@ class _ExpiryDateFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    final text = newValue.text;
+    // Remove any non-digit characters
+    final digitsOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
 
-    if (text.length == 2 && oldValue.text.length == 1) {
-      return TextEditingValue(
-        text: '$text/',
-        selection: TextSelection.collapsed(offset: 3),
-      );
+    // Don't allow more than 4 digits
+    if (digitsOnly.length > 4) {
+      return oldValue;
     }
 
-    return newValue;
+    String formattedText = digitsOnly;
+
+    // Add slash after 2 digits
+    if (digitsOnly.length >= 2) {
+      formattedText =
+          digitsOnly.substring(0, 2) + '/' + digitsOnly.substring(2);
+    }
+
+    return TextEditingValue(
+      text: formattedText,
+      selection: TextSelection.collapsed(offset: formattedText.length),
+    );
   }
 }
