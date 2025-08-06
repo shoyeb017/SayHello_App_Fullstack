@@ -100,6 +100,9 @@ Table courses:
   status (upcoming,active,expired)
   created_at
 
+
+  the size and time showing not actual video in here. use metadata for this like learner record class. and dont need views option. 
+
 Table course_enrollments:
   enrollment_id  
   course_id      

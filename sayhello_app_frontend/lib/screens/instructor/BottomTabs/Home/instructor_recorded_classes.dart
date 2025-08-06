@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'record_class_video_player.dart';
 
 class InstructorRecordedClassesTab extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -21,7 +20,8 @@ class _InstructorRecordedClassesTabState
       'description':
           'Learn essential greetings and introductions in English with native pronunciation',
       'duration': '45:30',
-      'uploadDate': '2025-07-20',
+      'uploadDate': '2025-08-05',
+      'uploadTime': '14:30',
       'views': 156,
       'fileSize': '485 MB',
       'format': 'MP4',
@@ -36,7 +36,8 @@ class _InstructorRecordedClassesTabState
       'description':
           'Step-by-step guide to writing hiragana characters correctly',
       'duration': '38:15',
-      'uploadDate': '2025-07-18',
+      'uploadDate': '2025-08-04',
+      'uploadTime': '10:15',
       'views': 203,
       'fileSize': '421 MB',
       'format': 'MP4',
@@ -51,7 +52,8 @@ class _InstructorRecordedClassesTabState
       'description':
           'Master the Spanish rolled R sound with practice exercises',
       'duration': '52:40',
-      'uploadDate': '2025-07-22',
+      'uploadDate': '2025-08-03',
+      'uploadTime': '16:45',
       'views': 89,
       'fileSize': '567 MB',
       'format': 'MP4',
@@ -65,27 +67,35 @@ class _InstructorRecordedClassesTabState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = Color(0xFF7A54FF);
+    final textColor = isDark ? Colors.white : Colors.black;
+    final subTextColor = isDark ? Colors.grey[400] : Colors.grey[600];
 
     return Column(
       children: [
-        // Upload Video Button
-        Padding(
-          padding: const EdgeInsets.all(16),
+        // Upload Video Button - Compact Design
+        Container(
+          margin: const EdgeInsets.all(12),
           child: SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: _showUploadDialog,
-              icon: const Icon(Icons.upload, color: Colors.white),
+              icon: const Icon(Icons.video_call, color: Colors.white, size: 18),
               label: const Text(
                 'Upload New Video',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7A54FF),
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                backgroundColor: primaryColor,
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                elevation: 2,
               ),
             ),
           ),
@@ -94,13 +104,20 @@ class _InstructorRecordedClassesTabState
         // Recordings List
         Expanded(
           child: _recordings.isEmpty
-              ? _buildEmptyState(isDark)
+              ? _buildEmptyState(isDark, primaryColor)
               : ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: _recordings.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  itemCount: _getSortedRecordings().length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
-                    return _buildRecordingCard(_recordings[index], isDark);
+                    final sortedRecordings = _getSortedRecordings();
+                    return _buildCompactRecordingCard(
+                      sortedRecordings[index],
+                      isDark,
+                      primaryColor,
+                      textColor,
+                      subTextColor,
+                    );
                   },
                 ),
         ),
@@ -108,9 +125,56 @@ class _InstructorRecordedClassesTabState
     );
   }
 
-  Widget _buildRecordingCard(Map<String, dynamic> recording, bool isDark) {
+  // Sort recordings by date and time (newest first)
+  List<Map<String, dynamic>> _getSortedRecordings() {
+    List<Map<String, dynamic>> sortedRecordings = List.from(_recordings);
+    
+    sortedRecordings.sort((a, b) {
+      try {
+        DateTime dateA = DateTime.parse(a['uploadDate'] ?? '1970-01-01');
+        DateTime dateB = DateTime.parse(b['uploadDate'] ?? '1970-01-01');
+        
+        if (dateA.isAtSameMomentAs(dateB)) {
+          TimeOfDay timeA = _parseTime(a['uploadTime'] ?? '00:00');
+          TimeOfDay timeB = _parseTime(b['uploadTime'] ?? '00:00');
+          
+          int minutesA = timeA.hour * 60 + timeA.minute;
+          int minutesB = timeB.hour * 60 + timeB.minute;
+          
+          return minutesB.compareTo(minutesA);
+        }
+        
+        return dateB.compareTo(dateA);
+      } catch (e) {
+        return 0;
+      }
+    });
+    
+    return sortedRecordings;
+  }
+
+  TimeOfDay _parseTime(String timeString) {
+    try {
+      List<String> parts = timeString.split(':');
+      if (parts.length >= 2) {
+        int hour = int.parse(parts[0]);
+        int minute = int.parse(parts[1]);
+        return TimeOfDay(hour: hour, minute: minute);
+      }
+    } catch (e) {
+      // Return default time if parsing fails
+    }
+    return const TimeOfDay(hour: 0, minute: 0);
+  }
+
+  Widget _buildCompactRecordingCard(
+    Map<String, dynamic> recording,
+    bool isDark,
+    Color primaryColor,
+    Color textColor,
+    Color? subTextColor,
+  ) {
     final status = recording['status'] as String;
-    final statusColor = _getStatusColor(status);
 
     return Container(
       decoration: BoxDecoration(
@@ -119,20 +183,20 @@ class _InstructorRecordedClassesTabState
         boxShadow: [
           BoxShadow(
             color: isDark ? Colors.black26 : Colors.grey[200]!,
-            blurRadius: 6,
-            offset: const Offset(0, 2),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          // Video Thumbnail - Make it clickable
+          // Compact Video Thumbnail
           GestureDetector(
             onTap: () => status == 'published' ? _playVideo(recording) : null,
             child: Container(
-              width: 80,
-              height: 60,
+              width: 60,
+              height: 45,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 color: Colors.grey[300],
@@ -143,8 +207,8 @@ class _InstructorRecordedClassesTabState
                   children: [
                     Image.network(
                       recording['thumbnail'],
-                      width: 80,
-                      height: 60,
+                      width: 60,
+                      height: 45,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
@@ -152,6 +216,7 @@ class _InstructorRecordedClassesTabState
                           child: const Icon(
                             Icons.video_library,
                             color: Colors.white,
+                            size: 20,
                           ),
                         );
                       },
@@ -161,21 +226,7 @@ class _InstructorRecordedClassesTabState
                         child: Icon(
                           Icons.play_circle_fill,
                           color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                    if (status == 'processing')
-                      Container(
-                        color: Colors.black54,
-                        child: const Center(
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          ),
+                          size: 24,
                         ),
                       ),
                   ],
@@ -184,46 +235,22 @@ class _InstructorRecordedClassesTabState
             ),
           ),
 
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
 
-          // Video Details
+          // Video Details - Compact
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        recording['title'],
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        status.toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                          color: statusColor,
-                        ),
-                      ),
-                    ),
-                  ],
+                Text(
+                  recording['title'],
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: textColor,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
 
                 const SizedBox(height: 4),
@@ -231,131 +258,107 @@ class _InstructorRecordedClassesTabState
                 Text(
                   recording['description'],
                   style: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    fontSize: 11,
+                    color: subTextColor,
                   ),
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
 
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
 
                 Row(
                   children: [
-                    Icon(
-                      Icons.access_time,
-                      size: 12,
-                      color: isDark ? Colors.grey[500] : Colors.grey[500],
-                    ),
-                    const SizedBox(width: 4),
+                    Icon(Icons.access_time, size: 11, color: subTextColor),
+                    const SizedBox(width: 3),
                     Text(
                       recording['duration'],
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: isDark ? Colors.grey[500] : Colors.grey[500],
-                      ),
+                      style: TextStyle(fontSize: 10, color: subTextColor),
                     ),
                     const SizedBox(width: 12),
-                    Icon(
-                      Icons.visibility,
-                      size: 12,
-                      color: isDark ? Colors.grey[500] : Colors.grey[500],
-                    ),
-                    const SizedBox(width: 4),
+                    Icon(Icons.visibility, size: 11, color: subTextColor),
+                    const SizedBox(width: 3),
                     Text(
-                      '${recording['views']} views',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: isDark ? Colors.grey[500] : Colors.grey[500],
-                      ),
+                      '${recording['views']}',
+                      style: TextStyle(fontSize: 10, color: subTextColor),
                     ),
-                  ],
-                ),
-
-                const SizedBox(height: 8),
-
-                Row(
-                  children: [
-                    if (status == 'published') ...[
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () => _editRecording(recording),
-                          icon: const Icon(Icons.edit, size: 14),
-                          label: const Text(
-                            'Edit',
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFF7A54FF),
-                            side: const BorderSide(color: Color(0xFF7A54FF)),
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            minimumSize: const Size(0, 28),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () => _viewAnalytics(recording),
-                          icon: const Icon(
-                            Icons.analytics,
-                            size: 14,
-                            color: Colors.white,
-                          ),
-                          label: const Text(
-                            'Analytics',
-                            style: TextStyle(fontSize: 12, color: Colors.white),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF7A54FF),
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            minimumSize: const Size(0, 28),
-                          ),
-                        ),
-                      ),
-                    ] else if (status == 'processing') ...[
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            'Processing video...',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isDark
-                                  ? Colors.grey[400]
-                                  : Colors.grey[600],
-                              fontStyle: FontStyle.italic,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ],
+                    const Spacer(),
+                    Text(
+                      recording['uploadDate'],
+                      style: TextStyle(fontSize: 10, color: subTextColor),
+                    ),
                   ],
                 ),
               ],
             ),
+          ),
+
+          const SizedBox(width: 8),
+
+          // Action Buttons - Compact
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 70,
+                height: 28,
+                child: ElevatedButton(
+                  onPressed: () => _editRecording(recording),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  child: const Text(
+                    'Edit',
+                    style: TextStyle(fontSize: 11, color: Colors.white),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 4),
+              SizedBox(
+                width: 70,
+                height: 28,
+                child: OutlinedButton(
+                  onPressed: () => _deleteRecording(recording),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    side: const BorderSide(color: Colors.red, width: 1),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  child: const Text(
+                    'Delete',
+                    style: TextStyle(fontSize: 11),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildEmptyState(bool isDark) {
+  Widget _buildEmptyState(bool isDark, Color primaryColor) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.video_library_outlined,
-            size: 80,
+            size: 64,
             color: isDark ? Colors.grey[600] : Colors.grey[400],
           ),
           const SizedBox(height: 16),
           Text(
-            'No recorded classes yet',
+            'No recorded videos yet',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.w500,
               color: isDark ? Colors.grey[400] : Colors.grey[600],
             ),
@@ -364,24 +367,8 @@ class _InstructorRecordedClassesTabState
           Text(
             'Upload your first recorded class',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               color: isDark ? Colors.grey[500] : Colors.grey[500],
-            ),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: _showUploadDialog,
-            icon: const Icon(Icons.upload, color: Colors.white),
-            label: const Text(
-              'Upload Video',
-              style: TextStyle(color: Colors.white),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF7A54FF),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
             ),
           ),
         ],
@@ -389,74 +376,55 @@ class _InstructorRecordedClassesTabState
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'published':
-        return Colors.green;
-      case 'processing':
-        return Colors.orange;
-      case 'draft':
-        return Colors.blue;
-      case 'failed':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  void _playVideo(Map<String, dynamic> recording) async {
-    final videoUrl = recording['videoUrl'];
-
-    try {
-      final Uri url = Uri.parse(videoUrl);
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-
-        // Show success message
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Opening "${recording['title']}" in video player...',
-              ),
-              backgroundColor: const Color(0xFF7A54FF),
-              duration: const Duration(seconds: 2),
+  void _playVideo(Map<String, dynamic> recording) {
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Color(0xFF7A54FF),
+              borderRadius: BorderRadius.circular(12),
             ),
-          );
-        }
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Cannot open video: $videoUrl'),
-              backgroundColor: Colors.red,
-              action: SnackBarAction(
-                label: 'Copy URL',
-                textColor: Colors.white,
-                onPressed: () {
-                  // In a real app, copy to clipboard
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('URL copied to clipboard!'),
-                      duration: Duration(seconds: 1),
-                    ),
-                  );
-                },
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Loading Video Player...',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error opening video: $e'),
-            backgroundColor: Colors.red,
           ),
         );
-      }
-    }
+      },
+    );
+
+    // Close loading dialog and open video player
+    Future.delayed(const Duration(milliseconds: 800), () {
+      Navigator.of(context).pop(); // Close loading dialog
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => InstructorRecordClassVideoPlayer(
+            videoUrl: recording['videoUrl'],
+            title: recording['title'],
+            thumbnail: recording['thumbnail'] ?? '',
+            duration: recording['duration'],
+          ),
+        ),
+      );
+    });
   }
 
   void _editRecording(Map<String, dynamic> recording) {
@@ -472,8 +440,11 @@ class _InstructorRecordedClassesTabState
         return AlertDialog(
           backgroundColor: isDark ? Colors.grey[850] : Colors.white,
           title: Text(
-            'Edit Video',
-            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+            'Edit Video Details',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+              fontSize: 18,
+            ),
           ),
           content: SizedBox(
             width: double.maxFinite,
@@ -489,12 +460,6 @@ class _InstructorRecordedClassesTabState
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: isDark ? Colors.grey[600]! : Colors.grey[300]!,
-                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -515,38 +480,12 @@ class _InstructorRecordedClassesTabState
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: isDark ? Colors.grey[600]! : Colors.grey[300]!,
-                      ),
-                    ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(color: Color(0xFF7A54FF)),
                     ),
                   ),
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      size: 16,
-                      color: isDark ? Colors.grey[500] : Colors.grey[500],
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Views: ${recording['views']} • Uploaded: ${recording['uploadDate']}',
-                        style: TextStyle(
-                          color: isDark ? Colors.grey[500] : Colors.grey[500],
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -569,15 +508,15 @@ class _InstructorRecordedClassesTabState
                   );
                   if (index != -1) {
                     _recordings[index]['title'] = titleController.text;
-                    _recordings[index]['description'] =
-                        descriptionController.text;
+                    _recordings[index]['description'] = descriptionController.text;
                   }
                 });
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Video updated successfully!'),
+                    content: Text('✅ Video updated successfully!'),
                     backgroundColor: Colors.green,
+                    duration: Duration(seconds: 2),
                   ),
                 );
               },
@@ -585,7 +524,7 @@ class _InstructorRecordedClassesTabState
                 backgroundColor: const Color(0xFF7A54FF),
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Save Changes'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -593,199 +532,103 @@ class _InstructorRecordedClassesTabState
     );
   }
 
-  void _viewAnalytics(Map<String, dynamic> recording) {
+  void _deleteRecording(Map<String, dynamic> recording) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
+    
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
+        return AlertDialog(
           backgroundColor: isDark ? Colors.grey[850] : Colors.white,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.9,
-            height: MediaQuery.of(context).size.height * 0.7,
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          title: Text(
+            'Delete Video',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+              fontSize: 18,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Are you sure you want to delete this video?',
+                style: TextStyle(
+                  color: isDark ? Colors.grey[300] : Colors.grey[700],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.grey[800] : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Text(
-                        'Video Analytics',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
+                    Text(
+                      recording['title'],
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black,
                       ),
                     ),
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: Icon(
-                        Icons.close,
+                    const SizedBox(height: 4),
+                    Text(
+                      '${recording['views']} views • ${recording['uploadDate']}',
+                      style: TextStyle(
+                        fontSize: 12,
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
                       ),
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 16),
-
-                // Video Title
-                Text(
-                  recording['title'],
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.grey[300] : Colors.grey[700],
-                  ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'This action cannot be undone.',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.red,
+                  fontWeight: FontWeight.w500,
                 ),
-
-                const SizedBox(height: 24),
-
-                // Analytics Cards
-                Expanded(
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 1.2,
-                    children: [
-                      _buildAnalyticsCard(
-                        'Total Views',
-                        '${recording['views']}',
-                        Icons.visibility,
-                        Colors.blue,
-                        isDark,
-                      ),
-                      _buildAnalyticsCard(
-                        'Watch Time',
-                        recording['duration'],
-                        Icons.access_time,
-                        Colors.green,
-                        isDark,
-                      ),
-                      _buildAnalyticsCard(
-                        'Completion Rate',
-                        '78%',
-                        Icons.check_circle,
-                        Colors.orange,
-                        isDark,
-                      ),
-                      _buildAnalyticsCard(
-                        'Student Rating',
-                        '4.8/5.0',
-                        Icons.star,
-                        Colors.amber,
-                        isDark,
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // Additional Info
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.grey[800] : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Video Details',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Upload Date: ${recording['uploadDate']}',
-                              style: TextStyle(
-                                color: isDark
-                                    ? Colors.grey[400]
-                                    : Colors.grey[600],
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            'Size: ${recording['fileSize']}',
-                            style: TextStyle(
-                              color: isDark
-                                  ? Colors.grey[400]
-                                  : Colors.grey[600],
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Format: ${recording['format']} • Status: ${recording['status'].toString().toUpperCase()}',
-                        style: TextStyle(
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _recordings.removeWhere((r) => r['id'] == recording['id']);
+                });
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('🗑️ "${recording['title']}" deleted'),
+                    backgroundColor: Colors.red,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Delete'),
+            ),
+          ],
         );
       },
-    );
-  }
-
-  Widget _buildAnalyticsCard(
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-    bool isDark,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[800] : Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2), width: 1),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 32),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 12,
-              color: isDark ? Colors.grey[400] : Colors.grey[600],
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
     );
   }
 
@@ -804,7 +647,10 @@ class _InstructorRecordedClassesTabState
               backgroundColor: isDark ? Colors.grey[850] : Colors.white,
               title: Text(
                 'Upload New Video',
-                style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black,
+                  fontSize: 18,
+                ),
               ),
               content: SizedBox(
                 width: double.maxFinite,
@@ -812,58 +658,64 @@ class _InstructorRecordedClassesTabState
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // File Selection
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: isDark ? Colors.grey[600]! : Colors.grey[300]!,
-                          style: BorderStyle.solid,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.cloud_upload,
-                            size: 40,
+                    // File Selection Area
+                    GestureDetector(
+                      onTap: () async {
+                        // Simulate file picker
+                        setState(() {
+                          selectedFile = 'recorded_lesson_${DateTime.now().millisecondsSinceEpoch}.mp4';
+                        });
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('📁 File selected: $selectedFile'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          border: Border.all(
                             color: selectedFile.isEmpty
-                                ? (isDark ? Colors.grey[600] : Colors.grey[400])
-                                : const Color(0xFF7A54FF),
+                                ? (isDark ? Colors.grey[600]! : Colors.grey[300]!)
+                                : Color(0xFF7A54FF),
+                            width: 2,
+                            style: BorderStyle.solid,
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            selectedFile.isEmpty
-                                ? 'Click to select video file'
-                                : selectedFile,
-                            style: TextStyle(
+                          borderRadius: BorderRadius.circular(8),
+                          color: selectedFile.isEmpty
+                              ? null
+                              : Color(0xFF7A54FF).withOpacity(0.1),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              selectedFile.isEmpty ? Icons.upload_file : Icons.check_circle,
+                              size: 32,
                               color: selectedFile.isEmpty
-                                  ? (isDark
-                                        ? Colors.grey[500]
-                                        : Colors.grey[600])
-                                  : (isDark ? Colors.white : Colors.black),
-                              fontWeight: selectedFile.isEmpty
-                                  ? FontWeight.normal
-                                  : FontWeight.w500,
+                                  ? (isDark ? Colors.grey[600] : Colors.grey[400])
+                                  : Color(0xFF7A54FF),
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 8),
-                          ElevatedButton(
-                            onPressed: () {
-                              // Simulate file selection
-                              setState(() {
-                                selectedFile = 'language_lesson_video.mp4';
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF7A54FF),
-                              foregroundColor: Colors.white,
+                            const SizedBox(height: 8),
+                            Text(
+                              selectedFile.isEmpty
+                                  ? 'Tap to select video file from storage'
+                                  : 'File selected: $selectedFile',
+                              style: TextStyle(
+                                color: selectedFile.isEmpty
+                                    ? (isDark ? Colors.grey[500] : Colors.grey[600])
+                                    : (isDark ? Colors.white : Colors.black),
+                                fontSize: 12,
+                                fontWeight: selectedFile.isEmpty
+                                    ? FontWeight.normal
+                                    : FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            child: const Text('Select File'),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
 
@@ -873,39 +725,27 @@ class _InstructorRecordedClassesTabState
                     TextField(
                       controller: titleController,
                       decoration: InputDecoration(
-                        labelText: 'Video Title',
+                        labelText: 'Video Title *',
                         labelStyle: TextStyle(
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: isDark
-                                ? Colors.grey[600]!
-                                : Colors.grey[300]!,
-                          ),
-                        ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF7A54FF),
-                          ),
+                          borderSide: const BorderSide(color: Color(0xFF7A54FF)),
                         ),
                       ),
-                      style: TextStyle(
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
+                      style: TextStyle(color: isDark ? Colors.white : Colors.black),
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
 
                     // Description Input
                     TextField(
                       controller: descriptionController,
-                      maxLines: 3,
+                      maxLines: 2,
                       decoration: InputDecoration(
                         labelText: 'Description',
                         labelStyle: TextStyle(
@@ -914,24 +754,12 @@ class _InstructorRecordedClassesTabState
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: isDark
-                                ? Colors.grey[600]!
-                                : Colors.grey[300]!,
-                          ),
-                        ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF7A54FF),
-                          ),
+                          borderSide: const BorderSide(color: Color(0xFF7A54FF)),
                         ),
                       ),
-                      style: TextStyle(
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
+                      style: TextStyle(color: isDark ? Colors.white : Colors.black),
                     ),
                   ],
                 ),
@@ -947,8 +775,7 @@ class _InstructorRecordedClassesTabState
                   ),
                 ),
                 ElevatedButton(
-                  onPressed:
-                      selectedFile.isNotEmpty && titleController.text.isNotEmpty
+                  onPressed: selectedFile.isNotEmpty && titleController.text.isNotEmpty
                       ? () {
                           _uploadVideo(
                             selectedFile,
@@ -973,7 +800,6 @@ class _InstructorRecordedClassesTabState
   }
 
   void _uploadVideo(String fileName, String title, String description) {
-    // Simulate video upload process
     final List<String> sampleVideoUrls = [
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
@@ -981,54 +807,50 @@ class _InstructorRecordedClassesTabState
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
     ];
 
+    final now = DateTime.now();
     final newRecording = {
-      'id': 'recording_${DateTime.now().millisecondsSinceEpoch}',
+      'id': 'recording_${now.millisecondsSinceEpoch}',
       'title': title,
-      'description': description.isNotEmpty
-          ? description
-          : 'Language learning video content',
+      'description': description.isNotEmpty ? description : 'Recorded class video',
       'duration': '00:00',
-      'uploadDate': DateTime.now().toString().split(' ')[0],
+      'uploadDate': now.toString().split(' ')[0],
+      'uploadTime': '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
       'views': 0,
       'fileSize': '0 MB',
       'format': 'MP4',
-      'thumbnail':
-          'https://picsum.photos/300/200?random=${_recordings.length + 20}',
+      'thumbnail': 'https://picsum.photos/300/200?random=${_recordings.length + 20}',
       'videoUrl': sampleVideoUrls[_recordings.length % sampleVideoUrls.length],
       'status': 'processing',
     };
 
     setState(() {
-      _recordings.insert(0, newRecording);
+      _recordings.insert(0, newRecording); // Add to top (newest first)
     });
 
-    // Show upload progress
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Uploading "$title"...'),
+        content: Text('📤 Uploading "$title"...'),
         duration: const Duration(seconds: 2),
       ),
     );
 
-    // Simulate processing completion after 3 seconds
+    // Simulate processing completion
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         setState(() {
-          final index = _recordings.indexWhere(
-            (r) => r['id'] == newRecording['id'],
-          );
+          final index = _recordings.indexWhere((r) => r['id'] == newRecording['id']);
           if (index != -1) {
             _recordings[index]['status'] = 'published';
-            _recordings[index]['duration'] =
-                '${(20 + (index * 5))}:${(30 + (index * 10)).toString().padLeft(2, '0')}';
-            _recordings[index]['fileSize'] = '${300 + (index * 50)} MB';
+            _recordings[index]['duration'] = '${(15 + (index * 3))}:${(30 + (index * 5)).toString().padLeft(2, '0')}';
+            _recordings[index]['fileSize'] = '${200 + (index * 30)} MB';
           }
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('"$title" has been published successfully!'),
+            content: Text('✅ "$title" published successfully!'),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ),
         );
       }
