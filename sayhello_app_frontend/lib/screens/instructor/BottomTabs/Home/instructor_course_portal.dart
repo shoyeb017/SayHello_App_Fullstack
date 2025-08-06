@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../../providers/theme_provider.dart';
 
 // Import instructor-specific tabs
 import 'instructor_course_details.dart';
@@ -22,17 +20,18 @@ class InstructorCoursePortalPage extends StatefulWidget {
 class _InstructorCoursePortalPageState
     extends State<InstructorCoursePortalPage> {
   final PageController _pageController = PageController();
+  final ScrollController _tabScrollController = ScrollController();
   int _selectedIndex = 0;
   bool _showMiniSidebar = false;
   bool _showExpandedSidebar = false;
 
-  final List<_TabItem> _tabs = const [
-    _TabItem(icon: Icons.info_outline, label: 'Course Details'),
-    _TabItem(icon: Icons.video_call, label: 'Online Sessions'),
-    _TabItem(icon: Icons.ondemand_video, label: 'Recorded Classes'),
-    _TabItem(icon: Icons.description, label: 'Study Materials'),
-    _TabItem(icon: Icons.chat, label: 'Group Chat'),
-    _TabItem(icon: Icons.analytics, label: 'Student Performance'),
+  List<_TabItem> get _tabs => [
+    const _TabItem(icon: Icons.info_outline, label: 'Course Details'),
+    const _TabItem(icon: Icons.video_call, label: 'Online Sessions'),
+    const _TabItem(icon: Icons.ondemand_video, label: 'Recorded Classes'),
+    const _TabItem(icon: Icons.description, label: 'Study Materials'),
+    const _TabItem(icon: Icons.chat, label: 'Group Chat'),
+    const _TabItem(icon: Icons.analytics, label: 'Student Performance'),
   ];
 
   void _onTabTap(int index) {
@@ -44,118 +43,205 @@ class _InstructorCoursePortalPageState
         curve: Curves.easeInOut,
       );
     });
+    _centerSelectedTab(index);
   }
 
   void _onPageChanged(int index) {
     setState(() {
       _selectedIndex = index;
     });
+    _centerSelectedTab(index);
+  }
+
+  void _centerSelectedTab(int index) {
+    // Calculate the scroll position to center the selected tab
+    const double tabWidth = 100.0; // Approximate tab width including margin
+    final double targetScrollOffset =
+        (index * tabWidth) -
+        (MediaQuery.of(context).size.width / 2) +
+        (tabWidth / 2);
+
+    _tabScrollController.animateTo(
+      targetScrollOffset.clamp(
+        0.0,
+        _tabScrollController.position.maxScrollExtent,
+      ),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _tabScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = widget.course['title'] ?? 'Course';
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        titleSpacing: 16,
-        centerTitle: false,
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            setState(() {
-              if (_showExpandedSidebar) {
-                _showExpandedSidebar = false;
-                _showMiniSidebar = true;
-              } else if (_showMiniSidebar) {
-                _showMiniSidebar = false;
-                _showExpandedSidebar = true;
-              } else {
-                _showMiniSidebar = true;
-              }
-            });
-          },
-          tooltip: 'Navigation Menu',
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Instructor Dashboard',
-              style: TextStyle(
-                fontSize: 12,
-                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(48),
+        child: AppBar(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          titleSpacing: 16,
+          centerTitle: false,
+          leading: IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              setState(() {
+                if (_showExpandedSidebar) {
+                  _showExpandedSidebar = false;
+                  _showMiniSidebar = true;
+                } else if (_showMiniSidebar) {
+                  _showMiniSidebar = false;
+                  _showExpandedSidebar = true;
+                } else {
+                  _showMiniSidebar = true;
+                }
+              });
+            },
+            tooltip: 'Navigation Menu',
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
+              Text(
+                'Instructor Portal',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            // Settings button
+            IconButton(
+              icon: Icon(
+                Icons.settings,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+              onPressed: () => _showInstructorSettings(),
+              tooltip: 'Instructor Settings',
+            ),
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => Navigator.of(context).pop(),
+              tooltip: 'Close Course',
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              themeProvider.themeMode == ThemeMode.dark
-                  ? Icons.light_mode
-                  : Icons.dark_mode,
-            ),
-            onPressed: () {
-              bool toDark = themeProvider.themeMode != ThemeMode.dark;
-              themeProvider.toggleTheme(toDark);
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            tooltip: 'Back',
-          ),
-        ],
       ),
       body: Stack(
         children: [
-          // Main Content Area - Full Width
-          PageView(
-            controller: _pageController,
-            onPageChanged: _onPageChanged,
-            children: [
-              InstructorCourseDetailsTab(course: widget.course),
-              InstructorOnlineSessionTab(course: widget.course),
-              InstructorRecordedClassesTab(course: widget.course),
-              InstructorStudyMaterialsTab(course: widget.course),
-              InstructorGroupChatTab(course: widget.course),
-              InstructorStudentPerformanceTab(course: widget.course),
-            ],
+          // Horizontal Sliding Tabs
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 32,
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                border: Border(
+                  bottom: BorderSide(
+                    color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                    width: 0.5,
+                  ),
+                ),
+              ),
+              child: ListView.builder(
+                controller: _tabScrollController,
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: _tabs.length,
+                itemBuilder: (context, index) {
+                  final tab = _tabs[index];
+                  final isSelected = index == _selectedIndex;
+
+                  return GestureDetector(
+                    onTap: () => _onTabTap(index),
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 24),
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              tab.label,
+                              style: TextStyle(
+                                fontSize: isSelected ? 11 : 10,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
+                                color: isSelected
+                                    ? const Color(0xFF7A54FF)
+                                    : (isDark
+                                          ? Colors.grey[400]
+                                          : Colors.grey[600]),
+                                height: 1.0,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          // Underline indicator
+                          Container(
+                            height: 2,
+                            width: isSelected ? 30 : 0,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF7A54FF),
+                              borderRadius: BorderRadius.circular(1),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
 
-          // Overlay Background (when sidebar is open)
-          if (_showMiniSidebar || _showExpandedSidebar)
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _showMiniSidebar = false;
-                  _showExpandedSidebar = false;
-                });
-              },
-              child: Container(color: Colors.black.withOpacity(0.3)),
+          // Main Content
+          Positioned(
+            top: 32,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: _onPageChanged,
+              children: [
+                InstructorCourseDetailsTab(course: widget.course),
+                InstructorOnlineSessionTab(course: widget.course),
+                InstructorRecordedClassesTab(course: widget.course),
+                InstructorStudyMaterialsTab(course: widget.course),
+                InstructorGroupChatTab(course: widget.course),
+                InstructorStudentPerformanceTab(course: widget.course),
+              ],
             ),
+          ),
 
           // Mini Sidebar Overlay
           if (_showMiniSidebar)
@@ -175,18 +261,19 @@ class _InstructorCoursePortalPageState
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(5, 0),
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 20,
+                      offset: const Offset(10, 0),
                     ),
                   ],
                 ),
                 child: Column(
                   children: [
-                    // Header
+                    // Course Icon Header with enhanced design
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(16),
+                      height: 80,
+                      margin: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
@@ -196,9 +283,7 @@ class _InstructorCoursePortalPageState
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
-                        borderRadius: const BorderRadius.only(
-                          topRight: Radius.circular(20),
-                        ),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Icon(
                         Icons.school,
@@ -289,7 +374,7 @@ class _InstructorCoursePortalPageState
                 ),
                 child: Column(
                   children: [
-                    // Header
+                    // Enhanced Header with course stats
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
@@ -309,48 +394,76 @@ class _InstructorCoursePortalPageState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Course Portal',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.school,
+                                color: Colors.white,
+                                size: 28,
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _showExpandedSidebar = false;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            title,
+                            style: const TextStyle(
                               color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            widget.course['title'] ?? 'Course Title',
+                            'Instructor Portal',
                             style: TextStyle(
+                              color: Colors.white70,
                               fontSize: 14,
-                              color: Colors.white.withOpacity(0.9),
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${widget.course['enrolledStudents'] ?? 0} Students',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white.withOpacity(0.8),
-                            ),
+                          const SizedBox(height: 8),
+                          // Course stats
+                          Row(
+                            children: [
+                              _buildStatItem(
+                                '${widget.course['enrolledStudents'] ?? 0}',
+                                'Students',
+                              ),
+                              const SizedBox(width: 16),
+                              _buildStatItem(
+                                '${widget.course['completionRate'] ?? 0}%',
+                                'Completion',
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
 
-                    // Navigation Items
+                    // Navigation Items with enhanced styling
                     Expanded(
                       child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.all(16),
                         itemCount: _tabs.length,
                         itemBuilder: (context, index) {
                           final tab = _tabs[index];
                           final isSelected = index == _selectedIndex;
 
                           return Container(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 4,
-                            ),
+                            margin: const EdgeInsets.only(bottom: 8),
                             child: Material(
                               color: Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
@@ -363,10 +476,7 @@ class _InstructorCoursePortalPageState
                                   });
                                 },
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 16,
-                                  ),
+                                  padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
                                     color: isSelected
                                         ? const Color(
@@ -444,43 +554,26 @@ class _InstructorCoursePortalPageState
                         },
                       ),
                     ),
-
-                    // Quick Actions
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          _buildQuickActionButton(
-                            'Course Settings',
-                            Icons.settings,
-                            isDark,
-                            () {
-                              _showCourseSettings();
-                              setState(() {
-                                _showExpandedSidebar = false;
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 8),
-                          _buildQuickActionButton(
-                            'View as Student',
-                            Icons.visibility,
-                            isDark,
-                            () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Student view coming soon'),
-                                ),
-                              );
-                              setState(() {
-                                _showExpandedSidebar = false;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
+                ),
+              ),
+            ),
+
+          // Overlay to close sidebar when tapping outside
+          if (_showMiniSidebar || _showExpandedSidebar)
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _showMiniSidebar = false;
+                    _showExpandedSidebar = false;
+                  });
+                },
+                child: Container(
+                  color: Colors.black.withOpacity(0.3),
+                  margin: EdgeInsets.only(
+                    left: _showExpandedSidebar ? 300 : 80,
+                  ),
                 ),
               ),
             ),
@@ -489,7 +582,24 @@ class _InstructorCoursePortalPageState
     );
   }
 
-  void _showCourseSettings() {
+  Widget _buildStatItem(String value, String label) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(label, style: TextStyle(color: Colors.white70, fontSize: 10)),
+      ],
+    );
+  }
+
+  void _showInstructorSettings() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
@@ -498,43 +608,58 @@ class _InstructorCoursePortalPageState
         return AlertDialog(
           backgroundColor: isDark ? Colors.grey[850] : Colors.white,
           title: Text(
-            'Course Settings',
+            'Instructor Settings',
             style: TextStyle(color: isDark ? Colors.white : Colors.black),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.edit, color: Color(0xFF7A54FF)),
+                leading: const Icon(
+                  Icons.notifications,
+                  color: Color(0xFF7A54FF),
+                ),
                 title: Text(
-                  'Edit Course Details',
+                  'Notification Preferences',
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  // TODO: Navigate to edit course page
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.people, color: Color(0xFF7A54FF)),
-                title: Text(
-                  'Manage Enrollments',
-                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  // TODO: Navigate to enrollment management
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Notification settings coming soon'),
+                    ),
+                  );
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.schedule, color: Color(0xFF7A54FF)),
                 title: Text(
-                  'Schedule Management',
+                  'Office Hours',
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  // TODO: Navigate to schedule management
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Office hours settings coming soon'),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.language, color: Color(0xFF7A54FF)),
+                title: Text(
+                  'Language & Region',
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Language settings coming soon'),
+                    ),
+                  );
                 },
               ),
             ],
@@ -550,50 +675,6 @@ class _InstructorCoursePortalPageState
           ],
         );
       },
-    );
-  }
-
-  Widget _buildQuickActionButton(
-    String title,
-    IconData icon,
-    bool isDark,
-    VoidCallback onTap,
-  ) {
-    return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: onTap,
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: isDark ? Colors.grey[800] : Colors.grey[100],
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                icon,
-                size: 16,
-                color: isDark ? Colors.grey[400] : Colors.grey[600],
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? Colors.grey[300] : Colors.grey[700],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
