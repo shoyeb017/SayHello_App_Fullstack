@@ -13,51 +13,21 @@ class _AddCoursePageState extends State<AddCoursePage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _durationController = TextEditingController();
+  final _totalSessionsController = TextEditingController();
 
-  String _selectedCategory = 'Programming';
-  String _selectedLanguage = 'English';
   String _selectedLevel = 'Beginner';
   double _price = 50.0;
   DateTime? _startDate;
   DateTime? _endDate;
   String? _thumbnailPath;
 
-  final List<String> _categories = [
-    'Programming',
-    'Design',
-    'Business',
-    'Language',
-    'Marketing',
-    'Photography',
-    'Music',
-    'Other',
-  ];
-
-  final List<String> _languages = [
-    'English',
-    'Spanish',
-    'French',
-    'German',
-    'Chinese',
-    'Japanese',
-    'Arabic',
-    'Hindi',
-    'Other',
-  ];
-
-  final List<String> _levels = [
-    'Beginner',
-    'Intermediate',
-    'Advanced',
-    'Expert',
-  ];
+  final List<String> _levels = ['Beginner', 'Intermediate', 'Advanced'];
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
-    _durationController.dispose();
+    _totalSessionsController.dispose();
     super.dispose();
   }
 
@@ -116,14 +86,14 @@ class _AddCoursePageState extends State<AddCoursePage> {
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -133,7 +103,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,16 +111,16 @@ class _AddCoursePageState extends State<AddCoursePage> {
                     const Text(
                       'Create Your Course',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Text(
-                      'Share your knowledge with students worldwide',
+                      'Fill in the details to create your course',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         color: Colors.white.withOpacity(0.9),
                       ),
                     ),
@@ -158,14 +128,14 @@ class _AddCoursePageState extends State<AddCoursePage> {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // Course Title
               _buildSectionTitle('Course Title', Icons.title, isDark),
               const SizedBox(height: 8),
               _buildTextField(
                 controller: _titleController,
-                hintText: 'Enter an engaging course title',
+                hintText: 'Enter course title',
                 isDark: isDark,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -175,20 +145,16 @@ class _AddCoursePageState extends State<AddCoursePage> {
                 },
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // Course Description
-              _buildSectionTitle(
-                'Course Description',
-                Icons.description,
-                isDark,
-              ),
+              _buildSectionTitle('Description', Icons.description, isDark),
               const SizedBox(height: 8),
               _buildTextField(
                 controller: _descriptionController,
-                hintText: 'Describe what students will learn in this course',
+                hintText: 'Describe your course',
                 isDark: isDark,
-                maxLines: 4,
+                maxLines: 3,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter course description';
@@ -197,67 +163,16 @@ class _AddCoursePageState extends State<AddCoursePage> {
                 },
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
-              // Category and Language Row
+              // Level and Total Sessions Row
               Row(
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildSectionTitle('Category', Icons.category, isDark),
-                        const SizedBox(height: 8),
-                        _buildDropdown(
-                          value: _selectedCategory,
-                          items: _categories,
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedCategory = value!;
-                            });
-                          },
-                          isDark: isDark,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildSectionTitle('Language', Icons.language, isDark),
-                        const SizedBox(height: 8),
-                        _buildDropdown(
-                          value: _selectedLanguage,
-                          items: _languages,
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedLanguage = value!;
-                            });
-                          },
-                          isDark: isDark,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              // Level and Duration Row
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildSectionTitle(
-                          'Difficulty Level',
-                          Icons.trending_up,
-                          isDark,
-                        ),
+                        _buildSectionTitle('Level', Icons.trending_up, isDark),
                         const SizedBox(height: 8),
                         _buildDropdown(
                           value: _selectedLevel,
@@ -272,20 +187,24 @@ class _AddCoursePageState extends State<AddCoursePage> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildSectionTitle('Duration', Icons.schedule, isDark),
+                        _buildSectionTitle(
+                          'Total Sessions',
+                          Icons.video_library,
+                          isDark,
+                        ),
                         const SizedBox(height: 8),
                         _buildTextField(
-                          controller: _durationController,
-                          hintText: 'e.g., 8 weeks',
+                          controller: _totalSessionsController,
+                          hintText: 'e.g., 12',
                           isDark: isDark,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Enter duration';
+                              return 'Enter sessions';
                             }
                             return null;
                           },
@@ -296,68 +215,36 @@ class _AddCoursePageState extends State<AddCoursePage> {
                 ],
               ),
 
-              const SizedBox(height: 20),
-
-              // Course Schedule
-              _buildSectionTitle(
-                'Course Schedule',
-                Icons.calendar_today,
-                isDark,
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDateCard(
-                      'Start Date',
-                      _startDate,
-                      () => _selectDate(true),
-                      isDark,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildDateCard(
-                      'End Date',
-                      _endDate,
-                      () => _selectDate(false),
-                      isDark,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              // Course Thumbnail
-              _buildSectionTitle('Course Thumbnail', Icons.image, isDark),
-              const SizedBox(height: 8),
-              _buildThumbnailUpload(isDark),
-
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // Price Section
-              _buildSectionTitle('Course Price', Icons.attach_money, isDark),
-              const SizedBox(height: 12),
+              _buildSectionTitle('Price (\$)', Icons.attach_money, isDark),
+              const SizedBox(height: 8),
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.grey[850] : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(16),
+                  color: isDark ? Colors.grey[850] : Colors.grey[200],
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
                   children: [
+                    // Price display with buttons
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'Price',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : Colors.black,
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              if (_price > 0) _price -= 1;
+                            });
+                          },
+                          icon: Icon(
+                            Icons.remove_circle_outline,
+                            color: const Color(0xFF7A54FF),
+                            size: 28,
                           ),
                         ),
+                        const SizedBox(width: 20),
                         Text(
                           '\$${_price.round()}',
                           style: TextStyle(
@@ -366,23 +253,38 @@ class _AddCoursePageState extends State<AddCoursePage> {
                             color: const Color(0xFF7A54FF),
                           ),
                         ),
+                        const SizedBox(width: 20),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              if (_price < 500) _price += 1;
+                            });
+                          },
+                          icon: Icon(
+                            Icons.add_circle_outline,
+                            color: const Color(0xFF7A54FF),
+                            size: 28,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 12),
+                    // Price slider
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         activeTrackColor: const Color(0xFF7A54FF),
                         inactiveTrackColor: isDark
                             ? Colors.grey[700]
-                            : Colors.grey[300],
+                            : Colors.grey[400],
                         thumbColor: const Color(0xFF7A54FF),
                         overlayColor: const Color(0xFF7A54FF).withOpacity(0.2),
+                        trackHeight: 4,
                       ),
                       child: Slider(
                         value: _price,
                         min: 0,
                         max: 500,
-                        divisions: 50,
+                        divisions: 500,
                         onChanged: (value) {
                           setState(() {
                             _price = value;
@@ -390,6 +292,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
                         },
                       ),
                     ),
+                    // Price range labels
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -413,32 +316,58 @@ class _AddCoursePageState extends State<AddCoursePage> {
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 16),
 
-              // Action Buttons
+              // Course Schedule
+              _buildSectionTitle(
+                'Course Schedule',
+                Icons.calendar_today,
+                isDark,
+              ),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   Expanded(
-                    child: _buildActionButton(
-                      'Save as Draft',
-                      Icons.save,
-                      isDark ? Colors.grey[700]! : Colors.grey[600]!,
-                      () => _saveDraft(),
+                    child: _buildDateCard(
+                      'Start Date',
+                      _startDate,
+                      () => _selectDate(true),
+                      isDark,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: _buildActionButton(
-                      'Publish Course',
-                      Icons.publish,
-                      const Color(0xFF7A54FF),
-                      () => _publishCourse(),
+                    child: _buildDateCard(
+                      'End Date',
+                      _endDate,
+                      () => _selectDate(false),
+                      isDark,
                     ),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
+
+              // Thumbnail
+              _buildSectionTitle('Course Thumbnail', Icons.image, isDark),
+              const SizedBox(height: 8),
+              _buildThumbnailPicker(isDark),
+
+              const SizedBox(height: 24),
+
+              // Action Button
+              SizedBox(
+                width: double.infinity,
+                child: _buildActionButton(
+                  'Publish Course',
+                  Icons.publish,
+                  const Color(0xFF7A54FF),
+                  () => _publishCourse(),
+                ),
+              ),
+
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -449,13 +378,13 @@ class _AddCoursePageState extends State<AddCoursePage> {
   Widget _buildSectionTitle(String title, IconData icon, bool isDark) {
     return Row(
       children: [
-        Icon(icon, color: const Color(0xFF7A54FF), size: 20),
-        const SizedBox(width: 8),
+        Icon(icon, color: const Color(0xFF7A54FF), size: 18),
+        const SizedBox(width: 6),
         Text(
           title,
           style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
             color: isDark ? Colors.white : Colors.black,
           ),
         ),
@@ -470,27 +399,34 @@ class _AddCoursePageState extends State<AddCoursePage> {
     int maxLines = 1,
     String? Function(String?)? validator,
   }) {
-    return TextFormField(
-      controller: controller,
-      maxLines: maxLines,
-      style: TextStyle(color: isDark ? Colors.white : Colors.black),
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: TextStyle(
-          color: isDark ? Colors.grey[400] : Colors.grey[600],
+    return Container(
+      height: maxLines == 1 ? 48 : null, // Fixed height for single line fields
+      child: TextFormField(
+        controller: controller,
+        maxLines: maxLines,
+        style: TextStyle(
+          color: isDark ? Colors.white : Colors.black,
+          fontSize: 14,
         ),
-        filled: true,
-        fillColor: isDark ? Colors.grey[850] : Colors.grey[100],
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(
+            color: isDark ? Colors.grey[400] : Colors.grey[600],
+            fontSize: 14,
+          ),
+          filled: true,
+          fillColor: isDark ? Colors.grey[850] : Colors.grey[200],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 12,
+          ),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
-        ),
+        validator: validator,
       ),
-      validator: validator,
     );
   }
 
@@ -501,10 +437,11 @@ class _AddCoursePageState extends State<AddCoursePage> {
     required bool isDark,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      height: 48, // Fixed height to match text field
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey[850] : Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? Colors.grey[850] : Colors.grey[200],
+        borderRadius: BorderRadius.circular(8),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -513,7 +450,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
           dropdownColor: isDark ? Colors.grey[800] : Colors.white,
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
-            fontSize: 16,
+            fontSize: 14,
           ),
           items: items.map((String item) {
             return DropdownMenuItem<String>(value: item, child: Text(item));
@@ -533,10 +470,10 @@ class _AddCoursePageState extends State<AddCoursePage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.grey[850] : Colors.grey[100],
-          borderRadius: BorderRadius.circular(12),
+          color: isDark ? Colors.grey[850] : Colors.grey[200],
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -544,30 +481,32 @@ class _AddCoursePageState extends State<AddCoursePage> {
             Text(
               label,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 color: isDark ? Colors.grey[400] : Colors.grey[600],
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Row(
               children: [
                 Icon(
                   Icons.calendar_today,
                   color: const Color(0xFF7A54FF),
-                  size: 16,
+                  size: 14,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  date != null
-                      ? '${date.day}/${date.month}/${date.year}'
-                      : 'Select date',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: date != null
-                        ? (isDark ? Colors.white : Colors.black)
-                        : (isDark ? Colors.grey[400] : Colors.grey[600]),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    date != null
+                        ? '${date.day}/${date.month}/${date.year}'
+                        : 'Select date',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: date != null
+                          ? (isDark ? Colors.white : Colors.black)
+                          : (isDark ? Colors.grey[400] : Colors.grey[600]),
+                    ),
                   ),
                 ),
               ],
@@ -578,42 +517,84 @@ class _AddCoursePageState extends State<AddCoursePage> {
     );
   }
 
-  Widget _buildThumbnailUpload(bool isDark) {
+  Widget _buildThumbnailPicker(bool isDark) {
     return GestureDetector(
       onTap: _selectThumbnail,
       child: Container(
         width: double.infinity,
         height: 120,
         decoration: BoxDecoration(
-          color: isDark ? Colors.grey[850] : Colors.grey[100],
-          borderRadius: BorderRadius.circular(12),
+          color: isDark ? Colors.grey[850] : Colors.grey[200],
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+            color: isDark ? Colors.grey[700]! : Colors.grey[400]!,
             style: BorderStyle.solid,
           ),
         ),
         child: _thumbnailPath != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.grey[800] : Colors.grey[200],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.check_circle, color: Colors.green, size: 32),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Thumbnail Selected',
-                        style: TextStyle(
-                          color: isDark ? Colors.white : Colors.black,
-                          fontWeight: FontWeight.w500,
-                        ),
+            ? Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.grey[800] : Colors.grey[300],
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ],
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.image,
+                            color: const Color(0xFF7A54FF),
+                            size: 32,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Image Selected',
+                            style: TextStyle(
+                              color: isDark ? Colors.white : Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            _thumbnailPath!.split('/').last,
+                            style: TextStyle(
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
+                              fontSize: 12,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _thumbnailPath = null;
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(Icons.close, color: Colors.white, size: 16),
+                      ),
+                    ),
+                  ),
+                ],
               )
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -625,10 +606,11 @@ class _AddCoursePageState extends State<AddCoursePage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Upload Course Thumbnail',
+                    'Select Course Thumbnail',
                     style: TextStyle(
                       color: isDark ? Colors.grey[400] : Colors.grey[600],
                       fontWeight: FontWeight.w500,
+                      fontSize: 14,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -653,18 +635,19 @@ class _AddCoursePageState extends State<AddCoursePage> {
   ) {
     return ElevatedButton.icon(
       onPressed: onPressed,
-      icon: Icon(icon, size: 18, color: Colors.white),
+      icon: Icon(icon, size: 16, color: Colors.white),
       label: Text(
         text,
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w600,
+          fontSize: 14,
         ),
       ),
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 2,
       ),
     );
@@ -700,24 +683,15 @@ class _AddCoursePageState extends State<AddCoursePage> {
   }
 
   void _selectThumbnail() {
-    // TODO: Implement image picker
+    // TODO: Implement image picker from local storage
     setState(() {
-      _thumbnailPath = 'selected_image.jpg'; // Placeholder
+      _thumbnailPath = 'course_thumbnail.jpg'; // Placeholder
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Image picker feature coming soon'),
-        backgroundColor: Color(0xFF7A54FF),
-      ),
-    );
-  }
-
-  void _saveDraft() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Course saved as draft!'),
-        backgroundColor: Colors.green,
+      SnackBar(
+        content: Text('Image picker feature will be implemented'),
+        backgroundColor: const Color(0xFF7A54FF),
       ),
     );
   }
@@ -728,6 +702,16 @@ class _AddCoursePageState extends State<AddCoursePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Please select start and end dates'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      if (_thumbnailPath == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select a course thumbnail'),
             backgroundColor: Colors.red,
           ),
         );
