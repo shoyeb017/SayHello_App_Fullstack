@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../../../../providers/settings_provider.dart';
 import '../../instructor_main_tab.dart';
-import 'withdrawal_request_page.dart';
 
-class InstructorRevenuePage extends StatefulWidget {
-  const InstructorRevenuePage({super.key});
+class InstructorRevenuePageTemp extends StatefulWidget {
+  const InstructorRevenuePageTemp({super.key});
 
   @override
-  State<InstructorRevenuePage> createState() => _InstructorRevenuePageState();
+  State<InstructorRevenuePageTemp> createState() =>
+      _InstructorRevenuePageTempState();
 }
 
-class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
+class _InstructorRevenuePageTempState extends State<InstructorRevenuePageTemp> {
   bool _showAllCourses = false;
   bool _showAllTransactions = false;
 
@@ -186,28 +186,28 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Payment Information (moved to top)
-            _buildPaymentInfo(isDark),
-            const SizedBox(height: 16),
-
             // Revenue Summary Cards
             _buildRevenueSummary(isDark),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Revenue Chart
             _buildRevenueChart(isDark),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Course Income Section
             _buildCourseIncome(isDark),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Transaction History Section
             _buildTransactionHistory(isDark),
+            const SizedBox(height: 20),
+
+            // Payment Information & Withdraw Button
+            _buildPaymentInfo(isDark),
           ],
         ),
       ),
@@ -276,42 +276,42 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     bool isDark,
   ) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[850] : Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, color: color, size: 18),
+              Icon(icon, color: color, size: 20),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.all(3),
+                padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(6),
                 ),
-                child: Icon(Icons.trending_up, color: color, size: 10),
+                child: Icon(Icons.trending_up, color: color, size: 12),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
             value,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           Text(
             title,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 12,
               color: isDark ? Colors.grey[400] : Colors.grey[600],
             ),
           ),
@@ -321,111 +321,51 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
   }
 
   Widget _buildRevenueChart(bool isDark) {
-    // Calculate data points for the chart
-    List<double> weeklyData = [];
-    List<String> weekLabels = [];
-
-    for (int i = 6; i >= 0; i--) {
-      DateTime date = DateTime.now().subtract(Duration(days: i));
-      double dayRevenue = 0;
-
-      for (var course in courseEnrollments) {
-        for (var enrollDate in course['enrollmentDates']) {
-          if (enrollDate.day == date.day &&
-              enrollDate.month == date.month &&
-              enrollDate.year == date.year) {
-            dayRevenue += course['coursePrice'];
-          }
-        }
-      }
-
-      weeklyData.add(dayRevenue);
-      weekLabels.add(
-        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][date.weekday - 1],
-      );
-    }
-
-    double maxValue = weeklyData.isNotEmpty
-        ? weeklyData.reduce((a, b) => a > b ? a : b)
-        : 100;
-    if (maxValue == 0) maxValue = 100;
-
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[850] : Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Weekly Revenue Trend',
+            'Revenue Trend',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Container(
-            height: 120,
-            padding: const EdgeInsets.all(8),
+            height: 150,
             decoration: BoxDecoration(
               color: isDark ? Colors.grey[800] : Colors.grey[100],
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: List.generate(7, (index) {
-                double height = weeklyData[index] / maxValue * 80;
-                if (height < 5) height = 5; // Minimum height for visibility
-
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      width: 20,
-                      height: height,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF7A54FF),
-                        borderRadius: BorderRadius.circular(3),
-                      ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.show_chart,
+                    size: 40,
+                    color: const Color(0xFF7A54FF),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Revenue Chart',
+                    style: TextStyle(
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      weekLabels[index],
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                );
-              }),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Total: \$${weeklyData.fold(0.0, (a, b) => a + b).toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: const Color(0xFF7A54FF),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Text(
-                'Peak: \$${maxValue.toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: isDark ? Colors.grey[400] : Colors.grey[600],
-                ),
-              ),
-            ],
           ),
         ],
       ),
@@ -434,10 +374,10 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
 
   Widget _buildCourseIncome(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[850] : Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -447,7 +387,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
               Text(
                 'Course Income',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black,
                 ),
@@ -461,20 +401,17 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                 },
                 child: Text(
                   _showAllCourses ? 'Show Less' : 'View All',
-                  style: TextStyle(
-                    color: const Color(0xFF7A54FF),
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: const Color(0xFF7A54FF)),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _showAllCourses ? courseEnrollments.length : 3,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final course = courseEnrollments[index];
               return _buildCourseIncomeItem(course, isDark);
@@ -487,10 +424,10 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
 
   Widget _buildCourseIncomeItem(Map<String, dynamic> course, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[800] : Colors.grey[100],
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
@@ -501,16 +438,15 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                 Text(
                   course['courseTitle'],
                   style: TextStyle(
-                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: isDark ? Colors.white : Colors.black,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text(
                   'Price: \$${course['coursePrice'].toStringAsFixed(2)} • ${course['enrolledStudents']} enrolled',
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
                   ),
                 ),
@@ -520,7 +456,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
           Text(
             '\$${course['totalRevenue'].toStringAsFixed(2)}',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF7A54FF),
             ),
@@ -532,10 +468,10 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
 
   Widget _buildTransactionHistory(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[850] : Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -545,7 +481,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
               Text(
                 'Transaction History',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black,
                 ),
@@ -559,20 +495,17 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                 },
                 child: Text(
                   _showAllTransactions ? 'Show Less' : 'View All',
-                  style: TextStyle(
-                    color: const Color(0xFF7A54FF),
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: const Color(0xFF7A54FF)),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _showAllTransactions ? transactionHistory.length : 3,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final transaction = transactionHistory[index];
               return _buildTransactionItem(transaction, isDark);
@@ -588,26 +521,26 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     final statusColor = isCompleted ? Colors.green : Colors.red;
 
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[800] : Colors.grey[100],
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(6),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: statusColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               isCompleted ? Icons.check_circle : Icons.error,
               color: statusColor,
-              size: 16,
+              size: 20,
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -615,16 +548,15 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                 Text(
                   'Withdrawal - ${transaction['id']}',
                   style: TextStyle(
-                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: isDark ? Colors.white : Colors.black,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text(
                   '${transaction['bankAccount']} • ${_formatDate(transaction['date'])}',
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
                   ),
                 ),
@@ -637,22 +569,22 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
               Text(
                 '\$${transaction['amount'].toStringAsFixed(2)}',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black,
                 ),
               ),
               const SizedBox(height: 2),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: statusColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(3),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
                   transaction['status'],
                   style: TextStyle(
-                    fontSize: 8,
+                    fontSize: 10,
                     color: statusColor,
                     fontWeight: FontWeight.w500,
                   ),
@@ -667,99 +599,43 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
 
   Widget _buildPaymentInfo(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[850] : Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Payment Overview',
+            'Payment Information',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
             ),
           ),
-          const SizedBox(height: 12),
-
-          // Main balance card
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  const Color(0xFF7A54FF),
-                  const Color(0xFF7A54FF).withOpacity(0.8),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Available Balance',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.white.withOpacity(0.8),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '\$${(totalIncome - totalWithdrawn).toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () => _navigateToPaymentRequest(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFF7A54FF),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  child: const Text(
-                    'Withdraw',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // Payment breakdown
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
                 child: _buildPaymentInfoItem(
-                  'Total Earned',
+                  'Total Income',
                   '\$${totalIncome.toStringAsFixed(2)}',
                   Colors.green,
                   isDark,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildPaymentInfoItem(
+                  'Pending',
+                  '\$${totalPending.toStringAsFixed(2)}',
+                  Colors.orange,
+                  isDark,
+                ),
+              ),
+              const SizedBox(width: 12),
               Expanded(
                 child: _buildPaymentInfoItem(
                   'Withdrawn',
@@ -769,6 +645,27 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => _navigateToPaymentRequest(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF7A54FF),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Withdraw Money',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -781,32 +678,25 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     Color color,
     bool isDark,
   ) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[800] : Colors.grey[100],
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Column(
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 10,
-              color: isDark ? Colors.grey[400] : Colors.grey[600],
-            ),
+    return Column(
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 12,
+            color: isDark ? Colors.grey[400] : Colors.grey[600],
           ),
-          const SizedBox(height: 2),
-          Text(
-            amount,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          amount,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: color,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -815,12 +705,11 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
   }
 
   void _navigateToPaymentRequest() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => WithdrawalRequestPage(
-          availableBalance: totalIncome - totalWithdrawn,
-        ),
+    // Navigate to payment request page
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Navigating to payment request page...'),
+        backgroundColor: Color(0xFF7A54FF),
       ),
     );
   }
