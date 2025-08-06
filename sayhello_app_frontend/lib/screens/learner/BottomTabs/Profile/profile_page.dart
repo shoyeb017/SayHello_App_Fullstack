@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../providers/settings_provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../Notifications/notifications.dart';
+import '../../../auth/landing_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -144,6 +145,15 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                 ],
+              ),
+
+              // 🚪 LOGOUT ICON - This is the logout button in the app bar
+              IconButton(
+                icon: Icon(
+                  Icons.logout,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+                onPressed: () => _showLogoutDialog(context),
               ),
             ],
           ),
@@ -1300,6 +1310,34 @@ class _ProfilePageState extends State<ProfilePage> {
               AppLocalizations.of(context)!.save,
               style: TextStyle(color: primaryColor),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Logout confirmation dialog
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Logout'),
+        content: Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              // Clear navigation stack and go to landing page
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => LandingPage()),
+                (route) => false,
+              );
+            },
+            child: Text('Logout', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
