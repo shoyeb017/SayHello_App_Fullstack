@@ -56,6 +56,9 @@ class _InstructorOnlineSessionTabState
     },
   ];
 
+  // Track expanded state for each session
+  Map<String, bool> _expandedSessions = {};
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -303,6 +306,12 @@ class _InstructorOnlineSessionTabState
   ) {
     final status = session['status'] as String;
     final statusColor = _getStatusColor(status);
+    final sessionId = session['id'] as String;
+
+    final title = session['title']?.toString() ?? 'Untitled Session';
+    final description = session['description']?.toString() ?? '';
+    final shouldShowToggle = title.length > 30 || description.length > 50;
+    final isExpanded = _expandedSessions[sessionId] ?? false;
 
     return Container(
       decoration: BoxDecoration(
@@ -312,291 +321,306 @@ class _InstructorOnlineSessionTabState
           BoxShadow(
             color: isDark ? Colors.black26 : Colors.grey[200]!,
             blurRadius: 4,
-            offset: const Offset(0, 2),
+            offset: const Offset(0, 1),
           ),
         ],
       ),
+      padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Session Header with Status
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
+          // Header Row - Status, Title, Platform, Actions
+          Row(
+            children: [
+              // Status Badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  status.toUpperCase(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 3,
-                  ),
+              const SizedBox(width: 8),
+
+              // Title
+              Expanded(
+                child: isExpanded || !shouldShowToggle
+                    ? Text(
+                        title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: textColor,
+                        ),
+                      )
+                    : Text(
+                        title.length > 30
+                            ? '${title.substring(0, 30)}...'
+                            : title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: textColor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+              ),
+
+              // Platform Icon
+              Icon(
+                _getPlatformIcon(session['platform']),
+                color: statusColor,
+                size: 16,
+              ),
+              const SizedBox(width: 4),
+
+              // Delete Button
+              InkWell(
+                onTap: () => _deleteSession(session['id']),
+                child: Container(
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: statusColor,
-                    borderRadius: BorderRadius.circular(6),
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                  child: Text(
-                    status.toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
+                  child: const Icon(
+                    Icons.delete_outline,
+                    color: Colors.red,
+                    size: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          // Description with More/Less
+          if (description.isNotEmpty) ...[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                isExpanded || !shouldShowToggle
+                    ? Text(
+                        description,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: subTextColor,
+                          height: 1.3,
+                        ),
+                      )
+                    : Text(
+                        description.length > 50
+                            ? '${description.substring(0, 50)}...'
+                            : description,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: subTextColor,
+                          height: 1.3,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                if (shouldShowToggle) ...[
+                  const SizedBox(height: 4),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _expandedSessions[sessionId] = !isExpanded;
+                      });
+                    },
+                    child: Text(
+                      isExpanded ? 'Show less' : 'Show more',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: primaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 10),
+          ],
+
+          // Compact Info Row (removed attendees)
+          Row(
+            children: [
+              // Date & Time
+              Expanded(
+                flex: 3,
+                child: Row(
+                  children: [
+                    Icon(Icons.schedule, size: 12, color: primaryColor),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        '${session['date']} • ${session['time']}',
+                        style: TextStyle(fontSize: 11, color: primaryColor),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Duration
+              Expanded(
+                flex: 2,
+                child: Row(
+                  children: [
+                    Icon(Icons.hourglass_empty, size: 12, color: primaryColor),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        session['duration'] ?? '',
+                        style: TextStyle(fontSize: 11, color: primaryColor),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          // Individual Copy Buttons Row
+          Row(
+            children: [
+              if (session['link'] != null) ...[
+                Expanded(
+                  child: InkWell(
+                    onTap: () => _copyToClipboard(session['link'], 'Link'),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: primaryColor.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.link, color: primaryColor, size: 14),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Copy Link',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: primaryColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                const Spacer(),
-                Icon(
-                  _getPlatformIcon(session['platform']),
-                  color: statusColor,
-                  size: 16,
+              ],
+              if (session['link'] != null && session['password'] != null)
+                const SizedBox(width: 8),
+              if (session['password'] != null) ...[
+                Expanded(
+                  child: InkWell(
+                    onTap: () =>
+                        _copyToClipboard(session['password'], 'Password'),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: primaryColor.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.lock, color: primaryColor, size: 14),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Copy Password',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: primaryColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 4),
-                Text(
-                  session['platform'] ?? '',
-                  style: TextStyle(
-                    color: statusColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 11,
+              ],
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          // Compact Action Buttons (removed view report)
+          if (status == 'scheduled') ...[
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 32,
+                    child: OutlinedButton(
+                      onPressed: () => _editSession(session),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: primaryColor,
+                        side: BorderSide(color: primaryColor, width: 1),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      child: const Text('Edit', style: TextStyle(fontSize: 12)),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                IconButton(
-                  onPressed: () => _deleteSession(session['id']),
-                  icon: const Icon(Icons.delete_outline),
-                  color: Colors.red,
-                  iconSize: 18,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
+                Expanded(
+                  child: SizedBox(
+                    height: 32,
+                    child: ElevatedButton(
+                      onPressed: () => _startSession(session),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      child: const Text(
+                        'Start',
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
-          ),
-
-          // Session Content
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  session['title'] ?? 'Untitled Session',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  session['description'] ?? '',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: subTextColor,
-                    height: 1.3,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 8),
-
-                // Session Details Grid
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildInfoItem(
-                        Icons.calendar_today,
-                        session['date'] ?? '',
-                        primaryColor,
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildInfoItem(
-                        Icons.access_time,
-                        session['time'] ?? '',
-                        primaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildInfoItem(
-                        Icons.schedule,
-                        session['duration'] ?? '',
-                        primaryColor,
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildInfoItem(
-                        Icons.people,
-                        '${session['attendees']} students',
-                        primaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-
-                // Session Link and Password (compact)
-                if (session['link'] != null) ...[
-                  const SizedBox(height: 8),
-                  _buildCopyableInfo(
-                    'Link',
-                    session['link'],
-                    Icons.link,
-                    primaryColor,
-                  ),
-                ],
-                if (session['password'] != null) ...[
-                  const SizedBox(height: 4),
-                  _buildCopyableInfo(
-                    'Password',
-                    session['password'],
-                    Icons.lock,
-                    primaryColor,
-                  ),
-                ],
-
-                const SizedBox(height: 8),
-
-                // Action Buttons
-                if (status == 'scheduled') ...[
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () => _editSession(session),
-                          icon: const Icon(Icons.edit, size: 14),
-                          label: const Text(
-                            'Edit',
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: primaryColor,
-                            side: BorderSide(color: primaryColor),
-                            padding: const EdgeInsets.symmetric(vertical: 6),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () => _startSession(session),
-                          icon: const Icon(
-                            Icons.play_arrow,
-                            size: 14,
-                            color: Colors.white,
-                          ),
-                          label: const Text(
-                            'Start',
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                            padding: const EdgeInsets.symmetric(vertical: 6),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ] else if (status == 'completed') ...[
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () => _viewSessionReport(session),
-                      icon: const Icon(Icons.analytics, size: 14),
-                      label: const Text(
-                        'View Report',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.green,
-                        side: const BorderSide(color: Colors.green),
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoItem(IconData icon, String text, Color primaryColor) {
-    return Row(
-      children: [
-        Icon(icon, size: 12, color: primaryColor),
-        const SizedBox(width: 4),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 10,
-              color: primaryColor,
-              fontWeight: FontWeight.w500,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCopyableInfo(
-    String label,
-    String value,
-    IconData icon,
-    Color primaryColor,
-  ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: primaryColor.withOpacity(0.3)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: primaryColor, size: 12),
-          const SizedBox(width: 4),
-          Text(
-            '$label: ',
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: primaryColor,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value.length > 15 ? '${value.substring(0, 15)}...' : value,
-              style: TextStyle(
-                fontSize: 10,
-                color: primaryColor.withOpacity(0.8),
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          InkWell(
-            onTap: () => _copyToClipboard(value, label),
-            child: Container(
-              padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                color: primaryColor,
-                borderRadius: BorderRadius.circular(3),
-              ),
-              child: const Icon(Icons.copy, color: Colors.white, size: 10),
-            ),
-          ),
+          ],
         ],
       ),
     );
@@ -1735,79 +1759,5 @@ class _InstructorOnlineSessionTabState
         );
       }
     }
-  }
-
-  void _viewSessionReport(Map<String, dynamic> session) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return AlertDialog(
-          backgroundColor: isDark ? Colors.grey[850] : Colors.white,
-          title: Text(
-            'Session Report',
-            style: TextStyle(color: isDark ? Colors.white : Colors.black),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                session['title'],
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              const SizedBox(height: 12),
-              _buildReportRow('Date', session['date']),
-              _buildReportRow('Duration', session['duration']),
-              _buildReportRow('Platform', session['platform']),
-              _buildReportRow('Attendees', '${session['attendees']} students'),
-              const SizedBox(height: 8),
-              Text(
-                'Session completed successfully!',
-                style: TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
-                'Close',
-                style: TextStyle(color: Color(0xFF7A54FF)),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildReportRow(String label, String value) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          Text(
-            '$label: ',
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: isDark ? Colors.grey[400] : Colors.grey[600],
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(color: isDark ? Colors.white : Colors.black),
-          ),
-        ],
-      ),
-    );
   }
 }

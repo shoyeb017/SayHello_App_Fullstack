@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'record_class_video_player.dart';
+import '../../../../services/video_metadata_service.dart';
 
 class InstructorRecordedClassesTab extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -64,12 +66,155 @@ class _InstructorRecordedClassesTabState
     },
   ];
 
+  bool _isLoading = true;
+  String? _error;
+  List<VideoMetadata> _videoMetadataList = [];
+  int _loadedVideos = 0;
+  int _totalVideos = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVideoMetadata();
+  }
+
+  Future<void> _loadVideoMetadata() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+      _loadedVideos = 0;
+      _totalVideos = _recordings.length;
+    });
+    try {
+      final urls = _recordings.map((r) => r['videoUrl'] as String).toList();
+      final titles = _recordings.map((r) => r['title'] as String).toList();
+      final metadataList =
+          await VideoMetadataService.extractMultipleVideoMetadata(
+            urls,
+            titles: titles,
+            onProgress: (completed, total) {
+              if (mounted) {
+                setState(() {
+                  _loadedVideos = completed;
+                  _totalVideos = total;
+                });
+              }
+            },
+          );
+      if (mounted) {
+        setState(() {
+          _videoMetadataList = metadataList;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = Color(0xFF7A54FF);
     final textColor = isDark ? Colors.white : Colors.black;
     final subTextColor = isDark ? Colors.grey[400] : Colors.grey[600];
+
+    if (_isLoading) {
+      final progress = _totalVideos > 0 ? _loadedVideos / _totalVideos : 0.0;
+      final percentage = (progress * 100).round();
+
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                value: progress,
+                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                strokeWidth: 4,
+                backgroundColor: isDark ? Colors.grey[700] : Colors.grey[300],
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Loading video metadata...',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: textColor,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '$percentage% complete',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: primaryColor,
+                ),
+              ),
+              if (_totalVideos > 0) ...[
+                const SizedBox(height: 4),
+                Text(
+                  '$_loadedVideos of $_totalVideos videos processed',
+                  style: TextStyle(fontSize: 12, color: subTextColor),
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
+    }
+    if (_error != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: Colors.red),
+              const SizedBox(height: 20),
+              Text(
+                'Failed to load video metadata',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _error!,
+                style: TextStyle(fontSize: 14, color: Colors.red),
+                textAlign: TextAlign.center,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                onPressed: _loadVideoMetadata,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
+                icon: const Icon(Icons.refresh, color: Colors.white),
+                label: const Text(
+                  'Retry',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Column(
       children: [
@@ -111,8 +256,18 @@ class _InstructorRecordedClassesTabState
                   separatorBuilder: (_, __) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                     final sortedRecordings = _getSortedRecordings();
+                    // Find the corresponding metadata by videoUrl
+                    final rec = sortedRecordings[index];
+                    final metaIdx = _recordings.indexWhere(
+                      (r) => r['videoUrl'] == rec['videoUrl'],
+                    );
+                    final meta =
+                        (metaIdx >= 0 && metaIdx < _videoMetadataList.length)
+                        ? _videoMetadataList[metaIdx]
+                        : null;
                     return _buildCompactRecordingCard(
-                      sortedRecordings[index],
+                      rec,
+                      meta,
                       isDark,
                       primaryColor,
                       textColor,
@@ -128,28 +283,28 @@ class _InstructorRecordedClassesTabState
   // Sort recordings by date and time (newest first)
   List<Map<String, dynamic>> _getSortedRecordings() {
     List<Map<String, dynamic>> sortedRecordings = List.from(_recordings);
-    
+
     sortedRecordings.sort((a, b) {
       try {
         DateTime dateA = DateTime.parse(a['uploadDate'] ?? '1970-01-01');
         DateTime dateB = DateTime.parse(b['uploadDate'] ?? '1970-01-01');
-        
+
         if (dateA.isAtSameMomentAs(dateB)) {
           TimeOfDay timeA = _parseTime(a['uploadTime'] ?? '00:00');
           TimeOfDay timeB = _parseTime(b['uploadTime'] ?? '00:00');
-          
+
           int minutesA = timeA.hour * 60 + timeA.minute;
           int minutesB = timeB.hour * 60 + timeB.minute;
-          
+
           return minutesB.compareTo(minutesA);
         }
-        
+
         return dateB.compareTo(dateA);
       } catch (e) {
         return 0;
       }
     });
-    
+
     return sortedRecordings;
   }
 
@@ -169,12 +324,14 @@ class _InstructorRecordedClassesTabState
 
   Widget _buildCompactRecordingCard(
     Map<String, dynamic> recording,
+    VideoMetadata? meta,
     bool isDark,
     Color primaryColor,
     Color textColor,
     Color? subTextColor,
   ) {
     final status = recording['status'] as String;
+    final showMeta = meta != null && meta.isValid;
 
     return Container(
       decoration: BoxDecoration(
@@ -257,10 +414,7 @@ class _InstructorRecordedClassesTabState
 
                 Text(
                   recording['description'],
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: subTextColor,
-                  ),
+                  style: TextStyle(fontSize: 11, color: subTextColor),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -272,14 +426,14 @@ class _InstructorRecordedClassesTabState
                     Icon(Icons.access_time, size: 11, color: subTextColor),
                     const SizedBox(width: 3),
                     Text(
-                      recording['duration'],
+                      showMeta ? meta.formattedDuration : '--:--',
                       style: TextStyle(fontSize: 10, color: subTextColor),
                     ),
                     const SizedBox(width: 12),
-                    Icon(Icons.visibility, size: 11, color: subTextColor),
+                    Icon(Icons.sd_storage, size: 11, color: subTextColor),
                     const SizedBox(width: 3),
                     Text(
-                      '${recording['views']}',
+                      showMeta ? meta.formattedSize : '--',
                       style: TextStyle(fontSize: 10, color: subTextColor),
                     ),
                     const Spacer(),
@@ -289,6 +443,16 @@ class _InstructorRecordedClassesTabState
                     ),
                   ],
                 ),
+                if (meta != null && !meta.isValid && meta.error != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      'Metadata error: ${meta.error}',
+                      style: TextStyle(fontSize: 10, color: Colors.red),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
               ],
             ),
           ),
@@ -331,10 +495,7 @@ class _InstructorRecordedClassesTabState
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
-                  child: const Text(
-                    'Delete',
-                    style: TextStyle(fontSize: 11),
-                  ),
+                  child: const Text('Delete', style: TextStyle(fontSize: 11)),
                 ),
               ),
             ],
@@ -508,7 +669,8 @@ class _InstructorRecordedClassesTabState
                   );
                   if (index != -1) {
                     _recordings[index]['title'] = titleController.text;
-                    _recordings[index]['description'] = descriptionController.text;
+                    _recordings[index]['description'] =
+                        descriptionController.text;
                   }
                 });
                 Navigator.of(context).pop();
@@ -534,7 +696,7 @@ class _InstructorRecordedClassesTabState
 
   void _deleteRecording(Map<String, dynamic> recording) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -663,9 +825,10 @@ class _InstructorRecordedClassesTabState
                       onTap: () async {
                         // Simulate file picker
                         setState(() {
-                          selectedFile = 'recorded_lesson_${DateTime.now().millisecondsSinceEpoch}.mp4';
+                          selectedFile =
+                              'recorded_lesson_${DateTime.now().millisecondsSinceEpoch}.mp4';
                         });
-                        
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('📁 File selected: $selectedFile'),
@@ -679,7 +842,9 @@ class _InstructorRecordedClassesTabState
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: selectedFile.isEmpty
-                                ? (isDark ? Colors.grey[600]! : Colors.grey[300]!)
+                                ? (isDark
+                                      ? Colors.grey[600]!
+                                      : Colors.grey[300]!)
                                 : Color(0xFF7A54FF),
                             width: 2,
                             style: BorderStyle.solid,
@@ -692,10 +857,14 @@ class _InstructorRecordedClassesTabState
                         child: Column(
                           children: [
                             Icon(
-                              selectedFile.isEmpty ? Icons.upload_file : Icons.check_circle,
+                              selectedFile.isEmpty
+                                  ? Icons.upload_file
+                                  : Icons.check_circle,
                               size: 32,
                               color: selectedFile.isEmpty
-                                  ? (isDark ? Colors.grey[600] : Colors.grey[400])
+                                  ? (isDark
+                                        ? Colors.grey[600]
+                                        : Colors.grey[400])
                                   : Color(0xFF7A54FF),
                             ),
                             const SizedBox(height: 8),
@@ -705,7 +874,9 @@ class _InstructorRecordedClassesTabState
                                   : 'File selected: $selectedFile',
                               style: TextStyle(
                                 color: selectedFile.isEmpty
-                                    ? (isDark ? Colors.grey[500] : Colors.grey[600])
+                                    ? (isDark
+                                          ? Colors.grey[500]
+                                          : Colors.grey[600])
                                     : (isDark ? Colors.white : Colors.black),
                                 fontSize: 12,
                                 fontWeight: selectedFile.isEmpty
@@ -734,10 +905,14 @@ class _InstructorRecordedClassesTabState
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF7A54FF)),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF7A54FF),
+                          ),
                         ),
                       ),
-                      style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
                     ),
 
                     const SizedBox(height: 12),
@@ -756,10 +931,14 @@ class _InstructorRecordedClassesTabState
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF7A54FF)),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF7A54FF),
+                          ),
                         ),
                       ),
-                      style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
                     ),
                   ],
                 ),
@@ -775,7 +954,8 @@ class _InstructorRecordedClassesTabState
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: selectedFile.isNotEmpty && titleController.text.isNotEmpty
+                  onPressed:
+                      selectedFile.isNotEmpty && titleController.text.isNotEmpty
                       ? () {
                           _uploadVideo(
                             selectedFile,
@@ -811,14 +991,18 @@ class _InstructorRecordedClassesTabState
     final newRecording = {
       'id': 'recording_${now.millisecondsSinceEpoch}',
       'title': title,
-      'description': description.isNotEmpty ? description : 'Recorded class video',
+      'description': description.isNotEmpty
+          ? description
+          : 'Recorded class video',
       'duration': '00:00',
       'uploadDate': now.toString().split(' ')[0],
-      'uploadTime': '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
+      'uploadTime':
+          '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
       'views': 0,
       'fileSize': '0 MB',
       'format': 'MP4',
-      'thumbnail': 'https://picsum.photos/300/200?random=${_recordings.length + 20}',
+      'thumbnail':
+          'https://picsum.photos/300/200?random=${_recordings.length + 20}',
       'videoUrl': sampleVideoUrls[_recordings.length % sampleVideoUrls.length],
       'status': 'processing',
     };
@@ -838,10 +1022,13 @@ class _InstructorRecordedClassesTabState
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         setState(() {
-          final index = _recordings.indexWhere((r) => r['id'] == newRecording['id']);
+          final index = _recordings.indexWhere(
+            (r) => r['id'] == newRecording['id'],
+          );
           if (index != -1) {
             _recordings[index]['status'] = 'published';
-            _recordings[index]['duration'] = '${(15 + (index * 3))}:${(30 + (index * 5)).toString().padLeft(2, '0')}';
+            _recordings[index]['duration'] =
+                '${(15 + (index * 3))}:${(30 + (index * 5)).toString().padLeft(2, '0')}';
             _recordings[index]['fileSize'] = '${200 + (index * 30)} MB';
           }
         });
