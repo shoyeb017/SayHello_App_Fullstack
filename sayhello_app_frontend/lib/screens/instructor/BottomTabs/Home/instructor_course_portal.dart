@@ -6,7 +6,7 @@ import 'instructor_online_session.dart';
 import 'instructor_recorded_classes.dart';
 import 'instructor_study_materials.dart';
 import 'instructor_group_chat.dart';
-import 'instructor_student_performance.dart';
+import 'instructor_feedback.dart';
 
 class InstructorCoursePortalPage extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -31,7 +31,7 @@ class _InstructorCoursePortalPageState
     const _TabItem(icon: Icons.ondemand_video, label: 'Recorded Classes'),
     const _TabItem(icon: Icons.description, label: 'Study Materials'),
     const _TabItem(icon: Icons.chat, label: 'Group Chat'),
-    const _TabItem(icon: Icons.analytics, label: 'Student Performance'),
+    const _TabItem(icon: Icons.analytics, label: 'Feedback'),
   ];
 
   void _onTabTap(int index) {
@@ -238,7 +238,7 @@ class _InstructorCoursePortalPageState
                 InstructorRecordedClassesTab(course: widget.course),
                 InstructorStudyMaterialsTab(course: widget.course),
                 InstructorGroupChatTab(course: widget.course),
-                InstructorStudentPerformanceTab(course: widget.course),
+                InstructorFeedbackTab(course: widget.course),
               ],
             ),
           ),

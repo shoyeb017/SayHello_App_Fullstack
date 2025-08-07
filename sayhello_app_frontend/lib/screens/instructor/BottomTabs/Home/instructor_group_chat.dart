@@ -12,103 +12,344 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  // Dynamic message data - replace with backend API later
-  List<Map<String, dynamic>> _messages = [
+  // Enhanced chat messages following learner context
+  final List<Map<String, dynamic>> _messages = [
     {
-      'id': 'msg_001',
-      'senderId': 'student_001',
-      'senderName': 'Alice Johnson',
-      'senderRole': 'student',
-      'message': 'Hello everyone! Excited to start this course 😊',
-      'timestamp': DateTime.now().subtract(const Duration(hours: 2)),
-      'isRead': true,
+      'id': 'msg_1',
+      'name': 'Emma Watson',
+      'role': 'learner',
+      'text': 'Good morning! Ready for today\'s Flutter session 💻',
+      'timestamp': '2025-08-07 9:15 AM',
+      'avatar': null,
     },
     {
-      'id': 'msg_002',
-      'senderId': 'instructor',
-      'senderName': 'You',
-      'senderRole': 'instructor',
-      'message':
-          'Welcome Alice! Great to have you here. Feel free to ask any questions.',
-      'timestamp': DateTime.now().subtract(
-        const Duration(hours: 1, minutes: 45),
-      ),
-      'isRead': true,
+      'id': 'msg_2',
+      'name': 'You',
+      'role': 'instructor',
+      'text':
+          'Good morning everyone! Today we\'ll cover advanced state management concepts.',
+      'timestamp': '2025-08-07 9:20 AM',
+      'avatar': null,
     },
     {
-      'id': 'msg_003',
-      'senderId': 'student_002',
-      'senderName': 'Bob Wilson',
-      'senderRole': 'student',
-      'message': 'When will the recorded session be available?',
-      'timestamp': DateTime.now().subtract(
-        const Duration(hours: 1, minutes: 30),
-      ),
-      'isRead': true,
+      'id': 'msg_3',
+      'name': 'Mike Johnson',
+      'role': 'learner',
+      'text': 'Will we be using Provider or Riverpod for state management?',
+      'timestamp': '2025-08-07 9:25 AM',
+      'avatar': null,
     },
     {
-      'id': 'msg_004',
-      'senderId': 'instructor',
-      'senderName': 'You',
-      'senderRole': 'instructor',
-      'message':
-          'Hi Bob! The recorded session will be uploaded within 24 hours after each live session.',
-      'timestamp': DateTime.now().subtract(
-        const Duration(hours: 1, minutes: 15),
-      ),
-      'isRead': true,
-    },
-    {
-      'id': 'msg_005',
-      'senderId': 'student_003',
-      'senderName': 'Carol Smith',
-      'senderRole': 'student',
-      'message': 'Thank you for the detailed explanation in today\'s session!',
-      'timestamp': DateTime.now().subtract(const Duration(minutes: 30)),
-      'isRead': false,
+      'id': 'msg_4',
+      'name': 'Sarah Williams',
+      'role': 'learner',
+      'text':
+          'Thanks for the clear explanation yesterday! Really helped with my project.',
+      'timestamp': '2025-08-07 10:10 AM',
+      'avatar': null,
     },
   ];
 
-  // Online students
-  final List<Map<String, dynamic>> _onlineStudents = [
+  final List<Map<String, dynamic>> _enrolledStudents = [
     {
-      'id': 'student_001',
-      'name': 'Alice Johnson',
-      'avatar': 'https://i.pravatar.cc/150?img=1',
+      'id': 'learner_1',
+      'name': 'Emma Watson',
+      'role': 'learner',
+      'avatar': null,
+      'isOnline': true,
     },
     {
-      'id': 'student_002',
-      'name': 'Bob Wilson',
-      'avatar': 'https://i.pravatar.cc/150?img=2',
+      'id': 'learner_2',
+      'name': 'Mike Johnson',
+      'role': 'learner',
+      'avatar': null,
+      'isOnline': true,
     },
     {
-      'id': 'student_003',
-      'name': 'Carol Smith',
-      'avatar': 'https://i.pravatar.cc/150?img=3',
+      'id': 'learner_3',
+      'name': 'Sarah Williams',
+      'role': 'learner',
+      'avatar': null,
+      'isOnline': false,
     },
     {
-      'id': 'student_004',
-      'name': 'David Brown',
-      'avatar': 'https://i.pravatar.cc/150?img=4',
+      'id': 'learner_4',
+      'name': 'David Chen',
+      'role': 'learner',
+      'avatar': null,
+      'isOnline': true,
     },
   ];
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
-    });
-  }
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = Color(0xFF7A54FF);
 
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
+    // Consistent theme colors
+    final textColor =
+        Theme.of(context).textTheme.bodyLarge?.color ??
+        (isDark ? Colors.white : Colors.black);
+    final subTextColor =
+        Theme.of(context).textTheme.bodyMedium?.color ??
+        (isDark ? Colors.grey.shade400 : Colors.grey.shade600);
+    final cardColor = Theme.of(context).cardColor;
+
+    // Get online students count
+    final onlineCount = _enrolledStudents
+        .where((s) => s['isOnline'] == true)
+        .length;
+
+    return Column(
+      children: [
+        // Instructor Chat Header - Different from learner
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: cardColor,
+            border: Border(
+              bottom: BorderSide(
+                color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+              ),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [primaryColor, primaryColor.withOpacity(0.7)],
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.school, color: Colors.white, size: 18),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Instructor Panel - ${widget.course['title']}',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      '$onlineCount online • ${_enrolledStudents.length} total students',
+                      style: TextStyle(fontSize: 12, color: subTextColor),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'INSTRUCTOR',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Messages List - Similar to learner but with instructor perspective
+        Expanded(
+          child: ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.all(16),
+            itemCount: _messages.length,
+            itemBuilder: (context, index) {
+              final message = _messages[index];
+              final isMe = message['name'] == 'You';
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: isMe
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    if (!isMe) ...[
+                      // Student Avatar
+                      CircleAvatar(
+                        radius: 16,
+                        backgroundColor: primaryColor.withOpacity(0.2),
+                        child: Text(
+                          (message['name'] as String)
+                              .substring(0, 1)
+                              .toUpperCase(),
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                    ],
+
+                    // Message Content
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isMe
+                              ? primaryColor
+                              : (isDark ? Colors.grey[800] : Colors.grey[100]),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Header with name and role indicator
+                            if (!isMe)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 4),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      message['name'].toString(),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: primaryColor,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(
+                                      Icons.person,
+                                      size: 12,
+                                      color: primaryColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                            // Message Text
+                            Text(
+                              message['text'].toString(),
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: isMe ? Colors.white : textColor,
+                                height: 1.4,
+                              ),
+                            ),
+
+                            const SizedBox(height: 6),
+
+                            // Footer with timestamp
+                            Text(
+                              message['timestamp'].toString(),
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: isMe ? Colors.white70 : subTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    if (isMe) ...[
+                      const SizedBox(width: 10),
+                      // Instructor Avatar
+                      CircleAvatar(
+                        radius: 16,
+                        backgroundColor: primaryColor,
+                        child: const Icon(
+                          Icons.school,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+
+        // Input Section - Instructor style
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: cardColor,
+            border: Border(
+              top: BorderSide(
+                color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+              ),
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    hintText: 'Message your students...',
+                    hintStyle: TextStyle(color: subTextColor, fontSize: 13),
+                    prefixIcon: Icon(
+                      Icons.school,
+                      color: primaryColor,
+                      size: 18,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                      borderSide: BorderSide(
+                        color: isDark
+                            ? Colors.grey.shade700
+                            : Colors.grey.shade300,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                      borderSide: BorderSide(
+                        color: isDark
+                            ? Colors.grey.shade700
+                            : Colors.grey.shade300,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                      borderSide: BorderSide(color: primaryColor),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                  ),
+                  style: TextStyle(color: textColor, fontSize: 13),
+                  maxLines: null,
+                  onSubmitted: (_) => _sendMessage(),
+                ),
+              ),
+              const SizedBox(width: 8),
+              FloatingActionButton.small(
+                onPressed: _sendMessage,
+                backgroundColor: primaryColor,
+                child: const Icon(Icons.send, color: Colors.white, size: 18),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   void _sendMessage() {
@@ -117,423 +358,32 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
     setState(() {
       _messages.add({
         'id': 'msg_${DateTime.now().millisecondsSinceEpoch}',
-        'senderId': 'instructor',
-        'senderName': 'You',
-        'senderRole': 'instructor',
-        'message': _controller.text.trim(),
-        'timestamp': DateTime.now(),
-        'isRead': true,
+        'name': 'You',
+        'role': 'instructor',
+        'text': _controller.text.trim(),
+        'timestamp': _formatTimestamp(DateTime.now()),
+        'avatar': null,
       });
       _controller.clear();
     });
 
-    // Scroll to bottom after sending message
+    // Auto scroll to bottom
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Column(
-      children: [
-        // Online Students Header
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isDark ? Colors.grey[850] : Colors.grey[50],
-            border: Border(
-              bottom: BorderSide(
-                color: isDark ? Colors.grey[700]! : Colors.grey[200]!,
-                width: 1,
-              ),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.people, color: const Color(0xFF7A54FF), size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Online Students (${_onlineStudents.length})',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.settings),
-                    onPressed: _showChatSettings,
-                    color: isDark ? Colors.grey[400] : Colors.grey[600],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 45,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _onlineStudents.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
-                  itemBuilder: (context, index) {
-                    final student = _onlineStudents[index];
-                    final firstName = student['name'].split(' ')[0];
-                    return SizedBox(
-                      width: 35,
-                      child: Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 16,
-                            backgroundImage: NetworkImage(student['avatar']),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            firstName.length > 6
-                                ? '${firstName.substring(0, 6)}.'
-                                : firstName,
-                            style: TextStyle(
-                              fontSize: 8,
-                              color: isDark
-                                  ? Colors.grey[400]
-                                  : Colors.grey[600],
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // Messages List
-        Expanded(
-          child: ListView.separated(
-            controller: _scrollController,
-            padding: const EdgeInsets.all(16),
-            itemCount: _messages.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              return _buildMessageBubble(_messages[index], isDark);
-            },
-          ),
-        ),
-
-        // Message Input
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isDark ? Colors.grey[850] : Colors.white,
-            border: Border(
-              top: BorderSide(
-                color: isDark ? Colors.grey[700]! : Colors.grey[200]!,
-                width: 1,
-              ),
-            ),
-          ),
-          child: SafeArea(
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: 'Type a message to your students...',
-                      hintStyle: TextStyle(
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      filled: true,
-                      fillColor: isDark ? Colors.grey[800] : Colors.grey[100],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    onSubmitted: (_) => _sendMessage(),
-                    maxLines: null,
-                    textInputAction: TextInputAction.send,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF7A54FF),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.send_rounded, color: Colors.white),
-                    onPressed: _sendMessage,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMessageBubble(Map<String, dynamic> message, bool isDark) {
-    final isInstructor = message['senderRole'] == 'instructor';
-    final timestamp = message['timestamp'] as DateTime;
-
-    return Align(
-      alignment: isInstructor ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
-        ),
-        child: Column(
-          crossAxisAlignment: isInstructor
-              ? CrossAxisAlignment.end
-              : CrossAxisAlignment.start,
-          children: [
-            if (!isInstructor) ...[
-              Padding(
-                padding: const EdgeInsets.only(left: 12, bottom: 4),
-                child: Text(
-                  message['senderName'],
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF7A54FF),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ),
-            ],
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: isInstructor
-                    ? const Color(0xFF7A54FF)
-                    : (isDark ? Colors.grey[800] : Colors.grey[200]),
-                borderRadius: BorderRadius.circular(18).copyWith(
-                  bottomRight: isInstructor ? const Radius.circular(4) : null,
-                  bottomLeft: !isInstructor ? const Radius.circular(4) : null,
-                ),
-              ),
-              child: IntrinsicWidth(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      message['message'],
-                      style: TextStyle(
-                        color: isInstructor
-                            ? Colors.white
-                            : (isDark ? Colors.white : Colors.black87),
-                        fontSize: 14,
-                      ),
-                      softWrap: true,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _formatTime(timestamp),
-                      style: TextStyle(
-                        color: isInstructor
-                            ? Colors.white70
-                            : (isDark ? Colors.grey[400] : Colors.grey[600]),
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _formatTime(DateTime timestamp) {
-    final now = DateTime.now();
-    final difference = now.difference(timestamp);
-
-    if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
-    } else {
-      return 'Just now';
-    }
-  }
-
-  void _showChatSettings() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: isDark ? Colors.grey[850] : Colors.white,
-          title: Text(
-            'Chat Settings',
-            style: TextStyle(color: isDark ? Colors.white : Colors.black),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: const Icon(
-                    Icons.notification_add,
-                    color: Color(0xFF7A54FF),
-                  ),
-                  title: Text(
-                    'Send Announcement',
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showAnnouncementDialog();
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.people_outline,
-                    color: Color(0xFF7A54FF),
-                  ),
-                  title: Text(
-                    'Manage Participants',
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    // TODO: Navigate to participants management
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.block, color: Color(0xFF7A54FF)),
-                  title: Text(
-                    'Moderation Settings',
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    // TODO: Navigate to moderation settings
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
-                'Close',
-                style: TextStyle(color: Color(0xFF7A54FF)),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showAnnouncementDialog() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final announcementController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: isDark ? Colors.grey[850] : Colors.white,
-          title: Text(
-            'Send Announcement',
-            style: TextStyle(color: isDark ? Colors.white : Colors.black),
-          ),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: SingleChildScrollView(
-              child: TextField(
-                controller: announcementController,
-                maxLines: 4,
-                style: TextStyle(color: isDark ? Colors.white : Colors.black),
-                decoration: InputDecoration(
-                  hintText: 'Type your announcement...',
-                  hintStyle: TextStyle(
-                    color: isDark ? Colors.grey[400] : Colors.grey[600],
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  filled: true,
-                  fillColor: isDark ? Colors.grey[800] : Colors.grey[100],
-                ),
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Cancel',
-                style: TextStyle(
-                  color: isDark ? Colors.grey[400] : Colors.grey[600],
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (announcementController.text.trim().isNotEmpty) {
-                  // Send announcement
-                  setState(() {
-                    _messages.add({
-                      'id':
-                          'announcement_${DateTime.now().millisecondsSinceEpoch}',
-                      'senderId': 'instructor',
-                      'senderName': 'Announcement',
-                      'senderRole': 'announcement',
-                      'message': '📢 ${announcementController.text.trim()}',
-                      'timestamp': DateTime.now(),
-                      'isRead': true,
-                    });
-                  });
-                  Navigator.of(context).pop();
-                  _scrollToBottom();
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7A54FF),
-              ),
-              child: const Text('Send', style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        );
-      },
-    );
+  String _formatTimestamp(DateTime dateTime) {
+    final hour = dateTime.hour > 12 ? dateTime.hour - 12 : dateTime.hour;
+    final period = dateTime.hour >= 12 ? 'PM' : 'AM';
+    final displayHour = hour == 0 ? 12 : hour;
+    return '${dateTime.month}/${dateTime.day} ${displayHour}:${dateTime.minute.toString().padLeft(2, '0')} $period';
   }
 
   @override
