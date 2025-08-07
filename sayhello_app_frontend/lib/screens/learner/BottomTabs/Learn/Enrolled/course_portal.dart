@@ -42,7 +42,10 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
       label: AppLocalizations.of(context)!.studyMaterials,
     ),
     _TabItem(icon: Icons.chat, label: AppLocalizations.of(context)!.groupChat),
-    _TabItem(icon: Icons.feedback, label: 'Feedback'),
+    _TabItem(
+      icon: Icons.feedback,
+      label: AppLocalizations.of(context)!.feedback,
+    ),
   ];
 
   void _onTabTap(int index) {
@@ -92,7 +95,8 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final title = widget.course['title'] ?? 'Course';
+    final title =
+        widget.course['title'] ?? AppLocalizations.of(context)!.courseDefault;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -119,7 +123,7 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
                 }
               });
             },
-            tooltip: 'Navigation Menu',
+            tooltip: AppLocalizations.of(context)!.navigationMenu,
           ),
           title: Text(
             title,
@@ -141,7 +145,7 @@ class _CoursePortalPageState extends State<CoursePortalPage> {
             IconButton(
               icon: const Icon(Icons.close),
               onPressed: () => Navigator.of(context).pop(),
-              tooltip: 'Close Course',
+              tooltip: AppLocalizations.of(context)!.closeCourse,
             ),
           ],
         ),

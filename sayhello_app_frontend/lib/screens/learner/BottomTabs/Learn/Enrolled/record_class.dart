@@ -232,7 +232,10 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
-                            '${_videoSummary!.failedVideos} of ${_videoSummary!.totalVideos} videos failed to load metadata',
+                            AppLocalizations.of(context)!.failedVideosCount(
+                              _videoSummary!.failedVideos,
+                              _videoSummary!.totalVideos,
+                            ),
                             style: TextStyle(
                               color: Colors.orange,
                               fontSize: 11,
@@ -249,7 +252,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                   children: [
                     Expanded(
                       child: _buildStatCard(
-                        'Total Videos',
+                        AppLocalizations.of(context)!.totalVideos,
                         '${_videoSummary!.validVideos}',
                         Icons.video_library,
                       ),
@@ -257,7 +260,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                     const SizedBox(width: 6),
                     Expanded(
                       child: _buildStatCard(
-                        'Total Duration',
+                        AppLocalizations.of(context)!.totalDuration,
                         _videoSummary!.formattedTotalDuration,
                         Icons.schedule,
                       ),
@@ -265,7 +268,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                     const SizedBox(width: 6),
                     Expanded(
                       child: _buildStatCard(
-                        'Total Size',
+                        AppLocalizations.of(context)!.totalSize,
                         _videoSummary!.formattedTotalSize,
                         Icons.storage,
                       ),
@@ -364,7 +367,9 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
-                                      'Failed to load',
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.failedToLoad,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 11,
@@ -452,7 +457,9 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
 
                         Text(
                           additionalData['description'] ??
-                              'No description available',
+                              AppLocalizations.of(
+                                context,
+                              )!.noDescriptionAvailable,
                           style: TextStyle(
                             fontSize: 12,
                             color: subTextColor,
@@ -475,7 +482,9 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                               ),
                             ),
                             child: Text(
-                              'Error: ${videoMetadata.error}',
+                              AppLocalizations.of(
+                                context,
+                              )!.videoError(videoMetadata.error!),
                               style: TextStyle(fontSize: 11, color: Colors.red),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -491,7 +500,10 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                             Expanded(
                               child: _buildInfoItem(
                                 Icons.calendar_today,
-                                additionalData['uploaded'] ?? 'Unknown',
+                                additionalData['uploaded'] ??
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.unknownUploadDate,
                                 subTextColor,
                               ),
                             ),
@@ -548,7 +560,9 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                               size: 16,
                             ),
                             label: Text(
-                              videoMetadata.isValid ? 'Watch Now' : 'Retry',
+                              videoMetadata.isValid
+                                  ? AppLocalizations.of(context)!.watchNow
+                                  : AppLocalizations.of(context)!.retry,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
@@ -583,7 +597,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
             ),
             const SizedBox(height: 20),
             Text(
-              'Loading video metadata...',
+              AppLocalizations.of(context)!.loadingVideoMetadata,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
@@ -593,7 +607,9 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
             const SizedBox(height: 8),
             if (_loadingProgress > 0)
               Text(
-                '${(_loadingProgress * 100).toInt()}% Complete',
+                AppLocalizations.of(
+                  context,
+                )!.completeProgress((_loadingProgress * 100).toInt()),
                 style: TextStyle(
                   fontSize: 14,
                   color: Theme.of(context).textTheme.bodyMedium?.color,
@@ -615,7 +631,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
             Icon(Icons.error_outline, size: 64, color: Colors.red),
             const SizedBox(height: 20),
             Text(
-              'Failed to load video metadata',
+              AppLocalizations.of(context)!.failedToLoadVideoMetadata,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -642,7 +658,10 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                 ),
               ),
               icon: const Icon(Icons.refresh, color: Colors.white),
-              label: const Text('Retry', style: TextStyle(color: Colors.white)),
+              label: Text(
+                AppLocalizations.of(context)!.retry,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),
@@ -660,7 +679,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
             Icon(Icons.video_library_outlined, size: 64, color: Colors.grey),
             const SizedBox(height: 20),
             Text(
-              'No videos available',
+              AppLocalizations.of(context)!.noVideosAvailable,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -669,7 +688,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Check back later for recorded classes',
+              AppLocalizations.of(context)!.checkBackLaterForRecorded,
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ],
@@ -768,8 +787,12 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
           SnackBar(
             content: Text(
               videoMetadata.isValid
-                  ? '✅ Video metadata loaded successfully'
-                  : '❌ Failed to load video metadata',
+                  ? AppLocalizations.of(
+                      context,
+                    )!.videoMetadataLoadedSuccessfully
+                  : AppLocalizations.of(
+                      context,
+                    )!.failedToLoadVideoMetadataSnackbar,
             ),
             backgroundColor: videoMetadata.isValid ? Colors.green : Colors.red,
             duration: Duration(seconds: 2),
@@ -784,7 +807,9 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('❌ Error: $e'),
+            content: Text(
+              AppLocalizations.of(context)!.errorMessage(e.toString()),
+            ),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 3),
           ),
@@ -801,7 +826,11 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
     if (!videoMetadata.isValid) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('❌ Cannot play video: ${videoMetadata.error}'),
+          content: Text(
+            AppLocalizations.of(
+              context,
+            )!.cannotPlayVideoError(videoMetadata.error!),
+          ),
           backgroundColor: Colors.red,
           duration: Duration(seconds: 3),
         ),
@@ -829,7 +858,7 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Loading Video Player...',
+                  AppLocalizations.of(context)!.loadingVideoPlayer,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -838,11 +867,13 @@ class _RecordedClassTabState extends State<RecordedClassTab> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Duration: ${videoMetadata.formattedDuration}',
+                  AppLocalizations.of(
+                    context,
+                  )!.videoDurationInfo(videoMetadata.formattedDuration),
                   style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
                 Text(
-                  'Size: ${videoMetadata.formattedSize}',
+                  '${AppLocalizations.of(context)!.totalSize}: ${videoMetadata.formattedSize}',
                   style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ],

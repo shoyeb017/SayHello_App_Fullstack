@@ -36,7 +36,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get and => '그리고';
 
   @override
-  String get hello => '안녕하세요!';
+  String get hello => '안녕하세요,';
 
   @override
   String get language => '언어';
@@ -510,7 +510,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get general => 'General';
 
   @override
-  String get about => 'About';
+  String get about => '소개';
 
   @override
   String get help => 'Help';
@@ -842,7 +842,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get findPartners => '파트너 찾기';
 
   @override
-  String get all => '전체';
+  String get all => '모두';
 
   @override
   String get seriousLearners => '진지한 학습자';
@@ -918,7 +918,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get instructor => '강사';
 
   @override
-  String get courseDescription => '강좌 설명';
+  String get courseDescription => '코스 설명';
 
   @override
   String get duration => '기간';
@@ -930,7 +930,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get endDate => '종료일';
 
   @override
-  String get price => '가격';
+  String price(String price) {
+    return '₩$price';
+  }
 
   @override
   String get enrollFor => '등록하기';
@@ -948,7 +950,294 @@ class AppLocalizationsKo extends AppLocalizations {
   String get recordedClasses => '녹화 수업';
 
   @override
+  String get accessAllRecordedSessions => '언제든지 모든 녹화된 세션에 접근하세요';
+
+  @override
+  String get videoLibrary => '비디오 라이브러리';
+
+  @override
+  String get totalVideos => '총 비디오';
+
+  @override
+  String get totalDuration => '총 재생 시간';
+
+  @override
+  String get totalSize => '총 크기';
+
+  @override
+  String get loadingVideoMetadata => '비디오 메타데이터 로딩 중...';
+
+  @override
+  String completeProgress(int percent) {
+    return '$percent% 완료';
+  }
+
+  @override
+  String get failedToLoadVideoMetadata => '비디오 메타데이터 로딩 실패';
+
+  @override
+  String get noVideosAvailable => '사용 가능한 비디오 없음';
+
+  @override
+  String get checkBackLaterForRecorded => '녹화 수업은 나중에 다시 확인하세요';
+
+  @override
+  String failedVideosCount(int failed, int total) {
+    return '$total개 중 $failed개 비디오의 메타데이터 로딩 실패';
+  }
+
+  @override
+  String get failedToLoad => '로딩 실패';
+
+  @override
+  String get noDescriptionAvailable => '설명이 없습니다';
+
+  @override
+  String videoError(String error) {
+    return '오류: $error';
+  }
+
+  @override
+  String get unknownUploadDate => '알 수 없음';
+
+  @override
+  String get watchNow => '지금 시청';
+
+  @override
+  String get videoMetadataLoadedSuccessfully => '✅ 비디오 메타데이터가 성공적으로 로딩됨';
+
+  @override
+  String get failedToLoadVideoMetadataSnackbar => '❌ 비디오 메타데이터 로딩 실패';
+
+  @override
+  String errorMessage(String error) {
+    return '❌ 오류: $error';
+  }
+
+  @override
+  String cannotPlayVideoError(String error) {
+    return '❌ 비디오를 재생할 수 없습니다: $error';
+  }
+
+  @override
+  String get loadingVideoPlayer => '비디오 플레이어 로딩 중...';
+
+  @override
+  String videoDurationSize(String duration, String size) {
+    return '재생 시간: $duration • 크기: $size';
+  }
+
+  @override
+  String get videoInformation => '동영상 정보';
+
+  @override
+  String videoTitle(String title) {
+    return '$title';
+  }
+
+  @override
+  String videoDurationInfo(String duration) {
+    return '• 재생 시간: $duration';
+  }
+
+  @override
+  String videoStatusInfo(String status) {
+    return '• 상태: $status';
+  }
+
+  @override
+  String videoResolutionInfo(int width, int height) {
+    return '• 해상도: ${width}x$height';
+  }
+
+  @override
+  String get videoStatusLoaded => '로딩 완료';
+
+  @override
+  String get videoStatusLoading => '로딩 중...';
+
+  @override
+  String get videoInfo => '동영상 정보';
+
+  @override
+  String get loadingVideo => '동영상 로딩 중...';
+
+  @override
+  String get failedToLoadVideo => '동영상 로드 실패';
+
+  @override
+  String get preparingVideo => '비디오 준비 중...';
+
+  @override
+  String get connectionTimeoutMessage => '연결 시간 초과. 인터넷 연결을 확인하고 다시 시도하세요.';
+
+  @override
+  String get videoNotFoundMessage => '비디오를 찾을 수 없습니다. 비디오 URL이 유효하지 않을 수 있습니다.';
+
+  @override
+  String get networkErrorMessage => '네트워크 오류. 인터넷 연결을 확인하세요.';
+
+  @override
+  String get videoLoadingTimeoutMessage => '비디오 로딩 시간 초과 - 인터넷 연결을 확인하세요';
+
+  @override
+  String videoErrorGeneric(String error) {
+    return '비디오 오류: $error';
+  }
+
+  @override
+  String get unknownError => '알 수 없는 오류';
+
+  @override
   String get studyMaterials => '학습 자료';
+
+  @override
+  String get downloadAndAccessMaterials => '강좌 자료를 다운로드하고 접근하세요';
+
+  @override
+  String get total => '총계';
+
+  @override
+  String get pdfs => 'PDF';
+
+  @override
+  String get images => '이미지';
+
+  @override
+  String get showMore => '더보기';
+
+  @override
+  String get showLess => '접기';
+
+  @override
+  String get untitledMaterial => '제목 없는 자료';
+
+  @override
+  String get noUrlAvailable => '❌ 이 자료의 URL을 사용할 수 없습니다';
+
+  @override
+  String openingFileType(String type) {
+    return '$type 열기 중...';
+  }
+
+  @override
+  String get noUrlForDownload => '❌ 다운로드할 URL을 사용할 수 없습니다';
+
+  @override
+  String get downloadFile => '파일 다운로드';
+
+  @override
+  String get downloadConfirmation => '브라우저에서 파일을 열어 다운로드합니다.';
+
+  @override
+  String fileType(String type) {
+    return '유형: $type';
+  }
+
+  @override
+  String get browserHandleDownload => '브라우저가 기본 다운로드 폴더로 다운로드를 처리합니다.';
+
+  @override
+  String get openInBrowser => '브라우저에서 열기';
+
+  @override
+  String get couldNotOpenBrowser => '브라우저를 열 수 없습니다. 링크가 클립보드에 복사되었습니다.';
+
+  @override
+  String get failedToOpenBrowser => '❌ 브라우저 열기 실패';
+
+  @override
+  String get linkCopiedInstead => '대신 링크가 클립보드에 복사되었습니다.';
+
+  @override
+  String get downloadLinkCopied => '📎 다운로드 링크가 클립보드에 복사됨';
+
+  @override
+  String get pasteAndGo => '붙여넣고 이동';
+
+  @override
+  String get downloadInstructions => '다운로드 지침';
+
+  @override
+  String get linkCopiedToClipboard => '다운로드 링크가 클립보드에 복사되었습니다:';
+
+  @override
+  String get toDownload => '다운로드 방법:';
+
+  @override
+  String get openYourBrowser => '1. 브라우저 열기';
+
+  @override
+  String get pasteLinkInAddress => '2. 주소창에 링크 붙여넣기';
+
+  @override
+  String get pressEnterToDownload => '3. Enter를 눌러 다운로드 시작';
+
+  @override
+  String get gotIt => '알겠습니다';
+
+  @override
+  String failedToCopyLink(String error) {
+    return '링크 복사 실패: $error';
+  }
+
+  @override
+  String loadingFileTypeViewer(String type) {
+    return '$type 로딩 중...';
+  }
+
+  @override
+  String get failedToLoadDocument => '문서 로딩 실패';
+
+  @override
+  String pdfLoadedPages(int pages) {
+    return 'PDF 로딩 완료: $pages페이지';
+  }
+
+  @override
+  String get loadingImage => '이미지 로딩 중...';
+
+  @override
+  String get failedToLoadImage => '이미지 로딩 실패';
+
+  @override
+  String get checkImageUrl => '이미지 URL을 확인하세요';
+
+  @override
+  String get documentOpenInBrowser => '이 문서는 기본 브라우저나 Google Docs 앱에서 열립니다';
+
+  @override
+  String get openDocument => '문서 열기';
+
+  @override
+  String get goBack => '뒤로 가기';
+
+  @override
+  String get unsupportedFileType => '지원되지 않는 파일 유형';
+
+  @override
+  String failedToOpenUrl(String error) {
+    return 'URL 열기 실패: $error';
+  }
+
+  @override
+  String get openingDocumentInBrowser => '브라우저에서 문서 열기 중...';
+
+  @override
+  String get errorOpeningBrowser => '브라우저 열기 오류. 링크가 클립보드에 복사되었습니다.';
+
+  @override
+  String linkCopiedToClipboardViewer(String label) {
+    return '$label이(가) 클립보드에 복사됨';
+  }
+
+  @override
+  String failedToCopyLabel(String label) {
+    return '$label 복사 실패';
+  }
+
+  @override
+  String get documentLink => '문서 링크';
 
   @override
   String get groupChat => '그룹 채팅';
@@ -963,7 +1252,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get learningPortal => '학습 포털';
 
   @override
-  String get courseDiscussion => '강좌 토론';
+  String get courseDiscussion => '코스 토론';
 
   @override
   String get participants => '참가자';
@@ -981,7 +1270,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get allOtherCourses => '모든 기타 강좌';
 
   @override
-  String get noCoursesFound => '강좌를 찾을 수 없습니다';
+  String get noCoursesFound => '코스를 찾을 수 없습니다';
 
   @override
   String get liveSessions => '라이브 세션';
@@ -1038,15 +1327,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get courseModules => '강좌 모듈';
 
   @override
-  String get accessAllRecordedSessions => '언제든지 모든 녹화된 세션에 접근하세요';
-
-  @override
-  String get totalVideos => '총 비디오';
-
-  @override
-  String get videoLibrary => '비디오 라이브러리';
-
-  @override
   String get newText => '새로운';
 
   @override
@@ -1056,16 +1336,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get downloading => '다운로드 중';
 
   @override
-  String get downloadAndAccessMaterials => '강좌 자료를 다운로드하고 접근하세요';
-
-  @override
   String get totalMaterials => '총 자료';
 
   @override
   String get downloaded => '다운로드됨';
-
-  @override
-  String get totalSize => '총 크기';
 
   @override
   String get opening => '열고 있습니다';
@@ -1210,12 +1484,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get interestsAndHobbies => '관심사 및 취미';
 
   @override
-  String get showLess => '접기';
-
-  @override
-  String get showMore => '더보기';
-
-  @override
   String get messageButton => '메시지';
 
   @override
@@ -1345,7 +1613,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get couldNotDetectLanguage => 'Could not detect language';
 
   @override
-  String get copiedToClipboard => '클립보드에 복사되었습니다';
+  String copiedToClipboard(String label) {
+    return '$label이(가) 클립보드에 복사되었습니다';
+  }
 
   @override
   String get failedToPlaySpeech => '음성 재생 실패';
@@ -1435,4 +1705,384 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get allCaughtUp => '모든 알림을 확인했습니다! 🎉';
+
+  @override
+  String get searchYourCourseHere => '여기서 코스를 검색하세요...';
+
+  @override
+  String get myCourses => '내 코스';
+
+  @override
+  String get levelCategory => '레벨 카테고리';
+
+  @override
+  String get popularCourses => '인기 코스';
+
+  @override
+  String get expiredCourses => '만료된 코스';
+
+  @override
+  String get sessions => '세션';
+
+  @override
+  String sessionsCount(String count) {
+    return '$count개 세션';
+  }
+
+  @override
+  String get by => '작성자:';
+
+  @override
+  String byInstructor(String instructor) {
+    return '$instructor에 의해';
+  }
+
+  @override
+  String completedPercentage(String percentage) {
+    return '$percentage% 완료';
+  }
+
+  @override
+  String get coursesCompleted => '완료';
+
+  @override
+  String get expired => '만료됨';
+
+  @override
+  String get noEnrolledCourses => '등록된 코스가 없습니다';
+
+  @override
+  String get searchCoursesByName => '코스명, 강사명으로 검색...';
+
+  @override
+  String get status => '상태';
+
+  @override
+  String get upcoming => '예정';
+
+  @override
+  String get active => '활성';
+
+  @override
+  String get showPopularOnly => '인기 코스만 표시';
+
+  @override
+  String coursesFound(String count, String plural) {
+    return '$count개의 코스$plural가 발견되었습니다';
+  }
+
+  @override
+  String get courseDefault => '코스';
+
+  @override
+  String get navigationMenu => '네비게이션 메뉴';
+
+  @override
+  String get closeCourse => '코스 닫기';
+
+  @override
+  String get totalStat => '전체';
+
+  @override
+  String get doneStat => '완료';
+
+  @override
+  String get nextStat => '다음';
+
+  @override
+  String get nextSession => '다음 세션';
+
+  @override
+  String get sessionDetails => '세션 세부정보';
+
+  @override
+  String get sessionLink => '세션 링크';
+
+  @override
+  String get joinNow => '지금 참가';
+
+  @override
+  String get sessionCompleted => '세션 완료';
+
+  @override
+  String get untitledSession => '제목 없는 세션';
+
+  @override
+  String durationLabel(String duration) {
+    return '기간: $duration';
+  }
+
+  @override
+  String failedToCopy(String label) {
+    return '$label 복사 실패';
+  }
+
+  @override
+  String openingSession(String platform) {
+    return '$platform 세션을 브라우저에서 열고 있습니다...';
+  }
+
+  @override
+  String get courseTitle => '코스 제목';
+
+  @override
+  String get meetYourInstructor => '강사 소개';
+
+  @override
+  String get coursesByInstructor => '코스';
+
+  @override
+  String get studentsLabel => '수강생';
+
+  @override
+  String get ratingLabel => '평점';
+
+  @override
+  String get priceLabel => '가격';
+
+  @override
+  String get durationStat => '기간';
+
+  @override
+  String get levelLabel => '레벨';
+
+  @override
+  String get languageLabel => '언어';
+
+  @override
+  String get statusLabel => '상태';
+
+  @override
+  String get courseCompletedStatus => '코스 완료';
+
+  @override
+  String get currentlyEnrolled => '현재 수강 중';
+
+  @override
+  String get enrollmentConfirmed => '등록 확인됨';
+
+  @override
+  String get enrollmentStatus => '등록 상태';
+
+  @override
+  String experienceYears(String years) {
+    return '$years년 이상';
+  }
+
+  @override
+  String expertIn(String language) {
+    return '$language 언어 전문가';
+  }
+
+  @override
+  String studentCountText(String count) {
+    return '$count명의 수강생';
+  }
+
+  @override
+  String get instructorBioDefault =>
+      '8년 이상의 교육 경험을 가진 경험 많은 교육자입니다. 현대적인 언어 학습 기법과 상호작용적인 교육 방법을 전문으로 합니다.';
+
+  @override
+  String get instructorExperience => '8년 이상';
+
+  @override
+  String instructorEducation(String language) {
+    return '$language 언어 전문가';
+  }
+
+  @override
+  String get aboutInstructor => '소개';
+
+  @override
+  String instructorStudents(int count) {
+    return '$count명의 학생';
+  }
+
+  @override
+  String get instructorCourses => '강의';
+
+  @override
+  String get instructorRating => '평점';
+
+  @override
+  String courseBy(String instructor) {
+    return '$instructor 강의';
+  }
+
+  @override
+  String expertInLanguage(String language) {
+    return '$language 전문가';
+  }
+
+  @override
+  String get courseFeedback => '코스 피드백';
+
+  @override
+  String get reviewInstructorFeedback => '강사 피드백을 검토하고 코스 경험을 공유하세요';
+
+  @override
+  String get feedbackFromInstructor => '강사로부터의 피드백';
+
+  @override
+  String get giveYourFeedback => '피드백 제공하기';
+
+  @override
+  String get rateCourse => '코스 평가하기';
+
+  @override
+  String ratingValue(int rating) {
+    return '$rating/5';
+  }
+
+  @override
+  String get noRating => '평가 없음';
+
+  @override
+  String get yourCourseFeedback => '귀하의 코스 피드백';
+
+  @override
+  String get courseFeedbackHint => '코스 내용, 구조, 난이도에 대한 생각을 공유하세요...';
+
+  @override
+  String get submitCourseFeedback => '코스 피드백 제출';
+
+  @override
+  String get instructorFeedback => '강사 피드백';
+
+  @override
+  String get rateInstructor => '강사 평가하기';
+
+  @override
+  String get yourInstructorFeedback => '귀하의 강사 피드백';
+
+  @override
+  String get instructorFeedbackHint => '교수 스타일, 명확성, 지원에 대한 생각을 공유하세요...';
+
+  @override
+  String get submitInstructorFeedback => '강사 피드백 제출';
+
+  @override
+  String get feedbackSummary => '피드백 요약';
+
+  @override
+  String get averageRating => '평균 평점';
+
+  @override
+  String get totalFeedback => '총 피드백';
+
+  @override
+  String get positive => '긍정적';
+
+  @override
+  String get constructive => '건설적';
+
+  @override
+  String get improvement => '개선';
+
+  @override
+  String get pleaseWriteCourseFeedback => '코스 피드백을 작성해 주세요';
+
+  @override
+  String get pleaseRateCourse => '코스에 대한 평가를 제공해 주세요';
+
+  @override
+  String get courseFeedbackSubmitted => '✅ 코스 피드백이 성공적으로 제출되었습니다!';
+
+  @override
+  String get pleaseWriteInstructorFeedback => '강사 피드백을 작성해 주세요';
+
+  @override
+  String get pleaseRateInstructor => '강사에 대한 평가를 제공해 주세요';
+
+  @override
+  String get instructorFeedbackSubmitted => '✅ 강사 피드백이 성공적으로 제출되었습니다!';
+
+  @override
+  String enrolledMembers(int count) {
+    return '$count명의 수강생';
+  }
+
+  @override
+  String get instructorRole => '강사';
+
+  @override
+  String enrolledMembersTitle(int count) {
+    return '등록된 수강생 ($count명)';
+  }
+
+  @override
+  String videoDuration(String duration) {
+    return '재생시간: $duration';
+  }
+
+  @override
+  String videoStatus(String status) {
+    return '• 상태: $status';
+  }
+
+  @override
+  String videoResolution(String resolution) {
+    return '해상도: $resolution';
+  }
+
+  @override
+  String get videoLoaded => '로드됨';
+
+  @override
+  String get videoLoading => 'Loading...';
+
+  @override
+  String get connectionTimeout =>
+      'Connection timeout. Please check your internet and try again.';
+
+  @override
+  String get videoNotFound => '동영상을 찾을 수 없습니다.';
+
+  @override
+  String get networkError =>
+      'Network error. Please check your internet connection.';
+
+  @override
+  String get videoLoadingTimeout => '동영상 로딩이 시간 초과되었습니다. 다시 시도해 주세요.';
+
+  @override
+  String videoErrorPrefix(String error) {
+    return '❌ $error';
+  }
+
+  @override
+  String videoErrorMessage(String error) {
+    return 'Video Error: $error';
+  }
+
+  @override
+  String get fullscreenMode => '전체 화면 모드';
+
+  @override
+  String get playbackSettings => '🎬 재생 설정:';
+
+  @override
+  String playbackSpeed(String speed) {
+    return '• 속도: ${speed}x';
+  }
+
+  @override
+  String playbackQuality(String quality) {
+    return '• 품질: $quality';
+  }
+
+  @override
+  String playbackVolume(int volume) {
+    return '• 음량: $volume%';
+  }
+
+  @override
+  String get playbackQualityAuto => 'Auto';
+
+  @override
+  String get retryButton => '다시 시도';
+
+  @override
+  String get qualityAuto => '자동';
 }

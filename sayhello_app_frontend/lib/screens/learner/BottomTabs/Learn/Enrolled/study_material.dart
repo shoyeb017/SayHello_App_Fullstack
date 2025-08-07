@@ -206,7 +206,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                   children: [
                     Expanded(
                       child: _buildStatCard(
-                        'Total',
+                        AppLocalizations.of(context)!.total,
                         '$totalMaterials',
                         Icons.folder_outlined,
                       ),
@@ -214,7 +214,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: _buildStatCard(
-                        'PDFs',
+                        AppLocalizations.of(context)!.pdfs,
                         '$pdfCount',
                         Icons.picture_as_pdf,
                       ),
@@ -222,7 +222,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: _buildStatCard(
-                        'Images',
+                        AppLocalizations.of(context)!.images,
                         '$imageCount',
                         Icons.image,
                       ),
@@ -230,7 +230,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: _buildStatCard(
-                        'Others',
+                        AppLocalizations.of(context)!.others,
                         '$othersCount',
                         Icons.description,
                       ),
@@ -289,7 +289,9 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                               children: [
                                 Text(
                                   material['title']?.toString() ??
-                                      'Untitled Material',
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.untitledMaterial,
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -364,7 +366,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                                 size: 14,
                               ),
                               label: Text(
-                                'Download',
+                                AppLocalizations.of(context)!.download,
                                 style: TextStyle(
                                   color: primaryColor,
                                   fontWeight: FontWeight.w600,
@@ -419,7 +421,9 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
             child: Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Text(
-                isExpanded ? 'Show Less' : 'Show More',
+                isExpanded
+                    ? AppLocalizations.of(context)!.showLess
+                    : AppLocalizations.of(context)!.showMore,
                 style: TextStyle(
                   color: Color(0xFF7A54FF),
                   fontWeight: FontWeight.w600,
@@ -513,7 +517,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
     if (url == null || url.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('❌ No URL available for this material'),
+          content: Text(AppLocalizations.of(context)!.noUrlAvailable),
           backgroundColor: Colors.red,
         ),
       );
@@ -540,7 +544,9 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Opening ${material['type']?.toString().toUpperCase()}...',
+                  AppLocalizations.of(context)!.openingFileType(
+                    material['type']?.toString().toUpperCase() ?? 'FILE',
+                  ),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -577,7 +583,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
     if (url == null || url.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('❌ No URL available for download'),
+          content: Text(AppLocalizations.of(context)!.noUrlForDownload),
           backgroundColor: Colors.red,
         ),
       );
@@ -593,14 +599,14 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
             children: [
               Icon(Icons.download, color: Color(0xFF7A54FF)),
               const SizedBox(width: 8),
-              Text('Download File'),
+              Text(AppLocalizations.of(context)!.downloadFile),
             ],
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('This will open the file in your browser for download.'),
+              Text(AppLocalizations.of(context)!.downloadConfirmation),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
@@ -612,7 +618,8 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      material['title']?.toString() ?? 'Unknown',
+                      material['title']?.toString() ??
+                          AppLocalizations.of(context)!.unknown,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF7A54FF),
@@ -620,7 +627,9 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Type: ${material['type']?.toString().toUpperCase()}',
+                      AppLocalizations.of(context)!.fileType(
+                        material['type']?.toString().toUpperCase() ?? 'FILE',
+                      ),
                       style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ],
@@ -628,7 +637,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Your browser will handle the download to your default downloads folder.',
+                AppLocalizations.of(context)!.browserHandleDownload,
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             ],
@@ -636,7 +645,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
@@ -645,7 +654,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
               onPressed: () => Navigator.of(context).pop(true),
               icon: Icon(Icons.open_in_new, color: Colors.white, size: 16),
               label: Text(
-                'Open in Browser',
+                AppLocalizations.of(context)!.openInBrowser,
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -680,7 +689,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
         );
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Could not open browser. Link copied to clipboard.'),
+            content: Text(AppLocalizations.of(context)!.couldNotOpenBrowser),
             backgroundColor: Colors.orange,
             duration: Duration(seconds: 3),
           ),
@@ -699,9 +708,9 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('❌ Failed to open browser'),
+              Text(AppLocalizations.of(context)!.failedToOpenBrowser),
               Text(
-                'Link copied to clipboard instead.',
+                AppLocalizations.of(context)!.linkCopiedInstead,
                 style: TextStyle(fontSize: 12, color: Colors.white70),
               ),
             ],
@@ -709,7 +718,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
           backgroundColor: Colors.red,
           duration: const Duration(seconds: 4),
           action: SnackBarAction(
-            label: 'Retry',
+            label: AppLocalizations.of(context)!.retry,
             textColor: Colors.white,
             onPressed: () => _downloadMaterial(context, material),
           ),
@@ -727,11 +736,11 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
       await Clipboard.setData(ClipboardData(text: url));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('📎 Download link copied to clipboard'),
+          content: Text(AppLocalizations.of(context)!.downloadLinkCopied),
           backgroundColor: Color(0xFF7A54FF),
           duration: Duration(seconds: 2),
           action: SnackBarAction(
-            label: 'Paste & Go',
+            label: AppLocalizations.of(context)!.pasteAndGo,
             textColor: Colors.white,
             onPressed: () {
               // Show instruction dialog
@@ -739,13 +748,15 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Download Instructions'),
+                    title: Text(
+                      AppLocalizations.of(context)!.downloadInstructions,
+                    ),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'The download link has been copied to your clipboard:',
+                          AppLocalizations.of(context)!.linkCopiedToClipboard,
                         ),
                         const SizedBox(height: 8),
                         Container(
@@ -763,16 +774,18 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        Text('To download:'),
-                        Text('1. Open your browser'),
-                        Text('2. Paste the link in the address bar'),
-                        Text('3. Press Enter to start download'),
+                        Text(AppLocalizations.of(context)!.toDownload),
+                        Text(AppLocalizations.of(context)!.openYourBrowser),
+                        Text(AppLocalizations.of(context)!.pasteLinkInAddress),
+                        Text(
+                          AppLocalizations.of(context)!.pressEnterToDownload,
+                        ),
                       ],
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: Text('Got it'),
+                        child: Text(AppLocalizations.of(context)!.gotIt),
                       ),
                     ],
                   );
@@ -785,7 +798,9 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to copy link: $e'),
+          content: Text(
+            AppLocalizations.of(context)!.failedToCopyLink(e.toString()),
+          ),
           backgroundColor: Colors.red,
           duration: Duration(seconds: 2),
         ),

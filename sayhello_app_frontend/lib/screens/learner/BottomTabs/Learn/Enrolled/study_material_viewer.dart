@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class StudyMaterialViewer extends StatefulWidget {
   final String url;
@@ -64,7 +65,9 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Loading ${widget.type.toUpperCase()}...',
+              AppLocalizations.of(
+                context,
+              )!.loadingFileTypeViewer(widget.type.toUpperCase()),
               style: const TextStyle(fontSize: 14),
             ),
           ],
@@ -82,7 +85,7 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
               Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
               Text(
-                'Failed to load document',
+                AppLocalizations.of(context)!.failedToLoadDocument,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -104,8 +107,8 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
                   backgroundColor: Color(0xFF7A54FF),
                 ),
                 icon: const Icon(Icons.refresh, color: Colors.white),
-                label: const Text(
-                  'Retry',
+                label: Text(
+                  AppLocalizations.of(context)!.retry,
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -150,7 +153,9 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'PDF loaded: ${details.document.pages.count} pages',
+                AppLocalizations.of(
+                  context,
+                )!.pdfLoadedPages(details.document.pages.count),
               ),
               backgroundColor: Color(0xFF7A54FF),
               duration: Duration(seconds: 2),
@@ -187,7 +192,7 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text('Loading image...'),
+                  Text(AppLocalizations.of(context)!.loadingImage),
                 ],
               ),
             );
@@ -199,10 +204,13 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
                 children: [
                   Icon(Icons.broken_image, size: 64, color: Colors.grey),
                   const SizedBox(height: 16),
-                  Text('Failed to load image', style: TextStyle(fontSize: 16)),
+                  Text(
+                    AppLocalizations.of(context)!.failedToLoadImage,
+                    style: TextStyle(fontSize: 16),
+                  ),
                   const SizedBox(height: 8),
                   Text(
-                    'Please check the image URL',
+                    AppLocalizations.of(context)!.checkImageUrl,
                     style: TextStyle(color: Colors.grey),
                   ),
                 ],
@@ -234,7 +242,7 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
             ),
             const SizedBox(height: 16),
             Text(
-              'This document will open in your default browser or Google Docs app',
+              AppLocalizations.of(context)!.documentOpenInBrowser,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
@@ -258,8 +266,8 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
                   color: Colors.white,
                   size: 24,
                 ),
-                label: const Text(
-                  'Open Document',
+                label: Text(
+                  AppLocalizations.of(context)!.openDocument,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -283,7 +291,7 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
               ),
               icon: Icon(Icons.arrow_back, color: Color(0xFF7A54FF), size: 20),
               label: Text(
-                'Go Back',
+                AppLocalizations.of(context)!.goBack,
                 style: TextStyle(
                   color: Color(0xFF7A54FF),
                   fontSize: 14,
@@ -307,12 +315,12 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
             Icon(Icons.file_present, size: 64, color: Colors.grey),
             const SizedBox(height: 16),
             Text(
-              'Unsupported file type',
+              AppLocalizations.of(context)!.unsupportedFileType,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
-              'File type: ${widget.type}',
+              AppLocalizations.of(context)!.fileType(widget.type),
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 16),
@@ -322,8 +330,8 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
                 backgroundColor: Color(0xFF7A54FF),
               ),
               icon: const Icon(Icons.open_in_new, color: Colors.white),
-              label: const Text(
-                'Open in Browser',
+              label: Text(
+                AppLocalizations.of(context)!.openInBrowser,
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -344,7 +352,9 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to open URL: $e'),
+          content: Text(
+            AppLocalizations.of(context)!.failedToOpenUrl(e.toString()),
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -367,7 +377,7 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
       // Show opening message (like online session)
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Opening document in browser...'),
+          content: Text(AppLocalizations.of(context)!.openingDocumentInBrowser),
           backgroundColor: Color(0xFF7A54FF),
           duration: Duration(seconds: 2),
         ),
@@ -384,7 +394,7 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
         _copyToClipboard(context, url, 'Document link');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Could not open browser. Link copied to clipboard.'),
+            content: Text(AppLocalizations.of(context)!.couldNotOpenBrowser),
             backgroundColor: Colors.orange,
             duration: Duration(seconds: 3),
           ),
@@ -395,7 +405,7 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
       _copyToClipboard(context, url, 'Document link');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error opening browser. Link copied to clipboard.'),
+          content: Text(AppLocalizations.of(context)!.errorOpeningBrowser),
           backgroundColor: Colors.red,
           duration: Duration(seconds: 3),
         ),
@@ -408,7 +418,7 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
       await Clipboard.setData(ClipboardData(text: text));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('$label copied to clipboard'),
+          content: Text(AppLocalizations.of(context)!.copiedToClipboard(label)),
           backgroundColor: Color(0xFF7A54FF),
           duration: Duration(seconds: 2),
         ),
@@ -416,7 +426,7 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to copy $label'),
+          content: Text(AppLocalizations.of(context)!.failedToCopy(label)),
           backgroundColor: Colors.red,
           duration: Duration(seconds: 2),
         ),

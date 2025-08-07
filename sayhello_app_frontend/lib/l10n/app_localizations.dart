@@ -158,10 +158,10 @@ abstract class AppLocalizations {
   /// **'and'**
   String get and;
 
-  /// Hello greeting
+  /// Greeting text
   ///
   /// In en, this message translates to:
-  /// **'Hello'**
+  /// **'Hello,'**
   String get hello;
 
   /// Language selector label
@@ -638,7 +638,7 @@ abstract class AppLocalizations {
   /// **'Art'**
   String get art;
 
-  /// Others option
+  /// Other files count label
   ///
   /// In en, this message translates to:
   /// **'Others'**
@@ -1106,7 +1106,7 @@ abstract class AppLocalizations {
   /// **'General'**
   String get general;
 
-  /// About section
+  /// About section title
   ///
   /// In en, this message translates to:
   /// **'About'**
@@ -1292,7 +1292,7 @@ abstract class AppLocalizations {
   /// **'Disconnected'**
   String get disconnected;
 
-  /// Retry button
+  /// Retry button text
   ///
   /// In en, this message translates to:
   /// **'Retry'**
@@ -1652,7 +1652,7 @@ abstract class AppLocalizations {
   /// **'New'**
   String get newLabel;
 
-  /// Popular languages section
+  /// Popular courses filter
   ///
   /// In en, this message translates to:
   /// **'Popular'**
@@ -1850,7 +1850,7 @@ abstract class AppLocalizations {
   /// **'Language Learn'**
   String get languageLearn;
 
-  /// Enrolled courses tab label
+  /// Enrolled course status
   ///
   /// In en, this message translates to:
   /// **'Enrolled'**
@@ -1868,10 +1868,10 @@ abstract class AppLocalizations {
   /// **'students'**
   String get students;
 
-  /// Completed status
+  /// Completed text
   ///
   /// In en, this message translates to:
-  /// **'Completed'**
+  /// **'completed'**
   String get completed;
 
   /// In progress status
@@ -1880,10 +1880,10 @@ abstract class AppLocalizations {
   /// **'In Progress'**
   String get inProgress;
 
-  /// Course completion message
+  /// Course completed status text
   ///
   /// In en, this message translates to:
-  /// **'Course completed successfully!'**
+  /// **'Course Completed'**
   String get courseCompleted;
 
   /// View all button text
@@ -1898,7 +1898,7 @@ abstract class AppLocalizations {
   /// **'Instructor'**
   String get instructor;
 
-  /// Course description header
+  /// Course description section title
   ///
   /// In en, this message translates to:
   /// **'Course Description'**
@@ -1910,23 +1910,23 @@ abstract class AppLocalizations {
   /// **'Duration'**
   String get duration;
 
-  /// Course start date label
+  /// Start date label
   ///
   /// In en, this message translates to:
   /// **'Start Date'**
   String get startDate;
 
-  /// Course end date label
+  /// End date label
   ///
   /// In en, this message translates to:
   /// **'End Date'**
   String get endDate;
 
-  /// Course price label
+  /// Course price display
   ///
   /// In en, this message translates to:
-  /// **'Price'**
-  String get price;
+  /// **'\${price}'**
+  String price(String price);
 
   /// Enroll button prefix
   ///
@@ -1958,11 +1958,509 @@ abstract class AppLocalizations {
   /// **'Recorded Classes'**
   String get recordedClasses;
 
+  /// Recorded sessions description
+  ///
+  /// In en, this message translates to:
+  /// **'Access all recorded sessions anytime'**
+  String get accessAllRecordedSessions;
+
+  /// Video library title
+  ///
+  /// In en, this message translates to:
+  /// **'Video Library'**
+  String get videoLibrary;
+
+  /// Total videos count label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Videos'**
+  String get totalVideos;
+
+  /// Total duration stat label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Duration'**
+  String get totalDuration;
+
+  /// Total size label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Size'**
+  String get totalSize;
+
+  /// Loading message for video metadata
+  ///
+  /// In en, this message translates to:
+  /// **'Loading video metadata...'**
+  String get loadingVideoMetadata;
+
+  /// Progress completion percentage
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% Complete'**
+  String completeProgress(int percent);
+
+  /// Error message for video metadata loading
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load video metadata'**
+  String get failedToLoadVideoMetadata;
+
+  /// Empty state message when no videos
+  ///
+  /// In en, this message translates to:
+  /// **'No videos available'**
+  String get noVideosAvailable;
+
+  /// Empty state subtitle message
+  ///
+  /// In en, this message translates to:
+  /// **'Check back later for recorded classes'**
+  String get checkBackLaterForRecorded;
+
+  /// Failed videos count message
+  ///
+  /// In en, this message translates to:
+  /// **'{failed} of {total} videos failed to load metadata'**
+  String failedVideosCount(int failed, int total);
+
+  /// Error message for failed video loading
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load'**
+  String get failedToLoad;
+
+  /// Message when video has no description
+  ///
+  /// In en, this message translates to:
+  /// **'No description available'**
+  String get noDescriptionAvailable;
+
+  /// Video error message
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String videoError(String error);
+
+  /// Unknown upload date placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknownUploadDate;
+
+  /// Watch video button text
+  ///
+  /// In en, this message translates to:
+  /// **'Watch Now'**
+  String get watchNow;
+
+  /// Success message for video metadata loading
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Video metadata loaded successfully'**
+  String get videoMetadataLoadedSuccessfully;
+
+  /// Snackbar error message for video metadata loading
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Failed to load video metadata'**
+  String get failedToLoadVideoMetadataSnackbar;
+
+  /// Generic error message
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Error: {error}'**
+  String errorMessage(String error);
+
+  /// Cannot play video error message
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Cannot play video: {error}'**
+  String cannotPlayVideoError(String error);
+
+  /// Loading video player dialog message
+  ///
+  /// In en, this message translates to:
+  /// **'Loading Video Player...'**
+  String get loadingVideoPlayer;
+
+  /// Video duration and size display
+  ///
+  /// In en, this message translates to:
+  /// **'Duration: {duration} • Size: {size}'**
+  String videoDurationSize(String duration, String size);
+
+  /// Video information snackbar header
+  ///
+  /// In en, this message translates to:
+  /// **'📹 Video Information:'**
+  String get videoInformation;
+
+  /// Video title display
+  ///
+  /// In en, this message translates to:
+  /// **'• Title: {title}'**
+  String videoTitle(String title);
+
+  /// Video duration in info
+  ///
+  /// In en, this message translates to:
+  /// **'• Duration: {duration}'**
+  String videoDurationInfo(String duration);
+
+  /// Video status in info
+  ///
+  /// In en, this message translates to:
+  /// **'• Status: {status}'**
+  String videoStatusInfo(String status);
+
+  /// Video resolution in info
+  ///
+  /// In en, this message translates to:
+  /// **'• Resolution: {width}x{height}'**
+  String videoResolutionInfo(int width, int height);
+
+  /// Video status when loaded
+  ///
+  /// In en, this message translates to:
+  /// **'Loaded'**
+  String get videoStatusLoaded;
+
+  /// Video status when loading
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get videoStatusLoading;
+
+  /// Video info button tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Video Info'**
+  String get videoInfo;
+
+  /// Loading video message
+  ///
+  /// In en, this message translates to:
+  /// **'Loading video...'**
+  String get loadingVideo;
+
+  /// Failed to load video error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load video'**
+  String get failedToLoadVideo;
+
+  /// Preparing video loading message
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing video...'**
+  String get preparingVideo;
+
+  /// Connection timeout error message
+  ///
+  /// In en, this message translates to:
+  /// **'Connection timeout. Please check your internet and try again.'**
+  String get connectionTimeoutMessage;
+
+  /// Video not found error message
+  ///
+  /// In en, this message translates to:
+  /// **'Video not found. The video URL may be invalid.'**
+  String get videoNotFoundMessage;
+
+  /// Network error message
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Please check your internet connection.'**
+  String get networkErrorMessage;
+
+  /// Video loading timeout error message
+  ///
+  /// In en, this message translates to:
+  /// **'Video loading timeout - Check your internet connection'**
+  String get videoLoadingTimeoutMessage;
+
+  /// Generic video error message
+  ///
+  /// In en, this message translates to:
+  /// **'Video Error: {error}'**
+  String videoErrorGeneric(String error);
+
+  /// Unknown error fallback message
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown error'**
+  String get unknownError;
+
   /// Study materials tab
   ///
   /// In en, this message translates to:
   /// **'Study Materials'**
   String get studyMaterials;
+
+  /// Study materials description
+  ///
+  /// In en, this message translates to:
+  /// **'Download and access course materials'**
+  String get downloadAndAccessMaterials;
+
+  /// Total materials count label
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// PDF files count label
+  ///
+  /// In en, this message translates to:
+  /// **'PDFs'**
+  String get pdfs;
+
+  /// Image files count label
+  ///
+  /// In en, this message translates to:
+  /// **'Images'**
+  String get images;
+
+  /// Show more button text
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get showMore;
+
+  /// Show less button text
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get showLess;
+
+  /// Default title for materials without name
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled Material'**
+  String get untitledMaterial;
+
+  /// Error message when material has no URL
+  ///
+  /// In en, this message translates to:
+  /// **'❌ No URL available for this material'**
+  String get noUrlAvailable;
+
+  /// Loading message when opening file
+  ///
+  /// In en, this message translates to:
+  /// **'Opening {type}...'**
+  String openingFileType(String type);
+
+  /// Error message when no download URL
+  ///
+  /// In en, this message translates to:
+  /// **'❌ No URL available for download'**
+  String get noUrlForDownload;
+
+  /// Download dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Download File'**
+  String get downloadFile;
+
+  /// Download confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'This will open the file in your browser for download.'**
+  String get downloadConfirmation;
+
+  /// File type display
+  ///
+  /// In en, this message translates to:
+  /// **'Type: {type}'**
+  String fileType(String type);
+
+  /// Browser download explanation
+  ///
+  /// In en, this message translates to:
+  /// **'Your browser will handle the download to your default downloads folder.'**
+  String get browserHandleDownload;
+
+  /// Open in browser button text
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Browser'**
+  String get openInBrowser;
+
+  /// Error message when browser cannot be opened
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open browser. Link copied to clipboard.'**
+  String get couldNotOpenBrowser;
+
+  /// Error message when browser fails
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Failed to open browser'**
+  String get failedToOpenBrowser;
+
+  /// Fallback action message
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied to clipboard instead.'**
+  String get linkCopiedInstead;
+
+  /// Success message for link copying
+  ///
+  /// In en, this message translates to:
+  /// **'📎 Download link copied to clipboard'**
+  String get downloadLinkCopied;
+
+  /// Paste and go action text
+  ///
+  /// In en, this message translates to:
+  /// **'Paste & Go'**
+  String get pasteAndGo;
+
+  /// Download instructions dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Download Instructions'**
+  String get downloadInstructions;
+
+  /// Link copied instruction
+  ///
+  /// In en, this message translates to:
+  /// **'The download link has been copied to your clipboard:'**
+  String get linkCopiedToClipboard;
+
+  /// Download steps header
+  ///
+  /// In en, this message translates to:
+  /// **'To download:'**
+  String get toDownload;
+
+  /// Download step 1
+  ///
+  /// In en, this message translates to:
+  /// **'1. Open your browser'**
+  String get openYourBrowser;
+
+  /// Download step 2
+  ///
+  /// In en, this message translates to:
+  /// **'2. Paste the link in the address bar'**
+  String get pasteLinkInAddress;
+
+  /// Download step 3
+  ///
+  /// In en, this message translates to:
+  /// **'3. Press Enter to start download'**
+  String get pressEnterToDownload;
+
+  /// Acknowledgment button text
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get gotIt;
+
+  /// Error message when copying fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to copy link: {error}'**
+  String failedToCopyLink(String error);
+
+  /// Loading message in viewer
+  ///
+  /// In en, this message translates to:
+  /// **'Loading {type}...'**
+  String loadingFileTypeViewer(String type);
+
+  /// Document loading error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load document'**
+  String get failedToLoadDocument;
+
+  /// PDF loading success message
+  ///
+  /// In en, this message translates to:
+  /// **'PDF loaded: {pages} pages'**
+  String pdfLoadedPages(int pages);
+
+  /// Image loading message
+  ///
+  /// In en, this message translates to:
+  /// **'Loading image...'**
+  String get loadingImage;
+
+  /// Image loading error
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load image'**
+  String get failedToLoadImage;
+
+  /// Image URL check instruction
+  ///
+  /// In en, this message translates to:
+  /// **'Please check the image URL'**
+  String get checkImageUrl;
+
+  /// Document opening explanation
+  ///
+  /// In en, this message translates to:
+  /// **'This document will open in your default browser or Google Docs app'**
+  String get documentOpenInBrowser;
+
+  /// Open document button text
+  ///
+  /// In en, this message translates to:
+  /// **'Open Document'**
+  String get openDocument;
+
+  /// Go back button text
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back'**
+  String get goBack;
+
+  /// Unsupported file type message
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported file type'**
+  String get unsupportedFileType;
+
+  /// URL opening error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to open URL: {error}'**
+  String failedToOpenUrl(String error);
+
+  /// Document opening loading message
+  ///
+  /// In en, this message translates to:
+  /// **'Opening document in browser...'**
+  String get openingDocumentInBrowser;
+
+  /// Error message when browser fails to open
+  ///
+  /// In en, this message translates to:
+  /// **'Error opening browser. Link copied to clipboard.'**
+  String get errorOpeningBrowser;
+
+  /// Link copied success message
+  ///
+  /// In en, this message translates to:
+  /// **'{label} copied to clipboard'**
+  String linkCopiedToClipboardViewer(String label);
+
+  /// Copy failure message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to copy {label}'**
+  String failedToCopyLabel(String label);
+
+  /// Document link label
+  ///
+  /// In en, this message translates to:
+  /// **'Document link'**
+  String get documentLink;
 
   /// Group chat tab
   ///
@@ -1988,7 +2486,7 @@ abstract class AppLocalizations {
   /// **'Learning Portal'**
   String get learningPortal;
 
-  /// Course discussion header
+  /// Course discussion chat title
   ///
   /// In en, this message translates to:
   /// **'Course Discussion'**
@@ -2000,7 +2498,7 @@ abstract class AppLocalizations {
   /// **'participants'**
   String get participants;
 
-  /// Message input placeholder
+  /// Chat message input hint
   ///
   /// In en, this message translates to:
   /// **'Type your message...'**
@@ -2024,7 +2522,7 @@ abstract class AppLocalizations {
   /// **'All Other Courses'**
   String get allOtherCourses;
 
-  /// No courses found message
+  /// No search results text
   ///
   /// In en, this message translates to:
   /// **'No courses found'**
@@ -2138,24 +2636,6 @@ abstract class AppLocalizations {
   /// **'Course Modules'**
   String get courseModules;
 
-  /// Recorded sessions description
-  ///
-  /// In en, this message translates to:
-  /// **'Access all recorded sessions anytime'**
-  String get accessAllRecordedSessions;
-
-  /// Total videos count label
-  ///
-  /// In en, this message translates to:
-  /// **'Total Videos'**
-  String get totalVideos;
-
-  /// Video library title
-  ///
-  /// In en, this message translates to:
-  /// **'Video Library'**
-  String get videoLibrary;
-
   /// New filter option
   ///
   /// In en, this message translates to:
@@ -2174,12 +2654,6 @@ abstract class AppLocalizations {
   /// **'Downloading'**
   String get downloading;
 
-  /// Study materials description
-  ///
-  /// In en, this message translates to:
-  /// **'Download and access course materials'**
-  String get downloadAndAccessMaterials;
-
   /// Total materials count label
   ///
   /// In en, this message translates to:
@@ -2191,12 +2665,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Downloaded'**
   String get downloaded;
-
-  /// Total size label
-  ///
-  /// In en, this message translates to:
-  /// **'Total Size'**
-  String get totalSize;
 
   /// Opening file message
   ///
@@ -2474,18 +2942,6 @@ abstract class AppLocalizations {
   /// **'Interests & Hobbies'**
   String get interestsAndHobbies;
 
-  /// Show less button text
-  ///
-  /// In en, this message translates to:
-  /// **'Show less'**
-  String get showLess;
-
-  /// Show more button text
-  ///
-  /// In en, this message translates to:
-  /// **'Show more'**
-  String get showMore;
-
   /// Message button text
   ///
   /// In en, this message translates to:
@@ -2642,7 +3098,7 @@ abstract class AppLocalizations {
   /// **'Select Learning Language & Level'**
   String get selectLearningLanguageLevel;
 
-  /// Level label
+  /// Level filter label
   ///
   /// In en, this message translates to:
   /// **'Level'**
@@ -2708,11 +3164,11 @@ abstract class AppLocalizations {
   /// **'Could not detect language'**
   String get couldNotDetectLanguage;
 
-  /// Clipboard copy confirmation
+  /// Success message when copied to clipboard
   ///
   /// In en, this message translates to:
-  /// **'copied to clipboard'**
-  String get copiedToClipboard;
+  /// **'{label} copied to clipboard'**
+  String copiedToClipboard(String label);
 
   /// Speech playback failure message
   ///
@@ -2774,7 +3230,7 @@ abstract class AppLocalizations {
   /// **'Azure credentials not configured'**
   String get azureCredentialsNotConfigured;
 
-  /// Unknown value label
+  /// Unknown status
   ///
   /// In en, this message translates to:
   /// **'Unknown'**
@@ -2854,6 +3310,660 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You\'re all caught up! 🎉'**
   String get allCaughtUp;
+
+  /// Search bar placeholder text
+  ///
+  /// In en, this message translates to:
+  /// **'Search your course here...'**
+  String get searchYourCourseHere;
+
+  /// My courses section title
+  ///
+  /// In en, this message translates to:
+  /// **'My Courses'**
+  String get myCourses;
+
+  /// Level category section title
+  ///
+  /// In en, this message translates to:
+  /// **'Level Category'**
+  String get levelCategory;
+
+  /// Popular courses section title
+  ///
+  /// In en, this message translates to:
+  /// **'Popular Courses'**
+  String get popularCourses;
+
+  /// Expired courses section title
+  ///
+  /// In en, this message translates to:
+  /// **'Expired Courses'**
+  String get expiredCourses;
+
+  /// Sessions text for course cards
+  ///
+  /// In en, this message translates to:
+  /// **'sessions'**
+  String get sessions;
+
+  /// Sessions count text
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Sessions'**
+  String sessionsCount(String count);
+
+  /// By instructor text
+  ///
+  /// In en, this message translates to:
+  /// **'by'**
+  String get by;
+
+  /// By instructor text
+  ///
+  /// In en, this message translates to:
+  /// **'by {instructor}'**
+  String byInstructor(String instructor);
+
+  /// Completion percentage text
+  ///
+  /// In en, this message translates to:
+  /// **'{percentage}% completed'**
+  String completedPercentage(String percentage);
+
+  /// Course completion status
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get coursesCompleted;
+
+  /// Expired course status
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get expired;
+
+  /// Empty state text for no enrolled courses
+  ///
+  /// In en, this message translates to:
+  /// **'No enrolled courses'**
+  String get noEnrolledCourses;
+
+  /// Search placeholder text for courses
+  ///
+  /// In en, this message translates to:
+  /// **'Search by course name, instructor...'**
+  String get searchCoursesByName;
+
+  /// Status filter label
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// Upcoming course status
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get upcoming;
+
+  /// Active course status
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get active;
+
+  /// Popular filter toggle text
+  ///
+  /// In en, this message translates to:
+  /// **'Show popular only'**
+  String get showPopularOnly;
+
+  /// Search results count
+  ///
+  /// In en, this message translates to:
+  /// **'{count} course{plural} found'**
+  String coursesFound(String count, String plural);
+
+  /// Default course title when course title is not available
+  ///
+  /// In en, this message translates to:
+  /// **'Course'**
+  String get courseDefault;
+
+  /// Tooltip for navigation menu button
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation Menu'**
+  String get navigationMenu;
+
+  /// Tooltip for close course button
+  ///
+  /// In en, this message translates to:
+  /// **'Close Course'**
+  String get closeCourse;
+
+  /// Total sessions stat label
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get totalStat;
+
+  /// Completed sessions stat label
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get doneStat;
+
+  /// Upcoming sessions stat label
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get nextStat;
+
+  /// Next session label in header
+  ///
+  /// In en, this message translates to:
+  /// **'Next Session'**
+  String get nextSession;
+
+  /// Session details section title
+  ///
+  /// In en, this message translates to:
+  /// **'Session Details'**
+  String get sessionDetails;
+
+  /// Session link field label
+  ///
+  /// In en, this message translates to:
+  /// **'Session Link'**
+  String get sessionLink;
+
+  /// Join session button text
+  ///
+  /// In en, this message translates to:
+  /// **'Join Now'**
+  String get joinNow;
+
+  /// Completed session status text
+  ///
+  /// In en, this message translates to:
+  /// **'Session Completed'**
+  String get sessionCompleted;
+
+  /// Default session title
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled Session'**
+  String get untitledSession;
+
+  /// Duration label with parameter
+  ///
+  /// In en, this message translates to:
+  /// **'Duration: {duration}'**
+  String durationLabel(String duration);
+
+  /// Error message when copy fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to copy {label}'**
+  String failedToCopy(String label);
+
+  /// Message when opening session
+  ///
+  /// In en, this message translates to:
+  /// **'Opening {platform} session in browser...'**
+  String openingSession(String platform);
+
+  /// Default course title
+  ///
+  /// In en, this message translates to:
+  /// **'Course Title'**
+  String get courseTitle;
+
+  /// Meet your instructor section header
+  ///
+  /// In en, this message translates to:
+  /// **'Meet Your Instructor'**
+  String get meetYourInstructor;
+
+  /// Courses count label for instructor
+  ///
+  /// In en, this message translates to:
+  /// **'Courses'**
+  String get coursesByInstructor;
+
+  /// Students count label
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get studentsLabel;
+
+  /// Rating label
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get ratingLabel;
+
+  /// Price label
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get priceLabel;
+
+  /// Duration stat label
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get durationStat;
+
+  /// Level label
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get levelLabel;
+
+  /// Language label
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageLabel;
+
+  /// Status label
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get statusLabel;
+
+  /// Course completed status text
+  ///
+  /// In en, this message translates to:
+  /// **'Course Completed'**
+  String get courseCompletedStatus;
+
+  /// Currently enrolled status text
+  ///
+  /// In en, this message translates to:
+  /// **'Currently Enrolled'**
+  String get currentlyEnrolled;
+
+  /// Enrollment confirmed status text
+  ///
+  /// In en, this message translates to:
+  /// **'Enrollment Confirmed'**
+  String get enrollmentConfirmed;
+
+  /// Default enrollment status text
+  ///
+  /// In en, this message translates to:
+  /// **'Enrollment Status'**
+  String get enrollmentStatus;
+
+  /// Experience years text
+  ///
+  /// In en, this message translates to:
+  /// **'{years}+ years'**
+  String experienceYears(String years);
+
+  /// Expert in language text
+  ///
+  /// In en, this message translates to:
+  /// **'Expert in {language} Language'**
+  String expertIn(String language);
+
+  /// Student count text
+  ///
+  /// In en, this message translates to:
+  /// **'{count} students'**
+  String studentCountText(String count);
+
+  /// Default instructor bio text
+  ///
+  /// In en, this message translates to:
+  /// **'Experienced educator with over 8 years of teaching experience. Specializes in modern language learning techniques and interactive teaching methods.'**
+  String get instructorBioDefault;
+
+  /// Default instructor experience text
+  ///
+  /// In en, this message translates to:
+  /// **'8+ years'**
+  String get instructorExperience;
+
+  /// Instructor education text
+  ///
+  /// In en, this message translates to:
+  /// **'Expert in {language} Language'**
+  String instructorEducation(String language);
+
+  /// About instructor section header
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get aboutInstructor;
+
+  /// Instructor student count
+  ///
+  /// In en, this message translates to:
+  /// **'{count} students'**
+  String instructorStudents(int count);
+
+  /// Instructor courses label
+  ///
+  /// In en, this message translates to:
+  /// **'Courses'**
+  String get instructorCourses;
+
+  /// Instructor rating label
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get instructorRating;
+
+  /// Course by instructor text
+  ///
+  /// In en, this message translates to:
+  /// **'by {instructor}'**
+  String courseBy(String instructor);
+
+  /// Expert in language text
+  ///
+  /// In en, this message translates to:
+  /// **'Expert in {language}'**
+  String expertInLanguage(String language);
+
+  /// Course feedback title
+  ///
+  /// In en, this message translates to:
+  /// **'Course Feedback'**
+  String get courseFeedback;
+
+  /// Course feedback subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Review instructor feedback and share your course experience'**
+  String get reviewInstructorFeedback;
+
+  /// Instructor feedback section title
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback from Instructor'**
+  String get feedbackFromInstructor;
+
+  /// Give feedback section title
+  ///
+  /// In en, this message translates to:
+  /// **'Give Your Feedback'**
+  String get giveYourFeedback;
+
+  /// Course rating label
+  ///
+  /// In en, this message translates to:
+  /// **'Rate the Course'**
+  String get rateCourse;
+
+  /// Rating display value
+  ///
+  /// In en, this message translates to:
+  /// **'{rating}/5'**
+  String ratingValue(int rating);
+
+  /// No rating given text
+  ///
+  /// In en, this message translates to:
+  /// **'No rating'**
+  String get noRating;
+
+  /// Course feedback input label
+  ///
+  /// In en, this message translates to:
+  /// **'Your Course Feedback'**
+  String get yourCourseFeedback;
+
+  /// Course feedback input hint
+  ///
+  /// In en, this message translates to:
+  /// **'Share your thoughts about the course content, structure, difficulty...'**
+  String get courseFeedbackHint;
+
+  /// Submit course feedback button
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Course Feedback'**
+  String get submitCourseFeedback;
+
+  /// Instructor feedback title
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor Feedback'**
+  String get instructorFeedback;
+
+  /// Instructor rating label
+  ///
+  /// In en, this message translates to:
+  /// **'Rate the Instructor'**
+  String get rateInstructor;
+
+  /// Instructor feedback input label
+  ///
+  /// In en, this message translates to:
+  /// **'Your Instructor Feedback'**
+  String get yourInstructorFeedback;
+
+  /// Instructor feedback input hint
+  ///
+  /// In en, this message translates to:
+  /// **'Share your thoughts about teaching style, clarity, support...'**
+  String get instructorFeedbackHint;
+
+  /// Submit instructor feedback button
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Instructor Feedback'**
+  String get submitInstructorFeedback;
+
+  /// Feedback summary section title
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback Summary'**
+  String get feedbackSummary;
+
+  /// Average rating label
+  ///
+  /// In en, this message translates to:
+  /// **'Average Rating'**
+  String get averageRating;
+
+  /// Total feedback count label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Feedback'**
+  String get totalFeedback;
+
+  /// Positive feedback type
+  ///
+  /// In en, this message translates to:
+  /// **'positive'**
+  String get positive;
+
+  /// Constructive feedback type
+  ///
+  /// In en, this message translates to:
+  /// **'constructive'**
+  String get constructive;
+
+  /// Improvement feedback type
+  ///
+  /// In en, this message translates to:
+  /// **'improvement'**
+  String get improvement;
+
+  /// Empty course feedback validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please write your course feedback'**
+  String get pleaseWriteCourseFeedback;
+
+  /// Missing course rating validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide a rating for the course'**
+  String get pleaseRateCourse;
+
+  /// Course feedback submission success message
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Course feedback submitted successfully!'**
+  String get courseFeedbackSubmitted;
+
+  /// Empty instructor feedback validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please write your instructor feedback'**
+  String get pleaseWriteInstructorFeedback;
+
+  /// Missing instructor rating validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide a rating for the instructor'**
+  String get pleaseRateInstructor;
+
+  /// Instructor feedback submission success message
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Instructor feedback submitted successfully!'**
+  String get instructorFeedbackSubmitted;
+
+  /// Enrolled members count
+  ///
+  /// In en, this message translates to:
+  /// **'{count} enrolled members'**
+  String enrolledMembers(int count);
+
+  /// Instructor role label
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor'**
+  String get instructorRole;
+
+  /// Enrolled members modal title
+  ///
+  /// In en, this message translates to:
+  /// **'Enrolled Members ({count})'**
+  String enrolledMembersTitle(int count);
+
+  /// Video duration display
+  ///
+  /// In en, this message translates to:
+  /// **'• Duration: {duration}'**
+  String videoDuration(String duration);
+
+  /// Video status display
+  ///
+  /// In en, this message translates to:
+  /// **'• Status: {status}'**
+  String videoStatus(String status);
+
+  /// Video resolution display
+  ///
+  /// In en, this message translates to:
+  /// **'• Resolution: {resolution}'**
+  String videoResolution(String resolution);
+
+  /// Video loaded status
+  ///
+  /// In en, this message translates to:
+  /// **'Loaded'**
+  String get videoLoaded;
+
+  /// Video loading status
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get videoLoading;
+
+  /// Connection timeout error message
+  ///
+  /// In en, this message translates to:
+  /// **'Connection timeout. Please check your internet and try again.'**
+  String get connectionTimeout;
+
+  /// Video not found error message
+  ///
+  /// In en, this message translates to:
+  /// **'Video not found. The video URL may be invalid.'**
+  String get videoNotFound;
+
+  /// Network error message
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Please check your internet connection.'**
+  String get networkError;
+
+  /// Video loading timeout error
+  ///
+  /// In en, this message translates to:
+  /// **'Video loading timeout - Check your internet connection'**
+  String get videoLoadingTimeout;
+
+  /// Video error message with prefix
+  ///
+  /// In en, this message translates to:
+  /// **'❌ {error}'**
+  String videoErrorPrefix(String error);
+
+  /// Video error snackbar message
+  ///
+  /// In en, this message translates to:
+  /// **'Video Error: {error}'**
+  String videoErrorMessage(String error);
+
+  /// Fullscreen mode notification
+  ///
+  /// In en, this message translates to:
+  /// **'Fullscreen mode'**
+  String get fullscreenMode;
+
+  /// Playback settings header
+  ///
+  /// In en, this message translates to:
+  /// **'🎬 Playback Settings:'**
+  String get playbackSettings;
+
+  /// Playback speed display
+  ///
+  /// In en, this message translates to:
+  /// **'• Speed: {speed}x'**
+  String playbackSpeed(String speed);
+
+  /// Playback quality display
+  ///
+  /// In en, this message translates to:
+  /// **'• Quality: {quality}'**
+  String playbackQuality(String quality);
+
+  /// Playback volume display
+  ///
+  /// In en, this message translates to:
+  /// **'• Volume: {volume}%'**
+  String playbackVolume(int volume);
+
+  /// Auto quality setting
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get playbackQualityAuto;
+
+  /// Retry button text
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retryButton;
+
+  /// Auto quality setting
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get qualityAuto;
 }
 
 class _AppLocalizationsDelegate

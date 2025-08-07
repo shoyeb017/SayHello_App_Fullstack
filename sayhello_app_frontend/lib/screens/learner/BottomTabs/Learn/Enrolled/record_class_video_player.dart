@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 // Modern Video Player for Record Class - Uses video_player package
 class RecordClassVideoPlayer extends StatefulWidget {
@@ -63,9 +64,7 @@ class _RecordClassVideoPlayerState extends State<RecordClassVideoPlayer> {
       await _controller!.initialize().timeout(
         const Duration(seconds: 15),
         onTimeout: () {
-          throw Exception(
-            'Video loading timeout - Check your internet connection',
-          );
+          throw Exception(AppLocalizations.of(context)!.videoLoadingTimeout);
         },
       );
 
@@ -88,13 +87,11 @@ class _RecordClassVideoPlayerState extends State<RecordClassVideoPlayer> {
         // Show detailed error message
         String errorMessage = e.toString();
         if (errorMessage.contains('timeout')) {
-          errorMessage =
-              'Connection timeout. Please check your internet and try again.';
+          errorMessage = AppLocalizations.of(context)!.connectionTimeout;
         } else if (errorMessage.contains('404')) {
-          errorMessage = 'Video not found. The video URL may be invalid.';
+          errorMessage = AppLocalizations.of(context)!.videoNotFound;
         } else if (errorMessage.contains('network')) {
-          errorMessage =
-              'Network error. Please check your internet connection.';
+          errorMessage = AppLocalizations.of(context)!.networkError;
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -103,7 +100,7 @@ class _RecordClassVideoPlayerState extends State<RecordClassVideoPlayer> {
             backgroundColor: Colors.red,
             duration: Duration(seconds: 5),
             action: SnackBarAction(
-              label: 'Retry',
+              label: AppLocalizations.of(context)!.retryButton,
               textColor: Colors.white,
               onPressed: _initializeVideo,
             ),
@@ -122,7 +119,10 @@ class _RecordClassVideoPlayerState extends State<RecordClassVideoPlayer> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Video Error: ${_controller!.value.errorDescription ?? 'Unknown error'}',
+              AppLocalizations.of(context)!.videoErrorMessage(
+                _controller!.value.errorDescription ??
+                    AppLocalizations.of(context)!.unknownError,
+              ),
             ),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 3),
@@ -230,15 +230,27 @@ class _RecordClassVideoPlayerState extends State<RecordClassVideoPlayer> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('📹 Video Information:'),
-                      Text('• Title: ${widget.title}'),
-                      Text('• Duration: ${widget.duration}'),
+                      Text(AppLocalizations.of(context)!.videoInformation),
                       Text(
-                        '• Status: ${_isInitialized ? "Loaded" : "Loading..."}',
+                        AppLocalizations.of(context)!.videoTitle(widget.title),
+                      ),
+                      Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.videoDuration(widget.duration),
+                      ),
+                      Text(
+                        AppLocalizations.of(context)!.videoStatus(
+                          _isInitialized
+                              ? AppLocalizations.of(context)!.videoLoaded
+                              : AppLocalizations.of(context)!.loadingVideo,
+                        ),
                       ),
                       if (_isInitialized && _controller != null)
                         Text(
-                          '• Resolution: ${_controller!.value.size.width.toInt()}x${_controller!.value.size.height.toInt()}',
+                          AppLocalizations.of(context)!.videoResolution(
+                            '${_controller!.value.size.width.toInt()}x${_controller!.value.size.height.toInt()}',
+                          ),
                         ),
                     ],
                   ),
@@ -248,7 +260,7 @@ class _RecordClassVideoPlayerState extends State<RecordClassVideoPlayer> {
               );
             },
             icon: const Icon(Icons.info_outline),
-            tooltip: 'Video Info',
+            tooltip: AppLocalizations.of(context)!.videoInfo,
           ),
         ],
       ),
@@ -269,7 +281,7 @@ class _RecordClassVideoPlayerState extends State<RecordClassVideoPlayer> {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Loading video...',
+                          AppLocalizations.of(context)!.loadingVideo,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -300,7 +312,7 @@ class _RecordClassVideoPlayerState extends State<RecordClassVideoPlayer> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Failed to load video',
+                            AppLocalizations.of(context)!.failedToLoadVideo,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -321,8 +333,8 @@ class _RecordClassVideoPlayerState extends State<RecordClassVideoPlayer> {
                               Icons.refresh,
                               color: Colors.white,
                             ),
-                            label: const Text(
-                              'Retry',
+                            label: Text(
+                              AppLocalizations.of(context)!.retryButton,
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -509,8 +521,12 @@ class _RecordClassVideoPlayerState extends State<RecordClassVideoPlayer> {
                               onPressed: () {
                                 // Fullscreen functionality can be added here
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Fullscreen mode'),
+                                  SnackBar(
+                                    content: Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.fullscreenMode,
+                                    ),
                                     backgroundColor: Color(0xFF7A54FF),
                                     duration: Duration(seconds: 1),
                                   ),
@@ -539,11 +555,35 @@ class _RecordClassVideoPlayerState extends State<RecordClassVideoPlayer> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text('🎬 Playback Settings:'),
-                                        Text('• Speed: 1.0x'),
-                                        Text('• Quality: Auto'),
                                         Text(
-                                          '• Volume: ${_controller != null ? (_controller!.value.volume * 100).toInt() : 0}%',
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.playbackSettings,
+                                        ),
+                                        Text(
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.playbackSpeed('1.0'),
+                                        ),
+                                        Text(
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.playbackQuality(
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.playbackQualityAuto,
+                                          ),
+                                        ),
+                                        Text(
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.playbackVolume(
+                                            _controller != null
+                                                ? (_controller!.value.volume *
+                                                          100)
+                                                      .toInt()
+                                                : 0,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -597,7 +637,7 @@ class _RecordClassVideoPlayerState extends State<RecordClassVideoPlayer> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Preparing video...',
+                        AppLocalizations.of(context)!.preparingVideo,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,

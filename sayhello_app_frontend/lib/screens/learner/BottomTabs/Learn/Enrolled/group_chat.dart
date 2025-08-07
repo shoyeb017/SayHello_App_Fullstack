@@ -127,7 +127,9 @@ class _GroupChatTabState extends State<GroupChatTab> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      '${_enrolledMembers.length} enrolled members',
+                      AppLocalizations.of(
+                        context,
+                      )!.enrolledMembers(_enrolledMembers.length),
                       style: TextStyle(fontSize: 11, color: subTextColor),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -238,7 +240,9 @@ class _GroupChatTabState extends State<GroupChatTab> {
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
-                                      'Instructor',
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.instructorRole,
                                       style: TextStyle(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w600,
@@ -387,7 +391,9 @@ class _GroupChatTabState extends State<GroupChatTab> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Enrolled Members (${_enrolledMembers.length})',
+              AppLocalizations.of(
+                context,
+              )!.enrolledMembersTitle(_enrolledMembers.length),
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),

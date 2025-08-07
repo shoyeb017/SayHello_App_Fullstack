@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Enrolled/course_portal.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class MyCoursesPage extends StatelessWidget {
   final List<Map<String, dynamic>> courses;
@@ -22,7 +23,7 @@ class MyCoursesPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: isDark ? Colors.black : Colors.grey[50],
         title: Text(
-          'My Courses',
+          AppLocalizations.of(context)!.myCourses,
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
@@ -49,7 +50,7 @@ class MyCoursesPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No enrolled courses',
+                    AppLocalizations.of(context)!.noEnrolledCourses,
                     style: TextStyle(
                       fontSize: 18,
                       color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -139,7 +140,9 @@ class MyCoursesPage extends StatelessWidget {
                     const SizedBox(height: 4),
 
                     Text(
-                      'by ${course['instructor'] ?? ''}',
+                      AppLocalizations.of(
+                        context,
+                      )!.byInstructor(course['instructor'] ?? ''),
                       style: TextStyle(
                         fontSize: 14,
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -157,7 +160,9 @@ class MyCoursesPage extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '${course['sessions'] ?? 0} sessions',
+                          AppLocalizations.of(context)!.sessionsCount(
+                            (course['sessions'] ?? 0).toString(),
+                          ),
                           style: TextStyle(
                             fontSize: 12,
                             color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -192,7 +197,9 @@ class MyCoursesPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${(progress * 100).toInt()}% completed',
+                        AppLocalizations.of(context)!.completedPercentage(
+                          ((progress * 100).toInt()).toString(),
+                        ),
                         style: TextStyle(
                           fontSize: 12,
                           color: Color(0xFF7A54FF),
@@ -212,8 +219,8 @@ class MyCoursesPage extends StatelessWidget {
                             color: Colors.green.withOpacity(0.3),
                           ),
                         ),
-                        child: const Text(
-                          'Completed',
+                        child: Text(
+                          AppLocalizations.of(context)!.coursesCompleted,
                           style: TextStyle(
                             color: Colors.green,
                             fontSize: 12,

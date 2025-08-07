@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 // Instructor Video Player for Recorded Classes
 class InstructorRecordClassVideoPlayer extends StatefulWidget {
@@ -82,13 +83,11 @@ class _InstructorRecordClassVideoPlayerState
 
         String errorMessage = e.toString();
         if (errorMessage.contains('timeout')) {
-          errorMessage =
-              'Connection timeout. Please check your internet and try again.';
+          errorMessage = AppLocalizations.of(context)!.connectionTimeoutMessage;
         } else if (errorMessage.contains('404')) {
-          errorMessage = 'Video not found. The video URL may be invalid.';
+          errorMessage = AppLocalizations.of(context)!.videoNotFoundMessage;
         } else if (errorMessage.contains('network')) {
-          errorMessage =
-              'Network error. Please check your internet connection.';
+          errorMessage = AppLocalizations.of(context)!.networkErrorMessage;
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -115,7 +114,10 @@ class _InstructorRecordClassVideoPlayerState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Video Error: ${_controller!.value.errorDescription ?? 'Unknown error'}',
+              AppLocalizations.of(context)!.videoErrorGeneric(
+                _controller!.value.errorDescription ??
+                    AppLocalizations.of(context)!.unknownError,
+              ),
             ),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 3),
@@ -223,15 +225,30 @@ class _InstructorRecordClassVideoPlayerState
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('📹 Video Information:'),
-                      Text('• Title: ${widget.title}'),
-                      Text('• Duration: ${widget.duration}'),
+                      Text(AppLocalizations.of(context)!.videoInformation),
                       Text(
-                        '• Status: ${_isInitialized ? "Loaded" : "Loading..."}',
+                        AppLocalizations.of(context)!.videoTitle(widget.title),
+                      ),
+                      Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.videoDurationInfo(widget.duration),
+                      ),
+                      Text(
+                        AppLocalizations.of(context)!.videoStatusInfo(
+                          _isInitialized
+                              ? AppLocalizations.of(context)!.videoStatusLoaded
+                              : AppLocalizations.of(
+                                  context,
+                                )!.videoStatusLoading,
+                        ),
                       ),
                       if (_isInitialized && _controller != null)
                         Text(
-                          '• Resolution: ${_controller!.value.size.width.toInt()}x${_controller!.value.size.height.toInt()}',
+                          AppLocalizations.of(context)!.videoResolutionInfo(
+                            _controller!.value.size.width.toInt(),
+                            _controller!.value.size.height.toInt(),
+                          ),
                         ),
                     ],
                   ),
@@ -241,7 +258,7 @@ class _InstructorRecordClassVideoPlayerState
               );
             },
             icon: const Icon(Icons.info_outline),
-            tooltip: 'Video Info',
+            tooltip: AppLocalizations.of(context)!.videoInfo,
           ),
         ],
       ),
@@ -262,7 +279,7 @@ class _InstructorRecordClassVideoPlayerState
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Loading video...',
+                          AppLocalizations.of(context)!.loadingVideo,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -293,7 +310,7 @@ class _InstructorRecordClassVideoPlayerState
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Failed to load video',
+                            AppLocalizations.of(context)!.failedToLoadVideo,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -489,7 +506,7 @@ class _InstructorRecordClassVideoPlayerState
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Preparing video...',
+                        AppLocalizations.of(context)!.preparingVideo,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,

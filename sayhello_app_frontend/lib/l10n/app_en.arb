@@ -1372,9 +1372,465 @@
   "@recordedClasses": {
     "description": "Recorded classes tab"
   },
+  "accessAllRecordedSessions": "Access all your recorded sessions",
+  "@accessAllRecordedSessions": {
+    "description": "Subtitle for recorded classes"
+  },
+  "videoLibrary": "Video Library",
+  "@videoLibrary": {
+    "description": "Video library section title"
+  },
+  "totalVideos": "Total Videos",
+  "@totalVideos": {
+    "description": "Total videos stat label"
+  },
+  "totalDuration": "Total Duration",
+  "@totalDuration": {
+    "description": "Total duration stat label"
+  },
+  "totalSize": "Total Size",
+  "@totalSize": {
+    "description": "Total size stat label"
+  },
+  "loadingVideoMetadata": "Loading video metadata...",
+  "@loadingVideoMetadata": {
+    "description": "Loading message for video metadata"
+  },
+  "completeProgress": "{percent}% Complete",
+  "@completeProgress": {
+    "description": "Progress completion percentage",
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "failedToLoadVideoMetadata": "Failed to load video metadata",
+  "@failedToLoadVideoMetadata": {
+    "description": "Error message for video metadata loading"
+  },
+  "noVideosAvailable": "No videos available",
+  "@noVideosAvailable": {
+    "description": "Empty state message when no videos"
+  },
+  "checkBackLaterForRecorded": "Check back later for recorded classes",
+  "@checkBackLaterForRecorded": {
+    "description": "Empty state subtitle message"
+  },
+  "failedVideosCount": "{failed} of {total} videos failed to load metadata",
+  "@failedVideosCount": {
+    "description": "Failed videos count message",
+    "placeholders": {
+      "failed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "failedToLoad": "Failed to load",
+  "@failedToLoad": {
+    "description": "Error message for failed video loading"
+  },
+  "noDescriptionAvailable": "No description available",
+  "@noDescriptionAvailable": {
+    "description": "Message when video has no description"
+  },
+  "videoError": "Error: {error}",
+  "@videoError": {
+    "description": "Video error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "unknownUploadDate": "Unknown",
+  "@unknownUploadDate": {
+    "description": "Unknown upload date placeholder"
+  },
+  "watchNow": "Watch Now",
+  "@watchNow": {
+    "description": "Watch video button text"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button text"
+  },
+  "videoMetadataLoadedSuccessfully": "✅ Video metadata loaded successfully",
+  "@videoMetadataLoadedSuccessfully": {
+    "description": "Success message for video metadata loading"
+  },
+  "failedToLoadVideoMetadataSnackbar": "❌ Failed to load video metadata",
+  "@failedToLoadVideoMetadataSnackbar": {
+    "description": "Snackbar error message for video metadata loading"
+  },
+  "errorMessage": "❌ Error: {error}",
+  "@errorMessage": {
+    "description": "Generic error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotPlayVideoError": "❌ Cannot play video: {error}",
+  "@cannotPlayVideoError": {
+    "description": "Cannot play video error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "loadingVideoPlayer": "Loading Video Player...",
+  "@loadingVideoPlayer": {
+    "description": "Loading video player dialog message"
+  },
+  "videoDurationSize": "Duration: {duration} • Size: {size}",
+  "@videoDurationSize": {
+    "description": "Video duration and size display",
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "videoInformation": "📹 Video Information:",
+  "@videoInformation": {
+    "description": "Video information header"
+  },
+  "videoTitle": "• Title: {title}",
+  "@videoTitle": {
+    "description": "Video title in info",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "videoDurationInfo": "• Duration: {duration}",
+  "@videoDurationInfo": {
+    "description": "Video duration in info",
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "videoStatusInfo": "• Status: {status}",
+  "@videoStatusInfo": {
+    "description": "Video status in info",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "videoResolutionInfo": "• Resolution: {width}x{height}",
+  "@videoResolutionInfo": {
+    "description": "Video resolution in info",
+    "placeholders": {
+      "width": {
+        "type": "int"
+      },
+      "height": {
+        "type": "int"
+      }
+    }
+  },
+  "videoStatusLoaded": "Loaded",
+  "@videoStatusLoaded": {
+    "description": "Video status when loaded"
+  },
+  "videoStatusLoading": "Loading...",
+  "@videoStatusLoading": {
+    "description": "Video status when loading"
+  },
+  "videoInfo": "Video Info",
+  "@videoInfo": {
+    "description": "Video info tooltip"
+  },
+  "loadingVideo": "Loading video...",
+  "@loadingVideo": {
+    "description": "Loading video message"
+  },
+  "failedToLoadVideo": "Failed to load video",
+  "@failedToLoadVideo": {
+    "description": "Failed to load video message"
+  },
+  "preparingVideo": "Preparing video...",
+  "@preparingVideo": {
+    "description": "Preparing video message"
+  },
+  "connectionTimeoutMessage": "Connection timeout. Please check your internet and try again.",
+  "@connectionTimeoutMessage": {
+    "description": "Connection timeout error message"
+  },
+  "videoNotFoundMessage": "Video not found. The video URL may be invalid.",
+  "@videoNotFoundMessage": {
+    "description": "Video not found error message"
+  },
+  "networkErrorMessage": "Network error. Please check your internet connection.",
+  "@networkErrorMessage": {
+    "description": "Network error message"
+  },
+  "videoLoadingTimeoutMessage": "Video loading timeout - Check your internet connection",
+  "@videoLoadingTimeoutMessage": {
+    "description": "Video loading timeout error message"
+  },
+  "videoErrorGeneric": "Video Error: {error}",
+  "@videoErrorGeneric": {
+    "description": "Generic video error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "unknownError": "Unknown error",
+  "@unknownError": {
+    "description": "Unknown error placeholder"
+  },
   "studyMaterials": "Study Materials",
   "@studyMaterials": {
     "description": "Study materials tab"
+  },
+  "downloadAndAccessMaterials": "Download and access course materials",
+  "@downloadAndAccessMaterials": {
+    "description": "Subtitle for study materials"
+  },
+  "total": "Total",
+  "@total": {
+    "description": "Total materials count label"
+  },
+  "pdfs": "PDFs",
+  "@pdfs": {
+    "description": "PDF files count label"
+  },
+  "images": "Images",
+  "@images": {
+    "description": "Image files count label"
+  },
+  "others": "Others",
+  "@others": {
+    "description": "Other files count label"
+  },
+  "view": "View",
+  "@view": {
+    "description": "View material button text"
+  },
+  "download": "Download",
+  "@download": {
+    "description": "Download material button text"
+  },
+  "showMore": "Show More",
+  "@showMore": {
+    "description": "Show more description text"
+  },
+  "showLess": "Show Less",
+  "@showLess": {
+    "description": "Show less description text"
+  },
+  "untitledMaterial": "Untitled Material",
+  "@untitledMaterial": {
+    "description": "Default title for materials without name"
+  },
+  "noUrlAvailable": "❌ No URL available for this material",
+  "@noUrlAvailable": {
+    "description": "Error message when material has no URL"
+  },
+  "openingFileType": "Opening {type}...",
+  "@openingFileType": {
+    "description": "Loading message when opening file",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "noUrlForDownload": "❌ No URL available for download",
+  "@noUrlForDownload": {
+    "description": "Error message when no download URL"
+  },
+  "downloadFile": "Download File",
+  "@downloadFile": {
+    "description": "Download dialog title"
+  },
+  "downloadConfirmation": "This will open the file in your browser for download.",
+  "@downloadConfirmation": {
+    "description": "Download confirmation message"
+  },
+  "fileType": "Type: {type}",
+  "@fileType": {
+    "description": "File type display",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "browserHandleDownload": "Your browser will handle the download to your default downloads folder.",
+  "@browserHandleDownload": {
+    "description": "Browser download explanation"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "openInBrowser": "Open in Browser",
+  "@openInBrowser": {
+    "description": "Open in browser button text"
+  },
+  "couldNotOpenBrowser": "Could not open browser. Link copied to clipboard.",
+  "@couldNotOpenBrowser": {
+    "description": "Fallback message when browser fails"
+  },
+  "failedToOpenBrowser": "❌ Failed to open browser",
+  "@failedToOpenBrowser": {
+    "description": "Error message when browser fails"
+  },
+  "linkCopiedInstead": "Link copied to clipboard instead.",
+  "@linkCopiedInstead": {
+    "description": "Fallback action message"
+  },
+  "downloadLinkCopied": "📎 Download link copied to clipboard",
+  "@downloadLinkCopied": {
+    "description": "Success message for link copying"
+  },
+  "pasteAndGo": "Paste & Go",
+  "@pasteAndGo": {
+    "description": "Paste and go action text"
+  },
+  "downloadInstructions": "Download Instructions",
+  "@downloadInstructions": {
+    "description": "Download instructions dialog title"
+  },
+  "linkCopiedToClipboard": "The download link has been copied to your clipboard:",
+  "@linkCopiedToClipboard": {
+    "description": "Link copied instruction"
+  },
+  "toDownload": "To download:",
+  "@toDownload": {
+    "description": "Download steps header"
+  },
+  "openYourBrowser": "1. Open your browser",
+  "@openYourBrowser": {
+    "description": "Download step 1"
+  },
+  "pasteLinkInAddress": "2. Paste the link in the address bar",
+  "@pasteLinkInAddress": {
+    "description": "Download step 2"
+  },
+  "pressEnterToDownload": "3. Press Enter to start download",
+  "@pressEnterToDownload": {
+    "description": "Download step 3"
+  },
+  "gotIt": "Got it",
+  "@gotIt": {
+    "description": "Acknowledgment button text"
+  },
+  "failedToCopyLink": "Failed to copy link: {error}",
+  "@failedToCopyLink": {
+    "description": "Error message when copying fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "loadingFileTypeViewer": "Loading {type}...",
+  "@loadingFileTypeViewer": {
+    "description": "Loading message in viewer",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToLoadDocument": "Failed to load document",
+  "@failedToLoadDocument": {
+    "description": "Document loading error message"
+  },
+  "pdfLoadedPages": "PDF loaded: {pages} pages",
+  "@pdfLoadedPages": {
+    "description": "PDF loading success message",
+    "placeholders": {
+      "pages": {
+        "type": "int"
+      }
+    }
+  },
+  "loadingImage": "Loading image...",
+  "@loadingImage": {
+    "description": "Image loading message"
+  },
+  "failedToLoadImage": "Failed to load image",
+  "@failedToLoadImage": {
+    "description": "Image loading error"
+  },
+  "checkImageUrl": "Please check the image URL",
+  "@checkImageUrl": {
+    "description": "Image URL check instruction"
+  },
+  "documentOpenInBrowser": "This document will open in your default browser or Google Docs app",
+  "@documentOpenInBrowser": {
+    "description": "Document opening explanation"
+  },
+  "openDocument": "Open Document",
+  "@openDocument": {
+    "description": "Open document button text"
+  },
+  "goBack": "Go Back",
+  "@goBack": {
+    "description": "Go back button text"
+  },
+  "unsupportedFileType": "Unsupported file type",
+  "@unsupportedFileType": {
+    "description": "Unsupported file type message"
+  },
+  "failedToOpenUrl": "Failed to open URL: {error}",
+  "@failedToOpenUrl": {
+    "description": "URL opening error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "openingDocumentInBrowser": "Opening document in browser...",
+  "@openingDocumentInBrowser": {
+    "description": "Document opening loading message"
+  },
+  "errorOpeningBrowser": "Error opening browser. Link copied to clipboard.",
+  "@errorOpeningBrowser": {
+    "description": "Browser opening error message"
+  },
+  "linkCopiedToClipboardViewer": "{label} copied to clipboard",
+  "@linkCopiedToClipboardViewer": {
+    "description": "Link copied success message",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToCopyLabel": "Failed to copy {label}",
+  "@failedToCopyLabel": {
+    "description": "Copy failure message",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "documentLink": "Document link",
+  "@documentLink": {
+    "description": "Document link label"
   },
   "groupChat": "Group Chat",
   "@groupChat": {
@@ -2184,5 +2640,730 @@
   "allCaughtUp": "You're all caught up! 🎉",
   "@allCaughtUp": {
     "description": "All caught up message"
+  },
+
+  "hello": "Hello,",
+  "@hello": {
+    "description": "Greeting text"
+  },
+  "searchYourCourseHere": "Search your course here...",
+  "@searchYourCourseHere": {
+    "description": "Search bar placeholder text"
+  },
+  "myCourses": "My Courses",
+  "@myCourses": {
+    "description": "My courses section title"
+  },
+  "viewAll": "View All",
+  "@viewAll": {
+    "description": "View all button text"
+  },
+  "levelCategory": "Level Category",
+  "@levelCategory": {
+    "description": "Level category section title"
+  },
+  "popularCourses": "Popular Courses",
+  "@popularCourses": {
+    "description": "Popular courses section title"
+  },
+  "expiredCourses": "Expired Courses",
+  "@expiredCourses": {
+    "description": "Expired courses section title"
+  },
+  "sessions": "sessions",
+  "@sessions": {
+    "description": "Sessions text for course cards"
+  },
+  "sessionsCount": "{count} Sessions",
+  "@sessionsCount": {
+    "description": "Sessions count text",
+    "placeholders": {
+      "count": {"type": "String"}
+    }
+  },
+  "by": "by",
+  "@by": {
+    "description": "By instructor text"
+  },
+  "byInstructor": "by {instructor}",
+  "@byInstructor": {
+    "description": "By instructor text with placeholder",
+    "placeholders": {
+      "instructor": {"type": "String"}
+    }
+  },
+  "completed": "completed",
+  "@completed": {
+    "description": "Completed text"
+  },
+  "completedPercentage": "{percentage}% completed",
+  "@completedPercentage": {
+    "description": "Completion percentage text",
+    "placeholders": {
+      "percentage": {"type": "String"}
+    }
+  },
+  "coursesCompleted": "Completed",
+  "@coursesCompleted": {
+    "description": "Course completion status"
+  },
+  "expired": "Expired",
+  "@expired": {
+    "description": "Expired course status"
+  },
+  "enrolled": "Enrolled",
+  "@enrolled": {
+    "description": "Enrolled course status"
+  },
+  "noEnrolledCourses": "No enrolled courses",
+  "@noEnrolledCourses": {
+    "description": "Empty state text for no enrolled courses"
+  },
+  "beginner": "Beginner",
+  "@beginner": {
+    "description": "Beginner level"
+  },
+  "intermediate": "Intermediate",
+  "@intermediate": {
+    "description": "Intermediate level"
+  },
+  "advanced": "Advanced",
+  "@advanced": {
+    "description": "Advanced level"
+  },
+  "searchCoursesByName": "Search by course name, instructor...",
+  "@searchCoursesByName": {
+    "description": "Search placeholder text for courses"
+  },
+  "level": "Level",
+  "@level": {
+    "description": "Level filter label"
+  },
+  "status": "Status",
+  "@status": {
+    "description": "Status filter label"
+  },
+  "all": "All",
+  "@all": {
+    "description": "All filter option"
+  },
+  "upcoming": "Upcoming",
+  "@upcoming": {
+    "description": "Upcoming course status"
+  },
+  "active": "Active",
+  "@active": {
+    "description": "Active course status"
+  },
+  "popular": "Popular",
+  "@popular": {
+    "description": "Popular courses filter"
+  },
+  "showPopularOnly": "Show popular only",
+  "@showPopularOnly": {
+    "description": "Popular filter toggle text"
+  },
+  "coursesFound": "{count} course{plural} found",
+  "@coursesFound": {
+    "description": "Search results count",
+    "placeholders": {
+      "count": {"type": "String"},
+      "plural": {"type": "String"}
+    }
+  },
+  "noCoursesFound": "No courses found",
+  "@noCoursesFound": {
+    "description": "No search results text"
+  },
+  "price": "${price}",
+  "@price": {
+    "description": "Course price display",
+    "placeholders": {
+      "price": {"type": "String"}
+    }
+  },
+  "unknown": "Unknown",
+  "@unknown": {
+    "description": "Unknown status"
+  },
+  "courseDefault": "Course",
+  "@courseDefault": {
+    "description": "Default course title when course title is not available"
+  },
+  "navigationMenu": "Navigation Menu",
+  "@navigationMenu": {
+    "description": "Tooltip for navigation menu button"
+  },
+  "closeCourse": "Close Course",
+  "@closeCourse": {
+    "description": "Tooltip for close course button"
+  },
+  "totalStat": "Total",
+  "@totalStat": {
+    "description": "Total sessions stat label"
+  },
+  "doneStat": "Done",
+  "@doneStat": {
+    "description": "Completed sessions stat label"
+  },
+  "nextStat": "Next",
+  "@nextStat": {
+    "description": "Upcoming sessions stat label"
+  },
+  "nextSession": "Next Session",
+  "@nextSession": {
+    "description": "Next session label in header"
+  },
+  "sessionDetails": "Session Details",
+  "@sessionDetails": {
+    "description": "Session details section title"
+  },
+  "sessionLink": "Session Link",
+  "@sessionLink": {
+    "description": "Session link field label"
+  },
+  "joinNow": "Join Now",
+  "@joinNow": {
+    "description": "Join session button text"
+  },
+  "sessionCompleted": "Session Completed",
+  "@sessionCompleted": {
+    "description": "Completed session status text"
+  },
+  "untitledSession": "Untitled Session",
+  "@untitledSession": {
+    "description": "Default session title"
+  },
+  "durationLabel": "Duration: {duration}",
+  "@durationLabel": {
+    "description": "Duration label with parameter",
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "copiedToClipboard": "{label} copied to clipboard",
+  "@copiedToClipboard": {
+    "description": "Success message when copied to clipboard",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToCopy": "Failed to copy {label}",
+  "@failedToCopy": {
+    "description": "Error message when copy fails",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "openingSession": "Opening {platform} session in browser...",
+  "@openingSession": {
+    "description": "Message when opening session",
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotOpenBrowser": "Could not open browser. Link copied to clipboard.",
+  "@couldNotOpenBrowser": {
+    "description": "Error message when browser cannot be opened"
+  },
+  "errorOpeningBrowser": "Error opening browser. Link copied to clipboard.",
+  "@errorOpeningBrowser": {
+    "description": "Error message when browser fails to open"
+  },
+  "courseTitle": "Course Title",
+  "@courseTitle": {
+    "description": "Default course title"
+  },
+  "courseDescription": "Course Description",
+  "@courseDescription": {
+    "description": "Course description section title"
+  },
+  "meetYourInstructor": "Meet Your Instructor",
+  "@meetYourInstructor": {
+    "description": "Instructor section title"
+  },
+  "about": "About",
+  "@about": {
+    "description": "About section title"
+  },
+  "coursesByInstructor": "Courses",
+  "@coursesByInstructor": {
+    "description": "Courses count label for instructor"
+  },
+  "studentsLabel": "Students",
+  "@studentsLabel": {
+    "description": "Students count label"
+  },
+  "ratingLabel": "Rating",
+  "@ratingLabel": {
+    "description": "Rating label"
+  },
+  "priceLabel": "Price",
+  "@priceLabel": {
+    "description": "Price label"
+  },
+  "startDate": "Start Date",
+  "@startDate": {
+    "description": "Start date label"
+  },
+  "endDate": "End Date",
+  "@endDate": {
+    "description": "End date label"
+  },
+  "durationStat": "Duration",
+  "@durationStat": {
+    "description": "Duration stat label"
+  },
+  "levelLabel": "Level",
+  "@levelLabel": {
+    "description": "Level label"
+  },
+  "languageLabel": "Language",
+  "@languageLabel": {
+    "description": "Language label"
+  },
+  "statusLabel": "Status",
+  "@statusLabel": {
+    "description": "Status label"
+  },
+  "courseCompletedStatus": "Course Completed",
+  "@courseCompletedStatus": {
+    "description": "Course completed status text"
+  },
+  "currentlyEnrolled": "Currently Enrolled",
+  "@currentlyEnrolled": {
+    "description": "Currently enrolled status text"
+  },
+  "enrollmentConfirmed": "Enrollment Confirmed",
+  "@enrollmentConfirmed": {
+    "description": "Enrollment confirmed status text"
+  },
+  "enrollmentStatus": "Enrollment Status",
+  "@enrollmentStatus": {
+    "description": "Default enrollment status text"
+  },
+  "byInstructor": "by {instructor}",
+  "@byInstructor": {
+    "description": "By instructor text",
+    "placeholders": {
+      "instructor": {
+        "type": "String"
+      }
+    }
+  },
+  "experienceYears": "{years}+ years",
+  "@experienceYears": {
+    "description": "Years of experience text",
+    "placeholders": {
+      "years": {
+        "type": "String"
+      }
+    }
+  },
+  "expertIn": "Expert in {language} Language",
+  "@expertIn": {
+    "description": "Expert in language text",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "studentCountText": "{count} students",
+  "@studentCountText": {
+    "description": "Student count text",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "instructorBioDefault": "Experienced educator with over 8 years of teaching experience. Specializes in modern language learning techniques and interactive teaching methods.",
+  "@instructorBioDefault": {
+    "description": "Default instructor bio text"
+  },
+  "instructorExperience": "8+ years",
+  "@instructorExperience": {
+    "description": "Default instructor experience text"
+  },
+  "instructorEducation": "Expert in {language} Language",
+  "@instructorEducation": {
+    "description": "Instructor education text",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "meetYourInstructor": "Meet Your Instructor",
+  "@meetYourInstructor": {
+    "description": "Meet your instructor section header"
+  },
+  "aboutInstructor": "About",
+  "@aboutInstructor": {
+    "description": "About instructor section header"
+  },
+  "instructorStudents": "{count} students",
+  "@instructorStudents": {
+    "description": "Instructor student count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "instructorCourses": "Courses",
+  "@instructorCourses": {
+    "description": "Instructor courses label"
+  },
+  "instructorRating": "Rating",
+  "@instructorRating": {
+    "description": "Instructor rating label"
+  },
+  "courseBy": "by {instructor}",
+  "@courseBy": {
+    "description": "Course by instructor text",
+    "placeholders": {
+      "instructor": {
+        "type": "String"
+      }
+    }
+  },
+  "experienceYears": "{years}+ years",
+  "@experienceYears": {
+    "description": "Experience years text",
+    "placeholders": {
+      "years": {
+        "type": "String"
+      }
+    }
+  },
+  "expertInLanguage": "Expert in {language}",
+  "@expertInLanguage": {
+    "description": "Expert in language text",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "currentlyEnrolled": "Currently Enrolled",
+  "@currentlyEnrolled": {
+    "description": "Currently enrolled status text"
+  },
+  "courseCompleted": "Course Completed", 
+  "@courseCompleted": {
+    "description": "Course completed status text"
+  },
+  "enrollmentConfirmed": "Enrollment Confirmed",
+  "@enrollmentConfirmed": {
+    "description": "Enrollment confirmed status text"
+  },
+  "enrollmentStatus": "Enrollment Status",
+  "@enrollmentStatus": {
+    "description": "Default enrollment status text"
+  },
+  
+  "courseFeedback": "Course Feedback",
+  "@courseFeedback": {
+    "description": "Course feedback title"
+  },
+  "reviewInstructorFeedback": "Review instructor feedback and share your course experience",
+  "@reviewInstructorFeedback": {
+    "description": "Course feedback subtitle"
+  },
+  "feedbackFromInstructor": "Feedback from Instructor",
+  "@feedbackFromInstructor": {
+    "description": "Instructor feedback section title"
+  },
+  "giveYourFeedback": "Give Your Feedback",
+  "@giveYourFeedback": {
+    "description": "Give feedback section title"
+  },
+  "rateCourse": "Rate the Course",
+  "@rateCourse": {
+    "description": "Course rating label"
+  },
+  "ratingValue": "{rating}/5",
+  "@ratingValue": {
+    "description": "Rating display value",
+    "placeholders": {
+      "rating": {
+        "type": "int"
+      }
+    }
+  },
+  "noRating": "No rating",
+  "@noRating": {
+    "description": "No rating given text"
+  },
+  "yourCourseFeedback": "Your Course Feedback",
+  "@yourCourseFeedback": {
+    "description": "Course feedback input label"
+  },
+  "courseFeedbackHint": "Share your thoughts about the course content, structure, difficulty...",
+  "@courseFeedbackHint": {
+    "description": "Course feedback input hint"
+  },
+  "submitCourseFeedback": "Submit Course Feedback",
+  "@submitCourseFeedback": {
+    "description": "Submit course feedback button"
+  },
+  "instructorFeedback": "Instructor Feedback",
+  "@instructorFeedback": {
+    "description": "Instructor feedback title"
+  },
+  "rateInstructor": "Rate the Instructor",
+  "@rateInstructor": {
+    "description": "Instructor rating label"
+  },
+  "yourInstructorFeedback": "Your Instructor Feedback",
+  "@yourInstructorFeedback": {
+    "description": "Instructor feedback input label"
+  },
+  "instructorFeedbackHint": "Share your thoughts about teaching style, clarity, support...",
+  "@instructorFeedbackHint": {
+    "description": "Instructor feedback input hint"
+  },
+  "submitInstructorFeedback": "Submit Instructor Feedback",
+  "@submitInstructorFeedback": {
+    "description": "Submit instructor feedback button"
+  },
+  "feedbackSummary": "Feedback Summary",
+  "@feedbackSummary": {
+    "description": "Feedback summary section title"
+  },
+  "averageRating": "Average Rating",
+  "@averageRating": {
+    "description": "Average rating label"
+  },
+  "totalFeedback": "Total Feedback",
+  "@totalFeedback": {
+    "description": "Total feedback count label"
+  },
+  "positive": "positive",
+  "@positive": {
+    "description": "Positive feedback type"
+  },
+  "constructive": "constructive",
+  "@constructive": {
+    "description": "Constructive feedback type"
+  },
+  "improvement": "improvement",
+  "@improvement": {
+    "description": "Improvement feedback type"
+  },
+  "pleaseWriteCourseFeedback": "Please write your course feedback",
+  "@pleaseWriteCourseFeedback": {
+    "description": "Empty course feedback validation message"
+  },
+  "pleaseRateCourse": "Please provide a rating for the course",
+  "@pleaseRateCourse": {
+    "description": "Missing course rating validation message"
+  },
+  "courseFeedbackSubmitted": "✅ Course feedback submitted successfully!",
+  "@courseFeedbackSubmitted": {
+    "description": "Course feedback submission success message"
+  },
+  "pleaseWriteInstructorFeedback": "Please write your instructor feedback",
+  "@pleaseWriteInstructorFeedback": {
+    "description": "Empty instructor feedback validation message"
+  },
+  "pleaseRateInstructor": "Please provide a rating for the instructor",
+  "@pleaseRateInstructor": {
+    "description": "Missing instructor rating validation message"
+  },
+  "instructorFeedbackSubmitted": "✅ Instructor feedback submitted successfully!",
+  "@instructorFeedbackSubmitted": {
+    "description": "Instructor feedback submission success message"
+  },
+  
+  "courseDiscussion": "Course Discussion",
+  "@courseDiscussion": {
+    "description": "Course discussion chat title"
+  },
+  "enrolledMembers": "{count} enrolled members",
+  "@enrolledMembers": {
+    "description": "Enrolled members count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "instructorRole": "Instructor",
+  "@instructorRole": {
+    "description": "Instructor role label"
+  },
+  "typeYourMessage": "Type your message...",
+  "@typeYourMessage": {
+    "description": "Chat message input hint"
+  },
+  "enrolledMembersTitle": "Enrolled Members ({count})",
+  "@enrolledMembersTitle": {
+    "description": "Enrolled members modal title",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "videoInfo": "Video Info",
+  "@videoInfo": {
+    "description": "Video info button tooltip"
+  },
+  "videoInformation": "📹 Video Information:",
+  "@videoInformation": {
+    "description": "Video information snackbar header"
+  },
+  "videoTitle": "• Title: {title}",
+  "@videoTitle": {
+    "description": "Video title display",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "videoDuration": "• Duration: {duration}",
+  "@videoDuration": {
+    "description": "Video duration display",
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "videoStatus": "• Status: {status}",
+  "@videoStatus": {
+    "description": "Video status display",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "videoResolution": "• Resolution: {resolution}",
+  "@videoResolution": {
+    "description": "Video resolution display",
+    "placeholders": {
+      "resolution": {
+        "type": "String"
+      }
+    }
+  },
+  "videoLoaded": "Loaded",
+  "@videoLoaded": {
+    "description": "Video loaded status"
+  },
+  "videoLoading": "Loading...",
+  "@videoLoading": {
+    "description": "Video loading status"
+  },
+  "loadingVideo": "Loading video...",
+  "@loadingVideo": {
+    "description": "Loading video message"
+  },
+  "connectionTimeout": "Connection timeout. Please check your internet and try again.",
+  "@connectionTimeout": {
+    "description": "Connection timeout error message"
+  },
+  "videoNotFound": "Video not found. The video URL may be invalid.",
+  "@videoNotFound": {
+    "description": "Video not found error message"
+  },
+  "networkError": "Network error. Please check your internet connection.",
+  "@networkError": {
+    "description": "Network error message"
+  },
+  "videoLoadingTimeout": "Video loading timeout - Check your internet connection",
+  "@videoLoadingTimeout": {
+    "description": "Video loading timeout error"
+  },
+  "videoErrorPrefix": "❌ {error}",
+  "@videoErrorPrefix": {
+    "description": "Video error message with prefix",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "videoErrorMessage": "Video Error: {error}",
+  "@videoErrorMessage": {
+    "description": "Video error snackbar message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "unknownError": "Unknown error",
+  "@unknownError": {
+    "description": "Unknown error fallback message"
+  },
+  "failedToLoadVideo": "Failed to load video",
+  "@failedToLoadVideo": {
+    "description": "Failed to load video error message"
+  },
+  "fullscreenMode": "Fullscreen mode",
+  "@fullscreenMode": {
+    "description": "Fullscreen mode notification"
+  },
+  "playbackSettings": "🎬 Playback Settings:",
+  "@playbackSettings": {
+    "description": "Playback settings header"
+  },
+  "playbackSpeed": "• Speed: {speed}x",
+  "@playbackSpeed": {
+    "description": "Playback speed display",
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "playbackQuality": "• Quality: {quality}",
+  "@playbackQuality": {
+    "description": "Playback quality display",
+    "placeholders": {
+      "quality": {
+        "type": "String"
+      }
+    }
+  },
+  "playbackVolume": "• Volume: {volume}%",
+  "@playbackVolume": {
+    "description": "Playback volume display",
+    "placeholders": {
+      "volume": {
+        "type": "int"
+      }
+    }
+  },
+  "playbackQualityAuto": "Auto",
+  "@playbackQualityAuto": {
+    "description": "Auto quality setting"
+  },
+  "preparingVideo": "Preparing video...",
+  "@preparingVideo": {
+    "description": "Preparing video loading message"
+  },
+  "retryButton": "Retry",
+  "@retryButton": {
+    "description": "Retry button text"
+  },
+  "qualityAuto": "Auto",
+  "@qualityAuto": {
+    "description": "Auto quality setting"
   }
 }

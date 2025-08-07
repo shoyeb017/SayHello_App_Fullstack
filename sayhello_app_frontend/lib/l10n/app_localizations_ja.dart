@@ -36,7 +36,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get and => 'と';
 
   @override
-  String get hello => 'こんにちは！';
+  String get hello => 'こんにちは、';
 
   @override
   String get language => '言語';
@@ -231,7 +231,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get skillLevel => 'スキルレベル';
 
   @override
-  String get beginner => '初心者';
+  String get beginner => '初級';
 
   @override
   String get basic => '基本';
@@ -510,7 +510,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get general => 'General';
 
   @override
-  String get about => 'About';
+  String get about => 'について';
 
   @override
   String get help => 'Help';
@@ -909,7 +909,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get inProgress => '進行中';
 
   @override
-  String get courseCompleted => 'コースが正常に完了しました！';
+  String get courseCompleted => 'コース修了';
 
   @override
   String get viewAll => 'すべて表示';
@@ -930,7 +930,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get endDate => '終了日';
 
   @override
-  String get price => '価格';
+  String price(String price) {
+    return '¥$price';
+  }
 
   @override
   String get enrollFor => '申し込み';
@@ -948,7 +950,295 @@ class AppLocalizationsJa extends AppLocalizations {
   String get recordedClasses => '録画授業';
 
   @override
+  String get accessAllRecordedSessions => '録画されたセッションにいつでもアクセス';
+
+  @override
+  String get videoLibrary => '動画ライブラリ';
+
+  @override
+  String get totalVideos => '総動画数';
+
+  @override
+  String get totalDuration => '総再生時間';
+
+  @override
+  String get totalSize => '総サイズ';
+
+  @override
+  String get loadingVideoMetadata => 'ビデオメタデータを読み込み中...';
+
+  @override
+  String completeProgress(int percent) {
+    return '$percent% 完了';
+  }
+
+  @override
+  String get failedToLoadVideoMetadata => 'ビデオメタデータの読み込みに失敗';
+
+  @override
+  String get noVideosAvailable => '利用可能なビデオがありません';
+
+  @override
+  String get checkBackLaterForRecorded => '録画授業については後でご確認ください';
+
+  @override
+  String failedVideosCount(int failed, int total) {
+    return '$total本中$failed本のビデオでメタデータ読み込みに失敗';
+  }
+
+  @override
+  String get failedToLoad => '読み込み失敗';
+
+  @override
+  String get noDescriptionAvailable => '説明がありません';
+
+  @override
+  String videoError(String error) {
+    return 'エラー: $error';
+  }
+
+  @override
+  String get unknownUploadDate => '不明';
+
+  @override
+  String get watchNow => '今すぐ視聴';
+
+  @override
+  String get videoMetadataLoadedSuccessfully => '✅ ビデオメタデータが正常に読み込まれました';
+
+  @override
+  String get failedToLoadVideoMetadataSnackbar => '❌ ビデオメタデータの読み込みに失敗';
+
+  @override
+  String errorMessage(String error) {
+    return '❌ エラー: $error';
+  }
+
+  @override
+  String cannotPlayVideoError(String error) {
+    return '❌ ビデオを再生できません: $error';
+  }
+
+  @override
+  String get loadingVideoPlayer => 'ビデオプレーヤーを読み込み中...';
+
+  @override
+  String videoDurationSize(String duration, String size) {
+    return '再生時間: $duration • サイズ: $size';
+  }
+
+  @override
+  String get videoInformation => '動画情報';
+
+  @override
+  String videoTitle(String title) {
+    return '$title';
+  }
+
+  @override
+  String videoDurationInfo(String duration) {
+    return '• 再生時間: $duration';
+  }
+
+  @override
+  String videoStatusInfo(String status) {
+    return '• ステータス: $status';
+  }
+
+  @override
+  String videoResolutionInfo(int width, int height) {
+    return '• 解像度: ${width}x$height';
+  }
+
+  @override
+  String get videoStatusLoaded => '読み込み完了';
+
+  @override
+  String get videoStatusLoading => '読み込み中...';
+
+  @override
+  String get videoInfo => '動画情報';
+
+  @override
+  String get loadingVideo => '動画を読み込み中...';
+
+  @override
+  String get failedToLoadVideo => '動画の読み込みに失敗しました';
+
+  @override
+  String get preparingVideo => 'ビデオを準備中...';
+
+  @override
+  String get connectionTimeoutMessage =>
+      '接続がタイムアウトしました。インターネット接続を確認して再試行してください。';
+
+  @override
+  String get videoNotFoundMessage => 'ビデオが見つかりません。ビデオURLが無効である可能性があります。';
+
+  @override
+  String get networkErrorMessage => 'ネットワークエラー。インターネット接続を確認してください。';
+
+  @override
+  String get videoLoadingTimeoutMessage => 'ビデオ読み込みタイムアウト - インターネット接続を確認してください';
+
+  @override
+  String videoErrorGeneric(String error) {
+    return 'ビデオエラー: $error';
+  }
+
+  @override
+  String get unknownError => '不明なエラー';
+
+  @override
   String get studyMaterials => '学習教材';
+
+  @override
+  String get downloadAndAccessMaterials => 'コース教材をダウンロード・アクセス';
+
+  @override
+  String get total => '合計';
+
+  @override
+  String get pdfs => 'PDF';
+
+  @override
+  String get images => '画像';
+
+  @override
+  String get showMore => 'もっと見る';
+
+  @override
+  String get showLess => '短く表示';
+
+  @override
+  String get untitledMaterial => '無題の教材';
+
+  @override
+  String get noUrlAvailable => '❌ この教材のURLが利用できません';
+
+  @override
+  String openingFileType(String type) {
+    return '$typeを開いています...';
+  }
+
+  @override
+  String get noUrlForDownload => '❌ ダウンロード用URLが利用できません';
+
+  @override
+  String get downloadFile => 'ファイルをダウンロード';
+
+  @override
+  String get downloadConfirmation => 'これによりファイルがブラウザで開かれ、ダウンロードされます。';
+
+  @override
+  String fileType(String type) {
+    return '種類: $type';
+  }
+
+  @override
+  String get browserHandleDownload => 'ブラウザがデフォルトのダウンロードフォルダにダウンロードを処理します。';
+
+  @override
+  String get openInBrowser => 'ブラウザで開く';
+
+  @override
+  String get couldNotOpenBrowser => 'ブラウザを開けませんでした。リンクをクリップボードにコピーしました。';
+
+  @override
+  String get failedToOpenBrowser => '❌ ブラウザの起動に失敗';
+
+  @override
+  String get linkCopiedInstead => '代わりにリンクをクリップボードにコピーしました。';
+
+  @override
+  String get downloadLinkCopied => '📎 ダウンロードリンクがクリップボードにコピーされました';
+
+  @override
+  String get pasteAndGo => '貼り付けて実行';
+
+  @override
+  String get downloadInstructions => 'ダウンロード手順';
+
+  @override
+  String get linkCopiedToClipboard => 'ダウンロードリンクがクリップボードにコピーされました:';
+
+  @override
+  String get toDownload => 'ダウンロード方法:';
+
+  @override
+  String get openYourBrowser => '1. ブラウザを開く';
+
+  @override
+  String get pasteLinkInAddress => '2. アドレスバーにリンクを貼り付け';
+
+  @override
+  String get pressEnterToDownload => '3. Enterを押してダウンロード開始';
+
+  @override
+  String get gotIt => '了解';
+
+  @override
+  String failedToCopyLink(String error) {
+    return 'リンクのコピーに失敗: $error';
+  }
+
+  @override
+  String loadingFileTypeViewer(String type) {
+    return '$typeを読み込み中...';
+  }
+
+  @override
+  String get failedToLoadDocument => 'ドキュメントの読み込みに失敗';
+
+  @override
+  String pdfLoadedPages(int pages) {
+    return 'PDF読み込み完了: $pagesページ';
+  }
+
+  @override
+  String get loadingImage => '画像を読み込み中...';
+
+  @override
+  String get failedToLoadImage => '画像の読み込みに失敗';
+
+  @override
+  String get checkImageUrl => '画像URLを確認してください';
+
+  @override
+  String get documentOpenInBrowser => 'この文書はデフォルトブラウザまたはGoogle Docsアプリで開きます';
+
+  @override
+  String get openDocument => '文書を開く';
+
+  @override
+  String get goBack => '戻る';
+
+  @override
+  String get unsupportedFileType => 'サポートされていないファイル形式';
+
+  @override
+  String failedToOpenUrl(String error) {
+    return 'URLを開くのに失敗: $error';
+  }
+
+  @override
+  String get openingDocumentInBrowser => 'ブラウザで文書を開いています...';
+
+  @override
+  String get errorOpeningBrowser => 'ブラウザを開く際にエラーが発生しました。リンクをクリップボードにコピーしました。';
+
+  @override
+  String linkCopiedToClipboardViewer(String label) {
+    return '$labelがクリップボードにコピーされました';
+  }
+
+  @override
+  String failedToCopyLabel(String label) {
+    return '$labelのコピーに失敗';
+  }
+
+  @override
+  String get documentLink => '文書リンク';
 
   @override
   String get groupChat => 'グループチャット';
@@ -963,7 +1253,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get learningPortal => '学習ポータル';
 
   @override
-  String get courseDiscussion => 'コースディスカッション';
+  String get courseDiscussion => 'コース討論';
 
   @override
   String get participants => '参加者';
@@ -981,7 +1271,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get allOtherCourses => 'すべてのその他のコース';
 
   @override
-  String get noCoursesFound => 'コースが見つかりませんでした';
+  String get noCoursesFound => 'コースが見つかりません';
 
   @override
   String get liveSessions => 'ライブセッション';
@@ -1038,15 +1328,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get courseModules => 'コースモジュール';
 
   @override
-  String get accessAllRecordedSessions => '録画されたセッションにいつでもアクセス';
-
-  @override
-  String get totalVideos => '総動画数';
-
-  @override
-  String get videoLibrary => '動画ライブラリ';
-
-  @override
   String get newText => '新着';
 
   @override
@@ -1056,16 +1337,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get downloading => 'ダウンロード中';
 
   @override
-  String get downloadAndAccessMaterials => 'コース教材をダウンロード・アクセス';
-
-  @override
   String get totalMaterials => '総教材数';
 
   @override
   String get downloaded => 'ダウンロード済み';
-
-  @override
-  String get totalSize => '総サイズ';
 
   @override
   String get opening => '開いています';
@@ -1210,12 +1485,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get interestsAndHobbies => '興味と趣味';
 
   @override
-  String get showLess => '短く表示';
-
-  @override
-  String get showMore => 'もっと見る';
-
-  @override
   String get messageButton => 'メッセージ';
 
   @override
@@ -1345,7 +1614,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get couldNotDetectLanguage => 'Could not detect language';
 
   @override
-  String get copiedToClipboard => 'クリップボードにコピーしました';
+  String copiedToClipboard(String label) {
+    return '$labelをクリップボードにコピーしました';
+  }
 
   @override
   String get failedToPlaySpeech => '音声の再生に失敗しました';
@@ -1435,4 +1706,384 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get allCaughtUp => 'すべて確認済みです！🎉';
+
+  @override
+  String get searchYourCourseHere => 'ここでコースを検索...';
+
+  @override
+  String get myCourses => 'マイコース';
+
+  @override
+  String get levelCategory => 'レベル別カテゴリ';
+
+  @override
+  String get popularCourses => '人気コース';
+
+  @override
+  String get expiredCourses => '期限切れコース';
+
+  @override
+  String get sessions => 'セッション';
+
+  @override
+  String sessionsCount(String count) {
+    return '$countセッション';
+  }
+
+  @override
+  String get by => 'by';
+
+  @override
+  String byInstructor(String instructor) {
+    return '$instructorによる';
+  }
+
+  @override
+  String completedPercentage(String percentage) {
+    return '$percentage%完了';
+  }
+
+  @override
+  String get coursesCompleted => '完了';
+
+  @override
+  String get expired => '期限切れ';
+
+  @override
+  String get noEnrolledCourses => '受講中のコースはありません';
+
+  @override
+  String get searchCoursesByName => 'コース名、講師名で検索...';
+
+  @override
+  String get status => 'ステータス';
+
+  @override
+  String get upcoming => '予定';
+
+  @override
+  String get active => 'アクティブ';
+
+  @override
+  String get showPopularOnly => '人気コースのみ表示';
+
+  @override
+  String coursesFound(String count, String plural) {
+    return '$count件のコース$pluralが見つかりました';
+  }
+
+  @override
+  String get courseDefault => 'コース';
+
+  @override
+  String get navigationMenu => 'ナビゲーションメニュー';
+
+  @override
+  String get closeCourse => 'コースを閉じる';
+
+  @override
+  String get totalStat => '合計';
+
+  @override
+  String get doneStat => '完了';
+
+  @override
+  String get nextStat => '次回';
+
+  @override
+  String get nextSession => '次のセッション';
+
+  @override
+  String get sessionDetails => 'セッション詳細';
+
+  @override
+  String get sessionLink => 'セッションリンク';
+
+  @override
+  String get joinNow => '今すぐ参加';
+
+  @override
+  String get sessionCompleted => 'セッション完了';
+
+  @override
+  String get untitledSession => '無題のセッション';
+
+  @override
+  String durationLabel(String duration) {
+    return '時間: $duration';
+  }
+
+  @override
+  String failedToCopy(String label) {
+    return '$labelのコピーに失敗しました';
+  }
+
+  @override
+  String openingSession(String platform) {
+    return '$platformセッションをブラウザで開いています...';
+  }
+
+  @override
+  String get courseTitle => 'コースタイトル';
+
+  @override
+  String get meetYourInstructor => 'インストラクターをご紹介';
+
+  @override
+  String get coursesByInstructor => 'コース';
+
+  @override
+  String get studentsLabel => '受講生';
+
+  @override
+  String get ratingLabel => '評価';
+
+  @override
+  String get priceLabel => '価格';
+
+  @override
+  String get durationStat => '期間';
+
+  @override
+  String get levelLabel => 'レベル';
+
+  @override
+  String get languageLabel => '言語';
+
+  @override
+  String get statusLabel => 'ステータス';
+
+  @override
+  String get courseCompletedStatus => 'コース完了';
+
+  @override
+  String get currentlyEnrolled => '現在受講中';
+
+  @override
+  String get enrollmentConfirmed => '受講確定';
+
+  @override
+  String get enrollmentStatus => '受講状況';
+
+  @override
+  String experienceYears(String years) {
+    return '$years年以上';
+  }
+
+  @override
+  String expertIn(String language) {
+    return '$language言語の専門家';
+  }
+
+  @override
+  String studentCountText(String count) {
+    return '$count 名の学生';
+  }
+
+  @override
+  String get instructorBioDefault =>
+      '8年以上の教育経験を持つ経験豊富な教育者です。現代的な言語学習技術とインタラクティブな教授法を専門としています。';
+
+  @override
+  String get instructorExperience => '8年以上';
+
+  @override
+  String instructorEducation(String language) {
+    return '$language言語の専門家';
+  }
+
+  @override
+  String get aboutInstructor => 'について';
+
+  @override
+  String instructorStudents(int count) {
+    return '$count 名の学生';
+  }
+
+  @override
+  String get instructorCourses => 'コース';
+
+  @override
+  String get instructorRating => '評価';
+
+  @override
+  String courseBy(String instructor) {
+    return '$instructor による';
+  }
+
+  @override
+  String expertInLanguage(String language) {
+    return '$languageの専門家';
+  }
+
+  @override
+  String get courseFeedback => 'コースフィードバック';
+
+  @override
+  String get reviewInstructorFeedback => '講師のフィードバックを確認し、コースの体験を共有してください';
+
+  @override
+  String get feedbackFromInstructor => '講師からのフィードバック';
+
+  @override
+  String get giveYourFeedback => 'フィードバックを提供';
+
+  @override
+  String get rateCourse => 'コースを評価';
+
+  @override
+  String ratingValue(int rating) {
+    return '$rating/5';
+  }
+
+  @override
+  String get noRating => '評価なし';
+
+  @override
+  String get yourCourseFeedback => 'あなたのコースフィードバック';
+
+  @override
+  String get courseFeedbackHint => 'コースの内容、構成、難易度について思うことを共有してください...';
+
+  @override
+  String get submitCourseFeedback => 'コースフィードバックを送信';
+
+  @override
+  String get instructorFeedback => '講師フィードバック';
+
+  @override
+  String get rateInstructor => '講師を評価';
+
+  @override
+  String get yourInstructorFeedback => 'あなたの講師フィードバック';
+
+  @override
+  String get instructorFeedbackHint => '教授スタイル、明瞭さ、サポートについて思うことを共有してください...';
+
+  @override
+  String get submitInstructorFeedback => '講師フィードバックを送信';
+
+  @override
+  String get feedbackSummary => 'フィードバック概要';
+
+  @override
+  String get averageRating => '平均評価';
+
+  @override
+  String get totalFeedback => '総フィードバック';
+
+  @override
+  String get positive => 'ポジティブ';
+
+  @override
+  String get constructive => '建設的';
+
+  @override
+  String get improvement => '改善';
+
+  @override
+  String get pleaseWriteCourseFeedback => 'コースフィードバックを記入してください';
+
+  @override
+  String get pleaseRateCourse => 'コースの評価を提供してください';
+
+  @override
+  String get courseFeedbackSubmitted => '✅ コースフィードバックが正常に送信されました！';
+
+  @override
+  String get pleaseWriteInstructorFeedback => '講師フィードバックを記入してください';
+
+  @override
+  String get pleaseRateInstructor => '講師の評価を提供してください';
+
+  @override
+  String get instructorFeedbackSubmitted => '✅ 講師フィードバックが正常に送信されました！';
+
+  @override
+  String enrolledMembers(int count) {
+    return '$count人の受講生';
+  }
+
+  @override
+  String get instructorRole => '講師';
+
+  @override
+  String enrolledMembersTitle(int count) {
+    return '受講生一覧 ($count人)';
+  }
+
+  @override
+  String videoDuration(String duration) {
+    return '時間: $duration';
+  }
+
+  @override
+  String videoStatus(String status) {
+    return '• ステータス: $status';
+  }
+
+  @override
+  String videoResolution(String resolution) {
+    return '解像度: $resolution';
+  }
+
+  @override
+  String get videoLoaded => '読み込み完了';
+
+  @override
+  String get videoLoading => 'Loading...';
+
+  @override
+  String get connectionTimeout =>
+      'Connection timeout. Please check your internet and try again.';
+
+  @override
+  String get videoNotFound => '動画が見つかりません。';
+
+  @override
+  String get networkError =>
+      'Network error. Please check your internet connection.';
+
+  @override
+  String get videoLoadingTimeout => '動画の読み込みがタイムアウトしました。もう一度お試しください。';
+
+  @override
+  String videoErrorPrefix(String error) {
+    return '❌ $error';
+  }
+
+  @override
+  String videoErrorMessage(String error) {
+    return 'Video Error: $error';
+  }
+
+  @override
+  String get fullscreenMode => 'フルスクリーンモード';
+
+  @override
+  String get playbackSettings => '🎬 再生設定:';
+
+  @override
+  String playbackSpeed(String speed) {
+    return '• 速度: ${speed}x';
+  }
+
+  @override
+  String playbackQuality(String quality) {
+    return '• 品質: $quality';
+  }
+
+  @override
+  String playbackVolume(int volume) {
+    return '• 音量: $volume%';
+  }
+
+  @override
+  String get playbackQualityAuto => 'Auto';
+
+  @override
+  String get retryButton => '再試行';
+
+  @override
+  String get qualityAuto => '自動';
 }

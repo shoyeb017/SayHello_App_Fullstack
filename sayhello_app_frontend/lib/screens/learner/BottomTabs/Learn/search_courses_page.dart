@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Enrolled/course_portal.dart';
 import 'Unenrolled/unenrolled_course_details.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class SearchCoursesPage extends StatefulWidget {
   final List<Map<String, dynamic>> allCourses;
@@ -32,6 +33,36 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
   ];
 
   final List<String> _statusFilters = ['All', 'Upcoming', 'Active', 'Expired'];
+
+  String _getLocalizedLevel(String level, BuildContext context) {
+    switch (level) {
+      case 'All':
+        return AppLocalizations.of(context)!.all;
+      case 'Beginner':
+        return AppLocalizations.of(context)!.beginner;
+      case 'Intermediate':
+        return AppLocalizations.of(context)!.intermediate;
+      case 'Advanced':
+        return AppLocalizations.of(context)!.advanced;
+      default:
+        return level;
+    }
+  }
+
+  String _getLocalizedStatus(String status, BuildContext context) {
+    switch (status) {
+      case 'All':
+        return AppLocalizations.of(context)!.all;
+      case 'Upcoming':
+        return AppLocalizations.of(context)!.upcoming;
+      case 'Active':
+        return AppLocalizations.of(context)!.active;
+      case 'Expired':
+        return AppLocalizations.of(context)!.expired;
+      default:
+        return status;
+    }
+  }
 
   @override
   void initState() {
@@ -171,7 +202,7 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
-          'Search Courses',
+          AppLocalizations.of(context)!.searchCourses,
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
@@ -208,7 +239,7 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search by course name, instructor...',
+                    hintText: AppLocalizations.of(context)!.searchCoursesByName,
                     hintStyle: TextStyle(
                       color: isDark ? Colors.grey[400] : Colors.grey[600],
                       fontSize: 14,
@@ -242,7 +273,7 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Level',
+                        AppLocalizations.of(context)!.level,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -291,7 +322,7 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                                     ),
                                   ),
                                   child: Text(
-                                    filter,
+                                    _getLocalizedLevel(filter, context),
                                     style: TextStyle(
                                       color: isSelected
                                           ? Colors.white
@@ -318,7 +349,7 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Status',
+                        AppLocalizations.of(context)!.status,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -367,7 +398,7 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                                     ),
                                   ),
                                   child: Text(
-                                    filter,
+                                    _getLocalizedStatus(filter, context),
                                     style: TextStyle(
                                       color: isSelected
                                           ? Colors.white
@@ -431,7 +462,7 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                'Popular Only',
+                                AppLocalizations.of(context)!.showPopularOnly,
                                 style: TextStyle(
                                   color: _showPopularOnly
                                       ? Colors.white
@@ -458,7 +489,10 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  '${_filteredCourses.length} course${_filteredCourses.length != 1 ? 's' : ''} found',
+                  AppLocalizations.of(context)!.coursesFound(
+                    _filteredCourses.length.toString(),
+                    _filteredCourses.length != 1 ? 's' : '',
+                  ),
                   style: TextStyle(
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
                     fontSize: 14,
@@ -484,7 +518,7 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No courses found',
+                            AppLocalizations.of(context)!.noCoursesFound,
                             style: TextStyle(
                               fontSize: 18,
                               color: isDark
@@ -590,7 +624,10 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                     if (isEnrolled) ...[
                       const SizedBox(height: 4),
                       Text(
-                        '${((course['progress'] ?? 0) * 100).toInt()}% completed',
+                        AppLocalizations.of(context)!.completedPercentage(
+                          (((course['progress'] ?? 0) * 100).toInt())
+                              .toString(),
+                        ),
                         style: const TextStyle(
                           fontSize: 10,
                           color: Color(0xFF7A54FF),
@@ -635,8 +672,8 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                     color: Colors.green.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Text(
-                    'Enrolled',
+                  child: Text(
+                    AppLocalizations.of(context)!.enrolled,
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
@@ -658,19 +695,19 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
     switch (status.toLowerCase()) {
       case 'upcoming':
         badgeColor = Colors.orange;
-        displayText = 'Upcoming';
+        displayText = AppLocalizations.of(context)!.upcoming;
         break;
       case 'active':
         badgeColor = Colors.blue;
-        displayText = 'Active';
+        displayText = AppLocalizations.of(context)!.active;
         break;
       case 'expired':
         badgeColor = Colors.green;
-        displayText = 'Expired';
+        displayText = AppLocalizations.of(context)!.expired;
         break;
       default:
         badgeColor = Colors.grey;
-        displayText = 'Unknown';
+        displayText = AppLocalizations.of(context)!.unknown;
     }
 
     return Container(

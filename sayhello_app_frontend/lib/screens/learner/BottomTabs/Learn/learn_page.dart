@@ -256,6 +256,19 @@ class _LearnPageState extends State<LearnPage> {
     }
   }
 
+  String _getLocalizedCategory(String category, BuildContext context) {
+    switch (category) {
+      case 'Beginner':
+        return AppLocalizations.of(context)!.beginner;
+      case 'Intermediate':
+        return AppLocalizations.of(context)!.intermediate;
+      case 'Advanced':
+        return AppLocalizations.of(context)!.advanced;
+      default:
+        return category;
+    }
+  }
+
   void _navigateToCourse(Map<String, dynamic> course) {
     // Check if user is currently enrolled (has progress > 0)
     final isCurrentlyEnrolled =
@@ -391,7 +404,7 @@ class _LearnPageState extends State<LearnPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Hello,',
+                  AppLocalizations.of(context)!.hello,
                   style: TextStyle(
                     fontSize: 14,
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -512,7 +525,7 @@ class _LearnPageState extends State<LearnPage> {
               ),
               const SizedBox(width: 12),
               Text(
-                'Search your course here...',
+                AppLocalizations.of(context)!.searchYourCourseHere,
                 style: TextStyle(
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                   fontSize: 16,
@@ -535,7 +548,7 @@ class _LearnPageState extends State<LearnPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'My Courses',
+                AppLocalizations.of(context)!.myCourses,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -551,8 +564,8 @@ class _LearnPageState extends State<LearnPage> {
                     ),
                   );
                 },
-                child: const Text(
-                  'View All',
+                child: Text(
+                  AppLocalizations.of(context)!.viewAll,
                   style: TextStyle(
                     color: Color(0xFF7A54FF),
                     fontSize: 14,
@@ -670,7 +683,9 @@ class _LearnPageState extends State<LearnPage> {
 
                     // Sessions info
                     Text(
-                      '${course['sessions'] ?? 0} Sessions',
+                      AppLocalizations.of(
+                        context,
+                      )!.sessionsCount((course['sessions'] ?? 0).toString()),
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.9),
                         fontSize: 13,
@@ -713,7 +728,9 @@ class _LearnPageState extends State<LearnPage> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        '${(progress * 100).toInt()}% completed',
+                        AppLocalizations.of(context)!.completedPercentage(
+                          ((progress * 100).toInt()).toString(),
+                        ),
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.9),
                           fontSize: 11,
@@ -740,7 +757,7 @@ class _LearnPageState extends State<LearnPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Level Category',
+                AppLocalizations.of(context)!.levelCategory,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -762,8 +779,8 @@ class _LearnPageState extends State<LearnPage> {
                     ),
                   );
                 },
-                child: const Text(
-                  'View All',
+                child: Text(
+                  AppLocalizations.of(context)!.viewAll,
                   style: TextStyle(
                     color: Color(0xFF7A54FF),
                     fontSize: 14,
@@ -860,7 +877,7 @@ class _LearnPageState extends State<LearnPage> {
               Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: Text(
-                  category,
+                  _getLocalizedCategory(category, context),
                   style: TextStyle(
                     color: Color(0xFF7A54FF),
                     fontSize: 13,
@@ -888,7 +905,7 @@ class _LearnPageState extends State<LearnPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Popular Courses',
+                AppLocalizations.of(context)!.popularCourses,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -911,8 +928,8 @@ class _LearnPageState extends State<LearnPage> {
                     ),
                   );
                 },
-                child: const Text(
-                  'View All',
+                child: Text(
+                  AppLocalizations.of(context)!.viewAll,
                   style: TextStyle(
                     color: Color(0xFF7A54FF),
                     fontSize: 14,
@@ -1000,7 +1017,9 @@ class _LearnPageState extends State<LearnPage> {
                     const SizedBox(height: 2),
 
                     Text(
-                      'by ${course['instructor'] ?? ''}',
+                      AppLocalizations.of(
+                        context,
+                      )!.byInstructor(course['instructor'] ?? ''),
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -1058,7 +1077,7 @@ class _LearnPageState extends State<LearnPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Expired Courses',
+                AppLocalizations.of(context)!.expiredCourses,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -1081,8 +1100,8 @@ class _LearnPageState extends State<LearnPage> {
                     ),
                   );
                 },
-                child: const Text(
-                  'View All',
+                child: Text(
+                  AppLocalizations.of(context)!.viewAll,
                   style: TextStyle(
                     color: Color(0xFF7A54FF),
                     fontSize: 14,

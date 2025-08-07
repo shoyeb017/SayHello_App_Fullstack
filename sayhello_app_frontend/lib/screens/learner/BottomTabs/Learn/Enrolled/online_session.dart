@@ -151,7 +151,7 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
                     // Total Sessions
                     Expanded(
                       child: _buildStatCard(
-                        'Total',
+                        AppLocalizations.of(context)!.totalStat,
                         '${sessions.length}',
                         Icons.event,
                       ),
@@ -160,7 +160,7 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
                     // Completed Sessions
                     Expanded(
                       child: _buildStatCard(
-                        'Done',
+                        AppLocalizations.of(context)!.doneStat,
                         '${sessions.where((s) => s['status'] == 'completed').length}',
                         Icons.check_circle,
                       ),
@@ -169,7 +169,7 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
                     // Upcoming Sessions
                     Expanded(
                       child: _buildStatCard(
-                        'Next',
+                        AppLocalizations.of(context)!.nextStat,
                         '${upcomingSessions.length}',
                         Icons.schedule,
                       ),
@@ -196,7 +196,7 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Next Session',
+                          AppLocalizations.of(context)!.nextSession,
                           style: TextStyle(
                             color: Colors.white.withOpacity(0.8),
                             fontSize: 11,
@@ -363,7 +363,8 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              session['title'] ?? 'Untitled Session',
+                              session['title'] ??
+                                  AppLocalizations.of(context)!.untitledSession,
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -401,7 +402,9 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
                             const SizedBox(height: 6),
                             _buildInfoRow(
                               Icons.schedule,
-                              'Duration: ${session['duration'] ?? ''}',
+                              AppLocalizations.of(
+                                context,
+                              )!.durationLabel(session['duration'] ?? ''),
                               textColor,
                             ),
 
@@ -410,7 +413,7 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
                                 session['status'] == 'completed') ...[
                               const SizedBox(height: 12),
                               Text(
-                                'Session Details',
+                                AppLocalizations.of(context)!.sessionDetails,
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
@@ -421,7 +424,7 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
 
                               // Session Link
                               _buildCopyableField(
-                                'Session Link',
+                                AppLocalizations.of(context)!.sessionLink,
                                 session['link'] ?? '',
                                 Icons.link,
                                 primaryColor,
@@ -432,7 +435,7 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
 
                               // Session Password
                               _buildCopyableField(
-                                'Password',
+                                AppLocalizations.of(context)!.password,
                                 session['password'] ?? '',
                                 Icons.lock,
                                 primaryColor,
@@ -465,7 +468,7 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
                                     size: 16,
                                   ),
                                   label: Text(
-                                    'Join Now',
+                                    AppLocalizations.of(context)!.joinNow,
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
@@ -498,7 +501,9 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
-                                      'Session Completed',
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.sessionCompleted,
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
@@ -549,7 +554,9 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
             child: Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Text(
-                isExpanded ? 'See less' : 'See more',
+                isExpanded
+                    ? AppLocalizations.of(context)!.seeLess
+                    : AppLocalizations.of(context)!.seeMore,
                 style: TextStyle(
                   fontSize: 11,
                   color: Color(0xFF7A54FF),
@@ -761,9 +768,7 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                'Could not open browser. Link copied to clipboard.',
-              ),
+              content: Text(AppLocalizations.of(context)!.couldNotOpenBrowser),
               backgroundColor: Colors.orange,
               duration: Duration(seconds: 3),
             ),
@@ -776,7 +781,7 @@ class _OnlineSessionTabState extends State<OnlineSessionTab> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error opening browser. Link copied to clipboard.'),
+            content: Text(AppLocalizations.of(context)!.errorOpeningBrowser),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 3),
           ),

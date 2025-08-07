@@ -37,7 +37,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get and => 'and';
 
   @override
-  String get hello => 'Hello';
+  String get hello => 'Hello,';
 
   @override
   String get language => 'Language';
@@ -906,13 +906,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get students => 'students';
 
   @override
-  String get completed => 'Completed';
+  String get completed => 'completed';
 
   @override
   String get inProgress => 'In Progress';
 
   @override
-  String get courseCompleted => 'Course completed successfully!';
+  String get courseCompleted => 'Course Completed';
 
   @override
   String get viewAll => 'View All';
@@ -933,7 +933,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get endDate => 'End Date';
 
   @override
-  String get price => 'Price';
+  String price(String price) {
+    return '\$$price';
+  }
 
   @override
   String get enrollFor => 'Enroll for';
@@ -951,7 +953,309 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordedClasses => 'Recorded Classes';
 
   @override
+  String get accessAllRecordedSessions =>
+      'Access all recorded sessions anytime';
+
+  @override
+  String get videoLibrary => 'Video Library';
+
+  @override
+  String get totalVideos => 'Total Videos';
+
+  @override
+  String get totalDuration => 'Total Duration';
+
+  @override
+  String get totalSize => 'Total Size';
+
+  @override
+  String get loadingVideoMetadata => 'Loading video metadata...';
+
+  @override
+  String completeProgress(int percent) {
+    return '$percent% Complete';
+  }
+
+  @override
+  String get failedToLoadVideoMetadata => 'Failed to load video metadata';
+
+  @override
+  String get noVideosAvailable => 'No videos available';
+
+  @override
+  String get checkBackLaterForRecorded =>
+      'Check back later for recorded classes';
+
+  @override
+  String failedVideosCount(int failed, int total) {
+    return '$failed of $total videos failed to load metadata';
+  }
+
+  @override
+  String get failedToLoad => 'Failed to load';
+
+  @override
+  String get noDescriptionAvailable => 'No description available';
+
+  @override
+  String videoError(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get unknownUploadDate => 'Unknown';
+
+  @override
+  String get watchNow => 'Watch Now';
+
+  @override
+  String get videoMetadataLoadedSuccessfully =>
+      '✅ Video metadata loaded successfully';
+
+  @override
+  String get failedToLoadVideoMetadataSnackbar =>
+      '❌ Failed to load video metadata';
+
+  @override
+  String errorMessage(String error) {
+    return '❌ Error: $error';
+  }
+
+  @override
+  String cannotPlayVideoError(String error) {
+    return '❌ Cannot play video: $error';
+  }
+
+  @override
+  String get loadingVideoPlayer => 'Loading Video Player...';
+
+  @override
+  String videoDurationSize(String duration, String size) {
+    return 'Duration: $duration • Size: $size';
+  }
+
+  @override
+  String get videoInformation => '📹 Video Information:';
+
+  @override
+  String videoTitle(String title) {
+    return '• Title: $title';
+  }
+
+  @override
+  String videoDurationInfo(String duration) {
+    return '• Duration: $duration';
+  }
+
+  @override
+  String videoStatusInfo(String status) {
+    return '• Status: $status';
+  }
+
+  @override
+  String videoResolutionInfo(int width, int height) {
+    return '• Resolution: ${width}x$height';
+  }
+
+  @override
+  String get videoStatusLoaded => 'Loaded';
+
+  @override
+  String get videoStatusLoading => 'Loading...';
+
+  @override
+  String get videoInfo => 'Video Info';
+
+  @override
+  String get loadingVideo => 'Loading video...';
+
+  @override
+  String get failedToLoadVideo => 'Failed to load video';
+
+  @override
+  String get preparingVideo => 'Preparing video...';
+
+  @override
+  String get connectionTimeoutMessage =>
+      'Connection timeout. Please check your internet and try again.';
+
+  @override
+  String get videoNotFoundMessage =>
+      'Video not found. The video URL may be invalid.';
+
+  @override
+  String get networkErrorMessage =>
+      'Network error. Please check your internet connection.';
+
+  @override
+  String get videoLoadingTimeoutMessage =>
+      'Video loading timeout - Check your internet connection';
+
+  @override
+  String videoErrorGeneric(String error) {
+    return 'Video Error: $error';
+  }
+
+  @override
+  String get unknownError => 'Unknown error';
+
+  @override
   String get studyMaterials => 'Study Materials';
+
+  @override
+  String get downloadAndAccessMaterials =>
+      'Download and access course materials';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get pdfs => 'PDFs';
+
+  @override
+  String get images => 'Images';
+
+  @override
+  String get showMore => 'Show more';
+
+  @override
+  String get showLess => 'Show less';
+
+  @override
+  String get untitledMaterial => 'Untitled Material';
+
+  @override
+  String get noUrlAvailable => '❌ No URL available for this material';
+
+  @override
+  String openingFileType(String type) {
+    return 'Opening $type...';
+  }
+
+  @override
+  String get noUrlForDownload => '❌ No URL available for download';
+
+  @override
+  String get downloadFile => 'Download File';
+
+  @override
+  String get downloadConfirmation =>
+      'This will open the file in your browser for download.';
+
+  @override
+  String fileType(String type) {
+    return 'Type: $type';
+  }
+
+  @override
+  String get browserHandleDownload =>
+      'Your browser will handle the download to your default downloads folder.';
+
+  @override
+  String get openInBrowser => 'Open in Browser';
+
+  @override
+  String get couldNotOpenBrowser =>
+      'Could not open browser. Link copied to clipboard.';
+
+  @override
+  String get failedToOpenBrowser => '❌ Failed to open browser';
+
+  @override
+  String get linkCopiedInstead => 'Link copied to clipboard instead.';
+
+  @override
+  String get downloadLinkCopied => '📎 Download link copied to clipboard';
+
+  @override
+  String get pasteAndGo => 'Paste & Go';
+
+  @override
+  String get downloadInstructions => 'Download Instructions';
+
+  @override
+  String get linkCopiedToClipboard =>
+      'The download link has been copied to your clipboard:';
+
+  @override
+  String get toDownload => 'To download:';
+
+  @override
+  String get openYourBrowser => '1. Open your browser';
+
+  @override
+  String get pasteLinkInAddress => '2. Paste the link in the address bar';
+
+  @override
+  String get pressEnterToDownload => '3. Press Enter to start download';
+
+  @override
+  String get gotIt => 'Got it';
+
+  @override
+  String failedToCopyLink(String error) {
+    return 'Failed to copy link: $error';
+  }
+
+  @override
+  String loadingFileTypeViewer(String type) {
+    return 'Loading $type...';
+  }
+
+  @override
+  String get failedToLoadDocument => 'Failed to load document';
+
+  @override
+  String pdfLoadedPages(int pages) {
+    return 'PDF loaded: $pages pages';
+  }
+
+  @override
+  String get loadingImage => 'Loading image...';
+
+  @override
+  String get failedToLoadImage => 'Failed to load image';
+
+  @override
+  String get checkImageUrl => 'Please check the image URL';
+
+  @override
+  String get documentOpenInBrowser =>
+      'This document will open in your default browser or Google Docs app';
+
+  @override
+  String get openDocument => 'Open Document';
+
+  @override
+  String get goBack => 'Go Back';
+
+  @override
+  String get unsupportedFileType => 'Unsupported file type';
+
+  @override
+  String failedToOpenUrl(String error) {
+    return 'Failed to open URL: $error';
+  }
+
+  @override
+  String get openingDocumentInBrowser => 'Opening document in browser...';
+
+  @override
+  String get errorOpeningBrowser =>
+      'Error opening browser. Link copied to clipboard.';
+
+  @override
+  String linkCopiedToClipboardViewer(String label) {
+    return '$label copied to clipboard';
+  }
+
+  @override
+  String failedToCopyLabel(String label) {
+    return 'Failed to copy $label';
+  }
+
+  @override
+  String get documentLink => 'Document link';
 
   @override
   String get groupChat => 'Group Chat';
@@ -1043,16 +1347,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get courseModules => 'Course Modules';
 
   @override
-  String get accessAllRecordedSessions =>
-      'Access all recorded sessions anytime';
-
-  @override
-  String get totalVideos => 'Total Videos';
-
-  @override
-  String get videoLibrary => 'Video Library';
-
-  @override
   String get newText => 'New';
 
   @override
@@ -1062,17 +1356,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get downloading => 'Downloading';
 
   @override
-  String get downloadAndAccessMaterials =>
-      'Download and access course materials';
-
-  @override
   String get totalMaterials => 'Total Materials';
 
   @override
   String get downloaded => 'Downloaded';
-
-  @override
-  String get totalSize => 'Total Size';
 
   @override
   String get opening => 'Opening';
@@ -1217,12 +1504,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get interestsAndHobbies => 'Interests & Hobbies';
 
   @override
-  String get showLess => 'Show less';
-
-  @override
-  String get showMore => 'Show more';
-
-  @override
   String get messageButton => 'Message';
 
   @override
@@ -1352,7 +1633,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get couldNotDetectLanguage => 'Could not detect language';
 
   @override
-  String get copiedToClipboard => 'copied to clipboard';
+  String copiedToClipboard(String label) {
+    return '$label copied to clipboard';
+  }
 
   @override
   String get failedToPlaySpeech => 'Failed to play speech';
@@ -1444,4 +1727,392 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allCaughtUp => 'You\'re all caught up! 🎉';
+
+  @override
+  String get searchYourCourseHere => 'Search your course here...';
+
+  @override
+  String get myCourses => 'My Courses';
+
+  @override
+  String get levelCategory => 'Level Category';
+
+  @override
+  String get popularCourses => 'Popular Courses';
+
+  @override
+  String get expiredCourses => 'Expired Courses';
+
+  @override
+  String get sessions => 'sessions';
+
+  @override
+  String sessionsCount(String count) {
+    return '$count Sessions';
+  }
+
+  @override
+  String get by => 'by';
+
+  @override
+  String byInstructor(String instructor) {
+    return 'by $instructor';
+  }
+
+  @override
+  String completedPercentage(String percentage) {
+    return '$percentage% completed';
+  }
+
+  @override
+  String get coursesCompleted => 'Completed';
+
+  @override
+  String get expired => 'Expired';
+
+  @override
+  String get noEnrolledCourses => 'No enrolled courses';
+
+  @override
+  String get searchCoursesByName => 'Search by course name, instructor...';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get upcoming => 'Upcoming';
+
+  @override
+  String get active => 'Active';
+
+  @override
+  String get showPopularOnly => 'Show popular only';
+
+  @override
+  String coursesFound(String count, String plural) {
+    return '$count course$plural found';
+  }
+
+  @override
+  String get courseDefault => 'Course';
+
+  @override
+  String get navigationMenu => 'Navigation Menu';
+
+  @override
+  String get closeCourse => 'Close Course';
+
+  @override
+  String get totalStat => 'Total';
+
+  @override
+  String get doneStat => 'Done';
+
+  @override
+  String get nextStat => 'Next';
+
+  @override
+  String get nextSession => 'Next Session';
+
+  @override
+  String get sessionDetails => 'Session Details';
+
+  @override
+  String get sessionLink => 'Session Link';
+
+  @override
+  String get joinNow => 'Join Now';
+
+  @override
+  String get sessionCompleted => 'Session Completed';
+
+  @override
+  String get untitledSession => 'Untitled Session';
+
+  @override
+  String durationLabel(String duration) {
+    return 'Duration: $duration';
+  }
+
+  @override
+  String failedToCopy(String label) {
+    return 'Failed to copy $label';
+  }
+
+  @override
+  String openingSession(String platform) {
+    return 'Opening $platform session in browser...';
+  }
+
+  @override
+  String get courseTitle => 'Course Title';
+
+  @override
+  String get meetYourInstructor => 'Meet Your Instructor';
+
+  @override
+  String get coursesByInstructor => 'Courses';
+
+  @override
+  String get studentsLabel => 'Students';
+
+  @override
+  String get ratingLabel => 'Rating';
+
+  @override
+  String get priceLabel => 'Price';
+
+  @override
+  String get durationStat => 'Duration';
+
+  @override
+  String get levelLabel => 'Level';
+
+  @override
+  String get languageLabel => 'Language';
+
+  @override
+  String get statusLabel => 'Status';
+
+  @override
+  String get courseCompletedStatus => 'Course Completed';
+
+  @override
+  String get currentlyEnrolled => 'Currently Enrolled';
+
+  @override
+  String get enrollmentConfirmed => 'Enrollment Confirmed';
+
+  @override
+  String get enrollmentStatus => 'Enrollment Status';
+
+  @override
+  String experienceYears(String years) {
+    return '$years+ years';
+  }
+
+  @override
+  String expertIn(String language) {
+    return 'Expert in $language Language';
+  }
+
+  @override
+  String studentCountText(String count) {
+    return '$count students';
+  }
+
+  @override
+  String get instructorBioDefault =>
+      'Experienced educator with over 8 years of teaching experience. Specializes in modern language learning techniques and interactive teaching methods.';
+
+  @override
+  String get instructorExperience => '8+ years';
+
+  @override
+  String instructorEducation(String language) {
+    return 'Expert in $language Language';
+  }
+
+  @override
+  String get aboutInstructor => 'About';
+
+  @override
+  String instructorStudents(int count) {
+    return '$count students';
+  }
+
+  @override
+  String get instructorCourses => 'Courses';
+
+  @override
+  String get instructorRating => 'Rating';
+
+  @override
+  String courseBy(String instructor) {
+    return 'by $instructor';
+  }
+
+  @override
+  String expertInLanguage(String language) {
+    return 'Expert in $language';
+  }
+
+  @override
+  String get courseFeedback => 'Course Feedback';
+
+  @override
+  String get reviewInstructorFeedback =>
+      'Review instructor feedback and share your course experience';
+
+  @override
+  String get feedbackFromInstructor => 'Feedback from Instructor';
+
+  @override
+  String get giveYourFeedback => 'Give Your Feedback';
+
+  @override
+  String get rateCourse => 'Rate the Course';
+
+  @override
+  String ratingValue(int rating) {
+    return '$rating/5';
+  }
+
+  @override
+  String get noRating => 'No rating';
+
+  @override
+  String get yourCourseFeedback => 'Your Course Feedback';
+
+  @override
+  String get courseFeedbackHint =>
+      'Share your thoughts about the course content, structure, difficulty...';
+
+  @override
+  String get submitCourseFeedback => 'Submit Course Feedback';
+
+  @override
+  String get instructorFeedback => 'Instructor Feedback';
+
+  @override
+  String get rateInstructor => 'Rate the Instructor';
+
+  @override
+  String get yourInstructorFeedback => 'Your Instructor Feedback';
+
+  @override
+  String get instructorFeedbackHint =>
+      'Share your thoughts about teaching style, clarity, support...';
+
+  @override
+  String get submitInstructorFeedback => 'Submit Instructor Feedback';
+
+  @override
+  String get feedbackSummary => 'Feedback Summary';
+
+  @override
+  String get averageRating => 'Average Rating';
+
+  @override
+  String get totalFeedback => 'Total Feedback';
+
+  @override
+  String get positive => 'positive';
+
+  @override
+  String get constructive => 'constructive';
+
+  @override
+  String get improvement => 'improvement';
+
+  @override
+  String get pleaseWriteCourseFeedback => 'Please write your course feedback';
+
+  @override
+  String get pleaseRateCourse => 'Please provide a rating for the course';
+
+  @override
+  String get courseFeedbackSubmitted =>
+      '✅ Course feedback submitted successfully!';
+
+  @override
+  String get pleaseWriteInstructorFeedback =>
+      'Please write your instructor feedback';
+
+  @override
+  String get pleaseRateInstructor =>
+      'Please provide a rating for the instructor';
+
+  @override
+  String get instructorFeedbackSubmitted =>
+      '✅ Instructor feedback submitted successfully!';
+
+  @override
+  String enrolledMembers(int count) {
+    return '$count enrolled members';
+  }
+
+  @override
+  String get instructorRole => 'Instructor';
+
+  @override
+  String enrolledMembersTitle(int count) {
+    return 'Enrolled Members ($count)';
+  }
+
+  @override
+  String videoDuration(String duration) {
+    return '• Duration: $duration';
+  }
+
+  @override
+  String videoStatus(String status) {
+    return '• Status: $status';
+  }
+
+  @override
+  String videoResolution(String resolution) {
+    return '• Resolution: $resolution';
+  }
+
+  @override
+  String get videoLoaded => 'Loaded';
+
+  @override
+  String get videoLoading => 'Loading...';
+
+  @override
+  String get connectionTimeout =>
+      'Connection timeout. Please check your internet and try again.';
+
+  @override
+  String get videoNotFound => 'Video not found. The video URL may be invalid.';
+
+  @override
+  String get networkError =>
+      'Network error. Please check your internet connection.';
+
+  @override
+  String get videoLoadingTimeout =>
+      'Video loading timeout - Check your internet connection';
+
+  @override
+  String videoErrorPrefix(String error) {
+    return '❌ $error';
+  }
+
+  @override
+  String videoErrorMessage(String error) {
+    return 'Video Error: $error';
+  }
+
+  @override
+  String get fullscreenMode => 'Fullscreen mode';
+
+  @override
+  String get playbackSettings => '🎬 Playback Settings:';
+
+  @override
+  String playbackSpeed(String speed) {
+    return '• Speed: ${speed}x';
+  }
+
+  @override
+  String playbackQuality(String quality) {
+    return '• Quality: $quality';
+  }
+
+  @override
+  String playbackVolume(int volume) {
+    return '• Volume: $volume%';
+  }
+
+  @override
+  String get playbackQualityAuto => 'Auto';
+
+  @override
+  String get retryButton => 'Retry';
+
+  @override
+  String get qualityAuto => 'Auto';
 }

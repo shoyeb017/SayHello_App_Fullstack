@@ -37,7 +37,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get and => 'এবং';
 
   @override
-  String get hello => 'হ্যালো!';
+  String get hello => 'হ্যালো,';
 
   @override
   String get language => 'ভাষা';
@@ -234,7 +234,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get skillLevel => 'দক্ষতার স্তর';
 
   @override
-  String get beginner => 'নতুন';
+  String get beginner => 'প্রাথমিক';
 
   @override
   String get basic => 'মৌলিক';
@@ -513,7 +513,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get general => 'General';
 
   @override
-  String get about => 'About';
+  String get about => 'সম্পর্কে';
 
   @override
   String get help => 'Help';
@@ -612,7 +612,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get disconnected => 'সংযোগ বিচ্ছিন্ন';
 
   @override
-  String get retry => 'পুনরায় চেষ্টা করুন';
+  String get retry => 'পুনরায় চেষ্টা';
 
   @override
   String get block => 'ব্লক করুন';
@@ -845,7 +845,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get findPartners => 'সঙ্গী খুঁজুন';
 
   @override
-  String get all => 'সকল';
+  String get all => 'সব';
 
   @override
   String get seriousLearners => 'গুরুতর শিক্ষার্থী';
@@ -906,13 +906,13 @@ class AppLocalizationsBn extends AppLocalizations {
   String get students => 'শিক্ষার্থী';
 
   @override
-  String get completed => 'সম্পূর্ণ';
+  String get completed => 'সম্পন্ন';
 
   @override
   String get inProgress => 'চলমান';
 
   @override
-  String get courseCompleted => 'কোর্স সফলভাবে সম্পন্ন হয়েছে!';
+  String get courseCompleted => 'কোর্স সম্পূর্ণ';
 
   @override
   String get viewAll => 'সব দেখুন';
@@ -933,7 +933,9 @@ class AppLocalizationsBn extends AppLocalizations {
   String get endDate => 'শেষের তারিখ';
 
   @override
-  String get price => 'মূল্য';
+  String price(String price) {
+    return '৳$price';
+  }
 
   @override
   String get enrollFor => 'ভর্তি হন';
@@ -951,7 +953,309 @@ class AppLocalizationsBn extends AppLocalizations {
   String get recordedClasses => 'রেকর্ডকৃত ক্লাস';
 
   @override
+  String get accessAllRecordedSessions =>
+      'যেকোনো সময় সকল রেকর্ড করা সেশন অ্যাক্সেস করুন';
+
+  @override
+  String get videoLibrary => 'ভিডিও লাইব্রেরি';
+
+  @override
+  String get totalVideos => 'মোট ভিডিও';
+
+  @override
+  String get totalDuration => 'মোট সময়কাল';
+
+  @override
+  String get totalSize => 'মোট আকার';
+
+  @override
+  String get loadingVideoMetadata => 'ভিডিও মেটাডেটা লোড হচ্ছে...';
+
+  @override
+  String completeProgress(int percent) {
+    return '$percent% সম্পূর্ণ';
+  }
+
+  @override
+  String get failedToLoadVideoMetadata => 'ভিডিও মেটাডেটা লোড করতে ব্যর্থ';
+
+  @override
+  String get noVideosAvailable => 'কোন ভিডিও উপলব্ধ নেই';
+
+  @override
+  String get checkBackLaterForRecorded =>
+      'রেকর্ড করা ক্লাসের জন্য পরে আবার দেখুন';
+
+  @override
+  String failedVideosCount(int failed, int total) {
+    return '$totalটির মধ্যে $failedটি ভিডিওর মেটাডেটা লোড করতে ব্যর্থ';
+  }
+
+  @override
+  String get failedToLoad => 'লোড করতে ব্যর্থ';
+
+  @override
+  String get noDescriptionAvailable => 'কোন বর্ণনা উপলব্ধ নেই';
+
+  @override
+  String videoError(String error) {
+    return 'ত্রুটি: $error';
+  }
+
+  @override
+  String get unknownUploadDate => 'অজানা';
+
+  @override
+  String get watchNow => 'এখনই দেখুন';
+
+  @override
+  String get videoMetadataLoadedSuccessfully =>
+      '✅ ভিডিও মেটাডেটা সফলভাবে লোড হয়েছে';
+
+  @override
+  String get failedToLoadVideoMetadataSnackbar =>
+      '❌ ভিডিও মেটাডেটা লোড করতে ব্যর্থ';
+
+  @override
+  String errorMessage(String error) {
+    return '❌ ত্রুটি: $error';
+  }
+
+  @override
+  String cannotPlayVideoError(String error) {
+    return '❌ ভিডিও চালাতে পারছে না: $error';
+  }
+
+  @override
+  String get loadingVideoPlayer => 'ভিডিও প্লেয়ার লোড হচ্ছে...';
+
+  @override
+  String videoDurationSize(String duration, String size) {
+    return 'সময়কাল: $duration • আকার: $size';
+  }
+
+  @override
+  String get videoInformation => 'ভিডিও তথ্য';
+
+  @override
+  String videoTitle(String title) {
+    return '$title';
+  }
+
+  @override
+  String videoDurationInfo(String duration) {
+    return '• সময়কাল: $duration';
+  }
+
+  @override
+  String videoStatusInfo(String status) {
+    return '• অবস্থা: $status';
+  }
+
+  @override
+  String videoResolutionInfo(int width, int height) {
+    return '• রেজোলিউশন: ${width}x$height';
+  }
+
+  @override
+  String get videoStatusLoaded => 'লোড হয়েছে';
+
+  @override
+  String get videoStatusLoading => 'লোড হচ্ছে...';
+
+  @override
+  String get videoInfo => 'ভিডিও তথ্য';
+
+  @override
+  String get loadingVideo => 'ভিডিও লোড হচ্ছে...';
+
+  @override
+  String get failedToLoadVideo => 'ভিডিও লোড করতে ব্যর্থ';
+
+  @override
+  String get preparingVideo => 'ভিডিও প্রস্তুত করা হচ্ছে...';
+
+  @override
+  String get connectionTimeoutMessage =>
+      'সংযোগ সময় শেষ। আপনার ইন্টারনেট চেক করুন এবং আবার চেষ্টা করুন।';
+
+  @override
+  String get videoNotFoundMessage =>
+      'ভিডিও পাওয়া যায়নি। ভিডিও URL অবৈধ হতে পারে।';
+
+  @override
+  String get networkErrorMessage =>
+      'নেটওয়ার্ক ত্রুটি। আপনার ইন্টারনেট সংযোগ চেক করুন।';
+
+  @override
+  String get videoLoadingTimeoutMessage =>
+      'ভিডিও লোডিং টাইমআউট - আপনার ইন্টারনেট সংযোগ চেক করুন';
+
+  @override
+  String videoErrorGeneric(String error) {
+    return 'ভিডিও ত্রুটি: $error';
+  }
+
+  @override
+  String get unknownError => 'অজানা ত্রুটি';
+
+  @override
   String get studyMaterials => 'অধ্যয়ন উপকরণ';
+
+  @override
+  String get downloadAndAccessMaterials =>
+      'কোর্স উপকরণ ডাউনলোড এবং অ্যাক্সেস করুন';
+
+  @override
+  String get total => 'মোট';
+
+  @override
+  String get pdfs => 'PDF';
+
+  @override
+  String get images => 'ছবি';
+
+  @override
+  String get showMore => 'আরো দেখান';
+
+  @override
+  String get showLess => 'কম দেখান';
+
+  @override
+  String get untitledMaterial => 'শিরোনামহীন উপকরণ';
+
+  @override
+  String get noUrlAvailable => '❌ এই উপকরণের জন্য কোন URL উপলব্ধ নেই';
+
+  @override
+  String openingFileType(String type) {
+    return '$type খোলা হচ্ছে...';
+  }
+
+  @override
+  String get noUrlForDownload => '❌ ডাউনলোডের জন্য কোন URL উপলব্ধ নেই';
+
+  @override
+  String get downloadFile => 'ফাইল ডাউনলোড';
+
+  @override
+  String get downloadConfirmation =>
+      'এটি ডাউনলোডের জন্য আপনার ব্রাউজারে ফাইল খুলবে।';
+
+  @override
+  String fileType(String type) {
+    return 'প্রকার: $type';
+  }
+
+  @override
+  String get browserHandleDownload =>
+      'আপনার ব্রাউজার আপনার ডিফল্ট ডাউনলোড ফোল্ডারে ডাউনলোড পরিচালনা করবে।';
+
+  @override
+  String get openInBrowser => 'ব্রাউজারে খুলুন';
+
+  @override
+  String get couldNotOpenBrowser =>
+      'ব্রাউজার খুলতে পারেনি। লিঙ্ক ক্লিপবোর্ডে কপি করা হয়েছে।';
+
+  @override
+  String get failedToOpenBrowser => '❌ ব্রাউজার খুলতে ব্যর্থ';
+
+  @override
+  String get linkCopiedInstead => 'বরং লিংক ক্লিপবোর্ডে কপি করা হয়েছে।';
+
+  @override
+  String get downloadLinkCopied => '📎 ডাউনলোড লিংক ক্লিপবোর্ডে কপি করা হয়েছে';
+
+  @override
+  String get pasteAndGo => 'পেস্ট করুন এবং যান';
+
+  @override
+  String get downloadInstructions => 'ডাউনলোড নির্দেশাবলী';
+
+  @override
+  String get linkCopiedToClipboard =>
+      'ডাউনলোড লিংক আপনার ক্লিপবোর্ডে কপি করা হয়েছে:';
+
+  @override
+  String get toDownload => 'ডাউনলোড করতে:';
+
+  @override
+  String get openYourBrowser => '১. আপনার ব্রাউজার খুলুন';
+
+  @override
+  String get pasteLinkInAddress => '২. ঠিকানা বারে লিংক পেস্ট করুন';
+
+  @override
+  String get pressEnterToDownload => '৩. ডাউনলোড শুরু করতে Enter চাপুন';
+
+  @override
+  String get gotIt => 'বুঝেছি';
+
+  @override
+  String failedToCopyLink(String error) {
+    return 'লিংক কপি করতে ব্যর্থ: $error';
+  }
+
+  @override
+  String loadingFileTypeViewer(String type) {
+    return '$type লোড হচ্ছে...';
+  }
+
+  @override
+  String get failedToLoadDocument => 'ডকুমেন্ট লোড করতে ব্যর্থ';
+
+  @override
+  String pdfLoadedPages(int pages) {
+    return 'PDF লোড হয়েছে: $pages পাতা';
+  }
+
+  @override
+  String get loadingImage => 'ছবি লোড হচ্ছে...';
+
+  @override
+  String get failedToLoadImage => 'ছবি লোড করতে ব্যর্থ';
+
+  @override
+  String get checkImageUrl => 'অনুগ্রহ করে ছবির URL চেক করুন';
+
+  @override
+  String get documentOpenInBrowser =>
+      'এই নথি আপনার ডিফল্ট ব্রাউজার বা Google Docs অ্যাপে খুলবে';
+
+  @override
+  String get openDocument => 'নথি খুলুন';
+
+  @override
+  String get goBack => 'পিছনে যান';
+
+  @override
+  String get unsupportedFileType => 'অসমর্থিত ফাইল প্রকার';
+
+  @override
+  String failedToOpenUrl(String error) {
+    return 'URL খুলতে ব্যর্থ: $error';
+  }
+
+  @override
+  String get openingDocumentInBrowser => 'ব্রাউজারে নথি খোলা হচ্ছে...';
+
+  @override
+  String get errorOpeningBrowser =>
+      'ব্রাউজার খোলায় ত্রুটি। লিঙ্ক ক্লিপবোর্ডে কপি করা হয়েছে।';
+
+  @override
+  String linkCopiedToClipboardViewer(String label) {
+    return '$label ক্লিপবোর্ডে কপি করা হয়েছে';
+  }
+
+  @override
+  String failedToCopyLabel(String label) {
+    return '$label কপি করতে ব্যর্থ';
+  }
+
+  @override
+  String get documentLink => 'ডকুমেন্ট লিংক';
 
   @override
   String get groupChat => 'গ্রুপ চ্যাট';
@@ -984,7 +1288,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get allOtherCourses => 'সব অন্যান্য কোর্স';
 
   @override
-  String get noCoursesFound => 'কোনো কোর্স পাওয়া যায়নি';
+  String get noCoursesFound => 'কোন কোর্স পাওয়া যায়নি';
 
   @override
   String get liveSessions => 'লাইভ সেশন';
@@ -1043,16 +1347,6 @@ class AppLocalizationsBn extends AppLocalizations {
   String get courseModules => 'কোর্স মডিউল';
 
   @override
-  String get accessAllRecordedSessions =>
-      'যেকোনো সময় সকল রেকর্ড করা সেশন অ্যাক্সেস করুন';
-
-  @override
-  String get totalVideos => 'মোট ভিডিও';
-
-  @override
-  String get videoLibrary => 'ভিডিও লাইব্রেরি';
-
-  @override
   String get newText => 'নতুন';
 
   @override
@@ -1062,17 +1356,10 @@ class AppLocalizationsBn extends AppLocalizations {
   String get downloading => 'ডাউনলোড করছে';
 
   @override
-  String get downloadAndAccessMaterials =>
-      'কোর্স উপকরণ ডাউনলোড এবং অ্যাক্সেস করুন';
-
-  @override
   String get totalMaterials => 'মোট উপকরণ';
 
   @override
   String get downloaded => 'ডাউনলোড করা হয়েছে';
-
-  @override
-  String get totalSize => 'মোট আকার';
 
   @override
   String get opening => 'খোলা হচ্ছে';
@@ -1217,12 +1504,6 @@ class AppLocalizationsBn extends AppLocalizations {
   String get interestsAndHobbies => 'আগ্রহ ও শখ';
 
   @override
-  String get showLess => 'কম দেখান';
-
-  @override
-  String get showMore => 'আরো দেখান';
-
-  @override
   String get messageButton => 'বার্তা';
 
   @override
@@ -1352,7 +1633,9 @@ class AppLocalizationsBn extends AppLocalizations {
   String get couldNotDetectLanguage => 'ভাষা সনাক্ত করা যায়নি';
 
   @override
-  String get copiedToClipboard => 'ক্লিপবোর্ডে কপি হয়েছে';
+  String copiedToClipboard(String label) {
+    return '$label ক্লিপবোর্ডে কপি করা হয়েছে';
+  }
 
   @override
   String get failedToPlaySpeech => 'স্পিচ প্লে করতে ব্যর্থ';
@@ -1444,4 +1727,394 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get allCaughtUp => 'সব দেখা হয়ে গেছে! 🎉';
+
+  @override
+  String get searchYourCourseHere => 'এখানে আপনার কোর্স খুঁজুন...';
+
+  @override
+  String get myCourses => 'আমার কোর্স';
+
+  @override
+  String get levelCategory => 'লেভেল ক্যাটাগরি';
+
+  @override
+  String get popularCourses => 'জনপ্রিয় কোর্স';
+
+  @override
+  String get expiredCourses => 'মেয়াদোত্তীর্ণ কোর্স';
+
+  @override
+  String get sessions => 'সেশন';
+
+  @override
+  String sessionsCount(String count) {
+    return '$countটি সেশন';
+  }
+
+  @override
+  String get by => 'দ্বারা';
+
+  @override
+  String byInstructor(String instructor) {
+    return '$instructor দ্বারা';
+  }
+
+  @override
+  String completedPercentage(String percentage) {
+    return '$percentage% সম্পন্ন';
+  }
+
+  @override
+  String get coursesCompleted => 'সম্পন্ন';
+
+  @override
+  String get expired => 'মেয়াদোত্তীর্ণ';
+
+  @override
+  String get noEnrolledCourses => 'কোন ভর্তি কোর্স নেই';
+
+  @override
+  String get searchCoursesByName => 'কোর্সের নাম, প্রশিক্ষক দিয়ে খুঁজুন...';
+
+  @override
+  String get status => 'অবস্থা';
+
+  @override
+  String get upcoming => 'আসন্ন';
+
+  @override
+  String get active => 'সক্রিয়';
+
+  @override
+  String get showPopularOnly => 'শুধু জনপ্রিয় দেখান';
+
+  @override
+  String coursesFound(String count, String plural) {
+    return '$countটি কোর্স$plural পাওয়া গেছে';
+  }
+
+  @override
+  String get courseDefault => 'কোর্স';
+
+  @override
+  String get navigationMenu => 'নেভিগেশন মেনু';
+
+  @override
+  String get closeCourse => 'কোর্স বন্ধ করুন';
+
+  @override
+  String get totalStat => 'মোট';
+
+  @override
+  String get doneStat => 'সম্পন্ন';
+
+  @override
+  String get nextStat => 'পরবর্তী';
+
+  @override
+  String get nextSession => 'পরবর্তী সেশন';
+
+  @override
+  String get sessionDetails => 'সেশন বিবরণ';
+
+  @override
+  String get sessionLink => 'সেশন লিঙ্ক';
+
+  @override
+  String get joinNow => 'এখনই যোগ দিন';
+
+  @override
+  String get sessionCompleted => 'সেশন সম্পন্ন';
+
+  @override
+  String get untitledSession => 'শিরোনামহীন সেশন';
+
+  @override
+  String durationLabel(String duration) {
+    return 'সময়কাল: $duration';
+  }
+
+  @override
+  String failedToCopy(String label) {
+    return '$label কপি করতে ব্যর্থ';
+  }
+
+  @override
+  String openingSession(String platform) {
+    return '$platform সেশন ব্রাউজারে খোলা হচ্ছে...';
+  }
+
+  @override
+  String get courseTitle => 'কোর্সের শিরোনাম';
+
+  @override
+  String get meetYourInstructor => 'আপনার প্রশিক্ষকের সাথে পরিচিত হন';
+
+  @override
+  String get coursesByInstructor => 'কোর্স';
+
+  @override
+  String get studentsLabel => 'শিক্ষার্থী';
+
+  @override
+  String get ratingLabel => 'রেটিং';
+
+  @override
+  String get priceLabel => 'মূল্য';
+
+  @override
+  String get durationStat => 'সময়কাল';
+
+  @override
+  String get levelLabel => 'স্তর';
+
+  @override
+  String get languageLabel => 'ভাষা';
+
+  @override
+  String get statusLabel => 'অবস্থা';
+
+  @override
+  String get courseCompletedStatus => 'কোর্স সম্পন্ন';
+
+  @override
+  String get currentlyEnrolled => 'বর্তমানে তালিকাভুক্ত';
+
+  @override
+  String get enrollmentConfirmed => 'তালিকাভুক্তি নিশ্চিত';
+
+  @override
+  String get enrollmentStatus => 'তালিকাভুক্তির অবস্থা';
+
+  @override
+  String experienceYears(String years) {
+    return '$years+ বছর';
+  }
+
+  @override
+  String expertIn(String language) {
+    return '$language ভাষার বিশেষজ্ঞ';
+  }
+
+  @override
+  String studentCountText(String count) {
+    return '$count জন শিক্ষার্থী';
+  }
+
+  @override
+  String get instructorBioDefault =>
+      '৮ বছরেরও বেশি শিক্ষাদানের অভিজ্ঞতা সহ অভিজ্ঞ শিক্ষাবিদ। আধুনিক ভাষা শেখার কৌশল এবং ইন্টারঅ্যাক্টিভ শিক্ষাদান পদ্ধতিতে বিশেষজ্ঞ।';
+
+  @override
+  String get instructorExperience => '৮+ বছর';
+
+  @override
+  String instructorEducation(String language) {
+    return '$language ভাষার বিশেষজ্ঞ';
+  }
+
+  @override
+  String get aboutInstructor => 'সম্পর্কে';
+
+  @override
+  String instructorStudents(int count) {
+    return '$count জন শিক্ষার্থী';
+  }
+
+  @override
+  String get instructorCourses => 'কোর্স';
+
+  @override
+  String get instructorRating => 'রেটিং';
+
+  @override
+  String courseBy(String instructor) {
+    return '$instructor এর কোর্স';
+  }
+
+  @override
+  String expertInLanguage(String language) {
+    return '$language এর বিশেষজ্ঞ';
+  }
+
+  @override
+  String get courseFeedback => 'কোর্স ফিডব্যাক';
+
+  @override
+  String get reviewInstructorFeedback =>
+      'প্রশিক্ষকের ফিডব্যাক পর্যালোচনা করুন এবং আপনার কোর্সের অভিজ্ঞতা শেয়ার করুন';
+
+  @override
+  String get feedbackFromInstructor => 'প্রশিক্ষকের কাছ থেকে ফিডব্যাক';
+
+  @override
+  String get giveYourFeedback => 'আপনার ফিডব্যাক দিন';
+
+  @override
+  String get rateCourse => 'কোর্স রেট করুন';
+
+  @override
+  String ratingValue(int rating) {
+    return '$rating/৫';
+  }
+
+  @override
+  String get noRating => 'কোন রেটিং নেই';
+
+  @override
+  String get yourCourseFeedback => 'আপনার কোর্স ফিডব্যাক';
+
+  @override
+  String get courseFeedbackHint =>
+      'কোর্সের বিষয়বস্তু, কাঠামো, কঠিনতা সম্পর্কে আপনার মতামত শেয়ার করুন...';
+
+  @override
+  String get submitCourseFeedback => 'কোর্স ফিডব্যাক জমা দিন';
+
+  @override
+  String get instructorFeedback => 'প্রশিক্ষক ফিডব্যাক';
+
+  @override
+  String get rateInstructor => 'প্রশিক্ষক রেট করুন';
+
+  @override
+  String get yourInstructorFeedback => 'আপনার প্রশিক্ষক ফিডব্যাক';
+
+  @override
+  String get instructorFeedbackHint =>
+      'শিক্ষার ধরন, স্পষ্টতা, সহায়তা সম্পর্কে আপনার মতামত শেয়ার করুন...';
+
+  @override
+  String get submitInstructorFeedback => 'প্রশিক্ষক ফিডব্যাক জমা দিন';
+
+  @override
+  String get feedbackSummary => 'ফিডব্যাক সারাংশ';
+
+  @override
+  String get averageRating => 'গড় রেটিং';
+
+  @override
+  String get totalFeedback => 'মোট ফিডব্যাক';
+
+  @override
+  String get positive => 'ইতিবাচক';
+
+  @override
+  String get constructive => 'গঠনমূলক';
+
+  @override
+  String get improvement => 'উন্নতি';
+
+  @override
+  String get pleaseWriteCourseFeedback =>
+      'অনুগ্রহ করে আপনার কোর্স ফিডব্যাক লিখুন';
+
+  @override
+  String get pleaseRateCourse =>
+      'অনুগ্রহ করে কোর্সের জন্য একটি রেটিং প্রদান করুন';
+
+  @override
+  String get courseFeedbackSubmitted =>
+      '✅ কোর্স ফিডব্যাক সফলভাবে জমা দেওয়া হয়েছে!';
+
+  @override
+  String get pleaseWriteInstructorFeedback =>
+      'অনুগ্রহ করে আপনার প্রশিক্ষক ফিডব্যাক লিখুন';
+
+  @override
+  String get pleaseRateInstructor =>
+      'অনুগ্রহ করে প্রশিক্ষকের জন্য একটি রেটিং প্রদান করুন';
+
+  @override
+  String get instructorFeedbackSubmitted =>
+      '✅ প্রশিক্ষক ফিডব্যাক সফলভাবে জমা দেওয়া হয়েছে!';
+
+  @override
+  String enrolledMembers(int count) {
+    return '$count জন তালিকাভুক্ত সদস্য';
+  }
+
+  @override
+  String get instructorRole => 'প্রশিক্ষক';
+
+  @override
+  String enrolledMembersTitle(int count) {
+    return 'তালিকাভুক্ত সদস্যবৃন্দ ($count জন)';
+  }
+
+  @override
+  String videoDuration(String duration) {
+    return 'সময়কাল: $duration';
+  }
+
+  @override
+  String videoStatus(String status) {
+    return '• অবস্থা: $status';
+  }
+
+  @override
+  String videoResolution(String resolution) {
+    return 'রেজোলিউশন: $resolution';
+  }
+
+  @override
+  String get videoLoaded => 'লোড হয়েছে';
+
+  @override
+  String get videoLoading => 'Loading...';
+
+  @override
+  String get connectionTimeout =>
+      'Connection timeout. Please check your internet and try again.';
+
+  @override
+  String get videoNotFound => 'ভিডিও খুঁজে পাওয়া যায়নি।';
+
+  @override
+  String get networkError =>
+      'Network error. Please check your internet connection.';
+
+  @override
+  String get videoLoadingTimeout =>
+      'ভিডিও লোডিং টাইমআউট হয়েছে। আবার চেষ্টা করুন।';
+
+  @override
+  String videoErrorPrefix(String error) {
+    return '❌ $error';
+  }
+
+  @override
+  String videoErrorMessage(String error) {
+    return 'Video Error: $error';
+  }
+
+  @override
+  String get fullscreenMode => 'ফুলস্ক্রিন মোড';
+
+  @override
+  String get playbackSettings => '🎬 প্লেব্যাক সেটিংস:';
+
+  @override
+  String playbackSpeed(String speed) {
+    return '• গতি: ${speed}x';
+  }
+
+  @override
+  String playbackQuality(String quality) {
+    return '• গুণমান: $quality';
+  }
+
+  @override
+  String playbackVolume(int volume) {
+    return '• ভলিউম: $volume%';
+  }
+
+  @override
+  String get playbackQualityAuto => 'Auto';
+
+  @override
+  String get retryButton => 'আবার চেষ্টা করুন';
+
+  @override
+  String get qualityAuto => 'স্বয়ংক্রিয়';
 }

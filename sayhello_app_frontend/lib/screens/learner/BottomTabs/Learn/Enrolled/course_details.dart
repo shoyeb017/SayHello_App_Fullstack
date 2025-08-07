@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../l10n/app_localizations.dart';
 
 class CourseDetails extends StatelessWidget {
   final Map<String, dynamic> course;
@@ -56,6 +57,7 @@ class CourseDetails extends StatelessWidget {
             primaryColor,
             textColor,
             cardColor,
+            context,
           ),
 
           const SizedBox(height: 16), // Reduced from 20
@@ -70,6 +72,7 @@ class CourseDetails extends StatelessWidget {
             textColor,
             subTextColor,
             cardColor,
+            context,
           ),
 
           const SizedBox(height: 16), // Reduced from 20
@@ -81,6 +84,7 @@ class CourseDetails extends StatelessWidget {
             textColor,
             subTextColor,
             cardColor,
+            context,
           ),
 
           const SizedBox(height: 16), // Reduced from 20
@@ -97,6 +101,7 @@ class CourseDetails extends StatelessWidget {
             textColor,
             subTextColor,
             cardColor,
+            context,
           ),
 
           const SizedBox(height: 16), // Reduced from 20
@@ -108,11 +113,12 @@ class CourseDetails extends StatelessWidget {
             textColor,
             subTextColor,
             cardColor,
+            context,
           ),
 
           const SizedBox(height: 16), // Reduced from 20
           // Enrollment Status
-          _buildEnrollmentStatus(status, primaryColor),
+          _buildEnrollmentStatus(status, primaryColor, context),
         ],
       ),
     );
@@ -130,6 +136,7 @@ class CourseDetails extends StatelessWidget {
     Color primaryColor,
     Color textColor,
     Color? cardColor,
+    BuildContext context,
   ) {
     return Container(
       width: double.infinity,
@@ -306,7 +313,7 @@ class CourseDetails extends StatelessWidget {
                     const SizedBox(width: 5), // Reduced from 6
                     Expanded(
                       child: Text(
-                        'by $instructor',
+                        AppLocalizations.of(context)!.courseBy(instructor),
                         style: TextStyle(
                           fontSize: 14, // Reduced from 16
                           color: primaryColor,
@@ -385,6 +392,7 @@ class CourseDetails extends StatelessWidget {
     Color textColor,
     Color subTextColor,
     Color? cardColor,
+    BuildContext context,
   ) {
     return Container(
       width: double.infinity,
@@ -427,7 +435,7 @@ class CourseDetails extends StatelessWidget {
                 ),
                 const SizedBox(height: 3), // Reduced from 4
                 Text(
-                  'Rating',
+                  AppLocalizations.of(context)!.ratingLabel,
                   style: TextStyle(
                     fontSize: 10, // Reduced from 12
                     color: subTextColor,
@@ -457,7 +465,7 @@ class CourseDetails extends StatelessWidget {
                 ),
                 const SizedBox(height: 3), // Reduced from 4
                 Text(
-                  'Students',
+                  AppLocalizations.of(context)!.studentsLabel,
                   style: TextStyle(
                     fontSize: 10, // Reduced from 12
                     color: subTextColor,
@@ -487,7 +495,7 @@ class CourseDetails extends StatelessWidget {
                 ),
                 const SizedBox(height: 3), // Reduced from 4
                 Text(
-                  'Price',
+                  AppLocalizations.of(context)!.priceLabel,
                   style: TextStyle(
                     fontSize: 10, // Reduced from 12
                     color: subTextColor,
@@ -538,6 +546,7 @@ class CourseDetails extends StatelessWidget {
     Color textColor,
     Color subTextColor,
     Color? cardColor,
+    BuildContext context,
   ) {
     return Container(
       width: double.infinity,
@@ -565,7 +574,7 @@ class CourseDetails extends StatelessWidget {
               ), // Reduced from 22
               const SizedBox(width: 6), // Reduced from 8
               Text(
-                'Course Description',
+                AppLocalizations.of(context)!.courseDescription,
                 style: TextStyle(
                   fontSize: 15, // Reduced from 18
                   fontWeight: FontWeight.bold,
@@ -600,14 +609,39 @@ class CourseDetails extends StatelessWidget {
     Color textColor,
     Color subTextColor,
     Color? cardColor,
+    BuildContext context,
   ) {
     final details = [
-      {'title': 'Start Date', 'value': startDate, 'icon': Icons.calendar_today},
-      {'title': 'End Date', 'value': endDate, 'icon': Icons.event_available},
-      {'title': 'Duration', 'value': duration, 'icon': Icons.schedule},
-      {'title': 'Level', 'value': level, 'icon': Icons.signal_cellular_alt},
-      {'title': 'Language', 'value': language, 'icon': Icons.language},
-      {'title': 'Status', 'value': status, 'icon': Icons.info_outline},
+      {
+        'title': AppLocalizations.of(context)!.startDate,
+        'value': startDate,
+        'icon': Icons.calendar_today,
+      },
+      {
+        'title': AppLocalizations.of(context)!.endDate,
+        'value': endDate,
+        'icon': Icons.event_available,
+      },
+      {
+        'title': AppLocalizations.of(context)!.durationStat,
+        'value': duration,
+        'icon': Icons.schedule,
+      },
+      {
+        'title': AppLocalizations.of(context)!.levelLabel,
+        'value': level,
+        'icon': Icons.signal_cellular_alt,
+      },
+      {
+        'title': AppLocalizations.of(context)!.languageLabel,
+        'value': language,
+        'icon': Icons.language,
+      },
+      {
+        'title': AppLocalizations.of(context)!.statusLabel,
+        'value': status,
+        'icon': Icons.info_outline,
+      },
     ];
 
     return GridView.builder(
@@ -687,6 +721,7 @@ class CourseDetails extends StatelessWidget {
     Color textColor,
     Color subTextColor,
     Color? cardColor,
+    BuildContext context,
   ) {
     // Sample instructor data - in real app this would come from API
     final instructorData = {
@@ -696,8 +731,8 @@ class CourseDetails extends StatelessWidget {
       'rating': 4.8,
       'totalStudents': 1250,
       'coursesOffered': 12,
-      'experience': '8+ years',
-      'education': 'Expert in ${course['language'] ?? 'English'} Language',
+      'experience': 8, // Just the number, UI will add localized text
+      'language': course['language'] ?? 'English', // Just the language name
       'avatar': '', // Would be URL in real app
     };
 
@@ -724,7 +759,7 @@ class CourseDetails extends StatelessWidget {
               Icon(Icons.person_outline, color: primaryColor, size: 18),
               const SizedBox(width: 6),
               Text(
-                'Meet Your Instructor',
+                AppLocalizations.of(context)!.meetYourInstructor,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -809,7 +844,9 @@ class CourseDetails extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '${instructorData['totalStudents']} students',
+                          AppLocalizations.of(context)!.instructorStudents(
+                            instructorData['totalStudents'] as int,
+                          ),
                           style: TextStyle(fontSize: 11, color: subTextColor),
                         ),
                       ],
@@ -818,7 +855,7 @@ class CourseDetails extends StatelessWidget {
 
                     // Experience and Education
                     Text(
-                      '${instructorData['experience']} • ${instructorData['education']}',
+                      '${AppLocalizations.of(context)!.experienceYears(instructorData['experience'].toString())} • ${AppLocalizations.of(context)!.expertInLanguage(instructorData['language'] as String)}',
                       style: TextStyle(fontSize: 11, color: subTextColor),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -833,7 +870,7 @@ class CourseDetails extends StatelessWidget {
 
           // Bio
           Text(
-            'About',
+            AppLocalizations.of(context)!.aboutInstructor,
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -853,7 +890,7 @@ class CourseDetails extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildInstructorStatCard(
-                  'Courses',
+                  AppLocalizations.of(context)!.instructorCourses,
                   '${instructorData['coursesOffered']}',
                   Icons.book,
                   primaryColor,
@@ -863,7 +900,7 @@ class CourseDetails extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: _buildInstructorStatCard(
-                  'Students',
+                  AppLocalizations.of(context)!.studentsLabel,
                   '${instructorData['totalStudents']}',
                   Icons.people,
                   primaryColor,
@@ -873,7 +910,7 @@ class CourseDetails extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: _buildInstructorStatCard(
-                  'Rating',
+                  AppLocalizations.of(context)!.instructorRating,
                   '${instructorData['rating']}',
                   Icons.star,
                   Colors.amber,
@@ -926,7 +963,11 @@ class CourseDetails extends StatelessWidget {
     );
   }
 
-  Widget _buildEnrollmentStatus(String status, Color primaryColor) {
+  Widget _buildEnrollmentStatus(
+    String status,
+    Color primaryColor,
+    BuildContext context,
+  ) {
     Color statusColor;
     IconData statusIcon;
     String statusText;
@@ -935,22 +976,22 @@ class CourseDetails extends StatelessWidget {
       case 'completed':
         statusColor = Colors.green;
         statusIcon = Icons.check_circle;
-        statusText = 'Course Completed';
+        statusText = AppLocalizations.of(context)!.courseCompleted;
         break;
       case 'active':
         statusColor = primaryColor;
         statusIcon = Icons.play_circle;
-        statusText = 'Currently Enrolled';
+        statusText = AppLocalizations.of(context)!.currentlyEnrolled;
         break;
       case 'upcoming':
         statusColor = Colors.orange;
         statusIcon = Icons.schedule;
-        statusText = 'Enrollment Confirmed';
+        statusText = AppLocalizations.of(context)!.enrollmentConfirmed;
         break;
       default:
         statusColor = Colors.grey;
         statusIcon = Icons.info;
-        statusText = 'Enrollment Status';
+        statusText = AppLocalizations.of(context)!.enrollmentStatus;
     }
 
     return Container(
