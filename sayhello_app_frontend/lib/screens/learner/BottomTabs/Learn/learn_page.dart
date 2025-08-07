@@ -1131,7 +1131,7 @@ class _LearnPageState extends State<LearnPage> {
   }
 
   Widget _buildCompletedCourseCard(Map<String, dynamic> course, bool isDark) {
-    final status = _getCourseStatus(course);
+    // final status = _getCourseStatus(course);
 
     return Container(
       width: 260,
@@ -1290,6 +1290,7 @@ class _LearnPageState extends State<LearnPage> {
               ),
 
               // Price badge
+
               Positioned(
                 top: 15,
                 right: 15,

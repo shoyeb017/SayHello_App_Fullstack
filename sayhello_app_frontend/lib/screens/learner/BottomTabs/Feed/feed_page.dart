@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../../providers/theme_provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'feed_detail_page.dart';
 import '../../Notifications/notifications.dart';
@@ -293,7 +291,6 @@ class _FeedPageState extends State<FeedPage>
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
