@@ -3365,5 +3365,144 @@
   "qualityAuto": "Auto",
   "@qualityAuto": {
     "description": "Auto quality setting"
+  },
+  "chatLearningLanguage": "Learning {language}",
+  "@chatLearningLanguage": {
+    "description": "Learning language display in chat",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "chatLanguageEnthusiast": "Language enthusiast from {country} {flag}. Love to practice languages and make new friends around the world!",
+  "@chatLanguageEnthusiast": {
+    "description": "Default bio text in chat profile",
+    "placeholders": {
+      "country": {
+        "type": "String"
+      },
+      "flag": {
+        "type": "String"
+      }
+    }
+  },
+  "chatCorrectedText": "Corrected text",
+  "@chatCorrectedText": {
+    "description": "Placeholder for corrected message"
+  },
+  "chatTranslationHere": "Translation here",
+  "@chatTranslationHere": {
+    "description": "Placeholder for message translation"
+  },
+  "chatRead": "Read",
+  "@chatRead": {
+    "description": "Message read status indicator"
+  },
+  "chatMessageTranslated": "Message translated!",
+  "@chatMessageTranslated": {
+    "description": "Snackbar message when translation is completed"
+  },
+  "chatCorrectMessage": "Correct Message",
+  "@chatCorrectMessage": {
+    "description": "Dialog title for message correction"
+  },
+  "chatOriginal": "Original:",
+  "@chatOriginal": {
+    "description": "Label for original message in correction dialog"
+  },
+  "chatCorrection": "Correction:",
+  "@chatCorrection": {
+    "description": "Label for correction input in dialog"
+  },
+  "chatCorrectionSaved": "Correction saved!",
+  "@chatCorrectionSaved": {
+    "description": "Snackbar message when correction is saved"
+  },
+  "chatDialogCorrectMessage": "Correct Message",
+  "@chatDialogCorrectMessage": {
+    "description": "Dialog title for message correction"
+  },
+  "chatDialogOriginal": "Original:",
+  "@chatDialogOriginal": {
+    "description": "Label for original message in correction dialog"
+  },
+  "chatDialogCorrection": "Correction:",
+  "@chatDialogCorrection": {
+    "description": "Label for correction input in dialog"
+  },
+  "chatDialogCancel": "Cancel",
+  "@chatDialogCancel": {
+    "description": "Cancel button in correction dialog"
+  },
+  "chatDialogSave": "Save",
+  "@chatDialogSave": {
+    "description": "Save button in correction dialog"
+  },
+  "chatDialogCorrectionSaved": "Correction saved!",
+  "@chatDialogCorrectionSaved": {
+    "description": "Snackbar message when correction is saved"
+  },
+  "chatTranslateIconTapped": "Translate icon tapped!",
+  "@chatTranslateIconTapped": {
+    "description": "Debug message for translate action"
+  },
+  "chatCorrectIconTapped": "Correct icon tapped!",
+  "@chatCorrectIconTapped": {
+    "description": "Debug message for correct action"
+  },
+  "chatDaysAgo": "{count} days ago",
+  "@chatDaysAgo": {
+    "description": "Days ago timestamp format",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatHoursAgo": "{count} hours ago",
+  "@chatHoursAgo": {
+    "description": "Hours ago timestamp format",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMinutesAgo": "{count} minutes ago",
+  "@chatMinutesAgo": {
+    "description": "Minutes ago timestamp format",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatTimestampDaysAgo": "{count} days ago",
+  "@chatTimestampDaysAgo": {
+    "description": "Days ago timestamp format for chat messages",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatTimestampHoursAgo": "{count} hours ago",
+  "@chatTimestampHoursAgo": {
+    "description": "Hours ago timestamp format for chat messages",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatTimestampMinutesAgo": "{count} minutes ago",
+  "@chatTimestampMinutesAgo": {
+    "description": "Minutes ago timestamp format for chat messages",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

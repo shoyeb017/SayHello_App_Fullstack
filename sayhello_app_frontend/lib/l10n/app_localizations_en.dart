@@ -2115,4 +2115,92 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get qualityAuto => 'Auto';
+
+  @override
+  String chatLearningLanguage(String language) {
+    return 'Learning $language';
+  }
+
+  @override
+  String chatLanguageEnthusiast(String country, String flag) {
+    return 'Language enthusiast from $country $flag. Love to practice languages and make new friends around the world!';
+  }
+
+  @override
+  String get chatCorrectedText => 'Corrected text';
+
+  @override
+  String get chatTranslationHere => 'Translation here';
+
+  @override
+  String get chatRead => 'Read';
+
+  @override
+  String get chatMessageTranslated => 'Message translated!';
+
+  @override
+  String get chatCorrectMessage => 'Correct Message';
+
+  @override
+  String get chatOriginal => 'Original:';
+
+  @override
+  String get chatCorrection => 'Correction:';
+
+  @override
+  String get chatCorrectionSaved => 'Correction saved!';
+
+  @override
+  String get chatDialogCorrectMessage => 'Correct Message';
+
+  @override
+  String get chatDialogOriginal => 'Original:';
+
+  @override
+  String get chatDialogCorrection => 'Correction:';
+
+  @override
+  String get chatDialogCancel => 'Cancel';
+
+  @override
+  String get chatDialogSave => 'Save';
+
+  @override
+  String get chatDialogCorrectionSaved => 'Correction saved!';
+
+  @override
+  String get chatTranslateIconTapped => 'Translate icon tapped!';
+
+  @override
+  String get chatCorrectIconTapped => 'Correct icon tapped!';
+
+  @override
+  String chatDaysAgo(int count) {
+    return '$count days ago';
+  }
+
+  @override
+  String chatHoursAgo(int count) {
+    return '$count hours ago';
+  }
+
+  @override
+  String chatMinutesAgo(int count) {
+    return '$count minutes ago';
+  }
+
+  @override
+  String chatTimestampDaysAgo(int count) {
+    return '$count days ago';
+  }
+
+  @override
+  String chatTimestampHoursAgo(int count) {
+    return '$count hours ago';
+  }
+
+  @override
+  String chatTimestampMinutesAgo(int count) {
+    return '$count minutes ago';
+  }
 }

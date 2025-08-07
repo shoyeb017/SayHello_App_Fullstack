@@ -2127,4 +2127,92 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get qualityAuto => 'Auto';
+
+  @override
+  String chatLearningLanguage(String language) {
+    return 'Aprendiendo $language';
+  }
+
+  @override
+  String chatLanguageEnthusiast(String country, String flag) {
+    return 'Entusiasta de idiomas de $country $flag. ¡Me encanta practicar idiomas y hacer nuevos amigos de todo el mundo!';
+  }
+
+  @override
+  String get chatCorrectedText => 'Texto corregido';
+
+  @override
+  String get chatTranslationHere => 'Traducción aquí';
+
+  @override
+  String get chatRead => 'Leído';
+
+  @override
+  String get chatMessageTranslated => '¡Mensaje traducido!';
+
+  @override
+  String get chatCorrectMessage => 'Corregir Mensaje';
+
+  @override
+  String get chatOriginal => 'Original:';
+
+  @override
+  String get chatCorrection => 'Corrección:';
+
+  @override
+  String get chatCorrectionSaved => '¡Corrección guardada!';
+
+  @override
+  String get chatDialogCorrectMessage => 'Corregir Mensaje';
+
+  @override
+  String get chatDialogOriginal => 'Original:';
+
+  @override
+  String get chatDialogCorrection => 'Corrección:';
+
+  @override
+  String get chatDialogCancel => 'Cancelar';
+
+  @override
+  String get chatDialogSave => 'Guardar';
+
+  @override
+  String get chatDialogCorrectionSaved => '¡Corrección guardada!';
+
+  @override
+  String get chatTranslateIconTapped => '¡Icono de traducir tocado!';
+
+  @override
+  String get chatCorrectIconTapped => '¡Icono de corregir tocado!';
+
+  @override
+  String chatDaysAgo(int count) {
+    return 'hace $count días';
+  }
+
+  @override
+  String chatHoursAgo(int count) {
+    return 'hace $count horas';
+  }
+
+  @override
+  String chatMinutesAgo(int count) {
+    return 'hace $count minutos';
+  }
+
+  @override
+  String chatTimestampDaysAgo(int count) {
+    return 'hace $count días';
+  }
+
+  @override
+  String chatTimestampHoursAgo(int count) {
+    return 'hace $count horas';
+  }
+
+  @override
+  String chatTimestampMinutesAgo(int count) {
+    return 'hace $count minutos';
+  }
 }

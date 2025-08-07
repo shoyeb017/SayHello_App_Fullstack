@@ -359,7 +359,9 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     const SizedBox(height: 4),
                     // Learning Language
                     Text(
-                      'Learning ${widget.user.learningLanguage}',
+                      AppLocalizations.of(
+                        context,
+                      )!.chatLearningLanguage(widget.user.learningLanguage),
                       style: TextStyle(
                         fontSize: 14,
                         color: isDark
@@ -379,7 +381,9 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
           // Second row: Bio
           Text(
-            'Language enthusiast from ${widget.user.country} ${widget.user.flag}. Love to practice languages and make new friends around the world!',
+            AppLocalizations.of(
+              context,
+            )!.chatLanguageEnthusiast(widget.user.country, widget.user.flag),
             style: TextStyle(
               fontSize: 14,
               color: isDark ? Colors.white : Colors.black,
@@ -520,7 +524,9 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                                     Expanded(
                                       child: Text(
                                         _messageCorrections[message.id] ??
-                                            'Corrected text',
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.chatCorrectedText,
                                         style: TextStyle(
                                           fontSize: 16,
                                           color: Colors.green,
@@ -572,7 +578,9 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                                   Expanded(
                                     child: Text(
                                       _messageTranslations[message.id] ??
-                                          'Translation here',
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.chatTranslationHere,
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: primaryPurple,
@@ -684,7 +692,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
                     child: Text(
-                      'Read',
+                      AppLocalizations.of(context)!.chatRead,
                       style: TextStyle(
                         fontSize: 10,
                         color: primaryPurple,
@@ -801,7 +809,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Message translated!\n${translation.length > 30 ? translation.substring(0, 30) + '...' : translation}',
+          '${AppLocalizations.of(context)!.chatMessageTranslated}\n${translation.length > 30 ? translation.substring(0, 30) + '...' : translation}',
         ),
         backgroundColor: primaryPurple,
         duration: const Duration(seconds: 3),
@@ -822,16 +830,22 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Correct Message'),
+        title: Text(AppLocalizations.of(context)!.chatDialogCorrectMessage),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Original:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              AppLocalizations.of(context)!.chatDialogOriginal,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 4),
             Text(message.text),
             const SizedBox(height: 16),
-            Text('Correction:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              AppLocalizations.of(context)!.chatDialogCorrection,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             TextField(
               controller: correctionController,
@@ -846,7 +860,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.chatDialogCancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -859,14 +873,19 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: const Text('Correction saved!'),
+                    content: Text(
+                      AppLocalizations.of(context)!.chatDialogCorrectionSaved,
+                    ),
                     backgroundColor: primaryPurple,
                   ),
                 );
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: primaryPurple),
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
+            child: Text(
+              AppLocalizations.of(context)!.chatDialogSave,
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -906,11 +925,13 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     final diff = now.difference(time);
 
     if (diff.inDays > 0) {
-      return '${diff.inDays} days ago';
+      return AppLocalizations.of(context)!.chatTimestampDaysAgo(diff.inDays);
     } else if (diff.inHours > 0) {
-      return '${diff.inHours} hours ago';
+      return AppLocalizations.of(context)!.chatTimestampHoursAgo(diff.inHours);
     } else {
-      return '${diff.inMinutes} minutes ago';
+      return AppLocalizations.of(
+        context,
+      )!.chatTimestampMinutesAgo(diff.inMinutes);
     }
   }
 

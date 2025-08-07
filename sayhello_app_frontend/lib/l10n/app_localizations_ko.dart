@@ -519,7 +519,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get support => 'Support';
 
   @override
-  String get feedback => 'Feedback';
+  String get feedback => '피드백';
 
   @override
   String get contact => 'Contact';
@@ -2085,4 +2085,92 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get qualityAuto => '자동';
+
+  @override
+  String chatLearningLanguage(String language) {
+    return '$language 학습 중';
+  }
+
+  @override
+  String chatLanguageEnthusiast(String country, String flag) {
+    return '$country $flag 출신의 언어 애호가입니다. 언어를 연습하고 전 세계에서 새로운 친구를 만드는 것을 좋아합니다!';
+  }
+
+  @override
+  String get chatCorrectedText => '수정된 텍스트';
+
+  @override
+  String get chatTranslationHere => '번역 내용';
+
+  @override
+  String get chatRead => '읽음';
+
+  @override
+  String get chatMessageTranslated => '메시지가 번역되었습니다!';
+
+  @override
+  String get chatCorrectMessage => '메시지 수정';
+
+  @override
+  String get chatOriginal => '원문:';
+
+  @override
+  String get chatCorrection => '수정:';
+
+  @override
+  String get chatCorrectionSaved => '수정이 저장되었습니다!';
+
+  @override
+  String get chatDialogCorrectMessage => '메시지 수정';
+
+  @override
+  String get chatDialogOriginal => '원문:';
+
+  @override
+  String get chatDialogCorrection => '수정:';
+
+  @override
+  String get chatDialogCancel => '취소';
+
+  @override
+  String get chatDialogSave => '저장';
+
+  @override
+  String get chatDialogCorrectionSaved => '수정이 저장되었습니다!';
+
+  @override
+  String get chatTranslateIconTapped => '번역 아이콘이 탭되었습니다!';
+
+  @override
+  String get chatCorrectIconTapped => '수정 아이콘이 탭되었습니다!';
+
+  @override
+  String chatDaysAgo(int count) {
+    return '$count일 전';
+  }
+
+  @override
+  String chatHoursAgo(int count) {
+    return '$count시간 전';
+  }
+
+  @override
+  String chatMinutesAgo(int count) {
+    return '$count분 전';
+  }
+
+  @override
+  String chatTimestampDaysAgo(int count) {
+    return '$count일 전';
+  }
+
+  @override
+  String chatTimestampHoursAgo(int count) {
+    return '$count시간 전';
+  }
+
+  @override
+  String chatTimestampMinutesAgo(int count) {
+    return '$count분 전';
+  }
 }

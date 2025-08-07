@@ -3964,6 +3964,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Auto'**
   String get qualityAuto;
+
+  /// Learning language display in chat
+  ///
+  /// In en, this message translates to:
+  /// **'Learning {language}'**
+  String chatLearningLanguage(String language);
+
+  /// Default bio text in chat profile
+  ///
+  /// In en, this message translates to:
+  /// **'Language enthusiast from {country} {flag}. Love to practice languages and make new friends around the world!'**
+  String chatLanguageEnthusiast(String country, String flag);
+
+  /// Placeholder for corrected message
+  ///
+  /// In en, this message translates to:
+  /// **'Corrected text'**
+  String get chatCorrectedText;
+
+  /// Placeholder for message translation
+  ///
+  /// In en, this message translates to:
+  /// **'Translation here'**
+  String get chatTranslationHere;
+
+  /// Message read status indicator
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get chatRead;
+
+  /// Snackbar message when translation is completed
+  ///
+  /// In en, this message translates to:
+  /// **'Message translated!'**
+  String get chatMessageTranslated;
+
+  /// Dialog title for message correction
+  ///
+  /// In en, this message translates to:
+  /// **'Correct Message'**
+  String get chatCorrectMessage;
+
+  /// Label for original message in correction dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Original:'**
+  String get chatOriginal;
+
+  /// Label for correction input in dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Correction:'**
+  String get chatCorrection;
+
+  /// Snackbar message when correction is saved
+  ///
+  /// In en, this message translates to:
+  /// **'Correction saved!'**
+  String get chatCorrectionSaved;
+
+  /// Dialog title for message correction
+  ///
+  /// In en, this message translates to:
+  /// **'Correct Message'**
+  String get chatDialogCorrectMessage;
+
+  /// Label for original message in correction dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Original:'**
+  String get chatDialogOriginal;
+
+  /// Label for correction input in dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Correction:'**
+  String get chatDialogCorrection;
+
+  /// Cancel button in correction dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get chatDialogCancel;
+
+  /// Save button in correction dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get chatDialogSave;
+
+  /// Snackbar message when correction is saved
+  ///
+  /// In en, this message translates to:
+  /// **'Correction saved!'**
+  String get chatDialogCorrectionSaved;
+
+  /// Debug message for translate action
+  ///
+  /// In en, this message translates to:
+  /// **'Translate icon tapped!'**
+  String get chatTranslateIconTapped;
+
+  /// Debug message for correct action
+  ///
+  /// In en, this message translates to:
+  /// **'Correct icon tapped!'**
+  String get chatCorrectIconTapped;
+
+  /// Days ago timestamp format
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days ago'**
+  String chatDaysAgo(int count);
+
+  /// Hours ago timestamp format
+  ///
+  /// In en, this message translates to:
+  /// **'{count} hours ago'**
+  String chatHoursAgo(int count);
+
+  /// Minutes ago timestamp format
+  ///
+  /// In en, this message translates to:
+  /// **'{count} minutes ago'**
+  String chatMinutesAgo(int count);
+
+  /// Days ago timestamp format for chat messages
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days ago'**
+  String chatTimestampDaysAgo(int count);
+
+  /// Hours ago timestamp format for chat messages
+  ///
+  /// In en, this message translates to:
+  /// **'{count} hours ago'**
+  String chatTimestampHoursAgo(int count);
+
+  /// Minutes ago timestamp format for chat messages
+  ///
+  /// In en, this message translates to:
+  /// **'{count} minutes ago'**
+  String chatTimestampMinutesAgo(int count);
 }
 
 class _AppLocalizationsDelegate

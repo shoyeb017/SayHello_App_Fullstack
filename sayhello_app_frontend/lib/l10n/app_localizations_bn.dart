@@ -522,7 +522,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get support => 'Support';
 
   @override
-  String get feedback => 'Feedback';
+  String get feedback => 'ফিডব্যাক';
 
   @override
   String get contact => 'Contact';
@@ -2117,4 +2117,92 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get qualityAuto => 'স্বয়ংক্রিয়';
+
+  @override
+  String chatLearningLanguage(String language) {
+    return '$language শিখছেন';
+  }
+
+  @override
+  String chatLanguageEnthusiast(String country, String flag) {
+    return '$country $flag থেকে একজন ভাষা উৎসাহী। ভাষা অনুশীলন করতে এবং সারা বিশ্বের নতুন বন্ধু তৈরি করতে ভালোবাসি!';
+  }
+
+  @override
+  String get chatCorrectedText => 'সংশোধিত টেক্সট';
+
+  @override
+  String get chatTranslationHere => 'অনুবাদ এখানে';
+
+  @override
+  String get chatRead => 'পড়েছেন';
+
+  @override
+  String get chatMessageTranslated => 'বার্তা অনুবাদ করা হয়েছে!';
+
+  @override
+  String get chatCorrectMessage => 'বার্তা সংশোধন করুন';
+
+  @override
+  String get chatOriginal => 'মূল:';
+
+  @override
+  String get chatCorrection => 'সংশোধন:';
+
+  @override
+  String get chatCorrectionSaved => 'সংশোধন সংরক্ষিত হয়েছে!';
+
+  @override
+  String get chatDialogCorrectMessage => 'বার্তা সংশোধন করুন';
+
+  @override
+  String get chatDialogOriginal => 'মূল:';
+
+  @override
+  String get chatDialogCorrection => 'সংশোধন:';
+
+  @override
+  String get chatDialogCancel => 'বাতিল';
+
+  @override
+  String get chatDialogSave => 'সংরক্ষণ';
+
+  @override
+  String get chatDialogCorrectionSaved => 'সংশোধন সংরক্ষিত হয়েছে!';
+
+  @override
+  String get chatTranslateIconTapped => 'অনুবাদ আইকন টেপ করা হয়েছে!';
+
+  @override
+  String get chatCorrectIconTapped => 'সংশোধন আইকন টেপ করা হয়েছে!';
+
+  @override
+  String chatDaysAgo(int count) {
+    return '$count দিন আগে';
+  }
+
+  @override
+  String chatHoursAgo(int count) {
+    return '$count ঘণ্টা আগে';
+  }
+
+  @override
+  String chatMinutesAgo(int count) {
+    return '$count মিনিট আগে';
+  }
+
+  @override
+  String chatTimestampDaysAgo(int count) {
+    return '$count দিন আগে';
+  }
+
+  @override
+  String chatTimestampHoursAgo(int count) {
+    return '$count ঘন্টা আগে';
+  }
+
+  @override
+  String chatTimestampMinutesAgo(int count) {
+    return '$count মিনিট আগে';
+  }
 }
