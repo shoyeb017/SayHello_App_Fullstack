@@ -1139,7 +1139,9 @@ class AppLocalizationsBn extends AppLocalizations {
       'এটি ডাউনলোডের জন্য আপনার ব্রাউজারে ফাইল খুলবে।';
 
   @override
-  String get fileType => 'ফাইলের ধরন';
+  String fileTypeLabel(String type) {
+    return 'প্রকার: $type';
+  }
 
   @override
   String get browserHandleDownload =>
@@ -3217,6 +3219,9 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get titleRequired => 'শিরোনাম *';
+
+  @override
+  String get fileType => 'ফাইলের ধরন';
 
   @override
   String materialUploadedSuccessfully(String materialTitle) {

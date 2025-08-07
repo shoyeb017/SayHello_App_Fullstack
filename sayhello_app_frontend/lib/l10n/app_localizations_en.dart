@@ -1139,7 +1139,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'This will open the file in your browser for download.';
 
   @override
-  String get fileType => 'File Type';
+  String fileTypeLabel(String type) {
+    return 'Type: $type';
+  }
 
   @override
   String get browserHandleDownload =>
@@ -3206,6 +3208,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get titleRequired => 'Title *';
+
+  @override
+  String get fileType => 'File Type';
 
   @override
   String materialUploadedSuccessfully(String materialTitle) {

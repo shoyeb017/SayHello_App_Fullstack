@@ -19,9 +19,9 @@ class _InstructorRecordedClassesTabState
   List<Map<String, dynamic>> _recordings = [
     {
       'id': 'recording_001',
-      'title': 'English Conversation Basics - Greetings',
+      'title': 'English Grammar Fundamentals - Tenses',
       'description':
-          'Learn essential greetings and introductions in English with native pronunciation',
+          'Complete guide to English tenses with examples and practice exercises',
       'duration': '45:30',
       'uploadDate': '2025-08-05',
       'uploadTime': '14:30',
@@ -35,9 +35,9 @@ class _InstructorRecordedClassesTabState
     },
     {
       'id': 'recording_002',
-      'title': 'Japanese Hiragana Writing Practice',
+      'title': 'Business English - Email Writing',
       'description':
-          'Step-by-step guide to writing hiragana characters correctly',
+          'Professional email writing techniques and formal business communication',
       'duration': '38:15',
       'uploadDate': '2025-08-04',
       'uploadTime': '10:15',
@@ -51,9 +51,9 @@ class _InstructorRecordedClassesTabState
     },
     {
       'id': 'recording_003',
-      'title': 'Spanish Pronunciation - Rolling Rs',
+      'title': 'English Speaking - Pronunciation Tips',
       'description':
-          'Master the Spanish rolled R sound with practice exercises',
+          'Improve your English pronunciation with phonetics and practice drills',
       'duration': '52:40',
       'uploadDate': '2025-08-03',
       'uploadTime': '16:45',
@@ -63,6 +63,38 @@ class _InstructorRecordedClassesTabState
       'thumbnail': 'https://picsum.photos/300/200?random=13',
       'videoUrl':
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+      'status': 'published',
+    },
+    {
+      'id': 'recording_004',
+      'title': 'IELTS Writing Task 1 - Graph Descriptions',
+      'description':
+          'Master IELTS Academic Writing Task 1 with graph analysis and description techniques',
+      'duration': '41:20',
+      'uploadDate': '2025-08-02',
+      'uploadTime': '11:00',
+      'views': 124,
+      'fileSize': '398 MB',
+      'format': 'MP4',
+      'thumbnail': 'https://picsum.photos/300/200?random=14',
+      'videoUrl':
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
+      'status': 'published',
+    },
+    {
+      'id': 'recording_005',
+      'title': 'English Vocabulary Building - Academic Words',
+      'description':
+          'Essential academic vocabulary for advanced English learners and test preparation',
+      'duration': '36:55',
+      'uploadDate': '2025-08-01',
+      'uploadTime': '13:20',
+      'views': 87,
+      'fileSize': '354 MB',
+      'format': 'MP4',
+      'thumbnail': 'https://picsum.photos/300/200?random=15',
+      'videoUrl':
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
       'status': 'published',
     },
   ];

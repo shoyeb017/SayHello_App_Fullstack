@@ -1126,7 +1126,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get downloadConfirmation => '브라우저에서 파일을 열어 다운로드합니다.';
 
   @override
-  String get fileType => '파일 유형';
+  String fileTypeLabel(String type) {
+    return '유형: $type';
+  }
 
   @override
   String get browserHandleDownload => '브라우저가 기본 다운로드 폴더로 다운로드를 처리합니다.';
@@ -3153,6 +3155,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get titleRequired => '제목 *';
+
+  @override
+  String get fileType => '파일 유형';
 
   @override
   String materialUploadedSuccessfully(String materialTitle) {

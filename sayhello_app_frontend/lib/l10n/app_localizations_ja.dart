@@ -1127,7 +1127,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get downloadConfirmation => 'これによりファイルがブラウザで開かれ、ダウンロードされます。';
 
   @override
-  String get fileType => 'ファイルタイプ';
+  String fileTypeLabel(String type) {
+    return '種類: $type';
+  }
 
   @override
   String get browserHandleDownload => 'ブラウザがデフォルトのダウンロードフォルダにダウンロードを処理します。';
@@ -3154,6 +3156,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get titleRequired => 'タイトル *';
+
+  @override
+  String get fileType => 'ファイルタイプ';
 
   @override
   String materialUploadedSuccessfully(String materialTitle) {

@@ -19,7 +19,7 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
       'id': 'msg_1',
       'name': 'Emma Watson',
       'role': 'learner',
-      'text': 'Good morning! Ready for today\'s Flutter session 💻',
+      'text': 'Good morning! Ready for today\'s English grammar lesson �',
       'timestamp': '2025-08-07 9:15 AM',
       'avatar': null,
     },
@@ -28,7 +28,7 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
       'name': 'You',
       'role': 'instructor',
       'text':
-          'Good morning everyone! Today we\'ll cover advanced state management concepts.',
+          'Good morning everyone! Today we\'ll focus on advanced English tenses and their usage.',
       'timestamp': '2025-08-07 9:20 AM',
       'avatar': null,
     },
@@ -36,7 +36,8 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
       'id': 'msg_3',
       'name': 'Mike Johnson',
       'role': 'learner',
-      'text': 'Will we be using Provider or Riverpod for state management?',
+      'text':
+          'Could you explain the difference between present perfect and past simple again?',
       'timestamp': '2025-08-07 9:25 AM',
       'avatar': null,
     },
@@ -45,8 +46,25 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
       'name': 'Sarah Williams',
       'role': 'learner',
       'text':
-          'Thanks for the clear explanation yesterday! Really helped with my project.',
+          'Thanks for the pronunciation tips yesterday! My speaking has improved a lot.',
       'timestamp': '2025-08-07 10:10 AM',
+      'avatar': null,
+    },
+    {
+      'id': 'msg_5',
+      'name': 'David Chen',
+      'role': 'learner',
+      'text': 'When will we practice business English vocabulary?',
+      'timestamp': '2025-08-07 10:15 AM',
+      'avatar': null,
+    },
+    {
+      'id': 'msg_6',
+      'name': 'You',
+      'role': 'instructor',
+      'text':
+          'Great question David! We\'ll cover business English in our next session. Don\'t forget to complete the IELTS writing practice I shared.',
+      'timestamp': '2025-08-07 10:20 AM',
       'avatar': null,
     },
   ];

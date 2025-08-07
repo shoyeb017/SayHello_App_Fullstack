@@ -2270,11 +2270,11 @@ abstract class AppLocalizations {
   /// **'This will open the file in your browser for download.'**
   String get downloadConfirmation;
 
-  /// File type selection label
+  /// File type display with label
   ///
   /// In en, this message translates to:
-  /// **'File Type'**
-  String get fileType;
+  /// **'Type: {type}'**
+  String fileTypeLabel(String type);
 
   /// Browser download explanation
   ///
@@ -5956,6 +5956,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Title *'**
   String get titleRequired;
+
+  /// File type selection label
+  ///
+  /// In en, this message translates to:
+  /// **'File Type'**
+  String get fileType;
 
   /// Success message when material is uploaded
   ///
