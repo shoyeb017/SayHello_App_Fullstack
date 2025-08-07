@@ -25,7 +25,7 @@ class Partner {
     required this.learningLanguage,
     required this.region,
     required this.city,
-  }); 
+  });
 }
 
 class ConnectPage extends StatefulWidget {
@@ -62,7 +62,7 @@ class _ConnectPageState extends State<ConnectPage> {
 
   List<String> get topTabs => [
     AppLocalizations.of(context)!.all,
-    'Shared Interests', // Will be localized later
+    AppLocalizations.of(context)!.sharedInterests,
     AppLocalizations.of(context)!.nearby,
     AppLocalizations.of(context)!.gender,
   ];
@@ -80,7 +80,7 @@ class _ConnectPageState extends State<ConnectPage> {
       city: 'Tokyo',
     ),
     Partner(
-      name: 'かえで',
+      name: 'かえде',
       message: 'Just joined HT\nTap to say Hi!',
       avatar: 'https://picsum.photos/seed/a/60',
       gender: 'female',
@@ -318,7 +318,7 @@ class _ConnectPageState extends State<ConnectPage> {
                 controller: _searchController,
                 onChanged: (value) => setState(() {}),
                 decoration: InputDecoration(
-                  hintText: 'Search partners...',
+                  hintText: AppLocalizations.of(context)!.searchPeople,
                   hintStyle: TextStyle(
                     color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                   ),
@@ -733,8 +733,8 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
                     onTap: () => Navigator.pop(context),
                     child: const Icon(Icons.close),
                   ),
-                  const Text(
-                    'Search',
+                  Text(
+                    AppLocalizations.of(context)!.search,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   TextButton(
@@ -937,8 +937,8 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
                       vertical: 14,
                     ),
                   ),
-                  child: const Text(
-                    'Search',
+                  child: Text(
+                    AppLocalizations.of(context)!.search,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

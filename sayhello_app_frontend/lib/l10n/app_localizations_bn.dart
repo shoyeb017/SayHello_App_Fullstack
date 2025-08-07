@@ -498,7 +498,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get brightness => 'Brightness';
 
   @override
-  String get notifications => 'Notifications';
+  String get notifications => 'বিজ্ঞপ্তি';
 
   @override
   String get privacy => 'Privacy';
@@ -559,15 +559,6 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get justNow => 'এখনই';
-
-  @override
-  String get minutesAgo => 'মিনিট আগে';
-
-  @override
-  String get hoursAgo => 'ঘন্টা আগে';
-
-  @override
-  String get daysAgo => 'দিন আগে';
 
   @override
   String daysAgoCount(int count) {
@@ -804,10 +795,10 @@ class AppLocalizationsBn extends AppLocalizations {
   String get popular => 'জনপ্রিয়';
 
   @override
-  String get swapLanguages => 'ভাষা পরিবর্তন করুন';
+  String get swapLanguages => 'ভাষা অদলবদল';
 
   @override
-  String get enterTextToTranslate => 'অনুবাদের জন্য টেক্সট লিখুন';
+  String get enterTextToTranslate => 'অনুবাদ করার জন্য পাঠ্য লিখুন';
 
   @override
   String get recent => 'সাম্প্রতিক';
@@ -1102,7 +1093,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get tellUsAboutYourself => 'আপনার সম্পর্কে বলুন...';
 
   @override
-  String get editBio => 'জীবনী সম্পাদনা';
+  String get editBio => 'পরিচয় সম্পাদনা';
 
   @override
   String get editImage => 'ছবি সম্পাদনা';
@@ -1295,4 +1286,162 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get enterCorrection => 'সংশোধন লিখুন...';
+
+  @override
+  String get justJoinedHT => 'এইমাত্র HT তে যোগদান করেছে';
+
+  @override
+  String get tapToSayHi => 'হাই বলতে ট্যাপ করুন!';
+
+  @override
+  String get joinedShort => 'যোগদান';
+
+  @override
+  String daysJoined(String days) {
+    return '$daysদিন যোগদান';
+  }
+
+  @override
+  String get areYouSureLogout => 'আপনি কি নিশ্চিত যে লগআউট করতে চান?';
+
+  @override
+  String get editName => 'নাম সম্পাদনা';
+
+  @override
+  String get enterYourName => 'আপনার নাম লিখুন';
+
+  @override
+  String get selectCountry => 'দেশ নির্বাচন করুন';
+
+  @override
+  String get selectLearningLanguageLevel => 'শেখার ভাষা ও স্তর নির্বাচন করুন';
+
+  @override
+  String get level => 'স্তর';
+
+  @override
+  String get detect => 'শনাক্ত';
+
+  @override
+  String get translating => 'অনুবাদ করা হচ্ছে...';
+
+  @override
+  String get translation => 'অনুবাদ';
+
+  @override
+  String get copyTranslation => 'অনুবাদ কপি করুন';
+
+  @override
+  String get pronunciation => 'উচ্চারণ';
+
+  @override
+  String get copyPronunciation => 'উচ্চারণ কপি করুন';
+
+  @override
+  String get pronunciationNotAvailable =>
+      'এই ভাষার জন্য উচ্চারণ গাইড উপলব্ধ নেই';
+
+  @override
+  String get demoModeMessage =>
+      'ডেমো মোড: ফলব্যাক অনুবাদ ব্যবহার করা হচ্ছে। সম্পূর্ণ কার্যকারিতার জন্য সার্ভিস কোডে Azure credentials কনফিগার করুন।';
+
+  @override
+  String get detectedLanguage => 'সনাক্তকৃত ভাষা';
+
+  @override
+  String get couldNotDetectLanguage => 'ভাষা সনাক্ত করা যায়নি';
+
+  @override
+  String get copiedToClipboard => 'ক্লিপবোর্ডে কপি হয়েছে';
+
+  @override
+  String get failedToPlaySpeech => 'স্পিচ প্লে করতে ব্যর্থ';
+
+  @override
+  String get speechError => 'স্পিচ ত্রুটি';
+
+  @override
+  String get speaking => 'বলছে...';
+
+  @override
+  String get stopSpeech => 'স্পিচ বন্ধ করুন';
+
+  @override
+  String get listenToText => 'পাঠ্য শুনুন';
+
+  @override
+  String get listenToTranslation => 'অনুবাদ শুনুন';
+
+  @override
+  String get translationFailed => 'অনুবাদ ব্যর্থ';
+
+  @override
+  String get failedToDetectLanguage => 'ভাষা সনাক্ত করা যায়নি';
+
+  @override
+  String get pronunciationGuideNotAvailable =>
+      'এই ভাষার জন্য উচ্চারণ গাইড উপলব্ধ নেই';
+
+  @override
+  String get azureCredentialsNotConfigured =>
+      'Azure শংসাপত্র কনফিগার করা হয়নি';
+
+  @override
+  String get unknown => 'অজানা';
+
+  @override
+  String get newSessionAvailable => 'নতুন সেশন উপলব্ধ';
+
+  @override
+  String sessionScheduled(
+    String courseName,
+    String instructorName,
+    String date,
+    String time,
+  ) {
+    return '$instructorName দ্বারা $date তারিখে $time এ $courseName সেশন নির্ধারিত হয়েছে। আপনার শেখার উন্নতির জন্য এখনই যোগ দিন!';
+  }
+
+  @override
+  String get courseFeedbackReceived => 'কোর্স ফিডব্যাক গ্রহণ';
+
+  @override
+  String feedbackReceived(
+    String rating,
+    String courseName,
+    String instructorName,
+  ) {
+    return 'আপনি প্রশিক্ষক $instructorName থেকে আপনার $courseName কোর্সের জন্য $rating তারকা রেটিং পেয়েছেন। চমৎকার কাজ চালিয়ে যান!';
+  }
+
+  @override
+  String minutesAgo(String minutes) {
+    return '$minutes মিনিট আগে';
+  }
+
+  @override
+  String hoursAgo(String hours) {
+    return '$hours ঘন্টা আগে';
+  }
+
+  @override
+  String daysAgo(String days) {
+    return '$days দিন আগে';
+  }
+
+  @override
+  String weeksAgo(String weeks) {
+    return '$weeks সপ্তাহ আগে';
+  }
+
+  @override
+  String youHaveNewNotifications(String count, String plural) {
+    return 'আপনার $countটি নতুন বিজ্ঞপ্তি আছে';
+  }
+
+  @override
+  String get noNotificationsYet => 'এখনো কোন বিজ্ঞপ্তি নেই';
+
+  @override
+  String get allCaughtUp => 'সব দেখা হয়ে গেছে! 🎉';
 }

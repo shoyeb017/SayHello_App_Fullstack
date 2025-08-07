@@ -495,7 +495,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get brightness => 'Brightness';
 
   @override
-  String get notifications => 'Notifications';
+  String get notifications => '알림';
 
   @override
   String get privacy => 'Privacy';
@@ -556,15 +556,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get justNow => '방금 전';
-
-  @override
-  String get minutesAgo => '분 전';
-
-  @override
-  String get hoursAgo => '시간 전';
-
-  @override
-  String get daysAgo => '일 전';
 
   @override
   String daysAgoCount(int count) {
@@ -801,10 +792,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get popular => '인기';
 
   @override
-  String get swapLanguages => '언어 바꾸기';
+  String get swapLanguages => '언어 교환';
 
   @override
-  String get enterTextToTranslate => '번역할 텍스트 입력';
+  String get enterTextToTranslate => '번역할 텍스트를 입력하세요';
 
   @override
   String get recent => '최근';
@@ -1092,10 +1083,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get selfIntroduction => '자기소개';
 
   @override
-  String get tellUsAboutYourself => '자기소개를 해주세요...';
+  String get tellUsAboutYourself => '자신에 대해 알려주세요';
 
   @override
-  String get editBio => '프로필 편집';
+  String get editBio => '자기소개 편집';
 
   @override
   String get editImage => '이미지 편집';
@@ -1116,7 +1107,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get native => '모국어';
 
   @override
-  String get learning => '학습중';
+  String get learning => '학습 중';
 
   @override
   String get addHobbies => '취미 추가';
@@ -1137,7 +1128,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get birthday => '생일';
 
   @override
-  String get birthdayUpdatedSuccessfully => '생일이 성공적으로 업데이트되었습니다!';
+  String get birthdayUpdatedSuccessfully => '생일이 성공적으로 업데이트되었습니다';
 
   @override
   String get theme => '테마';
@@ -1288,4 +1279,160 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get enterCorrection => '수정 사항을 입력하세요...';
+
+  @override
+  String get justJoinedHT => 'Just joined HT';
+
+  @override
+  String get tapToSayHi => 'Tap to say Hi!';
+
+  @override
+  String get joinedShort => '가입';
+
+  @override
+  String daysJoined(String days) {
+    return '${days}d joined';
+  }
+
+  @override
+  String get areYouSureLogout => '정말로 로그아웃하시겠습니까?';
+
+  @override
+  String get editName => '이름 편집';
+
+  @override
+  String get enterYourName => '이름을 입력하세요';
+
+  @override
+  String get selectCountry => '국가 선택';
+
+  @override
+  String get selectLearningLanguageLevel => '학습 언어 및 레벨 선택';
+
+  @override
+  String get level => '레벨';
+
+  @override
+  String get detect => '감지';
+
+  @override
+  String get translating => '번역 중...';
+
+  @override
+  String get translation => '번역';
+
+  @override
+  String get copyTranslation => '번역 복사';
+
+  @override
+  String get pronunciation => '발음';
+
+  @override
+  String get copyPronunciation => '발음 복사';
+
+  @override
+  String get pronunciationNotAvailable =>
+      'Pronunciation guide not available for this language';
+
+  @override
+  String get demoModeMessage =>
+      'Demo mode: Using fallback translations. Configure Azure credentials in the service code for full functionality.';
+
+  @override
+  String get detectedLanguage => '감지된 언어';
+
+  @override
+  String get couldNotDetectLanguage => 'Could not detect language';
+
+  @override
+  String get copiedToClipboard => '클립보드에 복사되었습니다';
+
+  @override
+  String get failedToPlaySpeech => '음성 재생 실패';
+
+  @override
+  String get speechError => '음성 오류';
+
+  @override
+  String get speaking => '말하는 중...';
+
+  @override
+  String get stopSpeech => '음성 중지';
+
+  @override
+  String get listenToText => '텍스트 듣기';
+
+  @override
+  String get listenToTranslation => '번역 듣기';
+
+  @override
+  String get translationFailed => '번역 실패';
+
+  @override
+  String get failedToDetectLanguage => '언어를 감지할 수 없습니다';
+
+  @override
+  String get pronunciationGuideNotAvailable => '이 언어에 대한 발음 가이드를 사용할 수 없습니다';
+
+  @override
+  String get azureCredentialsNotConfigured => 'Azure 자격 증명이 구성되지 않았습니다';
+
+  @override
+  String get unknown => '알 수 없음';
+
+  @override
+  String get newSessionAvailable => '새 세션 이용 가능';
+
+  @override
+  String sessionScheduled(
+    String courseName,
+    String instructorName,
+    String date,
+    String time,
+  ) {
+    return '$instructorName에 의해 $date $time에 $courseName 세션이 예약되었습니다. 지금 참여하여 학습을 향상시키세요!';
+  }
+
+  @override
+  String get courseFeedbackReceived => '코스 피드백 수신';
+
+  @override
+  String feedbackReceived(
+    String rating,
+    String courseName,
+    String instructorName,
+  ) {
+    return '강사 $instructorName로부터 $courseName 코스에 대해 $rating점 평가를 받았습니다. 계속해서 훌륭한 작업을 이어가세요!';
+  }
+
+  @override
+  String minutesAgo(String minutes) {
+    return '$minutes분 전';
+  }
+
+  @override
+  String hoursAgo(String hours) {
+    return '$hours시간 전';
+  }
+
+  @override
+  String daysAgo(String days) {
+    return '$days일 전';
+  }
+
+  @override
+  String weeksAgo(String weeks) {
+    return '$weeks주 전';
+  }
+
+  @override
+  String youHaveNewNotifications(String count, String plural) {
+    return '$count개의 새 알림이 있습니다';
+  }
+
+  @override
+  String get noNotificationsYet => '아직 알림이 없습니다';
+
+  @override
+  String get allCaughtUp => '모든 알림을 확인했습니다! 🎉';
 }

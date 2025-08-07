@@ -625,7 +625,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Interests & Hobbies",
+          AppLocalizations.of(context)!.interestsAndHobbies,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,

@@ -747,18 +747,6 @@
   "@justNow": {
     "description": "Just now time indicator"
   },
-  "minutesAgo": "minutes ago",
-  "@minutesAgo": {
-    "description": "Minutes ago time indicator"
-  },
-  "hoursAgo": "hours ago",
-  "@hoursAgo": {
-    "description": "Hours ago time indicator"
-  },
-  "daysAgo": "days ago",
-  "@daysAgo": {
-    "description": "Days ago time indicator"
-  },
   "daysAgoCount": "{count}d ago",
   "@daysAgoCount": {
     "description": "Days ago with count",
@@ -1886,5 +1874,315 @@
       }
     }
   },
-  "enterCorrection": "Enter correction..."
+  "enterCorrection": "Enter correction...",
+  "@enterCorrection": {
+    "description": "Placeholder text for entering corrections"
+  },
+  "justJoinedHT": "Just joined HT",
+  "@justJoinedHT": {
+    "description": "Message for new users"
+  },
+  "tapToSayHi": "Tap to say Hi!",
+  "@tapToSayHi": {
+    "description": "Instruction text for greeting users"
+  },
+  "editImage": "Edit Image",
+  "@editImage": {
+    "description": "Edit profile image dialog title"
+  },
+  "takePhoto": "Take Photo",
+  "@takePhoto": {
+    "description": "Take photo option"
+  },
+  "selectFromGallery": "Select from Gallery",
+  "@selectFromGallery": {
+    "description": "Select from gallery option"
+  },
+  "editBio": "Edit Bio",
+  "@editBio": {
+    "description": "Edit bio dialog title"
+  },
+  "selectHobbies": "Select Hobbies",
+  "@selectHobbies": {
+    "description": "Select hobbies dialog title"
+  },
+  "selectGender": "Select Gender",
+  "@selectGender": {
+    "description": "Select gender dialog title"
+  },
+  "selectAge": "Select Age",
+  "@selectAge": {
+    "description": "Select age dialog title"
+  },
+  "joinedShort": "joined",
+  "@joinedShort": {
+    "description": "Short form of joined text"
+  },
+  "daysJoined": "{days}d joined",
+  "@daysJoined": {
+    "description": "Days joined format",
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  "areYouSureLogout": "Are you sure you want to logout?",
+  "@areYouSureLogout": {
+    "description": "Logout confirmation message"
+  },
+  "editName": "Edit Name",
+  "@editName": {
+    "description": "Edit name dialog title"
+  },
+  "enterYourName": "Enter your name",
+  "@enterYourName": {
+    "description": "Name input placeholder"
+  },
+  "selectCountry": "Select Country",
+  "@selectCountry": {
+    "description": "Select country dialog title"
+  },
+  "selectLearningLanguageLevel": "Select Learning Language & Level",
+  "@selectLearningLanguageLevel": {
+    "description": "Select learning language and level dialog title"
+  },
+  "level": "Level",
+  "@level": {
+    "description": "Level label"
+  },
+  "detect": "Detect",
+  "@detect": {
+    "description": "Detect language button"
+  },
+  "enterTextToTranslate": "Enter text to translate",
+  "@enterTextToTranslate": {
+    "description": "Translation input placeholder"
+  },
+  "swapLanguages": "Swap Languages",
+  "@swapLanguages": {
+    "description": "Swap languages tooltip"
+  },
+  "translating": "Translating...",
+  "@translating": {
+    "description": "Translation progress text"
+  },
+  "translation": "Translation",
+  "@translation": {
+    "description": "Translation label"
+  },
+  "copyTranslation": "Copy translation",
+  "@copyTranslation": {
+    "description": "Copy translation tooltip"
+  },
+  "pronunciation": "Pronunciation",
+  "@pronunciation": {
+    "description": "Pronunciation label"
+  },
+  "copyPronunciation": "Copy pronunciation",
+  "@copyPronunciation": {
+    "description": "Copy pronunciation tooltip"
+  },
+  "pronunciationNotAvailable": "Pronunciation guide not available for this language",
+  "@pronunciationNotAvailable": {
+    "description": "Pronunciation unavailable message"
+  },
+  "demoModeMessage": "Demo mode: Using fallback translations. Configure Azure credentials in the service code for full functionality.",
+  "@demoModeMessage": {
+    "description": "Demo mode warning message"
+  },
+  "detectedLanguage": "Detected language: {language}",
+  "@detectedLanguage": {
+    "description": "Language detection success message",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotDetectLanguage": "Could not detect language",
+  "@couldNotDetectLanguage": {
+    "description": "Language detection failure message"
+  },
+  "copiedToClipboard": "{type} copied to clipboard",
+  "@copiedToClipboard": {
+    "description": "Copy to clipboard success message",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToPlaySpeech": "Failed to play speech",
+  "@failedToPlaySpeech": {
+    "description": "Speech playback failure message"
+  },
+  "speechError": "Speech error: {error}",
+  "@speechError": {
+    "description": "Speech error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "speaking": "Speaking...",
+  "@speaking": {
+    "description": "Speaking progress text"
+  },
+  "stopSpeech": "Stop speech",
+  "@stopSpeech": {
+    "description": "Stop speech tooltip"
+  },
+  "listenToText": "Listen to text",
+  "@listenToText": {
+    "description": "Listen to text tooltip"
+  },
+  "listenToTranslation": "Listen to translation",
+  "@listenToTranslation": {
+    "description": "Listen to translation tooltip"
+  },
+  "translationFailed": "Translation failed",
+  "@translationFailed": {
+    "description": "Translation failure message"
+  },
+  "failedToDetectLanguage": "Could not detect language",
+  "@failedToDetectLanguage": {
+    "description": "Language detection failure message"
+  },
+  "detectedLanguage": "Detected language",
+  "@detectedLanguage": {
+    "description": "Language detection success message"
+  },
+  "failedToPlaySpeech": "Failed to play speech",
+  "@failedToPlaySpeech": {
+    "description": "Speech playback failure message"
+  },
+  "speechError": "Speech error",
+  "@speechError": {
+    "description": "Speech error message"
+  },
+  "copiedToClipboard": "copied to clipboard",
+  "@copiedToClipboard": {
+    "description": "Clipboard copy confirmation"
+  },
+  "translation": "Translation",
+  "@translation": {
+    "description": "Translation label"
+  },
+  "copyTranslation": "Copy translation",
+  "@copyTranslation": {
+    "description": "Copy translation tooltip"
+  },
+  "copyPronunciation": "Copy pronunciation",
+  "@copyPronunciation": {
+    "description": "Copy pronunciation tooltip"
+  },
+  "speaking": "Speaking...",
+  "@speaking": {
+    "description": "Speaking status indicator"
+  },
+  "stopSpeech": "Stop speech",
+  "@stopSpeech": {
+    "description": "Stop speech tooltip"
+  },
+  "listenToText": "Listen to text",
+  "@listenToText": {
+    "description": "Listen to text tooltip"
+  },
+  "listenToTranslation": "Listen to translation",
+  "@listenToTranslation": {
+    "description": "Listen to translation tooltip"
+  },
+  "pronunciationGuideNotAvailable": "Pronunciation guide not available for this language",
+  "@pronunciationGuideNotAvailable": {
+    "description": "Pronunciation guide unavailable message"
+  },
+  "azureCredentialsNotConfigured": "Azure credentials not configured",
+  "@azureCredentialsNotConfigured": {
+    "description": "Azure configuration error message"
+  },
+  "unknown": "Unknown",
+  "@unknown": {
+    "description": "Unknown value label"
+  },
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications page title"
+  },
+  "newSessionAvailable": "New Session Available",
+  "@newSessionAvailable": {
+    "description": "Session alert notification title"
+  },
+  "sessionScheduled": "{courseName} session has been scheduled by {instructorName} on {date} at {time}. Join now to enhance your learning!",
+  "@sessionScheduled": {
+    "description": "Session scheduled notification message",
+    "placeholders": {
+      "courseName": {"type": "String"},
+      "instructorName": {"type": "String"},
+      "date": {"type": "String"},
+      "time": {"type": "String"}
+    }
+  },
+  "courseFeedbackReceived": "Course Feedback Received",
+  "@courseFeedbackReceived": {
+    "description": "Feedback notification title"
+  },
+  "feedbackReceived": "You received a {rating} star rating for your {courseName} course from instructor {instructorName}. Keep up the excellent work!",
+  "@feedbackReceived": {
+    "description": "Feedback received notification message",
+    "placeholders": {
+      "rating": {"type": "String"},
+      "courseName": {"type": "String"},
+      "instructorName": {"type": "String"}
+    }
+  },
+  "minutesAgo": "{minutes}m ago",
+  "@minutesAgo": {
+    "description": "Time ago in minutes",
+    "placeholders": {
+      "minutes": {"type": "String"}
+    }
+  },
+  "hoursAgo": "{hours}h ago",
+  "@hoursAgo": {
+    "description": "Time ago in hours",
+    "placeholders": {
+      "hours": {"type": "String"}
+    }
+  },
+  "daysAgo": "{days}d ago",
+  "@daysAgo": {
+    "description": "Time ago in days",
+    "placeholders": {
+      "days": {"type": "String"}
+    }
+  },
+  "weeksAgo": "{weeks}w ago",
+  "@weeksAgo": {
+    "description": "Time ago in weeks",
+    "placeholders": {
+      "weeks": {"type": "String"}
+    }
+  },
+  "youHaveNewNotifications": "You have {count} new notification{plural}",
+  "@youHaveNewNotifications": {
+    "description": "Unread notifications count message",
+    "placeholders": {
+      "count": {"type": "String"},
+      "plural": {"type": "String"}
+    }
+  },
+  "noNotificationsYet": "No notifications yet",
+  "@noNotificationsYet": {
+    "description": "Empty notifications state message"
+  },
+  "allCaughtUp": "You're all caught up! 🎉",
+  "@allCaughtUp": {
+    "description": "All caught up message"
+  }
 }

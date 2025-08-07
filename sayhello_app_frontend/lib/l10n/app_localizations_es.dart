@@ -185,7 +185,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settings => 'Configuración';
 
   @override
-  String get logout => 'Cerrar Sesión';
+  String get logout => 'Cerrar sesión';
 
   @override
   String get step1PersonalInfo => 'Paso 1: Información Personal';
@@ -560,15 +560,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get justNow => 'Ahora mismo';
-
-  @override
-  String get minutesAgo => 'minutos atrás';
-
-  @override
-  String get hoursAgo => 'horas atrás';
-
-  @override
-  String get daysAgo => 'días atrás';
 
   @override
   String daysAgoCount(int count) {
@@ -1100,7 +1091,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selfIntroduction => 'Autopresentación';
 
   @override
-  String get tellUsAboutYourself => 'Cuéntanos sobre ti...';
+  String get tellUsAboutYourself => 'Cuéntanos sobre ti';
 
   @override
   String get editBio => 'Editar biografía';
@@ -1127,10 +1118,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get learning => 'Aprendiendo';
 
   @override
-  String get addHobbies => 'Agregar aficiones';
+  String get addHobbies => 'Agregar pasatiempos';
 
   @override
-  String get selectHobbies => 'Seleccionar aficiones';
+  String get selectHobbies => 'Seleccionar pasatiempos';
 
   @override
   String get personalInformation => 'Información personal';
@@ -1146,7 +1137,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get birthdayUpdatedSuccessfully =>
-      '¡Cumpleaños actualizado exitosamente!';
+      'Cumpleaños actualizado exitosamente';
 
   @override
   String get theme => 'Tema';
@@ -1299,4 +1290,163 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get enterCorrection => 'Ingresa la corrección...';
+
+  @override
+  String get justJoinedHT => 'Just joined HT';
+
+  @override
+  String get tapToSayHi => 'Tap to say Hi!';
+
+  @override
+  String get joinedShort => 'registrado';
+
+  @override
+  String daysJoined(String days) {
+    return '${days}d joined';
+  }
+
+  @override
+  String get areYouSureLogout => '¿Estás seguro de que quieres cerrar sesión?';
+
+  @override
+  String get editName => 'Editar nombre';
+
+  @override
+  String get enterYourName => 'Ingresa tu nombre';
+
+  @override
+  String get selectCountry => 'Seleccionar país';
+
+  @override
+  String get selectLearningLanguageLevel =>
+      'Seleccionar idioma de aprendizaje y nivel';
+
+  @override
+  String get level => 'Nivel';
+
+  @override
+  String get detect => 'Detectar';
+
+  @override
+  String get translating => 'Traduciendo...';
+
+  @override
+  String get translation => 'Traducción';
+
+  @override
+  String get copyTranslation => 'Copiar traducción';
+
+  @override
+  String get pronunciation => 'Pronunciación';
+
+  @override
+  String get copyPronunciation => 'Copiar pronunciación';
+
+  @override
+  String get pronunciationNotAvailable =>
+      'Pronunciation guide not available for this language';
+
+  @override
+  String get demoModeMessage =>
+      'Demo mode: Using fallback translations. Configure Azure credentials in the service code for full functionality.';
+
+  @override
+  String get detectedLanguage => 'Idioma detectado';
+
+  @override
+  String get couldNotDetectLanguage => 'Could not detect language';
+
+  @override
+  String get copiedToClipboard => 'copiado al portapapeles';
+
+  @override
+  String get failedToPlaySpeech => 'Falló la reproducción de voz';
+
+  @override
+  String get speechError => 'Error de voz';
+
+  @override
+  String get speaking => 'Hablando...';
+
+  @override
+  String get stopSpeech => 'Detener voz';
+
+  @override
+  String get listenToText => 'Escuchar texto';
+
+  @override
+  String get listenToTranslation => 'Escuchar traducción';
+
+  @override
+  String get translationFailed => 'Falló la traducción';
+
+  @override
+  String get failedToDetectLanguage => 'No se pudo detectar el idioma';
+
+  @override
+  String get pronunciationGuideNotAvailable =>
+      'Guía de pronunciación no disponible para este idioma';
+
+  @override
+  String get azureCredentialsNotConfigured =>
+      'Credenciales de Azure no configuradas';
+
+  @override
+  String get unknown => 'Desconocido';
+
+  @override
+  String get newSessionAvailable => 'Nueva Sesión Disponible';
+
+  @override
+  String sessionScheduled(
+    String courseName,
+    String instructorName,
+    String date,
+    String time,
+  ) {
+    return 'La sesión de $courseName ha sido programada por $instructorName el $date a las $time. ¡Únete ahora para mejorar tu aprendizaje!';
+  }
+
+  @override
+  String get courseFeedbackReceived => 'Comentario del Curso Recibido';
+
+  @override
+  String feedbackReceived(
+    String rating,
+    String courseName,
+    String instructorName,
+  ) {
+    return 'Recibiste una calificación de $rating estrellas para tu curso de $courseName del instructor $instructorName. ¡Sigue con el excelente trabajo!';
+  }
+
+  @override
+  String minutesAgo(String minutes) {
+    return 'hace ${minutes}m';
+  }
+
+  @override
+  String hoursAgo(String hours) {
+    return 'hace ${hours}h';
+  }
+
+  @override
+  String daysAgo(String days) {
+    return 'hace ${days}d';
+  }
+
+  @override
+  String weeksAgo(String weeks) {
+    return 'hace ${weeks}sem';
+  }
+
+  @override
+  String youHaveNewNotifications(String count, String plural) {
+    return 'Tienes $count nueva$plural notificación$plural';
+  }
+
+  @override
+  String get noNotificationsYet => 'Aún no hay notificaciones';
+
+  @override
+  String get allCaughtUp => '¡Estás al día! 🎉';
 }

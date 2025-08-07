@@ -14,8 +14,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
   final List<Map<String, dynamic>> notifications = [
     {
       'notification_type': 'session_alert',
-      'content_title': 'New Session Available',
-      'content_text': 'Japanese for Beginners session has been scheduled by Hiro Tanaka on August 10, 2025 at 3:00 PM. Join now to enhance your learning!',
       'is_read': false,
       'created_at': DateTime.now().subtract(Duration(minutes: 30)),
       'course_name': 'Japanese for Beginners',
@@ -25,8 +23,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
     },
     {
       'notification_type': 'feedback',
-      'content_title': 'Course Feedback Received',
-      'content_text': 'You received a 4.8 star rating for your Conversational Spanish course from instructor Maria Gomez. Keep up the excellent work!',
       'is_read': false,
       'created_at': DateTime.now().subtract(Duration(hours: 2)),
       'course_name': 'Conversational Spanish',
@@ -35,8 +31,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
     },
     {
       'notification_type': 'session_alert',
-      'content_title': 'New Session Available',
-      'content_text': 'German Advanced Grammar session has been scheduled by Klaus Schmidt on August 12, 2025 at 10:00 AM. Join now to enhance your learning!',
       'is_read': true,
       'created_at': DateTime.now().subtract(Duration(hours: 5)),
       'course_name': 'German Advanced Grammar',
@@ -46,8 +40,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
     },
     {
       'notification_type': 'feedback',
-      'content_title': 'Course Feedback Received',
-      'content_text': 'You received a 4.5 star rating for your French Grammar Essentials course from instructor Jean Dupont. Keep up the excellent work!',
       'is_read': true,
       'created_at': DateTime.now().subtract(Duration(days: 1)),
       'course_name': 'French Grammar Essentials',
@@ -56,8 +48,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
     },
     {
       'notification_type': 'session_alert',
-      'content_title': 'New Session Available',
-      'content_text': 'Italian Basics session has been scheduled by Marco Rossi on August 15, 2025 at 2:30 PM. Join now to enhance your learning!',
       'is_read': true,
       'created_at': DateTime.now().subtract(Duration(days: 2)),
       'course_name': 'Italian Basics',
@@ -72,13 +62,47 @@ class _NotificationsPageState extends State<NotificationsPage> {
     final difference = now.difference(time);
 
     if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}m ago';
+      return AppLocalizations.of(
+        context,
+      )!.minutesAgo(difference.inMinutes.toString());
     } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
+      return AppLocalizations.of(
+        context,
+      )!.hoursAgo(difference.inHours.toString());
     } else if (difference.inDays < 7) {
-      return '${difference.inDays}d ago';
+      return AppLocalizations.of(
+        context,
+      )!.daysAgo(difference.inDays.toString());
     } else {
-      return '${difference.inDays ~/ 7}w ago';
+      return AppLocalizations.of(
+        context,
+      )!.weeksAgo((difference.inDays ~/ 7).toString());
+    }
+  }
+
+  String _getNotificationTitle(Map<String, dynamic> notification) {
+    final isSessionAlert = notification['notification_type'] == 'session_alert';
+    return isSessionAlert
+        ? AppLocalizations.of(context)!.newSessionAvailable
+        : AppLocalizations.of(context)!.courseFeedbackReceived;
+  }
+
+  String _getNotificationContent(Map<String, dynamic> notification) {
+    final isSessionAlert = notification['notification_type'] == 'session_alert';
+
+    if (isSessionAlert) {
+      return AppLocalizations.of(context)!.sessionScheduled(
+        notification['course_name'],
+        notification['instructor_name'],
+        notification['session_date'],
+        notification['session_time'],
+      );
+    } else {
+      return AppLocalizations.of(context)!.feedbackReceived(
+        notification['rating'].toString(),
+        notification['course_name'],
+        notification['instructor_name'],
+      );
     }
   }
 
@@ -146,7 +170,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     children: [
                       Expanded(
                         child: Text(
-                          notification['content_title'],
+                          _getNotificationTitle(notification),
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: isUnread
@@ -172,7 +196,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   const SizedBox(height: 6),
 
                   Text(
-                    notification['content_text'],
+                    _getNotificationContent(notification),
                     style: TextStyle(
                       fontSize: 12,
                       color: isDark ? Colors.grey[300] : Colors.grey[600],
@@ -267,7 +291,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'You have $unreadCount new notification${unreadCount != 1 ? 's' : ''}',
+                      AppLocalizations.of(context)!.youHaveNewNotifications(
+                        unreadCount.toString(),
+                        unreadCount != 1 ? 's' : '',
+                      ),
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -312,7 +339,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No notifications yet',
+            AppLocalizations.of(context)!.noNotificationsYet,
             style: TextStyle(
               fontSize: 16,
               color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -321,7 +348,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            'You\'re all caught up! 🎉',
+            AppLocalizations.of(context)!.allCaughtUp,
             style: TextStyle(
               fontSize: 14,
               color: isDark ? Colors.grey[500] : Colors.grey[500],

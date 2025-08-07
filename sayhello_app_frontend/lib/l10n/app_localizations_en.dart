@@ -561,15 +561,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get justNow => 'Just now';
 
   @override
-  String get minutesAgo => 'minutes ago';
-
-  @override
-  String get hoursAgo => 'hours ago';
-
-  @override
-  String get daysAgo => 'days ago';
-
-  @override
   String daysAgoCount(int count) {
     return '${count}d ago';
   }
@@ -804,7 +795,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get popular => 'Popular';
 
   @override
-  String get swapLanguages => 'Swap languages';
+  String get swapLanguages => 'Swap Languages';
 
   @override
   String get enterTextToTranslate => 'Enter text to translate';
@@ -1295,4 +1286,162 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get enterCorrection => 'Enter correction...';
+
+  @override
+  String get justJoinedHT => 'Just joined HT';
+
+  @override
+  String get tapToSayHi => 'Tap to say Hi!';
+
+  @override
+  String get joinedShort => 'joined';
+
+  @override
+  String daysJoined(String days) {
+    return '${days}d joined';
+  }
+
+  @override
+  String get areYouSureLogout => 'Are you sure you want to logout?';
+
+  @override
+  String get editName => 'Edit Name';
+
+  @override
+  String get enterYourName => 'Enter your name';
+
+  @override
+  String get selectCountry => 'Select Country';
+
+  @override
+  String get selectLearningLanguageLevel => 'Select Learning Language & Level';
+
+  @override
+  String get level => 'Level';
+
+  @override
+  String get detect => 'Detect';
+
+  @override
+  String get translating => 'Translating...';
+
+  @override
+  String get translation => 'Translation';
+
+  @override
+  String get copyTranslation => 'Copy translation';
+
+  @override
+  String get pronunciation => 'Pronunciation';
+
+  @override
+  String get copyPronunciation => 'Copy pronunciation';
+
+  @override
+  String get pronunciationNotAvailable =>
+      'Pronunciation guide not available for this language';
+
+  @override
+  String get demoModeMessage =>
+      'Demo mode: Using fallback translations. Configure Azure credentials in the service code for full functionality.';
+
+  @override
+  String get detectedLanguage => 'Detected language';
+
+  @override
+  String get couldNotDetectLanguage => 'Could not detect language';
+
+  @override
+  String get copiedToClipboard => 'copied to clipboard';
+
+  @override
+  String get failedToPlaySpeech => 'Failed to play speech';
+
+  @override
+  String get speechError => 'Speech error';
+
+  @override
+  String get speaking => 'Speaking...';
+
+  @override
+  String get stopSpeech => 'Stop speech';
+
+  @override
+  String get listenToText => 'Listen to text';
+
+  @override
+  String get listenToTranslation => 'Listen to translation';
+
+  @override
+  String get translationFailed => 'Translation failed';
+
+  @override
+  String get failedToDetectLanguage => 'Could not detect language';
+
+  @override
+  String get pronunciationGuideNotAvailable =>
+      'Pronunciation guide not available for this language';
+
+  @override
+  String get azureCredentialsNotConfigured =>
+      'Azure credentials not configured';
+
+  @override
+  String get unknown => 'Unknown';
+
+  @override
+  String get newSessionAvailable => 'New Session Available';
+
+  @override
+  String sessionScheduled(
+    String courseName,
+    String instructorName,
+    String date,
+    String time,
+  ) {
+    return '$courseName session has been scheduled by $instructorName on $date at $time. Join now to enhance your learning!';
+  }
+
+  @override
+  String get courseFeedbackReceived => 'Course Feedback Received';
+
+  @override
+  String feedbackReceived(
+    String rating,
+    String courseName,
+    String instructorName,
+  ) {
+    return 'You received a $rating star rating for your $courseName course from instructor $instructorName. Keep up the excellent work!';
+  }
+
+  @override
+  String minutesAgo(String minutes) {
+    return '${minutes}m ago';
+  }
+
+  @override
+  String hoursAgo(String hours) {
+    return '${hours}h ago';
+  }
+
+  @override
+  String daysAgo(String days) {
+    return '${days}d ago';
+  }
+
+  @override
+  String weeksAgo(String weeks) {
+    return '${weeks}w ago';
+  }
+
+  @override
+  String youHaveNewNotifications(String count, String plural) {
+    return 'You have $count new notification$plural';
+  }
+
+  @override
+  String get noNotificationsYet => 'No notifications yet';
+
+  @override
+  String get allCaughtUp => 'You\'re all caught up! 🎉';
 }

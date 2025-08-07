@@ -360,7 +360,7 @@ class _ProfilePageState extends State<ProfilePage> {
               border: Border.all(color: primaryColor.withOpacity(0.3)),
             ),
             child: Text(
-              "${joinedDays}d joined",
+              "${joinedDays}d ${AppLocalizations.of(context)!.joinedShort}",
               style: TextStyle(
                 color: primaryColor,
                 fontSize: 10,
@@ -1190,11 +1190,17 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Edit $title'),
+        title: Text(
+          title == AppLocalizations.of(context)!.name
+              ? AppLocalizations.of(context)!.editName
+              : 'Edit $title',
+        ),
         content: TextField(
           controller: controller,
           decoration: InputDecoration(
-            hintText: 'Enter your $title',
+            hintText: title == AppLocalizations.of(context)!.name
+                ? AppLocalizations.of(context)!.enterYourName
+                : 'Enter your $title',
             border: const OutlineInputBorder(),
           ),
           maxLines: title == 'Bio' ? 3 : 1,
@@ -1230,7 +1236,7 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Select Country'),
+        title: Text(AppLocalizations.of(context)!.selectCountry),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: countries
@@ -1266,7 +1272,7 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Select Learning Language & Level'),
+        title: Text(AppLocalizations.of(context)!.selectLearningLanguageLevel),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1282,7 +1288,9 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              decoration: InputDecoration(labelText: 'Level'),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.level,
+              ),
               value: languageLevel,
               items: levels
                   .map(
@@ -1321,8 +1329,8 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Logout'),
-        content: Text('Are you sure you want to logout?'),
+        title: Text(AppLocalizations.of(context)!.logout),
+        content: Text(AppLocalizations.of(context)!.areYouSureLogout),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -1337,7 +1345,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 (route) => false,
               );
             },
-            child: Text('Logout', style: TextStyle(color: Colors.red)),
+            child: Text(
+              AppLocalizations.of(context)!.logout,
+              style: TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),

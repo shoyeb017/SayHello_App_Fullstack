@@ -173,6 +173,15 @@ Table notifications
 
 Color(0xFF7A54FF)
 
+translate
+chat
+others profile
+feed
+notification
+
+i want to have the multi-language support for all files in attached here. and it should be for every single text item. dont miss like snackbar or const text or textspan or others where text might be there. and dont update the dummy data where the backend data will come. update all file and update also arb and I10n files.
+
+and dont do everytime flutter gen-l10n . i do it by myself
 
 
 

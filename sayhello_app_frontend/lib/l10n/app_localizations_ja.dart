@@ -495,7 +495,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get brightness => 'Brightness';
 
   @override
-  String get notifications => 'Notifications';
+  String get notifications => '通知';
 
   @override
   String get privacy => 'Privacy';
@@ -556,15 +556,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get justNow => 'たった今';
-
-  @override
-  String get minutesAgo => '分前';
-
-  @override
-  String get hoursAgo => '時間前';
-
-  @override
-  String get daysAgo => '日前';
 
   @override
   String daysAgoCount(int count) {
@@ -801,10 +792,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get popular => '人気';
 
   @override
-  String get swapLanguages => '言語を入れ替える';
+  String get swapLanguages => '言語を交換';
 
   @override
-  String get enterTextToTranslate => '翻訳するテキストを入力';
+  String get enterTextToTranslate => '翻訳するテキストを入力してください';
 
   @override
   String get recent => '最近';
@@ -1092,13 +1083,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get selfIntroduction => '自己紹介';
 
   @override
-  String get tellUsAboutYourself => '自己紹介をお聞かせください...';
+  String get tellUsAboutYourself => '自己紹介をしてください';
 
   @override
-  String get editBio => 'プロフィール編集';
+  String get editBio => 'プロフィールを編集';
 
   @override
-  String get editImage => '画像編集';
+  String get editImage => '画像を編集';
 
   @override
   String get camera => 'カメラ';
@@ -1137,7 +1128,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get birthday => '誕生日';
 
   @override
-  String get birthdayUpdatedSuccessfully => '誕生日が正常に更新されました！';
+  String get birthdayUpdatedSuccessfully => '誕生日が正常に更新されました';
 
   @override
   String get theme => 'テーマ';
@@ -1288,4 +1279,160 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get enterCorrection => '修正を入力してください...';
+
+  @override
+  String get justJoinedHT => 'Just joined HT';
+
+  @override
+  String get tapToSayHi => 'Tap to say Hi!';
+
+  @override
+  String get joinedShort => '参加';
+
+  @override
+  String daysJoined(String days) {
+    return '${days}d joined';
+  }
+
+  @override
+  String get areYouSureLogout => '本当にログアウトしますか？';
+
+  @override
+  String get editName => '名前を編集';
+
+  @override
+  String get enterYourName => 'お名前を入力してください';
+
+  @override
+  String get selectCountry => '国を選択';
+
+  @override
+  String get selectLearningLanguageLevel => '学習言語とレベルを選択';
+
+  @override
+  String get level => 'レベル';
+
+  @override
+  String get detect => '検出';
+
+  @override
+  String get translating => '翻訳中...';
+
+  @override
+  String get translation => '翻訳';
+
+  @override
+  String get copyTranslation => '翻訳をコピー';
+
+  @override
+  String get pronunciation => '発音';
+
+  @override
+  String get copyPronunciation => '発音をコピー';
+
+  @override
+  String get pronunciationNotAvailable =>
+      'Pronunciation guide not available for this language';
+
+  @override
+  String get demoModeMessage =>
+      'Demo mode: Using fallback translations. Configure Azure credentials in the service code for full functionality.';
+
+  @override
+  String get detectedLanguage => '検出された言語';
+
+  @override
+  String get couldNotDetectLanguage => 'Could not detect language';
+
+  @override
+  String get copiedToClipboard => 'クリップボードにコピーしました';
+
+  @override
+  String get failedToPlaySpeech => '音声の再生に失敗しました';
+
+  @override
+  String get speechError => '音声エラー';
+
+  @override
+  String get speaking => '話しています...';
+
+  @override
+  String get stopSpeech => '音声停止';
+
+  @override
+  String get listenToText => 'テキストを聞く';
+
+  @override
+  String get listenToTranslation => '翻訳を聞く';
+
+  @override
+  String get translationFailed => '翻訳に失敗しました';
+
+  @override
+  String get failedToDetectLanguage => '言語を検出できませんでした';
+
+  @override
+  String get pronunciationGuideNotAvailable => 'この言語の発音ガイドは利用できません';
+
+  @override
+  String get azureCredentialsNotConfigured => 'Azure認証情報が設定されていません';
+
+  @override
+  String get unknown => '不明';
+
+  @override
+  String get newSessionAvailable => '新しいセッションが利用可能';
+
+  @override
+  String sessionScheduled(
+    String courseName,
+    String instructorName,
+    String date,
+    String time,
+  ) {
+    return '$instructorNameによって$dateの$timeに$courseNameのセッションがスケジュールされました。今すぐ参加して学習を向上させましょう！';
+  }
+
+  @override
+  String get courseFeedbackReceived => 'コースフィードバック受信';
+
+  @override
+  String feedbackReceived(
+    String rating,
+    String courseName,
+    String instructorName,
+  ) {
+    return '講師$instructorNameから$courseNameコースに対して$ratingつ星の評価を受けました。素晴らしい仕事を続けてください！';
+  }
+
+  @override
+  String minutesAgo(String minutes) {
+    return '$minutes分前';
+  }
+
+  @override
+  String hoursAgo(String hours) {
+    return '$hours時間前';
+  }
+
+  @override
+  String daysAgo(String days) {
+    return '$days日前';
+  }
+
+  @override
+  String weeksAgo(String weeks) {
+    return '$weeks週間前';
+  }
+
+  @override
+  String youHaveNewNotifications(String count, String plural) {
+    return '$count件の新しい通知があります';
+  }
+
+  @override
+  String get noNotificationsYet => 'まだ通知はありません';
+
+  @override
+  String get allCaughtUp => 'すべて確認済みです！🎉';
 }

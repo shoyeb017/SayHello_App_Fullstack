@@ -113,7 +113,8 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
       });
     } catch (e) {
       setState(() {
-        translatedText = "Translation failed: ${e.toString()}";
+        translatedText =
+            "${AppLocalizations.of(context)!.translationFailed}: ${e.toString()}";
         transliteratedText = "";
         isTranslating = false;
       });
@@ -142,7 +143,9 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Detected language: $detectedLang'),
+              content: Text(
+                '${AppLocalizations.of(context)!.detectedLanguage}: $detectedLang',
+              ),
               duration: const Duration(seconds: 2),
             ),
           );
@@ -155,7 +158,9 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Could not detect language'),
+              content: Text(
+                AppLocalizations.of(context)!.failedToDetectLanguage,
+              ),
               duration: const Duration(seconds: 2),
             ),
           );
@@ -203,7 +208,9 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$type copied to clipboard'),
+        content: Text(
+          '$type ${AppLocalizations.of(context)!.copiedToClipboard}',
+        ),
         duration: const Duration(seconds: 1),
         behavior: SnackBarBehavior.floating,
       ),
@@ -228,7 +235,7 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to play speech'),
+              content: Text(AppLocalizations.of(context)!.failedToPlaySpeech),
               duration: const Duration(seconds: 2),
               backgroundColor: Colors.red,
             ),
@@ -239,7 +246,9 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Speech error: ${e.toString()}'),
+            content: Text(
+              '${AppLocalizations.of(context)!.speechError}: ${e.toString()}',
+            ),
             duration: const Duration(seconds: 2),
             backgroundColor: Colors.red,
           ),
@@ -256,7 +265,9 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
 
   Future<void> _speakOutputText() async {
     if (translatedText.isEmpty ||
-        translatedText.startsWith('Translation failed'))
+        translatedText.startsWith(
+          AppLocalizations.of(context)!.translationFailed,
+        ))
       return;
 
     setState(() {
@@ -273,7 +284,7 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to play speech'),
+              content: Text(AppLocalizations.of(context)!.failedToPlaySpeech),
               duration: const Duration(seconds: 2),
               backgroundColor: Colors.red,
             ),
@@ -284,7 +295,9 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Speech error: ${e.toString()}'),
+            content: Text(
+              '${AppLocalizations.of(context)!.speechError}: ${e.toString()}',
+            ),
             duration: const Duration(seconds: 2),
             backgroundColor: Colors.red,
           ),
@@ -667,7 +680,7 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                                       color: Colors.deepPurple,
                                     ),
                               label: Text(
-                                'Detect',
+                                AppLocalizations.of(context)!.detect,
                                 style: TextStyle(
                                   color: Colors.deepPurple,
                                   fontSize: 12,
@@ -729,10 +742,10 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                                           : Colors.deepPurple,
                                     ),
                               tooltip: isSpeakingInput
-                                  ? 'Speaking...'
+                                  ? AppLocalizations.of(context)!.speaking
                                   : isSpeakingOutput
-                                  ? 'Stop speech'
-                                  : 'Listen to text',
+                                  ? AppLocalizations.of(context)!.stopSpeech
+                                  : AppLocalizations.of(context)!.listenToText,
                             ),
                           ],
                         ),
@@ -759,7 +772,7 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                         : const Icon(Icons.translate),
                     label: Text(
                       isTranslating
-                          ? 'Translating...'
+                          ? AppLocalizations.of(context)!.translating
                           : AppLocalizations.of(context)!.translate,
                     ),
                     style: ElevatedButton.styleFrom(
@@ -808,14 +821,16 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                                   IconButton(
                                     onPressed: () => _copyToClipboard(
                                       translatedText,
-                                      'Translation',
+                                      AppLocalizations.of(context)!.translation,
                                     ),
                                     icon: Icon(
                                       Icons.copy,
                                       size: 20,
                                       color: Colors.deepPurple,
                                     ),
-                                    tooltip: 'Copy translation',
+                                    tooltip: AppLocalizations.of(
+                                      context,
+                                    )!.copyTranslation,
                                   ),
                                 ],
                               ),
@@ -838,7 +853,9 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                                     onPressed:
                                         (translatedText.isEmpty ||
                                             translatedText.startsWith(
-                                              'Translation failed',
+                                              AppLocalizations.of(
+                                                context,
+                                              )!.translationFailed,
                                             ) ||
                                             isSpeakingOutput)
                                         ? null
@@ -864,16 +881,22 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                                             color:
                                                 (translatedText.isEmpty ||
                                                     translatedText.startsWith(
-                                                      'Translation failed',
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      )!.translationFailed,
                                                     ))
                                                 ? Colors.grey
                                                 : Colors.deepPurple,
                                           ),
                                     tooltip: isSpeakingOutput
-                                        ? 'Speaking...'
+                                        ? AppLocalizations.of(context)!.speaking
                                         : isSpeakingInput
-                                        ? 'Stop speech'
-                                        : 'Listen to translation',
+                                        ? AppLocalizations.of(
+                                            context,
+                                          )!.stopSpeech
+                                        : AppLocalizations.of(
+                                            context,
+                                          )!.listenToTranslation,
                                   ),
                                 ],
                               ),
@@ -912,7 +935,9 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
-                                          'Pronunciation',
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.pronunciation,
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.deepPurple,
@@ -924,14 +949,18 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                                     IconButton(
                                       onPressed: () => _copyToClipboard(
                                         transliteratedText,
-                                        'Pronunciation',
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.pronunciation,
                                       ),
                                       icon: Icon(
                                         Icons.copy,
                                         size: 16,
                                         color: Colors.deepPurple,
                                       ),
-                                      tooltip: 'Copy pronunciation',
+                                      tooltip: AppLocalizations.of(
+                                        context,
+                                      )!.copyPronunciation,
                                     ),
                                   ],
                                 ),
@@ -955,9 +984,13 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                         if (translatedText.isNotEmpty &&
                             transliteratedText.isEmpty &&
                             isAzureConfigured &&
-                            !translatedText.startsWith('Translation failed') &&
+                            !translatedText.startsWith(
+                              AppLocalizations.of(context)!.translationFailed,
+                            ) &&
                             !translatedText.contains(
-                              'Azure credentials not configured',
+                              AppLocalizations.of(
+                                context,
+                              )!.azureCredentialsNotConfigured,
                             )) ...[
                           const SizedBox(height: 12),
                           Container(
@@ -981,7 +1014,9 @@ class _TranslatorInHomeState extends State<TranslatorInHome> {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    'Pronunciation guide not available for this language',
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.pronunciationGuideNotAvailable,
                                     style: TextStyle(
                                       color: Colors.grey.shade600,
                                       fontSize: 12,

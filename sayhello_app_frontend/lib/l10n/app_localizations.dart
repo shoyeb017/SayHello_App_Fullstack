@@ -1076,7 +1076,7 @@ abstract class AppLocalizations {
   /// **'Brightness'**
   String get brightness;
 
-  /// Notifications label
+  /// Notifications page title
   ///
   /// In en, this message translates to:
   /// **'Notifications'**
@@ -1201,24 +1201,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Just now'**
   String get justNow;
-
-  /// Minutes ago time indicator
-  ///
-  /// In en, this message translates to:
-  /// **'minutes ago'**
-  String get minutesAgo;
-
-  /// Hours ago time indicator
-  ///
-  /// In en, this message translates to:
-  /// **'hours ago'**
-  String get hoursAgo;
-
-  /// Days ago time indicator
-  ///
-  /// In en, this message translates to:
-  /// **'days ago'**
-  String get daysAgo;
 
   /// Days ago with count
   ///
@@ -1676,13 +1658,13 @@ abstract class AppLocalizations {
   /// **'Popular'**
   String get popular;
 
-  /// Tooltip for swap languages button
+  /// Swap languages tooltip
   ///
   /// In en, this message translates to:
-  /// **'Swap languages'**
+  /// **'Swap Languages'**
   String get swapLanguages;
 
-  /// Placeholder for translation input
+  /// Translation input placeholder
   ///
   /// In en, this message translates to:
   /// **'Enter text to translate'**
@@ -2258,7 +2240,7 @@ abstract class AppLocalizations {
   /// **'Edit Bio'**
   String get editBio;
 
-  /// Edit image dialog title
+  /// Edit profile image dialog title
   ///
   /// In en, this message translates to:
   /// **'Edit Image'**
@@ -2600,11 +2582,278 @@ abstract class AppLocalizations {
   /// **'{field} updated successfully!'**
   String fieldUpdated(String field);
 
-  /// No description provided for @enterCorrection.
+  /// Placeholder text for entering corrections
   ///
   /// In en, this message translates to:
   /// **'Enter correction...'**
   String get enterCorrection;
+
+  /// Message for new users
+  ///
+  /// In en, this message translates to:
+  /// **'Just joined HT'**
+  String get justJoinedHT;
+
+  /// Instruction text for greeting users
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to say Hi!'**
+  String get tapToSayHi;
+
+  /// Short form of joined text
+  ///
+  /// In en, this message translates to:
+  /// **'joined'**
+  String get joinedShort;
+
+  /// Days joined format
+  ///
+  /// In en, this message translates to:
+  /// **'{days}d joined'**
+  String daysJoined(String days);
+
+  /// Logout confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get areYouSureLogout;
+
+  /// Edit name dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Name'**
+  String get editName;
+
+  /// Name input placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name'**
+  String get enterYourName;
+
+  /// Select country dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Select Country'**
+  String get selectCountry;
+
+  /// Select learning language and level dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Select Learning Language & Level'**
+  String get selectLearningLanguageLevel;
+
+  /// Level label
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get level;
+
+  /// Detect language button
+  ///
+  /// In en, this message translates to:
+  /// **'Detect'**
+  String get detect;
+
+  /// Translation progress text
+  ///
+  /// In en, this message translates to:
+  /// **'Translating...'**
+  String get translating;
+
+  /// Translation label
+  ///
+  /// In en, this message translates to:
+  /// **'Translation'**
+  String get translation;
+
+  /// Copy translation tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Copy translation'**
+  String get copyTranslation;
+
+  /// Pronunciation label
+  ///
+  /// In en, this message translates to:
+  /// **'Pronunciation'**
+  String get pronunciation;
+
+  /// Copy pronunciation tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Copy pronunciation'**
+  String get copyPronunciation;
+
+  /// Pronunciation unavailable message
+  ///
+  /// In en, this message translates to:
+  /// **'Pronunciation guide not available for this language'**
+  String get pronunciationNotAvailable;
+
+  /// Demo mode warning message
+  ///
+  /// In en, this message translates to:
+  /// **'Demo mode: Using fallback translations. Configure Azure credentials in the service code for full functionality.'**
+  String get demoModeMessage;
+
+  /// Language detection success message
+  ///
+  /// In en, this message translates to:
+  /// **'Detected language'**
+  String get detectedLanguage;
+
+  /// Language detection failure message
+  ///
+  /// In en, this message translates to:
+  /// **'Could not detect language'**
+  String get couldNotDetectLanguage;
+
+  /// Clipboard copy confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'copied to clipboard'**
+  String get copiedToClipboard;
+
+  /// Speech playback failure message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to play speech'**
+  String get failedToPlaySpeech;
+
+  /// Speech error message
+  ///
+  /// In en, this message translates to:
+  /// **'Speech error'**
+  String get speechError;
+
+  /// Speaking status indicator
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking...'**
+  String get speaking;
+
+  /// Stop speech tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Stop speech'**
+  String get stopSpeech;
+
+  /// Listen to text tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Listen to text'**
+  String get listenToText;
+
+  /// Listen to translation tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Listen to translation'**
+  String get listenToTranslation;
+
+  /// Translation failure message
+  ///
+  /// In en, this message translates to:
+  /// **'Translation failed'**
+  String get translationFailed;
+
+  /// Language detection failure message
+  ///
+  /// In en, this message translates to:
+  /// **'Could not detect language'**
+  String get failedToDetectLanguage;
+
+  /// Pronunciation guide unavailable message
+  ///
+  /// In en, this message translates to:
+  /// **'Pronunciation guide not available for this language'**
+  String get pronunciationGuideNotAvailable;
+
+  /// Azure configuration error message
+  ///
+  /// In en, this message translates to:
+  /// **'Azure credentials not configured'**
+  String get azureCredentialsNotConfigured;
+
+  /// Unknown value label
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknown;
+
+  /// Session alert notification title
+  ///
+  /// In en, this message translates to:
+  /// **'New Session Available'**
+  String get newSessionAvailable;
+
+  /// Session scheduled notification message
+  ///
+  /// In en, this message translates to:
+  /// **'{courseName} session has been scheduled by {instructorName} on {date} at {time}. Join now to enhance your learning!'**
+  String sessionScheduled(
+    String courseName,
+    String instructorName,
+    String date,
+    String time,
+  );
+
+  /// Feedback notification title
+  ///
+  /// In en, this message translates to:
+  /// **'Course Feedback Received'**
+  String get courseFeedbackReceived;
+
+  /// Feedback received notification message
+  ///
+  /// In en, this message translates to:
+  /// **'You received a {rating} star rating for your {courseName} course from instructor {instructorName}. Keep up the excellent work!'**
+  String feedbackReceived(
+    String rating,
+    String courseName,
+    String instructorName,
+  );
+
+  /// Time ago in minutes
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes}m ago'**
+  String minutesAgo(String minutes);
+
+  /// Time ago in hours
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h ago'**
+  String hoursAgo(String hours);
+
+  /// Time ago in days
+  ///
+  /// In en, this message translates to:
+  /// **'{days}d ago'**
+  String daysAgo(String days);
+
+  /// Time ago in weeks
+  ///
+  /// In en, this message translates to:
+  /// **'{weeks}w ago'**
+  String weeksAgo(String weeks);
+
+  /// Unread notifications count message
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count} new notification{plural}'**
+  String youHaveNewNotifications(String count, String plural);
+
+  /// Empty notifications state message
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get noNotificationsYet;
+
+  /// All caught up message
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all caught up! 🎉'**
+  String get allCaughtUp;
 }
 
 class _AppLocalizationsDelegate
