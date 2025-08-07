@@ -320,7 +320,7 @@ class _StudyMaterialViewerState extends State<StudyMaterialViewer> {
             ),
             const SizedBox(height: 8),
             Text(
-              AppLocalizations.of(context)!.fileType(widget.type),
+              AppLocalizations.of(context)!.typeLabel(widget.type),
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 16),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../l10n/app_localizations.dart';
 
 class InstructorCourseDetailsTab extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -14,6 +15,7 @@ class _InstructorCourseDetailsTabState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final localizations = AppLocalizations.of(context)!;
 
     // Extract course data with fallback values
     final title = widget.course['title'] ?? 'Course Title';
@@ -50,7 +52,13 @@ class _InstructorCourseDetailsTabState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Edit Course Action - Moved to Top
-          _buildEditCourseSection(isDark, primaryColor, textColor, cardColor),
+          _buildEditCourseSection(
+            isDark,
+            primaryColor,
+            textColor,
+            cardColor,
+            localizations,
+          ),
 
           const SizedBox(height: 16),
 
@@ -67,6 +75,7 @@ class _InstructorCourseDetailsTabState
             primaryColor: primaryColor,
             textColor: textColor,
             cardColor: cardColor,
+            localizations: localizations,
           ),
 
           const SizedBox(height: 16),
@@ -81,6 +90,7 @@ class _InstructorCourseDetailsTabState
             textColor,
             subTextColor,
             cardColor,
+            localizations,
           ),
 
           const SizedBox(height: 16),
@@ -99,6 +109,7 @@ class _InstructorCourseDetailsTabState
             textColor,
             subTextColor,
             cardColor,
+            localizations,
           ),
 
           const SizedBox(height: 16),
@@ -111,6 +122,7 @@ class _InstructorCourseDetailsTabState
             textColor,
             subTextColor,
             cardColor,
+            localizations,
           ),
 
           const SizedBox(height: 16),
@@ -125,6 +137,7 @@ class _InstructorCourseDetailsTabState
             textColor,
             subTextColor,
             cardColor,
+            localizations,
           ),
 
           const SizedBox(height: 20),
@@ -145,6 +158,7 @@ class _InstructorCourseDetailsTabState
     required Color primaryColor,
     required Color textColor,
     required Color? cardColor,
+    required AppLocalizations localizations,
   }) {
     return Container(
       width: double.infinity,
@@ -198,7 +212,7 @@ class _InstructorCourseDetailsTabState
                         Icon(Icons.school, size: 40, color: Colors.white),
                         const SizedBox(height: 6),
                         Text(
-                          'Course Thumbnail',
+                          localizations.courseThumbnail,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -280,7 +294,7 @@ class _InstructorCourseDetailsTabState
                     Icon(Icons.people, size: 14, color: primaryColor),
                     const SizedBox(width: 4),
                     Text(
-                      '$enrolledStudents students',
+                      '$enrolledStudents ${localizations.studentsCount}',
                       style: TextStyle(
                         fontSize: 12,
                         color: textColor,
@@ -352,6 +366,7 @@ class _InstructorCourseDetailsTabState
     Color textColor,
     Color subTextColor,
     Color? cardColor,
+    AppLocalizations localizations,
   ) {
     return Container(
       width: double.infinity,
@@ -370,7 +385,7 @@ class _InstructorCourseDetailsTabState
       child: Row(
         children: [
           _buildStatItem(
-            'Students',
+            localizations.coursesStudents,
             enrolledStudents.toString(),
             Icons.people,
             primaryColor,
@@ -379,7 +394,7 @@ class _InstructorCourseDetailsTabState
           ),
           _buildDivider(),
           _buildStatItem(
-            'Completion',
+            localizations.completion,
             '$completionRate%',
             Icons.check_circle,
             Colors.green,
@@ -388,7 +403,7 @@ class _InstructorCourseDetailsTabState
           ),
           _buildDivider(),
           _buildStatItem(
-            'Sessions',
+            localizations.sessions,
             totalSessions.toString(),
             Icons.video_library,
             Colors.blue,
@@ -456,18 +471,39 @@ class _InstructorCourseDetailsTabState
     Color textColor,
     Color subTextColor,
     Color? cardColor,
+    AppLocalizations localizations,
   ) {
     final details = [
-      {'title': 'Category', 'value': category, 'icon': Icons.category},
-      {'title': 'Level', 'value': level, 'icon': Icons.signal_cellular_alt},
-      {'title': 'Duration', 'value': duration, 'icon': Icons.schedule},
-      {'title': 'Language', 'value': language, 'icon': Icons.language},
       {
-        'title': 'Price',
+        'title': localizations.category,
+        'value': category,
+        'icon': Icons.category,
+      },
+      {
+        'title': localizations.level,
+        'value': level,
+        'icon': Icons.signal_cellular_alt,
+      },
+      {
+        'title': localizations.duration,
+        'value': duration,
+        'icon': Icons.schedule,
+      },
+      {
+        'title': localizations.language,
+        'value': language,
+        'icon': Icons.language,
+      },
+      {
+        'title': localizations.price,
         'value': '\$${price.toStringAsFixed(0)}',
         'icon': Icons.attach_money,
       },
-      {'title': 'Starts', 'value': startDate, 'icon': Icons.calendar_today},
+      {
+        'title': localizations.starts,
+        'value': startDate,
+        'icon': Icons.calendar_today,
+      },
     ];
 
     return GridView.builder(
@@ -537,6 +573,7 @@ class _InstructorCourseDetailsTabState
     Color textColor,
     Color subTextColor,
     Color? cardColor,
+    AppLocalizations localizations,
   ) {
     return Container(
       width: double.infinity,
@@ -560,7 +597,7 @@ class _InstructorCourseDetailsTabState
               Icon(Icons.description, color: primaryColor, size: 16),
               const SizedBox(width: 6),
               Text(
-                'Course Description',
+                localizations.courseDescription,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -588,6 +625,7 @@ class _InstructorCourseDetailsTabState
     Color textColor,
     Color subTextColor,
     Color? cardColor,
+    AppLocalizations localizations,
   ) {
     return Container(
       width: double.infinity,
@@ -611,7 +649,7 @@ class _InstructorCourseDetailsTabState
               Icon(Icons.monetization_on, color: Colors.green, size: 16),
               const SizedBox(width: 6),
               Text(
-                'Revenue Analytics',
+                localizations.revenueAnalytics,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -625,7 +663,7 @@ class _InstructorCourseDetailsTabState
             children: [
               Expanded(
                 child: _buildRevenueItem(
-                  'Course Price',
+                  localizations.coursePrice,
                   '\$${price.toStringAsFixed(0)}',
                   Icons.local_offer,
                   primaryColor,
@@ -635,7 +673,7 @@ class _InstructorCourseDetailsTabState
               ),
               Expanded(
                 child: _buildRevenueItem(
-                  'Total Revenue',
+                  localizations.totalRevenue,
                   '\$${totalRevenue.toStringAsFixed(0)}',
                   Icons.account_balance_wallet,
                   Colors.green,
@@ -688,6 +726,7 @@ class _InstructorCourseDetailsTabState
     Color primaryColor,
     Color textColor,
     Color? cardColor,
+    AppLocalizations localizations,
   ) {
     return Container(
       width: double.infinity,
@@ -711,7 +750,7 @@ class _InstructorCourseDetailsTabState
               Icon(Icons.edit, color: primaryColor, size: 16),
               const SizedBox(width: 6),
               Text(
-                'Course Management',
+                localizations.courseManagement,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -726,7 +765,7 @@ class _InstructorCourseDetailsTabState
             child: ElevatedButton.icon(
               icon: Icon(Icons.edit, size: 16, color: Colors.white),
               label: Text(
-                'Edit Course Details',
+                localizations.editCourseDetails,
                 style: TextStyle(color: Colors.white, fontSize: 12),
               ),
               style: ElevatedButton.styleFrom(
@@ -739,7 +778,7 @@ class _InstructorCourseDetailsTabState
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onPressed: () => _showEditCourseDialog(),
+              onPressed: () => _showEditCourseDialog(localizations),
             ),
           ),
         ],
@@ -747,7 +786,7 @@ class _InstructorCourseDetailsTabState
     );
   }
 
-  void _showEditCourseDialog() {
+  void _showEditCourseDialog(AppLocalizations localizations) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Controllers for form fields
@@ -781,7 +820,7 @@ class _InstructorCourseDetailsTabState
         builder: (context, setState) => AlertDialog(
           backgroundColor: isDark ? Colors.grey[850] : Colors.white,
           title: Text(
-            'Edit Course Details',
+            localizations.editCourseDetailsTitle,
             style: TextStyle(
               color: isDark ? Colors.white : Colors.black,
               fontSize: 16,
@@ -793,10 +832,10 @@ class _InstructorCourseDetailsTabState
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildEditField('Title', titleController, isDark),
+                  _buildEditField(localizations.title, titleController, isDark),
                   const SizedBox(height: 12),
                   _buildEditField(
-                    'Description',
+                    localizations.description,
                     descriptionController,
                     isDark,
                     maxLines: 3,
@@ -811,7 +850,7 @@ class _InstructorCourseDetailsTabState
                     child: DropdownButtonFormField<String>(
                       value: selectedLevel,
                       decoration: InputDecoration(
-                        labelText: 'Level',
+                        labelText: localizations.level,
                         labelStyle: TextStyle(
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
                           fontSize: 12,
@@ -847,7 +886,7 @@ class _InstructorCourseDetailsTabState
                     children: [
                       Expanded(
                         child: _buildEditField(
-                          'Total Sessions',
+                          localizations.totalSessions,
                           sessionsController,
                           isDark,
                           keyboardType: TextInputType.number,
@@ -856,7 +895,7 @@ class _InstructorCourseDetailsTabState
                       const SizedBox(width: 8),
                       Expanded(
                         child: _buildEditField(
-                          'Price (\$)',
+                          localizations.priceWithSymbol,
                           priceController,
                           isDark,
                           keyboardType: TextInputType.number,
@@ -865,13 +904,17 @@ class _InstructorCourseDetailsTabState
                     ],
                   ),
                   const SizedBox(height: 12),
-                  _buildEditField('Thumbnail URL', thumbnailController, isDark),
+                  _buildEditField(
+                    localizations.thumbnailUrl,
+                    thumbnailController,
+                    isDark,
+                  ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
                         child: _buildEditField(
-                          'Start Date',
+                          localizations.startDate,
                           startDateController,
                           isDark,
                         ),
@@ -879,7 +922,7 @@ class _InstructorCourseDetailsTabState
                       const SizedBox(width: 8),
                       Expanded(
                         child: _buildEditField(
-                          'End Date',
+                          localizations.endDate,
                           endDateController,
                           isDark,
                         ),
@@ -894,7 +937,7 @@ class _InstructorCourseDetailsTabState
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
-                'Cancel',
+                localizations.cancel,
                 style: TextStyle(
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                 ),
@@ -918,18 +961,20 @@ class _InstructorCourseDetailsTabState
 
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Course details updated successfully'),
-                    backgroundColor: Color(0xFF7A54FF),
+                  SnackBar(
+                    content: Text(
+                      localizations.courseDetailsUpdatedSuccessfully,
+                    ),
+                    backgroundColor: const Color(0xFF7A54FF),
                   ),
                 );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF7A54FF),
               ),
-              child: const Text(
-                'Save Changes',
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                localizations.saveChanges,
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],

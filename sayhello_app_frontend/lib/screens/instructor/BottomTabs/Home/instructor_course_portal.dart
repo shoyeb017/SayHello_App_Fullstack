@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../l10n/app_localizations.dart';
 
 // Import instructor-specific tabs
 import 'instructor_course_details.dart';
@@ -25,14 +26,20 @@ class _InstructorCoursePortalPageState
   bool _showMiniSidebar = false;
   bool _showExpandedSidebar = false;
 
-  List<_TabItem> get _tabs => [
-    const _TabItem(icon: Icons.info_outline, label: 'Course Details'),
-    const _TabItem(icon: Icons.video_call, label: 'Online Sessions'),
-    const _TabItem(icon: Icons.ondemand_video, label: 'Recorded Classes'),
-    const _TabItem(icon: Icons.description, label: 'Study Materials'),
-    const _TabItem(icon: Icons.chat, label: 'Group Chat'),
-    const _TabItem(icon: Icons.analytics, label: 'Feedback'),
-  ];
+  List<_TabItem> _getTabs(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    return [
+      _TabItem(icon: Icons.info_outline, label: localizations.courseDetails),
+      _TabItem(icon: Icons.video_call, label: localizations.onlineSessions),
+      _TabItem(
+        icon: Icons.ondemand_video,
+        label: localizations.recordedClasses,
+      ),
+      _TabItem(icon: Icons.description, label: localizations.studyMaterials),
+      _TabItem(icon: Icons.chat, label: localizations.groupChat),
+      _TabItem(icon: Icons.analytics, label: localizations.feedback),
+    ];
+  }
 
   void _onTabTap(int index) {
     setState(() {
@@ -82,6 +89,8 @@ class _InstructorCoursePortalPageState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = widget.course['title'] ?? 'Course';
+    final localizations = AppLocalizations.of(context)!;
+    final tabs = _getTabs(context);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -108,7 +117,7 @@ class _InstructorCoursePortalPageState
                 }
               });
             },
-            tooltip: 'Navigation Menu',
+            tooltip: localizations.navigationMenu,
           ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,7 +132,7 @@ class _InstructorCoursePortalPageState
                 maxLines: 1,
               ),
               Text(
-                'Instructor Portal',
+                localizations.instructorPortal,
                 style: TextStyle(
                   fontSize: 10,
                   color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
@@ -139,12 +148,12 @@ class _InstructorCoursePortalPageState
                 color: isDark ? Colors.white : Colors.black,
               ),
               onPressed: () => _showInstructorSettings(),
-              tooltip: 'Instructor Settings',
+              tooltip: localizations.instructorSettings,
             ),
             IconButton(
               icon: const Icon(Icons.close),
               onPressed: () => Navigator.of(context).pop(),
-              tooltip: 'Close Course',
+              tooltip: localizations.closeCourse,
             ),
           ],
         ),
@@ -171,9 +180,9 @@ class _InstructorCoursePortalPageState
                 controller: _tabScrollController,
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: _tabs.length,
+                itemCount: tabs.length,
                 itemBuilder: (context, index) {
-                  final tab = _tabs[index];
+                  final tab = tabs[index];
                   final isSelected = index == _selectedIndex;
 
                   return GestureDetector(
@@ -296,9 +305,9 @@ class _InstructorCoursePortalPageState
                     Expanded(
                       child: ListView.builder(
                         padding: const EdgeInsets.symmetric(vertical: 8),
-                        itemCount: _tabs.length,
+                        itemCount: tabs.length,
                         itemBuilder: (context, index) {
-                          final tab = _tabs[index];
+                          final tab = tabs[index];
                           final isSelected = index == _selectedIndex;
 
                           return Container(
@@ -428,8 +437,8 @@ class _InstructorCoursePortalPageState
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Instructor Portal',
-                            style: TextStyle(
+                            localizations.instructorPortal,
+                            style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 14,
                             ),
@@ -440,12 +449,12 @@ class _InstructorCoursePortalPageState
                             children: [
                               _buildStatItem(
                                 '${widget.course['enrolledStudents'] ?? 0}',
-                                'Students',
+                                localizations.students,
                               ),
                               const SizedBox(width: 16),
                               _buildStatItem(
                                 '${widget.course['completionRate'] ?? 0}%',
-                                'Completion',
+                                localizations.completion,
                               ),
                             ],
                           ),
@@ -457,9 +466,9 @@ class _InstructorCoursePortalPageState
                     Expanded(
                       child: ListView.builder(
                         padding: const EdgeInsets.all(16),
-                        itemCount: _tabs.length,
+                        itemCount: tabs.length,
                         itemBuilder: (context, index) {
-                          final tab = _tabs[index];
+                          final tab = tabs[index];
                           final isSelected = index == _selectedIndex;
 
                           return Container(
@@ -601,6 +610,7 @@ class _InstructorCoursePortalPageState
 
   void _showInstructorSettings() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final localizations = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
@@ -608,7 +618,7 @@ class _InstructorCoursePortalPageState
         return AlertDialog(
           backgroundColor: isDark ? Colors.grey[850] : Colors.white,
           title: Text(
-            'Instructor Settings',
+            localizations.instructorSettings,
             style: TextStyle(color: isDark ? Colors.white : Colors.black),
           ),
           content: Column(
@@ -620,14 +630,16 @@ class _InstructorCoursePortalPageState
                   color: Color(0xFF7A54FF),
                 ),
                 title: Text(
-                  'Notification Preferences',
+                  localizations.notificationPreferences,
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 ),
                 onTap: () {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Notification settings coming soon'),
+                    SnackBar(
+                      content: Text(
+                        localizations.notificationSettingsComingSoon,
+                      ),
                     ),
                   );
                 },
@@ -635,14 +647,16 @@ class _InstructorCoursePortalPageState
               ListTile(
                 leading: const Icon(Icons.schedule, color: Color(0xFF7A54FF)),
                 title: Text(
-                  'Office Hours',
+                  localizations.officeHours,
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 ),
                 onTap: () {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Office hours settings coming soon'),
+                    SnackBar(
+                      content: Text(
+                        localizations.officeHoursSettingsComingSoon,
+                      ),
                     ),
                   );
                 },
@@ -650,14 +664,14 @@ class _InstructorCoursePortalPageState
               ListTile(
                 leading: const Icon(Icons.language, color: Color(0xFF7A54FF)),
                 title: Text(
-                  'Language & Region',
+                  localizations.languageAndRegion,
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 ),
                 onTap: () {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Language settings coming soon'),
+                    SnackBar(
+                      content: Text(localizations.languageSettingsComingSoon),
                     ),
                   );
                 },
@@ -667,9 +681,9 @@ class _InstructorCoursePortalPageState
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
-                'Close',
-                style: TextStyle(color: Color(0xFF7A54FF)),
+              child: Text(
+                localizations.close,
+                style: const TextStyle(color: Color(0xFF7A54FF)),
               ),
             ),
           ],

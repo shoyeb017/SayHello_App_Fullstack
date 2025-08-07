@@ -18,26 +18,38 @@ class _UnenrolledCourseDetailsPageState
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Extract all course data with fallback values - matching course_details.dart
-    final title = widget.course['title'] ?? 'Course Title';
+    final title =
+        widget.course['title'] ?? localizations.courseDetailsFallbackTitle;
     final description =
         widget.course['description'] ??
-        'This is a comprehensive course designed to help you master the language.';
-    final language = widget.course['language'] ?? 'English';
-    final level = widget.course['level'] ?? 'Beginner';
-    final instructor = widget.course['instructor'] ?? 'John Doe';
+        localizations.courseDetailsFallbackDescription;
+    final language =
+        widget.course['language'] ??
+        localizations.courseDetailsFallbackLanguage;
+    final level =
+        widget.course['level'] ?? localizations.courseDetailsFallbackLevel;
+    final instructor =
+        widget.course['instructor'] ??
+        localizations.courseDetailsFallbackInstructor;
     final startDate = widget.course['startDate'] ?? '2025-07-15';
     final endDate = widget.course['endDate'] ?? '2025-09-15';
-    final duration = widget.course['duration'] ?? '4 weeks';
-    final status = widget.course['status'] ?? 'active';
+    final duration =
+        widget.course['duration'] ??
+        localizations.courseDetailsFallbackDuration;
+    final status =
+        widget.course['status'] ?? localizations.courseDetailsFallbackStatus;
     final rating = widget.course['rating'] ?? 4.7;
     final enrolledStudents = widget.course['students'] ?? 42;
     final price =
         double.tryParse(widget.course['price']?.toString() ?? '49.99') ?? 49.99;
     final thumbnail = widget.course['thumbnail'] ?? '';
-    final category = widget.course['category'] ?? 'Language';
+    final category =
+        widget.course['category'] ??
+        localizations.courseDetailsFallbackCategory;
     final totalSessions = widget.course['totalSessions'] ?? 20;
 
     // Consistent color scheme with new theme
@@ -104,6 +116,7 @@ class _UnenrolledCourseDetailsPageState
                     textColor,
                     subTextColor,
                     cardColor,
+                    localizations,
                   ),
 
                   const SizedBox(height: 20),
@@ -119,6 +132,7 @@ class _UnenrolledCourseDetailsPageState
                     textColor,
                     subTextColor,
                     cardColor,
+                    localizations,
                   ),
 
                   const SizedBox(height: 20),
@@ -130,6 +144,7 @@ class _UnenrolledCourseDetailsPageState
                     textColor,
                     subTextColor,
                     cardColor,
+                    localizations,
                   ),
 
                   const SizedBox(height: 20),
@@ -141,6 +156,7 @@ class _UnenrolledCourseDetailsPageState
                     textColor,
                     subTextColor,
                     cardColor,
+                    localizations,
                   ),
 
                   const SizedBox(height: 100), // Space for floating button
@@ -150,7 +166,13 @@ class _UnenrolledCourseDetailsPageState
           ),
 
           // Enhanced Enrollment Action Bar
-          _buildEnhancedEnrollmentBar(price, isDark, primaryColor, textColor),
+          _buildEnhancedEnrollmentBar(
+            price,
+            isDark,
+            primaryColor,
+            textColor,
+            localizations,
+          ),
         ],
       ),
     );
@@ -330,7 +352,9 @@ class _UnenrolledCourseDetailsPageState
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        'by $instructor',
+                        AppLocalizations.of(
+                          context,
+                        )!.courseDetailsInstructorBy(instructor),
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.9),
                           fontSize: 12,
@@ -401,12 +425,13 @@ class _UnenrolledCourseDetailsPageState
     Color textColor,
     Color subTextColor,
     Color? cardColor,
+    AppLocalizations localizations,
   ) {
     return Row(
       children: [
         Expanded(
           child: _buildInfoPill(
-            'Language',
+            localizations.courseDetailsLanguageLabel,
             language,
             Icons.language,
             primaryColor,
@@ -416,7 +441,7 @@ class _UnenrolledCourseDetailsPageState
         const SizedBox(width: 12),
         Expanded(
           child: _buildInfoPill(
-            'Sessions',
+            localizations.courseDetailsSessionsLabel,
             totalSessions.toString(),
             Icons.video_library,
             Colors.blue,
@@ -426,7 +451,7 @@ class _UnenrolledCourseDetailsPageState
         const SizedBox(width: 12),
         Expanded(
           child: _buildInfoPill(
-            'Students',
+            localizations.courseDetailsStudentsLabel,
             enrolledStudents.toString(),
             Icons.people,
             Colors.orange,
@@ -489,6 +514,7 @@ class _UnenrolledCourseDetailsPageState
     Color textColor,
     Color subTextColor,
     Color? cardColor,
+    AppLocalizations localizations,
   ) {
     return Container(
       width: double.infinity,
@@ -508,7 +534,7 @@ class _UnenrolledCourseDetailsPageState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Course Overview',
+            localizations.courseDetailsOverviewTitle,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -537,7 +563,7 @@ class _UnenrolledCourseDetailsPageState
                     Icon(Icons.calendar_today, color: primaryColor, size: 18),
                     const SizedBox(width: 8),
                     Text(
-                      'Course Timeline',
+                      localizations.courseDetailsTimelineTitle,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -554,7 +580,7 @@ class _UnenrolledCourseDetailsPageState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Start Date',
+                            localizations.courseDetailsStartDateLabel,
                             style: TextStyle(fontSize: 10, color: subTextColor),
                           ),
                           const SizedBox(height: 4),
@@ -579,7 +605,7 @@ class _UnenrolledCourseDetailsPageState
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'End Date',
+                            localizations.courseDetailsEndDateLabel,
                             style: TextStyle(fontSize: 10, color: subTextColor),
                           ),
                           const SizedBox(height: 4),
@@ -605,7 +631,7 @@ class _UnenrolledCourseDetailsPageState
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    'Duration: $duration • Level: $level',
+                    localizations.courseDetailsDurationLevel(duration, level),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 11,
@@ -630,6 +656,7 @@ class _UnenrolledCourseDetailsPageState
     Color textColor,
     Color subTextColor,
     Color? cardColor,
+    AppLocalizations localizations,
   ) {
     return Container(
       width: double.infinity,
@@ -680,7 +707,7 @@ class _UnenrolledCourseDetailsPageState
           ),
           const SizedBox(height: 6),
           Text(
-            'Expert Language Instructor',
+            localizations.courseDetailsInstructorTitle,
             style: TextStyle(
               fontSize: 12,
               color: primaryColor,
@@ -689,7 +716,7 @@ class _UnenrolledCourseDetailsPageState
           ),
           const SizedBox(height: 14),
           Text(
-            'Experienced educator with over 8 years of teaching experience. Specializes in modern language learning techniques.',
+            localizations.courseDetailsInstructorDescription,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 11, color: subTextColor, height: 1.4),
           ),
@@ -699,14 +726,19 @@ class _UnenrolledCourseDetailsPageState
             children: [
               _buildInstructorStat(
                 '8+',
-                'Years Exp.',
+                localizations.courseDetailsInstructorYearsExp,
                 Icons.school,
                 primaryColor,
               ),
-              _buildInstructorStat('4.8', 'Rating', Icons.star, Colors.amber),
+              _buildInstructorStat(
+                '4.8',
+                localizations.courseDetailsInstructorRating,
+                Icons.star,
+                Colors.amber,
+              ),
               _buildInstructorStat(
                 '1.2K',
-                'Students',
+                localizations.courseDetailsInstructorStudents,
                 Icons.people,
                 Colors.blue,
               ),
@@ -748,6 +780,7 @@ class _UnenrolledCourseDetailsPageState
     Color textColor,
     Color subTextColor,
     Color? cardColor,
+    AppLocalizations localizations,
   ) {
     return Container(
       width: double.infinity,
@@ -771,7 +804,7 @@ class _UnenrolledCourseDetailsPageState
               Icon(Icons.feedback, color: Colors.amber, size: 20),
               const SizedBox(width: 10),
               Text(
-                'Student Feedback',
+                localizations.courseDetailsFeedbackTitle,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -823,7 +856,7 @@ class _UnenrolledCourseDetailsPageState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Highly Rated Course',
+                      localizations.courseDetailsHighlyRated,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -832,7 +865,7 @@ class _UnenrolledCourseDetailsPageState
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Based on 124+ student reviews',
+                      localizations.courseDetailsReviewsCount,
                       style: TextStyle(fontSize: 10, color: subTextColor),
                     ),
                     const SizedBox(height: 6),
@@ -849,7 +882,7 @@ class _UnenrolledCourseDetailsPageState
                         ),
                       ),
                       child: Text(
-                        '95% Satisfaction Rate',
+                        localizations.courseDetailsSatisfactionRate,
                         style: TextStyle(
                           fontSize: 9,
                           color: primaryColor,
@@ -873,6 +906,7 @@ class _UnenrolledCourseDetailsPageState
     bool isDark,
     Color primaryColor,
     Color textColor,
+    AppLocalizations localizations,
   ) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -912,7 +946,7 @@ class _UnenrolledCourseDetailsPageState
                     ),
                   ),
                   Text(
-                    'One-time Payment',
+                    localizations.courseDetailsOneTimePayment,
                     style: TextStyle(
                       fontSize: 9,
                       color: primaryColor.withOpacity(0.8),
@@ -965,7 +999,7 @@ class _UnenrolledCourseDetailsPageState
                       Icon(Icons.school, size: 18),
                       const SizedBox(width: 6),
                       Text(
-                        'Enroll Now',
+                        localizations.courseDetailsEnrollNow,
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,

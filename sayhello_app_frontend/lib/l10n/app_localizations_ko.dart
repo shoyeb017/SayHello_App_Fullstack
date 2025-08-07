@@ -51,7 +51,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get instructorSignIn => '강사 로그인';
 
   @override
-  String get welcomeBack => '다시 오신 것을 환영합니다';
+  String get welcomeBack => '돌아오신 것을 환영합니다!';
 
   @override
   String get signInToContinue => '학습을 계속하려면 로그인하세요.';
@@ -375,7 +375,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get failed => '실패';
 
   @override
-  String get confirm => 'Confirm';
+  String get confirm => '확인';
 
   @override
   String get yes => 'Yes';
@@ -387,7 +387,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get ok => 'OK';
 
   @override
-  String get close => 'Close';
+  String get close => '닫기';
 
   @override
   String get open => 'Open';
@@ -402,7 +402,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get remove => 'Remove';
 
   @override
-  String get update => 'Update';
+  String get update => '업데이트';
 
   @override
   String get refresh => 'Refresh';
@@ -438,7 +438,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get receive => 'Receive';
 
   @override
-  String get upload => 'Upload';
+  String get upload => '업로드';
 
   @override
   String get download => '다운로드';
@@ -471,7 +471,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get complete => '완료';
 
   @override
-  String get start => 'Start';
+  String get start => '시작';
 
   @override
   String get stop => 'Stop';
@@ -842,7 +842,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get findPartners => '파트너 찾기';
 
   @override
-  String get all => '모두';
+  String get all => '전체';
 
   @override
   String get seriousLearners => '진지한 학습자';
@@ -903,7 +903,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get students => '학생';
 
   @override
-  String get completed => '완료됨';
+  String get completed => '완료';
 
   @override
   String get inProgress => '진행 중';
@@ -918,21 +918,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get instructor => '강사';
 
   @override
-  String get courseDescription => '코스 설명';
+  String get courseDescription => '강의 설명';
 
   @override
   String get duration => '기간';
 
   @override
-  String get startDate => '시작일';
+  String get startDate => '시작 날짜';
 
   @override
-  String get endDate => '종료일';
+  String get endDate => '종료 날짜';
 
   @override
-  String price(String price) {
-    return '₩$price';
-  }
+  String get price => '가격';
 
   @override
   String get enrollFor => '등록하기';
@@ -941,7 +939,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get enrolledSuccessfully => '성공적으로 등록되었습니다!';
 
   @override
-  String get courseDetails => '강좌 상세';
+  String get courseDetails => '강의 상세정보';
 
   @override
   String get onlineSessions => '온라인 세션';
@@ -965,7 +963,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get totalSize => '총 크기';
 
   @override
-  String get loadingVideoMetadata => '비디오 메타데이터 로딩 중...';
+  String get loadingVideoMetadata => '동영상 메타데이터 로딩 중...';
 
   @override
   String completeProgress(int percent) {
@@ -973,7 +971,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get failedToLoadVideoMetadata => '비디오 메타데이터 로딩 실패';
+  String get failedToLoadVideoMetadata => '동영상 메타데이터 로드 실패';
 
   @override
   String get noVideosAvailable => '사용 가능한 비디오 없음';
@@ -1020,7 +1018,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get loadingVideoPlayer => '비디오 플레이어 로딩 중...';
+  String get loadingVideoPlayer => '동영상 플레이어 로딩 중...';
 
   @override
   String videoDurationSize(String duration, String size) {
@@ -1031,9 +1029,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get videoInformation => '동영상 정보';
 
   @override
-  String videoTitle(String title) {
-    return '$title';
-  }
+  String get videoTitle => '동영상 제목';
 
   @override
   String videoDurationInfo(String duration) {
@@ -1095,7 +1091,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get downloadAndAccessMaterials => '강좌 자료를 다운로드하고 접근하세요';
 
   @override
-  String get total => '총계';
+  String get total => '총';
 
   @override
   String get pdfs => 'PDF';
@@ -1104,10 +1100,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get images => '이미지';
 
   @override
-  String get showMore => '더보기';
+  String get showMore => '더 보기';
 
   @override
-  String get showLess => '접기';
+  String get showLess => '적게 보기';
 
   @override
   String get untitledMaterial => '제목 없는 자료';
@@ -1130,9 +1126,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get downloadConfirmation => '브라우저에서 파일을 열어 다운로드합니다.';
 
   @override
-  String fileType(String type) {
-    return '유형: $type';
-  }
+  String get fileType => '파일 유형';
 
   @override
   String get browserHandleDownload => '브라우저가 기본 다운로드 폴더로 다운로드를 처리합니다.';
@@ -1159,7 +1153,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get downloadInstructions => '다운로드 지침';
 
   @override
-  String get linkCopiedToClipboard => '다운로드 링크가 클립보드에 복사되었습니다:';
+  String linkCopiedToClipboard(String item) {
+    return '$item이(가) 클립보드에 복사되었습니다';
+  }
 
   @override
   String get toDownload => '다운로드 방법:';
@@ -1224,7 +1220,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get openingDocumentInBrowser => '브라우저에서 문서 열기 중...';
 
   @override
-  String get errorOpeningBrowser => '브라우저 열기 오류. 링크가 클립보드에 복사되었습니다.';
+  String get errorOpeningBrowser => '브라우저를 여는 중 오류가 발생했습니다. 링크가 클립보드에 복사되었습니다.';
 
   @override
   String linkCopiedToClipboardViewer(String label) {
@@ -1243,7 +1239,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get groupChat => '그룹 채팅';
 
   @override
-  String get progress => '진행 상황';
+  String get progress => '진도';
 
   @override
   String get yourLearningJourney => '당신의 학습 여정';
@@ -1270,7 +1266,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get allOtherCourses => '모든 기타 강좌';
 
   @override
-  String get noCoursesFound => '코스를 찾을 수 없습니다';
+  String get noCoursesFound => '강의를 찾을 수 없습니다';
 
   @override
   String get liveSessions => '라이브 세션';
@@ -1279,7 +1275,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get joinInteractiveSessions => '강사와 함께하는 대화형 세션에 참여하세요';
 
   @override
-  String get totalSessions => '총 세션';
+  String get totalSessions => '총 세션 수';
 
   @override
   String get attended => '참석함';
@@ -1578,7 +1574,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get selectLearningLanguageLevel => '학습 언어 및 레벨 선택';
 
   @override
-  String get level => '레벨';
+  String get level => '수준';
 
   @override
   String get detect => '감지';
@@ -1710,7 +1706,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get searchYourCourseHere => '여기서 코스를 검색하세요...';
 
   @override
-  String get myCourses => '내 코스';
+  String get myCourses => '내 강의';
 
   @override
   String get levelCategory => '레벨 카테고리';
@@ -1746,7 +1742,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get coursesCompleted => '완료';
 
   @override
-  String get expired => '만료됨';
+  String get expired => '만료';
 
   @override
   String get noEnrolledCourses => '등록된 코스가 없습니다';
@@ -1761,7 +1757,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get upcoming => '예정';
 
   @override
-  String get active => '활성';
+  String get active => '진행중';
 
   @override
   String get showPopularOnly => '인기 코스만 표시';
@@ -1775,10 +1771,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get courseDefault => '코스';
 
   @override
-  String get navigationMenu => '네비게이션 메뉴';
+  String get navigationMenu => '내비게이션 메뉴';
 
   @override
-  String get closeCourse => '코스 닫기';
+  String get closeCourse => '강의 닫기';
 
   @override
   String get totalStat => '전체';
@@ -1813,8 +1809,8 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String failedToCopy(String label) {
-    return '$label 복사 실패';
+  String failedToCopy(String item) {
+    return '$item 복사에 실패했습니다';
   }
 
   @override
@@ -1903,7 +1899,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get instructorCourses => '강의';
 
   @override
-  String get instructorRating => '평점';
+  String get instructorRating => '강사 평점';
 
   @override
   String courseBy(String instructor) {
@@ -1936,7 +1932,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get noRating => '평가 없음';
+  String get noRating => '평점 없음';
 
   @override
   String get yourCourseFeedback => '귀하의 코스 피드백';
@@ -2081,7 +2077,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get playbackQualityAuto => 'Auto';
 
   @override
-  String get retryButton => '다시 시도';
+  String get retryButton => '재시도';
 
   @override
   String get qualityAuto => '자동';
@@ -2172,5 +2168,999 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String chatTimestampMinutesAgo(int count) {
     return '$count분 전';
+  }
+
+  @override
+  String get paymentCompletePurchase => '구매 완료';
+
+  @override
+  String get paymentCourseFallback => '과정';
+
+  @override
+  String get paymentInstructorFallback => '강사';
+
+  @override
+  String paymentCourseBy(String instructor) {
+    return '강사: $instructor';
+  }
+
+  @override
+  String get paymentMethod => '결제 방법';
+
+  @override
+  String get paymentCreditDebitCard => '신용/체크카드';
+
+  @override
+  String get paymentPayPal => '페이팔';
+
+  @override
+  String get paymentCardInformation => '카드 정보';
+
+  @override
+  String get paymentCardNumber => '카드 번호';
+
+  @override
+  String get paymentCardNumberHint => '1234 5678 9012 3456';
+
+  @override
+  String get paymentExpiryDate => '유효 기한';
+
+  @override
+  String get paymentExpiryHint => 'MM/YY';
+
+  @override
+  String get paymentCVV => 'CVV';
+
+  @override
+  String get paymentCVVHint => '123';
+
+  @override
+  String get paymentBillingInformation => '청구 정보';
+
+  @override
+  String get paymentCardholderName => '카드 소유자 이름';
+
+  @override
+  String get paymentCardholderNameHint => '김철수';
+
+  @override
+  String get paymentEmailAddress => '이메일 주소';
+
+  @override
+  String get paymentEmailHint => 'kim@example.com';
+
+  @override
+  String get paymentOrderSummary => '주문 요약';
+
+  @override
+  String get paymentCoursePrice => '과정 가격';
+
+  @override
+  String get paymentTax => '세금 (10%)';
+
+  @override
+  String get paymentTotal => '총액';
+
+  @override
+  String get paymentProcessing => '처리 중...';
+
+  @override
+  String paymentPay(String amount) {
+    return '$amount 결제';
+  }
+
+  @override
+  String get paymentProcessingPayPal => '페이팔 결제 처리 중...';
+
+  @override
+  String get paymentSuccessTitle => '결제 완료!';
+
+  @override
+  String paymentSuccessMessage(String courseTitle) {
+    return '$courseTitle에 오신 것을 환영합니다!\n이제 모든 강의 자료에 액세스할 수 있습니다.';
+  }
+
+  @override
+  String get paymentStartLearning => '학습 시작';
+
+  @override
+  String get paymentErrorCardNumber => '카드 번호를 입력해주세요';
+
+  @override
+  String get paymentErrorInvalidCard => '유효한 카드 번호를 입력해주세요';
+
+  @override
+  String get paymentErrorRequired => '필수';
+
+  @override
+  String get paymentErrorInvalidDate => '잘못된 날짜';
+
+  @override
+  String get paymentErrorInvalidCVV => '잘못된 CVV';
+
+  @override
+  String get paymentErrorCardholderName => '카드 소유자 이름을 입력해주세요';
+
+  @override
+  String get paymentErrorEmail => '이메일 주소를 입력해주세요';
+
+  @override
+  String get paymentErrorInvalidEmail => '유효한 이메일을 입력해주세요';
+
+  @override
+  String get courseDetailsFallbackTitle => '코스 제목';
+
+  @override
+  String get courseDetailsFallbackDescription =>
+      '이것은 언어를 마스터하는데 도움이 되도록 설계된 종합적인 과정입니다.';
+
+  @override
+  String get courseDetailsFallbackLanguage => '한국어';
+
+  @override
+  String get courseDetailsFallbackLevel => '초급';
+
+  @override
+  String get courseDetailsFallbackInstructor => '김철수';
+
+  @override
+  String get courseDetailsFallbackDuration => '4주';
+
+  @override
+  String get courseDetailsFallbackStatus => '활성';
+
+  @override
+  String get courseDetailsFallbackCategory => '언어';
+
+  @override
+  String courseDetailsInstructorBy(String instructor) {
+    return '$instructor에 의한';
+  }
+
+  @override
+  String get courseDetailsLanguageLabel => '언어';
+
+  @override
+  String get courseDetailsSessionsLabel => '세션';
+
+  @override
+  String get courseDetailsStudentsLabel => '학생';
+
+  @override
+  String get courseDetailsOverviewTitle => '코스 개요';
+
+  @override
+  String get courseDetailsTimelineTitle => '코스 일정';
+
+  @override
+  String get courseDetailsStartDateLabel => '시작일';
+
+  @override
+  String get courseDetailsEndDateLabel => '종료일';
+
+  @override
+  String courseDetailsDurationLevel(String duration, String level) {
+    return '기간: $duration • 레벨: $level';
+  }
+
+  @override
+  String get courseDetailsInstructorTitle => '전문 언어 강사';
+
+  @override
+  String get courseDetailsInstructorDescription =>
+      '8년 이상의 교육 경험을 가진 숙련된 교육자입니다. 현대적인 언어 학습 기법을 전문으로 합니다.';
+
+  @override
+  String get courseDetailsInstructorYearsExp => '경력 연수';
+
+  @override
+  String get courseDetailsInstructorRating => '평점';
+
+  @override
+  String get courseDetailsInstructorStudents => '학생 수';
+
+  @override
+  String get courseDetailsFeedbackTitle => '학생 피드백';
+
+  @override
+  String get courseDetailsHighlyRated => '높은 평가의 코스';
+
+  @override
+  String get courseDetailsReviewsCount => '124개 이상의 학생 리뷰 기반';
+
+  @override
+  String get courseDetailsSatisfactionRate => '95% 만족도';
+
+  @override
+  String get courseDetailsOneTimePayment => '일회성 결제';
+
+  @override
+  String get courseDetailsEnrollNow => '지금 등록';
+
+  @override
+  String get instructorProfile => '프로필';
+
+  @override
+  String instructorYearsExp(int years) {
+    return '$years년 경력';
+  }
+
+  @override
+  String get instructorStatsCourses => '코스';
+
+  @override
+  String get instructorStatsStudents => '학생';
+
+  @override
+  String get instructorStatsRating => '평점';
+
+  @override
+  String get instructorPersonalInfo => '개인 정보';
+
+  @override
+  String get instructorProfessionalInfo => '전문 정보';
+
+  @override
+  String get instructorLanguages => '언어';
+
+  @override
+  String get instructorAboutMe => '자기소개';
+
+  @override
+  String get instructorEmail => '이메일';
+
+  @override
+  String get instructorDateOfBirth => '생년월일';
+
+  @override
+  String get instructorGender => '성별';
+
+  @override
+  String get instructorCountry => '국가';
+
+  @override
+  String get instructorYearsOfExperience => '경력 연수';
+
+  @override
+  String instructorYearsFormat(int years) {
+    return '$years년';
+  }
+
+  @override
+  String get instructorNativeLanguage => '모국어';
+
+  @override
+  String get instructorTeachingLanguage => '교육 언어';
+
+  @override
+  String get instructorEditProfileImage => '프로필 이미지 편집';
+
+  @override
+  String get instructorTakePhoto => '사진 촬영';
+
+  @override
+  String get instructorSelectFromGallery => '갤러리에서 선택';
+
+  @override
+  String get instructorEnterImageUrl => '이미지 URL 입력';
+
+  @override
+  String get instructorCameraFeatureMessage => '카메라 기능이 구현될 예정입니다';
+
+  @override
+  String get instructorGalleryFeatureMessage => '갤러리 기능이 구현될 예정입니다';
+
+  @override
+  String instructorEditTitle(String field) {
+    return '$field 편집';
+  }
+
+  @override
+  String instructorEnterField(String field) {
+    return '$field 입력';
+  }
+
+  @override
+  String get instructorCancel => '취소';
+
+  @override
+  String get instructorSave => '저장';
+
+  @override
+  String instructorFieldUpdated(String field) {
+    return '$field이(가) 성공적으로 업데이트되었습니다';
+  }
+
+  @override
+  String get instructorEditBio => '자기소개 편집';
+
+  @override
+  String get instructorBioPlaceholder => '당신에 대해 알려주세요...';
+
+  @override
+  String get instructorBioUpdated => '자기소개가 성공적으로 업데이트되었습니다';
+
+  @override
+  String get instructorDateOfBirthUpdated => '생년월일이 성공적으로 업데이트되었습니다';
+
+  @override
+  String get instructorSelectGender => '성별 선택';
+
+  @override
+  String get instructorGenderUpdated => '성별이 성공적으로 업데이트되었습니다';
+
+  @override
+  String get instructorSelectCountry => '국가 선택';
+
+  @override
+  String get instructorCountryUpdated => '국가가 성공적으로 업데이트되었습니다';
+
+  @override
+  String get instructorSelectNativeLanguage => '모국어 선택';
+
+  @override
+  String get instructorSelectTeachingLanguage => '교육 언어 선택';
+
+  @override
+  String get instructorNativeLanguageUpdated => '모국어가 성공적으로 업데이트되었습니다';
+
+  @override
+  String get instructorTeachingLanguageUpdated => '교육 언어가 성공적으로 업데이트되었습니다';
+
+  @override
+  String get instructorExperienceUpdated => '경력이 성공적으로 업데이트되었습니다';
+
+  @override
+  String get instructorLogout => '로그아웃';
+
+  @override
+  String get instructorLogoutConfirm => '로그아웃 하시겠습니까?';
+
+  @override
+  String get revenueDashboard => '수익 대시보드';
+
+  @override
+  String get revenueWeekly => '주간';
+
+  @override
+  String get revenueMonthly => '월간';
+
+  @override
+  String get revenueThisYear => '올해';
+
+  @override
+  String get revenueTotalCourses => '총 과정 수';
+
+  @override
+  String get revenueWeeklyTrend => '주간 수익 동향';
+
+  @override
+  String get revenueTotal => '총액';
+
+  @override
+  String get revenuePeak => '최고점';
+
+  @override
+  String get revenueCourseIncome => '과정 수입';
+
+  @override
+  String get revenueShowLess => '간단히 보기';
+
+  @override
+  String get revenueViewAll => '모두 보기';
+
+  @override
+  String get revenuePrice => '가격';
+
+  @override
+  String get revenueEnrolled => '등록됨';
+
+  @override
+  String get revenueTransactionHistory => '거래 내역';
+
+  @override
+  String get revenueWithdrawal => '출금';
+
+  @override
+  String get revenuePaymentOverview => '결제 개요';
+
+  @override
+  String get revenueAvailableBalance => '사용 가능한 잔액';
+
+  @override
+  String get revenueWithdrawButton => '출금';
+
+  @override
+  String get revenueTotalEarned => '총 수익';
+
+  @override
+  String get revenueWithdrawn => '출금됨';
+
+  @override
+  String get withdrawMoney => '출금하기';
+
+  @override
+  String get availableBalance => '사용 가능한 잔액';
+
+  @override
+  String get withdrawalAmount => '출금 금액';
+
+  @override
+  String get enterAmountToWithdraw => '출금할 금액을 입력하세요';
+
+  @override
+  String get pleaseEnterWithdrawalAmount => '출금 금액을 입력해주세요';
+
+  @override
+  String get pleaseEnterValidAmount => '유효한 금액을 입력해주세요';
+
+  @override
+  String get amountMustBeGreaterThanZero => '금액은 0보다 커야 합니다';
+
+  @override
+  String get amountExceedsAvailableBalance => '금액이 사용 가능한 잔액을 초과합니다';
+
+  @override
+  String get minimumWithdrawalAmountIs => '최소 출금 금액은 \$10입니다';
+
+  @override
+  String get quickAmount50 => '\$50';
+
+  @override
+  String get quickAmount100 => '\$100';
+
+  @override
+  String get quickAmountMax => '최대';
+
+  @override
+  String get bankInformation => '은행 정보';
+
+  @override
+  String get accountHolderName => '계좌 명의인';
+
+  @override
+  String get enterFullNameAsOnBankAccount => '은행 계좌의 명의인 성명을 입력하세요';
+
+  @override
+  String get pleaseEnterAccountHolderName => '계좌 명의인을 입력해주세요';
+
+  @override
+  String get bankName => '은행명';
+
+  @override
+  String get enterYourBankName => '은행명을 입력하세요';
+
+  @override
+  String get pleaseEnterBankName => '은행명을 입력해주세요';
+
+  @override
+  String get accountNumber => '계좌번호';
+
+  @override
+  String get enterYourAccountNumber => '계좌번호를 입력하세요';
+
+  @override
+  String get pleaseEnterAccountNumber => '계좌번호를 입력해주세요';
+
+  @override
+  String get accountNumberMustBeAtLeast8Digits => '계좌번호는 최소 8자리여야 합니다';
+
+  @override
+  String get routingNumber => '라우팅 번호';
+
+  @override
+  String get enter9DigitRoutingNumber => '9자리 라우팅 번호를 입력하세요';
+
+  @override
+  String get pleaseEnterRoutingNumber => '라우팅 번호를 입력해주세요';
+
+  @override
+  String get routingNumberMustBe9Digits => '라우팅 번호는 9자리여야 합니다';
+
+  @override
+  String get submitWithdrawalRequest => '출금 신청 제출';
+
+  @override
+  String get importantInformation => '중요한 정보';
+
+  @override
+  String get processingTime => '처리 시간: 3-5 영업일';
+
+  @override
+  String get minimumWithdrawal => '최소 출금액: \$10';
+
+  @override
+  String get noProcessingFees => '처리 수수료 없음';
+
+  @override
+  String get withdrawalsProcessedMondayFriday => '출금은 월요일부터 금요일까지 처리됩니다';
+
+  @override
+  String get bankInformationEncrypted => '은행 정보는 암호화되어 안전합니다';
+
+  @override
+  String get confirmWithdrawal => '출금 확인';
+
+  @override
+  String get withdrawToAccountEndingIn => '로 끝나는 계좌로';
+
+  @override
+  String get withdrawConfirmationQuestion => '을(를) 출금하시겠습니까?';
+
+  @override
+  String get withdrawalRequestSubmittedSuccessfully => '출금 신청이 성공적으로 제출되었습니다!';
+
+  @override
+  String get createNewCourse => '새 코스 만들기';
+
+  @override
+  String get createYourCourse => '코스 만들기';
+
+  @override
+  String get fillDetailsToCreateCourse => '코스를 만들기 위한 세부 정보를 입력하세요';
+
+  @override
+  String get enterCourseTitle => '코스 제목을 입력하세요';
+
+  @override
+  String get pleaseEnterCourseTitle => '코스 제목을 입력해 주세요';
+
+  @override
+  String get description => '설명';
+
+  @override
+  String get describeCourse => '코스를 설명해 주세요';
+
+  @override
+  String get pleaseEnterCourseDescription => '코스 설명을 입력해 주세요';
+
+  @override
+  String get totalSessionsHint => '예: 12';
+
+  @override
+  String get enterSessions => '세션 수 입력';
+
+  @override
+  String get priceInDollars => '가격 (\$)';
+
+  @override
+  String get free => '무료';
+
+  @override
+  String get courseSchedule => '코스 일정';
+
+  @override
+  String get selectDate => '날짜 선택 *';
+
+  @override
+  String get courseThumbnail => '강의 썸네일';
+
+  @override
+  String get selectCourseThumbnail => '코스 썸네일 선택';
+
+  @override
+  String get jpgPngMax5MB => 'JPG, PNG (최대 5MB)';
+
+  @override
+  String get imageSelected => '이미지 선택됨';
+
+  @override
+  String get publishCourse => '코스 게시';
+
+  @override
+  String get pleaseSelectStartEndDates => '시작일과 종료일을 선택해 주세요';
+
+  @override
+  String get pleaseSelectCourseThumbnail => '코스 썸네일을 선택해 주세요';
+
+  @override
+  String get coursePublishedSuccessfully => '코스가 성공적으로 게시되었습니다!';
+
+  @override
+  String get imagePickerFeatureWillBeImplemented => '이미지 선택 기능이 구현될 예정입니다';
+
+  @override
+  String get analytics => '분석';
+
+  @override
+  String get searchYourCourses => '강의 검색...';
+
+  @override
+  String get totalStudents => '총 학생 수';
+
+  @override
+  String get activeCourses => '진행중인 강의';
+
+  @override
+  String get totalCourses => '총 강의 수';
+
+  @override
+  String get upcomingCourses => '예정된 강의';
+
+  @override
+  String get seeAll => '모두 보기';
+
+  @override
+  String get completedCourses => '완료된 강의';
+
+  @override
+  String get showAllSections => '모든 섹션 보기';
+
+  @override
+  String get tryAdjustingSearch => '검색어를 조정해 보세요';
+
+  @override
+  String get instructorPortal => '강사 포털';
+
+  @override
+  String get instructorSettings => '강사 설정';
+
+  @override
+  String get completion => '완료율';
+
+  @override
+  String get notificationPreferences => '알림 설정';
+
+  @override
+  String get officeHours => '상담 시간';
+
+  @override
+  String get languageAndRegion => '언어 및 지역';
+
+  @override
+  String get notificationSettingsComingSoon => '알림 설정이 곧 제공됩니다';
+
+  @override
+  String get officeHoursSettingsComingSoon => '상담 시간 설정이 곧 제공됩니다';
+
+  @override
+  String get languageSettingsComingSoon => '언어 설정이 곧 제공됩니다';
+
+  @override
+  String get studentsCount => '학생';
+
+  @override
+  String get coursesStudents => '학생';
+
+  @override
+  String get category => '카테고리';
+
+  @override
+  String get starts => '시작';
+
+  @override
+  String get revenueAnalytics => '수익 분석';
+
+  @override
+  String get coursePrice => '강의 가격';
+
+  @override
+  String get totalRevenue => '총 수익';
+
+  @override
+  String get courseManagement => '강의 관리';
+
+  @override
+  String get editCourseDetails => '강의 세부사항 편집';
+
+  @override
+  String get editCourseDetailsTitle => '강의 세부사항 편집';
+
+  @override
+  String get title => '제목';
+
+  @override
+  String get priceWithSymbol => '가격 (\$)';
+
+  @override
+  String get thumbnailUrl => '썸네일 URL';
+
+  @override
+  String get saveChanges => '변경 사항 저장';
+
+  @override
+  String get courseDetailsUpdatedSuccessfully => '강의 세부사항이 성공적으로 업데이트되었습니다';
+
+  @override
+  String get feedbackManagement => '피드백 관리';
+
+  @override
+  String get viewStudentReviewsDescription => '학생 리뷰를 보고 개인화된 피드백을 제공하세요';
+
+  @override
+  String get courseRating => '강의 평점';
+
+  @override
+  String get totalReviews => '총 리뷰 수';
+
+  @override
+  String get courseReviewsFromStudents => '학생들의 강의 리뷰';
+
+  @override
+  String get instructorReviewsFromStudents => '학생들의 강사 리뷰';
+
+  @override
+  String get giveStudentFeedback => '학생 피드백 제공';
+
+  @override
+  String get selectStudent => '학생 선택';
+
+  @override
+  String get chooseAStudent => '학생을 선택하세요...';
+
+  @override
+  String get rateStudentPerformance => '학생 성과 평가';
+
+  @override
+  String get feedbackMessage => '피드백 메시지';
+
+  @override
+  String get feedbackHintText => '학생의 성과, 참여도, 개선점에 대한 피드백을 공유하세요...';
+
+  @override
+  String get sendFeedbackToStudent => '학생에게 피드백 보내기';
+
+  @override
+  String get pleaseWriteYourFeedback => '피드백을 작성해주세요';
+
+  @override
+  String get pleaseProvideARating => '평점을 제공해주세요';
+
+  @override
+  String feedbackSentSuccessfully(String studentName) {
+    return '✅ $studentName에게 피드백이 성공적으로 전송되었습니다!';
+  }
+
+  @override
+  String get instructorPanel => '강사 패널';
+
+  @override
+  String onlineStudentsCount(int onlineCount, int totalCount) {
+    return '$onlineCount명 온라인 • 총 $totalCount명 학생';
+  }
+
+  @override
+  String get messageYourStudents => '학생들에게 메시지 보내기...';
+
+  @override
+  String get scheduleNewSession => '새 세션 예약하기';
+
+  @override
+  String get sessionOverview => '세션 개요';
+
+  @override
+  String get noSessionsScheduled => '예약된 세션이 없습니다';
+
+  @override
+  String get createYourFirstSession => '첫 번째 세션을 만들어보세요';
+
+  @override
+  String get scheduleSession => '세션 예약하기';
+
+  @override
+  String get copyLink => '링크 복사';
+
+  @override
+  String get copyPassword => '비밀번호 복사';
+
+  @override
+  String get deleteSession => '세션 삭제';
+
+  @override
+  String get deleteSessionConfirmation => '이 세션을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.';
+
+  @override
+  String get sessionDeletedSuccessfully => '세션이 성공적으로 삭제되었습니다';
+
+  @override
+  String get sessionTitle => '세션 제목';
+
+  @override
+  String get sessionTitleRequired => '세션 제목 *';
+
+  @override
+  String get platform => '플랫폼';
+
+  @override
+  String get platformRequired => '플랫폼 *';
+
+  @override
+  String get selectTime => '시간 선택 *';
+
+  @override
+  String durationHours(String duration) {
+    return '지속 시간: $duration시간';
+  }
+
+  @override
+  String get uploadNewVideo => '새 동영상 업로드';
+
+  @override
+  String completePercentage(int percentage) {
+    return '$percentage% 완료';
+  }
+
+  @override
+  String videosProcessed(int loaded, int total) {
+    return '$loaded/$total 동영상 처리됨';
+  }
+
+  @override
+  String get noRecordedVideosYet => '녹화된 동영상이 아직 없습니다';
+
+  @override
+  String get uploadYourFirstRecordedClass => '첫 번째 녹화 수업을 업로드하세요';
+
+  @override
+  String get editVideoDetails => '동영상 세부사항 편집';
+
+  @override
+  String get videoUpdatedSuccessfully => '✅ 동영상이 성공적으로 업데이트되었습니다!';
+
+  @override
+  String get deleteVideo => '동영상 삭제';
+
+  @override
+  String get areYouSureDeleteVideo => '이 동영상을 삭제하시겠습니까?';
+
+  @override
+  String get thisActionCannotBeUndone => '이 작업은 되돌릴 수 없습니다.';
+
+  @override
+  String videoDeleted(String title) {
+    return '🗑️ \"$title\" 삭제됨';
+  }
+
+  @override
+  String get uploadNewVideoDialog => '새 동영상 업로드';
+
+  @override
+  String get tapToSelectVideoFile => '저장소에서 동영상 파일을 선택하려면 탭하세요';
+
+  @override
+  String fileSelectedPrefix(String filename) {
+    return '선택된 파일: $filename';
+  }
+
+  @override
+  String fileSelected(String filename) {
+    return '📁 선택된 파일: $filename';
+  }
+
+  @override
+  String get videoTitleRequired => '동영상 제목 *';
+
+  @override
+  String get uploadButton => '업로드';
+
+  @override
+  String uploadingVideo(String title) {
+    return '📤 \"$title\" 업로드 중...';
+  }
+
+  @override
+  String videoPublishedSuccessfully(String title) {
+    return '✅ \"$title\"이 성공적으로 게시되었습니다!';
+  }
+
+  @override
+  String metadataError(String error) {
+    return '메타데이터 오류: $error';
+  }
+
+  @override
+  String get sessionLinkRequired => '세션 링크 *';
+
+  @override
+  String get passwordOptional => '비밀번호 (선택사항)';
+
+  @override
+  String get sessionScheduledSuccessfully => '세션이 성공적으로 예약되었습니다!';
+
+  @override
+  String get fillAllRequiredFields => '모든 필수 필드를 입력해주세요';
+
+  @override
+  String get editSession => '세션 편집';
+
+  @override
+  String get sessionUpdatedSuccessfully => '세션이 성공적으로 업데이트되었습니다!';
+
+  @override
+  String startingSession(String platform) {
+    return '$platform 세션을 시작하고 있습니다...';
+  }
+
+  @override
+  String get uploadStudyMaterial => '학습 자료 업로드';
+
+  @override
+  String get noStudyMaterialsYet => '아직 학습 자료가 없습니다';
+
+  @override
+  String get uploadYourFirstStudyMaterial => '첫 번째 학습 자료를 업로드하세요';
+
+  @override
+  String get noFileAvailableForThisMaterial => '❌ 이 자료에 사용할 수 있는 파일이 없습니다';
+
+  @override
+  String openingFile(String fileName) {
+    return '📁 파일 열기: $fileName';
+  }
+
+  @override
+  String get filePreview => '파일 미리보기';
+
+  @override
+  String fileLabel(String fileName) {
+    return '파일: $fileName';
+  }
+
+  @override
+  String sizeLabel(String fileSize) {
+    return '크기: $fileSize';
+  }
+
+  @override
+  String typeLabel(String fileType) {
+    return '유형: $fileType';
+  }
+
+  @override
+  String get inRealAppDescription => '실제 앱에서는 여기에 실제 파일 내용이 표시됩니다';
+
+  @override
+  String get openFile => '파일 열기';
+
+  @override
+  String openingFileWithSystemViewer(String fileName) {
+    return '📂 시스템 뷰어로 $fileName 열기';
+  }
+
+  @override
+  String get editMaterialDetails => '자료 세부정보 편집';
+
+  @override
+  String get materialUpdatedSuccessfully => '✅ 자료가 성공적으로 업데이트되었습니다!';
+
+  @override
+  String get deleteMaterial => '자료 삭제';
+
+  @override
+  String get areYouSureDeleteMaterial => '이 자료를 삭제하시겠습니까?';
+
+  @override
+  String materialDeleted(String materialTitle) {
+    return '🗑️ \"$materialTitle\"이 삭제되었습니다';
+  }
+
+  @override
+  String selectFileType(String fileType) {
+    return '$fileType 파일 선택';
+  }
+
+  @override
+  String get chooseFileFromDevice => '장치에서 파일을 선택하세요:';
+
+  @override
+  String get noFileSelected => '선택된 파일이 없습니다';
+
+  @override
+  String get chooseFile => '파일 선택';
+
+  @override
+  String get changeFile => '파일 변경';
+
+  @override
+  String get titleRequired => '제목 *';
+
+  @override
+  String materialUploadedSuccessfully(String materialTitle) {
+    return '✅ \"$materialTitle\"이 성공적으로 업로드되었습니다!';
+  }
+
+  @override
+  String studyMaterialFor(String courseTitle) {
+    return '$courseTitle 학습 자료';
   }
 }

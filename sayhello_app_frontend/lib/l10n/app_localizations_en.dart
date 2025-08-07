@@ -52,7 +52,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get instructorSignIn => 'Instructor Sign In';
 
   @override
-  String get welcomeBack => 'Welcome Back';
+  String get welcomeBack => 'Welcome back!';
 
   @override
   String get signInToContinue => 'Sign in to continue learning.';
@@ -906,7 +906,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get students => 'students';
 
   @override
-  String get completed => 'completed';
+  String get completed => 'Completed';
 
   @override
   String get inProgress => 'In Progress';
@@ -933,9 +933,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get endDate => 'End Date';
 
   @override
-  String price(String price) {
-    return '\$$price';
-  }
+  String get price => 'Price';
 
   @override
   String get enrollFor => 'Enroll for';
@@ -1038,9 +1036,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get videoInformation => '📹 Video Information:';
 
   @override
-  String videoTitle(String title) {
-    return '• Title: $title';
-  }
+  String get videoTitle => 'Video Title';
 
   @override
   String videoDurationInfo(String duration) {
@@ -1116,10 +1112,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get images => 'Images';
 
   @override
-  String get showMore => 'Show more';
+  String get showMore => 'Show More';
 
   @override
-  String get showLess => 'Show less';
+  String get showLess => 'Show Less';
 
   @override
   String get untitledMaterial => 'Untitled Material';
@@ -1143,9 +1139,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'This will open the file in your browser for download.';
 
   @override
-  String fileType(String type) {
-    return 'Type: $type';
-  }
+  String get fileType => 'File Type';
 
   @override
   String get browserHandleDownload =>
@@ -1174,8 +1168,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get downloadInstructions => 'Download Instructions';
 
   @override
-  String get linkCopiedToClipboard =>
-      'The download link has been copied to your clipboard:';
+  String linkCopiedToClipboard(String item) {
+    return '$item copied to clipboard';
+  }
 
   @override
   String get toDownload => 'To download:';
@@ -1744,7 +1739,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expiredCourses => 'Expired Courses';
 
   @override
-  String get sessions => 'sessions';
+  String get sessions => 'Sessions';
 
   @override
   String sessionsCount(String count) {
@@ -1835,8 +1830,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String failedToCopy(String label) {
-    return 'Failed to copy $label';
+  String failedToCopy(String item) {
+    return 'Failed to copy $item';
   }
 
   @override
@@ -1925,7 +1920,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get instructorCourses => 'Courses';
 
   @override
-  String get instructorRating => 'Rating';
+  String get instructorRating => 'Instructor Rating';
 
   @override
   String courseBy(String instructor) {
@@ -2033,7 +2028,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get instructorRole => 'Instructor';
+  String get instructorRole => 'INSTRUCTOR';
 
   @override
   String enrolledMembersTitle(int count) {
@@ -2202,5 +2197,1023 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String chatTimestampMinutesAgo(int count) {
     return '$count minutes ago';
+  }
+
+  @override
+  String get paymentCompletePurchase => 'Complete Purchase';
+
+  @override
+  String get paymentCourseFallback => 'Course';
+
+  @override
+  String get paymentInstructorFallback => 'Instructor';
+
+  @override
+  String paymentCourseBy(String instructor) {
+    return 'by $instructor';
+  }
+
+  @override
+  String get paymentMethod => 'Payment Method';
+
+  @override
+  String get paymentCreditDebitCard => 'Credit/Debit Card';
+
+  @override
+  String get paymentPayPal => 'PayPal';
+
+  @override
+  String get paymentCardInformation => 'Card Information';
+
+  @override
+  String get paymentCardNumber => 'Card Number';
+
+  @override
+  String get paymentCardNumberHint => '1234 5678 9012 3456';
+
+  @override
+  String get paymentExpiryDate => 'Expiry Date';
+
+  @override
+  String get paymentExpiryHint => 'MM/YY';
+
+  @override
+  String get paymentCVV => 'CVV';
+
+  @override
+  String get paymentCVVHint => '123';
+
+  @override
+  String get paymentBillingInformation => 'Billing Information';
+
+  @override
+  String get paymentCardholderName => 'Cardholder Name';
+
+  @override
+  String get paymentCardholderNameHint => 'John Doe';
+
+  @override
+  String get paymentEmailAddress => 'Email Address';
+
+  @override
+  String get paymentEmailHint => 'john@example.com';
+
+  @override
+  String get paymentOrderSummary => 'Order Summary';
+
+  @override
+  String get paymentCoursePrice => 'Course Price';
+
+  @override
+  String get paymentTax => 'Tax (10%)';
+
+  @override
+  String get paymentTotal => 'Total';
+
+  @override
+  String get paymentProcessing => 'Processing...';
+
+  @override
+  String paymentPay(String amount) {
+    return 'Pay $amount';
+  }
+
+  @override
+  String get paymentProcessingPayPal => 'Processing PayPal payment...';
+
+  @override
+  String get paymentSuccessTitle => 'Payment Successful!';
+
+  @override
+  String paymentSuccessMessage(String courseTitle) {
+    return 'Welcome to $courseTitle!\nYou can now access all course materials.';
+  }
+
+  @override
+  String get paymentStartLearning => 'Start Learning';
+
+  @override
+  String get paymentErrorCardNumber => 'Please enter card number';
+
+  @override
+  String get paymentErrorInvalidCard => 'Please enter a valid card number';
+
+  @override
+  String get paymentErrorRequired => 'Required';
+
+  @override
+  String get paymentErrorInvalidDate => 'Invalid date';
+
+  @override
+  String get paymentErrorInvalidCVV => 'Invalid CVV';
+
+  @override
+  String get paymentErrorCardholderName => 'Please enter cardholder name';
+
+  @override
+  String get paymentErrorEmail => 'Please enter email address';
+
+  @override
+  String get paymentErrorInvalidEmail => 'Please enter a valid email';
+
+  @override
+  String get courseDetailsFallbackTitle => 'Course Title';
+
+  @override
+  String get courseDetailsFallbackDescription =>
+      'This is a comprehensive course designed to help you master the language.';
+
+  @override
+  String get courseDetailsFallbackLanguage => 'English';
+
+  @override
+  String get courseDetailsFallbackLevel => 'Beginner';
+
+  @override
+  String get courseDetailsFallbackInstructor => 'John Doe';
+
+  @override
+  String get courseDetailsFallbackDuration => '4 weeks';
+
+  @override
+  String get courseDetailsFallbackStatus => 'active';
+
+  @override
+  String get courseDetailsFallbackCategory => 'Language';
+
+  @override
+  String courseDetailsInstructorBy(String instructor) {
+    return 'by $instructor';
+  }
+
+  @override
+  String get courseDetailsLanguageLabel => 'Language';
+
+  @override
+  String get courseDetailsSessionsLabel => 'Sessions';
+
+  @override
+  String get courseDetailsStudentsLabel => 'Students';
+
+  @override
+  String get courseDetailsOverviewTitle => 'Course Overview';
+
+  @override
+  String get courseDetailsTimelineTitle => 'Course Timeline';
+
+  @override
+  String get courseDetailsStartDateLabel => 'Start Date';
+
+  @override
+  String get courseDetailsEndDateLabel => 'End Date';
+
+  @override
+  String courseDetailsDurationLevel(String duration, String level) {
+    return 'Duration: $duration • Level: $level';
+  }
+
+  @override
+  String get courseDetailsInstructorTitle => 'Expert Language Instructor';
+
+  @override
+  String get courseDetailsInstructorDescription =>
+      'Experienced educator with over 8 years of teaching experience. Specializes in modern language learning techniques.';
+
+  @override
+  String get courseDetailsInstructorYearsExp => 'Years Exp.';
+
+  @override
+  String get courseDetailsInstructorRating => 'Rating';
+
+  @override
+  String get courseDetailsInstructorStudents => 'Students';
+
+  @override
+  String get courseDetailsFeedbackTitle => 'Student Feedback';
+
+  @override
+  String get courseDetailsHighlyRated => 'Highly Rated Course';
+
+  @override
+  String get courseDetailsReviewsCount => 'Based on 124+ student reviews';
+
+  @override
+  String get courseDetailsSatisfactionRate => '95% Satisfaction Rate';
+
+  @override
+  String get courseDetailsOneTimePayment => 'One-time Payment';
+
+  @override
+  String get courseDetailsEnrollNow => 'Enroll Now';
+
+  @override
+  String get instructorProfile => 'Profile';
+
+  @override
+  String instructorYearsExp(int years) {
+    return '$years years experience';
+  }
+
+  @override
+  String get instructorStatsCourses => 'Courses';
+
+  @override
+  String get instructorStatsStudents => 'Students';
+
+  @override
+  String get instructorStatsRating => 'Rating';
+
+  @override
+  String get instructorPersonalInfo => 'Personal Information';
+
+  @override
+  String get instructorProfessionalInfo => 'Professional Information';
+
+  @override
+  String get instructorLanguages => 'Languages';
+
+  @override
+  String get instructorAboutMe => 'About Me';
+
+  @override
+  String get instructorEmail => 'Email';
+
+  @override
+  String get instructorDateOfBirth => 'Date of Birth';
+
+  @override
+  String get instructorGender => 'Gender';
+
+  @override
+  String get instructorCountry => 'Country';
+
+  @override
+  String get instructorYearsOfExperience => 'Years of Experience';
+
+  @override
+  String instructorYearsFormat(int years) {
+    return '$years years';
+  }
+
+  @override
+  String get instructorNativeLanguage => 'Native Language';
+
+  @override
+  String get instructorTeachingLanguage => 'Teaching Language';
+
+  @override
+  String get instructorEditProfileImage => 'Edit Profile Image';
+
+  @override
+  String get instructorTakePhoto => 'Take Photo';
+
+  @override
+  String get instructorSelectFromGallery => 'Select from Gallery';
+
+  @override
+  String get instructorEnterImageUrl => 'Enter Image URL';
+
+  @override
+  String get instructorCameraFeatureMessage =>
+      'Camera feature will be implemented';
+
+  @override
+  String get instructorGalleryFeatureMessage =>
+      'Gallery feature will be implemented';
+
+  @override
+  String instructorEditTitle(String field) {
+    return 'Edit $field';
+  }
+
+  @override
+  String instructorEnterField(String field) {
+    return 'Enter $field';
+  }
+
+  @override
+  String get instructorCancel => 'Cancel';
+
+  @override
+  String get instructorSave => 'Save';
+
+  @override
+  String instructorFieldUpdated(String field) {
+    return '$field updated successfully';
+  }
+
+  @override
+  String get instructorEditBio => 'Edit Bio';
+
+  @override
+  String get instructorBioPlaceholder => 'Tell us about yourself...';
+
+  @override
+  String get instructorBioUpdated => 'Bio updated successfully';
+
+  @override
+  String get instructorDateOfBirthUpdated =>
+      'Date of birth updated successfully';
+
+  @override
+  String get instructorSelectGender => 'Select Gender';
+
+  @override
+  String get instructorGenderUpdated => 'Gender updated successfully';
+
+  @override
+  String get instructorSelectCountry => 'Select Country';
+
+  @override
+  String get instructorCountryUpdated => 'Country updated successfully';
+
+  @override
+  String get instructorSelectNativeLanguage => 'Select Native Language';
+
+  @override
+  String get instructorSelectTeachingLanguage => 'Select Teaching Language';
+
+  @override
+  String get instructorNativeLanguageUpdated =>
+      'Native language updated successfully';
+
+  @override
+  String get instructorTeachingLanguageUpdated =>
+      'Teaching language updated successfully';
+
+  @override
+  String get instructorExperienceUpdated => 'Experience updated successfully';
+
+  @override
+  String get instructorLogout => 'Logout';
+
+  @override
+  String get instructorLogoutConfirm => 'Are you sure you want to logout?';
+
+  @override
+  String get revenueDashboard => 'Revenue Dashboard';
+
+  @override
+  String get revenueWeekly => 'Weekly';
+
+  @override
+  String get revenueMonthly => 'Monthly';
+
+  @override
+  String get revenueThisYear => 'This Year';
+
+  @override
+  String get revenueTotalCourses => 'Total Courses';
+
+  @override
+  String get revenueWeeklyTrend => 'Weekly Revenue Trend';
+
+  @override
+  String get revenueTotal => 'Total';
+
+  @override
+  String get revenuePeak => 'Peak';
+
+  @override
+  String get revenueCourseIncome => 'Course Income';
+
+  @override
+  String get revenueShowLess => 'Show Less';
+
+  @override
+  String get revenueViewAll => 'View All';
+
+  @override
+  String get revenuePrice => 'Price';
+
+  @override
+  String get revenueEnrolled => 'enrolled';
+
+  @override
+  String get revenueTransactionHistory => 'Transaction History';
+
+  @override
+  String get revenueWithdrawal => 'Withdrawal';
+
+  @override
+  String get revenuePaymentOverview => 'Payment Overview';
+
+  @override
+  String get revenueAvailableBalance => 'Available Balance';
+
+  @override
+  String get revenueWithdrawButton => 'Withdraw';
+
+  @override
+  String get revenueTotalEarned => 'Total Earned';
+
+  @override
+  String get revenueWithdrawn => 'Withdrawn';
+
+  @override
+  String get withdrawMoney => 'Withdraw Money';
+
+  @override
+  String get availableBalance => 'Available Balance';
+
+  @override
+  String get withdrawalAmount => 'Withdrawal Amount';
+
+  @override
+  String get enterAmountToWithdraw => 'Enter amount to withdraw';
+
+  @override
+  String get pleaseEnterWithdrawalAmount => 'Please enter withdrawal amount';
+
+  @override
+  String get pleaseEnterValidAmount => 'Please enter a valid amount';
+
+  @override
+  String get amountMustBeGreaterThanZero => 'Amount must be greater than zero';
+
+  @override
+  String get amountExceedsAvailableBalance =>
+      'Amount exceeds available balance';
+
+  @override
+  String get minimumWithdrawalAmountIs => 'Minimum withdrawal amount is \$10';
+
+  @override
+  String get quickAmount50 => '\$50';
+
+  @override
+  String get quickAmount100 => '\$100';
+
+  @override
+  String get quickAmountMax => 'Max';
+
+  @override
+  String get bankInformation => 'Bank Information';
+
+  @override
+  String get accountHolderName => 'Account Holder Name';
+
+  @override
+  String get enterFullNameAsOnBankAccount =>
+      'Enter full name as on bank account';
+
+  @override
+  String get pleaseEnterAccountHolderName => 'Please enter account holder name';
+
+  @override
+  String get bankName => 'Bank Name';
+
+  @override
+  String get enterYourBankName => 'Enter your bank name';
+
+  @override
+  String get pleaseEnterBankName => 'Please enter bank name';
+
+  @override
+  String get accountNumber => 'Account Number';
+
+  @override
+  String get enterYourAccountNumber => 'Enter your account number';
+
+  @override
+  String get pleaseEnterAccountNumber => 'Please enter account number';
+
+  @override
+  String get accountNumberMustBeAtLeast8Digits =>
+      'Account number must be at least 8 digits';
+
+  @override
+  String get routingNumber => 'Routing Number';
+
+  @override
+  String get enter9DigitRoutingNumber => 'Enter 9-digit routing number';
+
+  @override
+  String get pleaseEnterRoutingNumber => 'Please enter routing number';
+
+  @override
+  String get routingNumberMustBe9Digits => 'Routing number must be 9 digits';
+
+  @override
+  String get submitWithdrawalRequest => 'Submit Withdrawal Request';
+
+  @override
+  String get importantInformation => 'Important Information';
+
+  @override
+  String get processingTime => 'Processing time: 3-5 business days';
+
+  @override
+  String get minimumWithdrawal => 'Minimum withdrawal: \$10';
+
+  @override
+  String get noProcessingFees => 'No processing fees';
+
+  @override
+  String get withdrawalsProcessedMondayFriday =>
+      'Withdrawals are processed Monday-Friday';
+
+  @override
+  String get bankInformationEncrypted =>
+      'Bank information is encrypted and secure';
+
+  @override
+  String get confirmWithdrawal => 'Confirm Withdrawal';
+
+  @override
+  String get withdrawToAccountEndingIn => 'Withdraw';
+
+  @override
+  String get withdrawConfirmationQuestion => 'to your account ending in';
+
+  @override
+  String get withdrawalRequestSubmittedSuccessfully =>
+      'Withdrawal request submitted successfully!';
+
+  @override
+  String get createNewCourse => 'Create New Course';
+
+  @override
+  String get createYourCourse => 'Create Your Course';
+
+  @override
+  String get fillDetailsToCreateCourse =>
+      'Fill in the details to create your course';
+
+  @override
+  String get enterCourseTitle => 'Enter course title';
+
+  @override
+  String get pleaseEnterCourseTitle => 'Please enter course title';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get describeCourse => 'Describe your course';
+
+  @override
+  String get pleaseEnterCourseDescription => 'Please enter course description';
+
+  @override
+  String get totalSessionsHint => 'e.g., 12';
+
+  @override
+  String get enterSessions => 'Enter sessions';
+
+  @override
+  String get priceInDollars => 'Price (\$)';
+
+  @override
+  String get free => 'Free';
+
+  @override
+  String get courseSchedule => 'Course Schedule';
+
+  @override
+  String get selectDate => 'Select Date *';
+
+  @override
+  String get courseThumbnail => 'Course Thumbnail';
+
+  @override
+  String get selectCourseThumbnail => 'Select Course Thumbnail';
+
+  @override
+  String get jpgPngMax5MB => 'JPG, PNG (Max 5MB)';
+
+  @override
+  String get imageSelected => 'Image Selected';
+
+  @override
+  String get publishCourse => 'Publish Course';
+
+  @override
+  String get pleaseSelectStartEndDates => 'Please select start and end dates';
+
+  @override
+  String get pleaseSelectCourseThumbnail => 'Please select a course thumbnail';
+
+  @override
+  String get coursePublishedSuccessfully => 'Course published successfully!';
+
+  @override
+  String get imagePickerFeatureWillBeImplemented =>
+      'Image picker feature will be implemented';
+
+  @override
+  String get analytics => 'Analytics';
+
+  @override
+  String get searchYourCourses => 'Search your courses...';
+
+  @override
+  String get totalStudents => 'Total Students';
+
+  @override
+  String get activeCourses => 'Active Courses';
+
+  @override
+  String get totalCourses => 'Total Courses';
+
+  @override
+  String get upcomingCourses => 'Upcoming Courses';
+
+  @override
+  String get seeAll => 'See all';
+
+  @override
+  String get completedCourses => 'Completed Courses';
+
+  @override
+  String get showAllSections => 'Show all sections';
+
+  @override
+  String get tryAdjustingSearch => 'Try adjusting your search terms';
+
+  @override
+  String get instructorPortal => 'Instructor Portal';
+
+  @override
+  String get instructorSettings => 'Instructor Settings';
+
+  @override
+  String get completion => 'Completion';
+
+  @override
+  String get notificationPreferences => 'Notification Preferences';
+
+  @override
+  String get officeHours => 'Office Hours';
+
+  @override
+  String get languageAndRegion => 'Language & Region';
+
+  @override
+  String get notificationSettingsComingSoon =>
+      'Notification settings coming soon';
+
+  @override
+  String get officeHoursSettingsComingSoon =>
+      'Office hours settings coming soon';
+
+  @override
+  String get languageSettingsComingSoon => 'Language settings coming soon';
+
+  @override
+  String get studentsCount => 'students';
+
+  @override
+  String get coursesStudents => 'Students';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get starts => 'Starts';
+
+  @override
+  String get revenueAnalytics => 'Revenue Analytics';
+
+  @override
+  String get coursePrice => 'Course Price';
+
+  @override
+  String get totalRevenue => 'Total Revenue';
+
+  @override
+  String get courseManagement => 'Course Management';
+
+  @override
+  String get editCourseDetails => 'Edit Course Details';
+
+  @override
+  String get editCourseDetailsTitle => 'Edit Course Details';
+
+  @override
+  String get title => 'Title';
+
+  @override
+  String get priceWithSymbol => 'Price (\$)';
+
+  @override
+  String get thumbnailUrl => 'Thumbnail URL';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get courseDetailsUpdatedSuccessfully =>
+      'Course details updated successfully';
+
+  @override
+  String get feedbackManagement => 'Feedback Management';
+
+  @override
+  String get viewStudentReviewsDescription =>
+      'View student reviews and provide personalized feedback';
+
+  @override
+  String get courseRating => 'Course Rating';
+
+  @override
+  String get totalReviews => 'Total Reviews';
+
+  @override
+  String get courseReviewsFromStudents => 'Course Reviews from Students';
+
+  @override
+  String get instructorReviewsFromStudents =>
+      'Instructor Reviews from Students';
+
+  @override
+  String get giveStudentFeedback => 'Give Student Feedback';
+
+  @override
+  String get selectStudent => 'Select Student';
+
+  @override
+  String get chooseAStudent => 'Choose a student...';
+
+  @override
+  String get rateStudentPerformance => 'Rate Student Performance';
+
+  @override
+  String get feedbackMessage => 'Feedback Message';
+
+  @override
+  String get feedbackHintText =>
+      'Share your feedback about student\'s performance, participation, areas for improvement...';
+
+  @override
+  String get sendFeedbackToStudent => 'Send Feedback to Student';
+
+  @override
+  String get pleaseWriteYourFeedback => 'Please write your feedback';
+
+  @override
+  String get pleaseProvideARating => 'Please provide a rating';
+
+  @override
+  String feedbackSentSuccessfully(String studentName) {
+    return '✅ Feedback sent to $studentName successfully!';
+  }
+
+  @override
+  String get instructorPanel => 'Instructor Panel';
+
+  @override
+  String onlineStudentsCount(int onlineCount, int totalCount) {
+    return '$onlineCount online • $totalCount total students';
+  }
+
+  @override
+  String get messageYourStudents => 'Message your students...';
+
+  @override
+  String get scheduleNewSession => 'Schedule New Session';
+
+  @override
+  String get sessionOverview => 'Session Overview';
+
+  @override
+  String get noSessionsScheduled => 'No sessions scheduled';
+
+  @override
+  String get createYourFirstSession => 'Create your first session';
+
+  @override
+  String get scheduleSession => 'Schedule Session';
+
+  @override
+  String get copyLink => 'Copy Link';
+
+  @override
+  String get copyPassword => 'Copy Password';
+
+  @override
+  String get deleteSession => 'Delete Session';
+
+  @override
+  String get deleteSessionConfirmation =>
+      'Are you sure you want to delete this session? This action cannot be undone.';
+
+  @override
+  String get sessionDeletedSuccessfully => 'Session deleted successfully';
+
+  @override
+  String get sessionTitle => 'Session Title';
+
+  @override
+  String get sessionTitleRequired => 'Session Title *';
+
+  @override
+  String get platform => 'Platform';
+
+  @override
+  String get platformRequired => 'Platform *';
+
+  @override
+  String get selectTime => 'Select Time *';
+
+  @override
+  String durationHours(String duration) {
+    return 'Duration: $duration hours';
+  }
+
+  @override
+  String get uploadNewVideo => 'Upload New Video';
+
+  @override
+  String completePercentage(int percentage) {
+    return '$percentage% complete';
+  }
+
+  @override
+  String videosProcessed(int loaded, int total) {
+    return '$loaded of $total videos processed';
+  }
+
+  @override
+  String get noRecordedVideosYet => 'No recorded videos yet';
+
+  @override
+  String get uploadYourFirstRecordedClass => 'Upload your first recorded class';
+
+  @override
+  String get editVideoDetails => 'Edit Video Details';
+
+  @override
+  String get videoUpdatedSuccessfully => '✅ Video updated successfully!';
+
+  @override
+  String get deleteVideo => 'Delete Video';
+
+  @override
+  String get areYouSureDeleteVideo =>
+      'Are you sure you want to delete this video?';
+
+  @override
+  String get thisActionCannotBeUndone => 'This action cannot be undone.';
+
+  @override
+  String videoDeleted(String title) {
+    return '🗑️ \"$title\" deleted';
+  }
+
+  @override
+  String get uploadNewVideoDialog => 'Upload New Video';
+
+  @override
+  String get tapToSelectVideoFile => 'Tap to select video file from storage';
+
+  @override
+  String fileSelectedPrefix(String filename) {
+    return 'File selected: $filename';
+  }
+
+  @override
+  String fileSelected(String filename) {
+    return '📁 File selected: $filename';
+  }
+
+  @override
+  String get videoTitleRequired => 'Video Title *';
+
+  @override
+  String get uploadButton => 'Upload';
+
+  @override
+  String uploadingVideo(String title) {
+    return '📤 Uploading \"$title\"...';
+  }
+
+  @override
+  String videoPublishedSuccessfully(String title) {
+    return '✅ \"$title\" published successfully!';
+  }
+
+  @override
+  String metadataError(String error) {
+    return 'Metadata error: $error';
+  }
+
+  @override
+  String get sessionLinkRequired => 'Session Link *';
+
+  @override
+  String get passwordOptional => 'Password (optional)';
+
+  @override
+  String get sessionScheduledSuccessfully => 'Session scheduled successfully!';
+
+  @override
+  String get fillAllRequiredFields => 'Please fill in all required fields';
+
+  @override
+  String get editSession => 'Edit Session';
+
+  @override
+  String get sessionUpdatedSuccessfully => 'Session updated successfully!';
+
+  @override
+  String startingSession(String platform) {
+    return 'Starting $platform session...';
+  }
+
+  @override
+  String get uploadStudyMaterial => 'Upload Study Material';
+
+  @override
+  String get noStudyMaterialsYet => 'No study materials yet';
+
+  @override
+  String get uploadYourFirstStudyMaterial => 'Upload your first study material';
+
+  @override
+  String get noFileAvailableForThisMaterial =>
+      '❌ No file available for this material';
+
+  @override
+  String openingFile(String fileName) {
+    return '📁 Opening file: $fileName';
+  }
+
+  @override
+  String get filePreview => 'File Preview';
+
+  @override
+  String fileLabel(String fileName) {
+    return 'File: $fileName';
+  }
+
+  @override
+  String sizeLabel(String fileSize) {
+    return 'Size: $fileSize';
+  }
+
+  @override
+  String typeLabel(String fileType) {
+    return 'Type: $fileType';
+  }
+
+  @override
+  String get inRealAppDescription =>
+      'In real app, this would show the actual file content';
+
+  @override
+  String get openFile => 'Open File';
+
+  @override
+  String openingFileWithSystemViewer(String fileName) {
+    return '📂 Opening $fileName with system viewer';
+  }
+
+  @override
+  String get editMaterialDetails => 'Edit Material Details';
+
+  @override
+  String get materialUpdatedSuccessfully => '✅ Material updated successfully!';
+
+  @override
+  String get deleteMaterial => 'Delete Material';
+
+  @override
+  String get areYouSureDeleteMaterial =>
+      'Are you sure you want to delete this material?';
+
+  @override
+  String materialDeleted(String materialTitle) {
+    return '🗑️ \"$materialTitle\" deleted';
+  }
+
+  @override
+  String selectFileType(String fileType) {
+    return 'Select $fileType File';
+  }
+
+  @override
+  String get chooseFileFromDevice => 'Choose a file from your device:';
+
+  @override
+  String get noFileSelected => 'No file selected';
+
+  @override
+  String get chooseFile => 'Choose File';
+
+  @override
+  String get changeFile => 'Change File';
+
+  @override
+  String get titleRequired => 'Title *';
+
+  @override
+  String materialUploadedSuccessfully(String materialTitle) {
+    return '✅ \"$materialTitle\" uploaded successfully!';
+  }
+
+  @override
+  String studyMaterialFor(String courseTitle) {
+    return 'Study material for $courseTitle';
   }
 }

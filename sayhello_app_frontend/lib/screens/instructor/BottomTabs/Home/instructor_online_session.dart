@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class InstructorOnlineSessionTab extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -61,6 +62,7 @@ class _InstructorOnlineSessionTabState
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = const Color(0xFF7A54FF);
     final textColor = isDark ? Colors.white : Colors.black;
@@ -83,11 +85,11 @@ class _InstructorOnlineSessionTabState
           child: SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: _showAddSessionDialog,
+              onPressed: () => _showAddSessionDialog(localizations),
               icon: const Icon(Icons.add_circle, color: Colors.white, size: 20),
-              label: const Text(
-                'Schedule New Session',
-                style: TextStyle(
+              label: Text(
+                localizations.scheduleNewSession,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -129,7 +131,7 @@ class _InstructorOnlineSessionTabState
                   Icon(Icons.video_camera_front, color: primaryColor, size: 20),
                   const SizedBox(width: 8),
                   Text(
-                    'Session Overview',
+                    localizations.sessionOverview,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -142,21 +144,21 @@ class _InstructorOnlineSessionTabState
               Row(
                 children: [
                   _buildQuickStat(
-                    'Total',
+                    localizations.total,
                     totalSessions.toString(),
                     Icons.event,
                     primaryColor,
                   ),
                   const SizedBox(width: 12),
                   _buildQuickStat(
-                    'Done',
+                    localizations.done,
                     completedSessions.toString(),
                     Icons.check_circle,
                     primaryColor,
                   ),
                   const SizedBox(width: 12),
                   _buildQuickStat(
-                    'Next',
+                    localizations.next,
                     upcomingSessions.toString(),
                     Icons.schedule,
                     primaryColor,
@@ -170,7 +172,7 @@ class _InstructorOnlineSessionTabState
         // Sessions List
         Expanded(
           child: _sessions.isEmpty
-              ? _buildEmptyState(isDark, primaryColor)
+              ? _buildEmptyState(isDark, primaryColor, localizations)
               : ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   itemCount: _getSortedSessions().length,
@@ -183,6 +185,7 @@ class _InstructorOnlineSessionTabState
                       primaryColor,
                       textColor,
                       subTextColor,
+                      localizations,
                     );
                   },
                 ),
@@ -303,6 +306,7 @@ class _InstructorOnlineSessionTabState
     Color primaryColor,
     Color? textColor,
     Color? subTextColor,
+    AppLocalizations localizations,
   ) {
     final status = session['status'] as String;
     final statusColor = _getStatusColor(status);
@@ -385,7 +389,7 @@ class _InstructorOnlineSessionTabState
 
               // Delete Button
               InkWell(
-                onTap: () => _deleteSession(session['id']),
+                onTap: () => _deleteSession(session['id'], localizations),
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
@@ -439,7 +443,9 @@ class _InstructorOnlineSessionTabState
                       });
                     },
                     child: Text(
-                      isExpanded ? 'Show less' : 'Show more',
+                      isExpanded
+                          ? localizations.showLess
+                          : localizations.showMore,
                       style: TextStyle(
                         fontSize: 11,
                         color: primaryColor,
@@ -502,7 +508,11 @@ class _InstructorOnlineSessionTabState
               if (session['link'] != null) ...[
                 Expanded(
                   child: InkWell(
-                    onTap: () => _copyToClipboard(session['link'], 'Link'),
+                    onTap: () => _copyToClipboard(
+                      session['link'],
+                      localizations.copyLink,
+                      localizations,
+                    ),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
@@ -521,7 +531,7 @@ class _InstructorOnlineSessionTabState
                           Icon(Icons.link, color: primaryColor, size: 14),
                           const SizedBox(width: 4),
                           Text(
-                            'Copy Link',
+                            localizations.copyLink,
                             style: TextStyle(
                               fontSize: 11,
                               color: primaryColor,
@@ -539,8 +549,11 @@ class _InstructorOnlineSessionTabState
               if (session['password'] != null) ...[
                 Expanded(
                   child: InkWell(
-                    onTap: () =>
-                        _copyToClipboard(session['password'], 'Password'),
+                    onTap: () => _copyToClipboard(
+                      session['password'],
+                      localizations.copyPassword,
+                      localizations,
+                    ),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
@@ -559,7 +572,7 @@ class _InstructorOnlineSessionTabState
                           Icon(Icons.lock, color: primaryColor, size: 14),
                           const SizedBox(width: 4),
                           Text(
-                            'Copy Password',
+                            localizations.copyPassword,
                             style: TextStyle(
                               fontSize: 11,
                               color: primaryColor,
@@ -585,7 +598,7 @@ class _InstructorOnlineSessionTabState
                   child: SizedBox(
                     height: 32,
                     child: OutlinedButton(
-                      onPressed: () => _editSession(session),
+                      onPressed: () => _editSession(session, localizations),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: primaryColor,
                         side: BorderSide(color: primaryColor, width: 1),
@@ -594,7 +607,10 @@ class _InstructorOnlineSessionTabState
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
-                      child: const Text('Edit', style: TextStyle(fontSize: 12)),
+                      child: Text(
+                        localizations.edit,
+                        style: const TextStyle(fontSize: 12),
+                      ),
                     ),
                   ),
                 ),
@@ -603,7 +619,7 @@ class _InstructorOnlineSessionTabState
                   child: SizedBox(
                     height: 32,
                     child: ElevatedButton(
-                      onPressed: () => _startSession(session),
+                      onPressed: () => _startSession(session, localizations),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryColor,
                         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -611,9 +627,12 @@ class _InstructorOnlineSessionTabState
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
-                      child: const Text(
-                        'Start',
-                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      child: Text(
+                        localizations.start,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -626,7 +645,11 @@ class _InstructorOnlineSessionTabState
     );
   }
 
-  Widget _buildEmptyState(bool isDark, Color primaryColor) {
+  Widget _buildEmptyState(
+    bool isDark,
+    Color primaryColor,
+    AppLocalizations localizations,
+  ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -638,7 +661,7 @@ class _InstructorOnlineSessionTabState
           ),
           const SizedBox(height: 16),
           Text(
-            'No sessions scheduled',
+            localizations.noSessionsScheduled,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -647,7 +670,7 @@ class _InstructorOnlineSessionTabState
           ),
           const SizedBox(height: 6),
           Text(
-            'Create your first session',
+            localizations.createYourFirstSession,
             style: TextStyle(
               fontSize: 12,
               color: isDark ? Colors.grey[500] : Colors.grey[500],
@@ -655,11 +678,11 @@ class _InstructorOnlineSessionTabState
           ),
           const SizedBox(height: 20),
           ElevatedButton.icon(
-            onPressed: _showAddSessionDialog,
+            onPressed: () => _showAddSessionDialog(localizations),
             icon: const Icon(Icons.add, color: Colors.white, size: 16),
-            label: const Text(
-              'Schedule Session',
-              style: TextStyle(color: Colors.white, fontSize: 12),
+            label: Text(
+              localizations.scheduleSession,
+              style: const TextStyle(color: Colors.white, fontSize: 12),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: primaryColor,
@@ -700,13 +723,17 @@ class _InstructorOnlineSessionTabState
     }
   }
 
-  void _copyToClipboard(String text, String label) async {
+  void _copyToClipboard(
+    String text,
+    String label,
+    AppLocalizations localizations,
+  ) async {
     try {
       await Clipboard.setData(ClipboardData(text: text));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$label copied to clipboard'),
+            content: Text(localizations.linkCopiedToClipboard(label)),
             backgroundColor: const Color(0xFF7A54FF),
             duration: const Duration(seconds: 2),
           ),
@@ -716,7 +743,7 @@ class _InstructorOnlineSessionTabState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to copy $label'),
+            content: Text(localizations.failedToCopy(label)),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 2),
           ),
@@ -725,7 +752,7 @@ class _InstructorOnlineSessionTabState
     }
   }
 
-  void _deleteSession(String sessionId) {
+  void _deleteSession(String sessionId, AppLocalizations localizations) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -733,11 +760,11 @@ class _InstructorOnlineSessionTabState
         return AlertDialog(
           backgroundColor: isDark ? Colors.grey[850] : Colors.white,
           title: Text(
-            'Delete Session',
+            localizations.deleteSession,
             style: TextStyle(color: isDark ? Colors.white : Colors.black),
           ),
           content: Text(
-            'Are you sure you want to delete this session? This action cannot be undone.',
+            localizations.deleteSessionConfirmation,
             style: TextStyle(
               color: isDark ? Colors.grey[300] : Colors.grey[700],
             ),
@@ -745,7 +772,10 @@ class _InstructorOnlineSessionTabState
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+              child: Text(
+                localizations.cancel,
+                style: const TextStyle(color: Colors.grey),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -756,13 +786,16 @@ class _InstructorOnlineSessionTabState
                 });
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Session deleted successfully'),
+                  SnackBar(
+                    content: Text(localizations.sessionDeletedSuccessfully),
                     backgroundColor: Colors.red,
                   ),
                 );
               },
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              child: Text(
+                localizations.delete,
+                style: const TextStyle(color: Colors.red),
+              ),
             ),
           ],
         );
@@ -770,7 +803,7 @@ class _InstructorOnlineSessionTabState
     );
   }
 
-  void _showAddSessionDialog() {
+  void _showAddSessionDialog(AppLocalizations localizations) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final titleController = TextEditingController();
     final descriptionController = TextEditingController();
@@ -789,7 +822,7 @@ class _InstructorOnlineSessionTabState
             return AlertDialog(
               backgroundColor: isDark ? Colors.grey[850] : Colors.white,
               title: Text(
-                'Schedule New Session',
+                localizations.scheduleNewSession,
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 18,
@@ -1182,15 +1215,17 @@ class _InstructorOnlineSessionTabState
 
                       Navigator.of(context).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Session scheduled successfully!'),
-                          backgroundColor: Color(0xFF7A54FF),
+                        SnackBar(
+                          content: Text(
+                            localizations.sessionScheduledSuccessfully,
+                          ),
+                          backgroundColor: const Color(0xFF7A54FF),
                         ),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please fill in all required fields'),
+                        SnackBar(
+                          content: Text(localizations.fillAllRequiredFields),
                           backgroundColor: Colors.red,
                         ),
                       );
@@ -1205,9 +1240,12 @@ class _InstructorOnlineSessionTabState
                       vertical: 8,
                     ),
                   ),
-                  label: const Text(
-                    'Schedule',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  label: Text(
+                    localizations.scheduleSession,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -1218,7 +1256,10 @@ class _InstructorOnlineSessionTabState
     );
   }
 
-  void _editSession(Map<String, dynamic> session) {
+  void _editSession(
+    Map<String, dynamic> session,
+    AppLocalizations localizations,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final titleController = TextEditingController(text: session['title']);
     final descriptionController = TextEditingController(
@@ -1278,7 +1319,7 @@ class _InstructorOnlineSessionTabState
             return AlertDialog(
               backgroundColor: isDark ? Colors.grey[850] : Colors.white,
               title: Text(
-                'Edit Session',
+                localizations.editSession,
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 18,
@@ -1671,9 +1712,11 @@ class _InstructorOnlineSessionTabState
 
                       Navigator.of(context).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Session updated successfully!'),
-                          backgroundColor: Color(0xFF7A54FF),
+                        SnackBar(
+                          content: Text(
+                            localizations.sessionUpdatedSuccessfully,
+                          ),
+                          backgroundColor: const Color(0xFF7A54FF),
                         ),
                       );
                     } else {
@@ -1694,9 +1737,12 @@ class _InstructorOnlineSessionTabState
                       vertical: 8,
                     ),
                   ),
-                  label: const Text(
-                    'Update',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  label: Text(
+                    localizations.update,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -1707,7 +1753,10 @@ class _InstructorOnlineSessionTabState
     );
   }
 
-  void _startSession(Map<String, dynamic> session) async {
+  void _startSession(
+    Map<String, dynamic> session,
+    AppLocalizations localizations,
+  ) async {
     final link = session['link'] as String;
 
     try {
@@ -1718,7 +1767,7 @@ class _InstructorOnlineSessionTabState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Starting ${session['platform']} session...'),
+            content: Text(localizations.startingSession(session['platform'])),
             backgroundColor: const Color(0xFF7A54FF),
             duration: const Duration(seconds: 2),
           ),
@@ -1733,28 +1782,26 @@ class _InstructorOnlineSessionTabState
 
       if (!launched) {
         // Fallback: copy link to clipboard
-        _copyToClipboard(link, 'Session link');
+        _copyToClipboard(link, 'Session link', localizations);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Could not open browser. Link copied to clipboard.',
-              ),
+            SnackBar(
+              content: Text(localizations.couldNotOpenBrowser),
               backgroundColor: Colors.orange,
-              duration: Duration(seconds: 3),
+              duration: const Duration(seconds: 3),
             ),
           );
         }
       }
     } catch (e) {
       // Error handling: copy link to clipboard as fallback
-      _copyToClipboard(link, 'Session link');
+      _copyToClipboard(link, 'Session link', localizations);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Error opening browser. Link copied to clipboard.'),
+          SnackBar(
+            content: Text(localizations.errorOpeningBrowser),
             backgroundColor: Colors.red,
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           ),
         );
       }

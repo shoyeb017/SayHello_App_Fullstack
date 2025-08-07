@@ -51,7 +51,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get instructorSignIn => '講師ログイン';
 
   @override
-  String get welcomeBack => 'おかえりなさい';
+  String get welcomeBack => 'お帰りなさい！';
 
   @override
   String get signInToContinue => '学習を続けるためにログインしてください。';
@@ -204,7 +204,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get chooseDOB => '生年月日を選択';
 
   @override
-  String get next => '次へ';
+  String get next => '次回';
 
   @override
   String get back => '戻る';
@@ -375,7 +375,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get failed => '失敗';
 
   @override
-  String get confirm => 'Confirm';
+  String get confirm => '確認';
 
   @override
   String get yes => 'Yes';
@@ -387,7 +387,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get ok => 'OK';
 
   @override
-  String get close => 'Close';
+  String get close => '閉じる';
 
   @override
   String get open => 'Open';
@@ -402,7 +402,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get remove => 'Remove';
 
   @override
-  String get update => 'Update';
+  String get update => '更新';
 
   @override
   String get refresh => 'Refresh';
@@ -438,7 +438,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get receive => 'Receive';
 
   @override
-  String get upload => 'Upload';
+  String get upload => 'アップロード';
 
   @override
   String get download => 'ダウンロード';
@@ -471,7 +471,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get complete => '完了';
 
   @override
-  String get start => 'Start';
+  String get start => '開始';
 
   @override
   String get stop => 'Stop';
@@ -918,7 +918,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get instructor => '講師';
 
   @override
-  String get courseDescription => 'コース説明';
+  String get courseDescription => 'コースの説明';
 
   @override
   String get duration => '期間';
@@ -930,9 +930,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get endDate => '終了日';
 
   @override
-  String price(String price) {
-    return '¥$price';
-  }
+  String get price => '価格';
 
   @override
   String get enrollFor => '申し込み';
@@ -941,7 +939,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get enrolledSuccessfully => '正常に登録されました！';
 
   @override
-  String get courseDetails => 'コース詳細';
+  String get courseDetails => 'コースの詳細';
 
   @override
   String get onlineSessions => 'オンラインセッション';
@@ -965,7 +963,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get totalSize => '総サイズ';
 
   @override
-  String get loadingVideoMetadata => 'ビデオメタデータを読み込み中...';
+  String get loadingVideoMetadata => '動画メタデータを読み込み中...';
 
   @override
   String completeProgress(int percent) {
@@ -973,7 +971,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get failedToLoadVideoMetadata => 'ビデオメタデータの読み込みに失敗';
+  String get failedToLoadVideoMetadata => '動画メタデータの読み込みに失敗しました';
 
   @override
   String get noVideosAvailable => '利用可能なビデオがありません';
@@ -1020,7 +1018,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get loadingVideoPlayer => 'ビデオプレーヤーを読み込み中...';
+  String get loadingVideoPlayer => '動画プレーヤーを読み込み中...';
 
   @override
   String videoDurationSize(String duration, String size) {
@@ -1031,9 +1029,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get videoInformation => '動画情報';
 
   @override
-  String videoTitle(String title) {
-    return '$title';
-  }
+  String get videoTitle => '動画タイトル';
 
   @override
   String videoDurationInfo(String duration) {
@@ -1105,7 +1101,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get images => '画像';
 
   @override
-  String get showMore => 'もっと見る';
+  String get showMore => '詳しく表示';
 
   @override
   String get showLess => '短く表示';
@@ -1131,9 +1127,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get downloadConfirmation => 'これによりファイルがブラウザで開かれ、ダウンロードされます。';
 
   @override
-  String fileType(String type) {
-    return '種類: $type';
-  }
+  String get fileType => 'ファイルタイプ';
 
   @override
   String get browserHandleDownload => 'ブラウザがデフォルトのダウンロードフォルダにダウンロードを処理します。';
@@ -1142,7 +1136,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get openInBrowser => 'ブラウザで開く';
 
   @override
-  String get couldNotOpenBrowser => 'ブラウザを開けませんでした。リンクをクリップボードにコピーしました。';
+  String get couldNotOpenBrowser => 'ブラウザを開けませんでした。リンクがクリップボードにコピーされました。';
 
   @override
   String get failedToOpenBrowser => '❌ ブラウザの起動に失敗';
@@ -1160,7 +1154,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get downloadInstructions => 'ダウンロード手順';
 
   @override
-  String get linkCopiedToClipboard => 'ダウンロードリンクがクリップボードにコピーされました:';
+  String linkCopiedToClipboard(String item) {
+    return '$itemがクリップボードにコピーされました';
+  }
 
   @override
   String get toDownload => 'ダウンロード方法:';
@@ -1225,7 +1221,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get openingDocumentInBrowser => 'ブラウザで文書を開いています...';
 
   @override
-  String get errorOpeningBrowser => 'ブラウザを開く際にエラーが発生しました。リンクをクリップボードにコピーしました。';
+  String get errorOpeningBrowser => 'ブラウザを開く際にエラーが発生しました。リンクがクリップボードにコピーされました。';
 
   @override
   String linkCopiedToClipboardViewer(String label) {
@@ -1814,8 +1810,8 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String failedToCopy(String label) {
-    return '$labelのコピーに失敗しました';
+  String failedToCopy(String item) {
+    return '$itemのコピーに失敗しました';
   }
 
   @override
@@ -1904,7 +1900,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get instructorCourses => 'コース';
 
   @override
-  String get instructorRating => '評価';
+  String get instructorRating => '講師評価';
 
   @override
   String courseBy(String instructor) {
@@ -2173,5 +2169,999 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String chatTimestampMinutesAgo(int count) {
     return '$count分前';
+  }
+
+  @override
+  String get paymentCompletePurchase => '購入完了';
+
+  @override
+  String get paymentCourseFallback => 'コース';
+
+  @override
+  String get paymentInstructorFallback => '講師';
+
+  @override
+  String paymentCourseBy(String instructor) {
+    return '講師: $instructor';
+  }
+
+  @override
+  String get paymentMethod => '支払い方法';
+
+  @override
+  String get paymentCreditDebitCard => 'クレジット/デビットカード';
+
+  @override
+  String get paymentPayPal => 'PayPal';
+
+  @override
+  String get paymentCardInformation => 'カード情報';
+
+  @override
+  String get paymentCardNumber => 'カード番号';
+
+  @override
+  String get paymentCardNumberHint => '1234 5678 9012 3456';
+
+  @override
+  String get paymentExpiryDate => '有効期限';
+
+  @override
+  String get paymentExpiryHint => 'MM/YY';
+
+  @override
+  String get paymentCVV => 'CVV';
+
+  @override
+  String get paymentCVVHint => '123';
+
+  @override
+  String get paymentBillingInformation => '請求情報';
+
+  @override
+  String get paymentCardholderName => 'カード名義人';
+
+  @override
+  String get paymentCardholderNameHint => '田中太郎';
+
+  @override
+  String get paymentEmailAddress => 'メールアドレス';
+
+  @override
+  String get paymentEmailHint => 'tanaka@example.com';
+
+  @override
+  String get paymentOrderSummary => '注文概要';
+
+  @override
+  String get paymentCoursePrice => 'コース価格';
+
+  @override
+  String get paymentTax => '税 (10%)';
+
+  @override
+  String get paymentTotal => '合計';
+
+  @override
+  String get paymentProcessing => '処理中...';
+
+  @override
+  String paymentPay(String amount) {
+    return '$amountを支払う';
+  }
+
+  @override
+  String get paymentProcessingPayPal => 'PayPal支払いを処理中...';
+
+  @override
+  String get paymentSuccessTitle => '支払い完了！';
+
+  @override
+  String paymentSuccessMessage(String courseTitle) {
+    return '$courseTitleへようこそ！\nすべてのコース教材にアクセスできます。';
+  }
+
+  @override
+  String get paymentStartLearning => '学習開始';
+
+  @override
+  String get paymentErrorCardNumber => 'カード番号を入力してください';
+
+  @override
+  String get paymentErrorInvalidCard => '有効なカード番号を入力してください';
+
+  @override
+  String get paymentErrorRequired => '必須';
+
+  @override
+  String get paymentErrorInvalidDate => '無効な日付';
+
+  @override
+  String get paymentErrorInvalidCVV => '無効なCVV';
+
+  @override
+  String get paymentErrorCardholderName => 'カード名義人を入力してください';
+
+  @override
+  String get paymentErrorEmail => 'メールアドレスを入力してください';
+
+  @override
+  String get paymentErrorInvalidEmail => '有効なメールアドレスを入力してください';
+
+  @override
+  String get courseDetailsFallbackTitle => 'コースタイトル';
+
+  @override
+  String get courseDetailsFallbackDescription =>
+      'これは言語をマスターするのに役立つように設計された包括的なコースです。';
+
+  @override
+  String get courseDetailsFallbackLanguage => '日本語';
+
+  @override
+  String get courseDetailsFallbackLevel => '初級';
+
+  @override
+  String get courseDetailsFallbackInstructor => '田中太郎';
+
+  @override
+  String get courseDetailsFallbackDuration => '4週間';
+
+  @override
+  String get courseDetailsFallbackStatus => 'アクティブ';
+
+  @override
+  String get courseDetailsFallbackCategory => '言語';
+
+  @override
+  String courseDetailsInstructorBy(String instructor) {
+    return '$instructorによる';
+  }
+
+  @override
+  String get courseDetailsLanguageLabel => '言語';
+
+  @override
+  String get courseDetailsSessionsLabel => 'セッション';
+
+  @override
+  String get courseDetailsStudentsLabel => '学生';
+
+  @override
+  String get courseDetailsOverviewTitle => 'コース概要';
+
+  @override
+  String get courseDetailsTimelineTitle => 'コーススケジュール';
+
+  @override
+  String get courseDetailsStartDateLabel => '開始日';
+
+  @override
+  String get courseDetailsEndDateLabel => '終了日';
+
+  @override
+  String courseDetailsDurationLevel(String duration, String level) {
+    return '期間：$duration・レベル：$level';
+  }
+
+  @override
+  String get courseDetailsInstructorTitle => '専門言語講師';
+
+  @override
+  String get courseDetailsInstructorDescription =>
+      '8年以上の指導経験を持つ経験豊富な教育者。現代的な言語学習技法を専門としています。';
+
+  @override
+  String get courseDetailsInstructorYearsExp => '経験年数';
+
+  @override
+  String get courseDetailsInstructorRating => '評価';
+
+  @override
+  String get courseDetailsInstructorStudents => '学生数';
+
+  @override
+  String get courseDetailsFeedbackTitle => '学生からのフィードバック';
+
+  @override
+  String get courseDetailsHighlyRated => '高評価コース';
+
+  @override
+  String get courseDetailsReviewsCount => '124件以上の学生レビューに基づく';
+
+  @override
+  String get courseDetailsSatisfactionRate => '95%満足度';
+
+  @override
+  String get courseDetailsOneTimePayment => '一回払い';
+
+  @override
+  String get courseDetailsEnrollNow => '今すぐ登録';
+
+  @override
+  String get instructorProfile => 'プロフィール';
+
+  @override
+  String instructorYearsExp(int years) {
+    return '$years年の経験';
+  }
+
+  @override
+  String get instructorStatsCourses => 'コース';
+
+  @override
+  String get instructorStatsStudents => '学生';
+
+  @override
+  String get instructorStatsRating => '評価';
+
+  @override
+  String get instructorPersonalInfo => '個人情報';
+
+  @override
+  String get instructorProfessionalInfo => '専門情報';
+
+  @override
+  String get instructorLanguages => '言語';
+
+  @override
+  String get instructorAboutMe => '自己紹介';
+
+  @override
+  String get instructorEmail => 'メールアドレス';
+
+  @override
+  String get instructorDateOfBirth => '生年月日';
+
+  @override
+  String get instructorGender => '性別';
+
+  @override
+  String get instructorCountry => '国';
+
+  @override
+  String get instructorYearsOfExperience => '経験年数';
+
+  @override
+  String instructorYearsFormat(int years) {
+    return '$years年';
+  }
+
+  @override
+  String get instructorNativeLanguage => '母国語';
+
+  @override
+  String get instructorTeachingLanguage => '指導言語';
+
+  @override
+  String get instructorEditProfileImage => 'プロフィール画像を編集';
+
+  @override
+  String get instructorTakePhoto => '写真を撮る';
+
+  @override
+  String get instructorSelectFromGallery => 'ギャラリーから選択';
+
+  @override
+  String get instructorEnterImageUrl => '画像URLを入力';
+
+  @override
+  String get instructorCameraFeatureMessage => 'カメラ機能は実装予定です';
+
+  @override
+  String get instructorGalleryFeatureMessage => 'ギャラリー機能は実装予定です';
+
+  @override
+  String instructorEditTitle(String field) {
+    return '$fieldを編集';
+  }
+
+  @override
+  String instructorEnterField(String field) {
+    return '$fieldを入力';
+  }
+
+  @override
+  String get instructorCancel => 'キャンセル';
+
+  @override
+  String get instructorSave => '保存';
+
+  @override
+  String instructorFieldUpdated(String field) {
+    return '$fieldが正常に更新されました';
+  }
+
+  @override
+  String get instructorEditBio => '自己紹介を編集';
+
+  @override
+  String get instructorBioPlaceholder => 'あなたについて教えてください...';
+
+  @override
+  String get instructorBioUpdated => '自己紹介が正常に更新されました';
+
+  @override
+  String get instructorDateOfBirthUpdated => '生年月日が正常に更新されました';
+
+  @override
+  String get instructorSelectGender => '性別を選択';
+
+  @override
+  String get instructorGenderUpdated => '性別が正常に更新されました';
+
+  @override
+  String get instructorSelectCountry => '国を選択';
+
+  @override
+  String get instructorCountryUpdated => '国が正常に更新されました';
+
+  @override
+  String get instructorSelectNativeLanguage => '母国語を選択';
+
+  @override
+  String get instructorSelectTeachingLanguage => '指導言語を選択';
+
+  @override
+  String get instructorNativeLanguageUpdated => '母国語が正常に更新されました';
+
+  @override
+  String get instructorTeachingLanguageUpdated => '指導言語が正常に更新されました';
+
+  @override
+  String get instructorExperienceUpdated => '経験が正常に更新されました';
+
+  @override
+  String get instructorLogout => 'ログアウト';
+
+  @override
+  String get instructorLogoutConfirm => 'ログアウトしてもよろしいですか？';
+
+  @override
+  String get revenueDashboard => '収益ダッシュボード';
+
+  @override
+  String get revenueWeekly => '週次';
+
+  @override
+  String get revenueMonthly => '月次';
+
+  @override
+  String get revenueThisYear => '今年';
+
+  @override
+  String get revenueTotalCourses => '総コース数';
+
+  @override
+  String get revenueWeeklyTrend => '週次収益トレンド';
+
+  @override
+  String get revenueTotal => '合計';
+
+  @override
+  String get revenuePeak => 'ピーク';
+
+  @override
+  String get revenueCourseIncome => 'コース収入';
+
+  @override
+  String get revenueShowLess => '少なく表示';
+
+  @override
+  String get revenueViewAll => 'すべて表示';
+
+  @override
+  String get revenuePrice => '価格';
+
+  @override
+  String get revenueEnrolled => '登録済み';
+
+  @override
+  String get revenueTransactionHistory => '取引履歴';
+
+  @override
+  String get revenueWithdrawal => '出金';
+
+  @override
+  String get revenuePaymentOverview => '支払い概要';
+
+  @override
+  String get revenueAvailableBalance => '利用可能残高';
+
+  @override
+  String get revenueWithdrawButton => '出金';
+
+  @override
+  String get revenueTotalEarned => '総収入';
+
+  @override
+  String get revenueWithdrawn => '出金済み';
+
+  @override
+  String get withdrawMoney => '出金';
+
+  @override
+  String get availableBalance => '利用可能残高';
+
+  @override
+  String get withdrawalAmount => '出金金額';
+
+  @override
+  String get enterAmountToWithdraw => '出金する金額を入力してください';
+
+  @override
+  String get pleaseEnterWithdrawalAmount => '出金金額を入力してください';
+
+  @override
+  String get pleaseEnterValidAmount => '有効な金額を入力してください';
+
+  @override
+  String get amountMustBeGreaterThanZero => '金額は0より大きい必要があります';
+
+  @override
+  String get amountExceedsAvailableBalance => '金額が利用可能残高を超えています';
+
+  @override
+  String get minimumWithdrawalAmountIs => '最小出金額は\$10です';
+
+  @override
+  String get quickAmount50 => '\$50';
+
+  @override
+  String get quickAmount100 => '\$100';
+
+  @override
+  String get quickAmountMax => '最大';
+
+  @override
+  String get bankInformation => '銀行情報';
+
+  @override
+  String get accountHolderName => '口座名義人';
+
+  @override
+  String get enterFullNameAsOnBankAccount => '銀行口座の名義人名をフルネームで入力してください';
+
+  @override
+  String get pleaseEnterAccountHolderName => '口座名義人名を入力してください';
+
+  @override
+  String get bankName => '銀行名';
+
+  @override
+  String get enterYourBankName => '銀行名を入力してください';
+
+  @override
+  String get pleaseEnterBankName => '銀行名を入力してください';
+
+  @override
+  String get accountNumber => '口座番号';
+
+  @override
+  String get enterYourAccountNumber => '口座番号を入力してください';
+
+  @override
+  String get pleaseEnterAccountNumber => '口座番号を入力してください';
+
+  @override
+  String get accountNumberMustBeAtLeast8Digits => '口座番号は8桁以上である必要があります';
+
+  @override
+  String get routingNumber => '支店コード';
+
+  @override
+  String get enter9DigitRoutingNumber => '9桁の支店コードを入力してください';
+
+  @override
+  String get pleaseEnterRoutingNumber => '支店コードを入力してください';
+
+  @override
+  String get routingNumberMustBe9Digits => '支店コードは9桁である必要があります';
+
+  @override
+  String get submitWithdrawalRequest => '出金申請を送信';
+
+  @override
+  String get importantInformation => '重要な情報';
+
+  @override
+  String get processingTime => '処理時間：3-5営業日';
+
+  @override
+  String get minimumWithdrawal => '最小出金額：\$10';
+
+  @override
+  String get noProcessingFees => '処理手数料なし';
+
+  @override
+  String get withdrawalsProcessedMondayFriday => '出金は月曜日から金曜日に処理されます';
+
+  @override
+  String get bankInformationEncrypted => '銀行情報は暗号化されて安全です';
+
+  @override
+  String get confirmWithdrawal => '出金を確認';
+
+  @override
+  String get withdrawToAccountEndingIn => '末尾が';
+
+  @override
+  String get withdrawConfirmationQuestion => 'の口座に出金しますか？';
+
+  @override
+  String get withdrawalRequestSubmittedSuccessfully => '出金申請が正常に送信されました！';
+
+  @override
+  String get createNewCourse => '新しいコース作成';
+
+  @override
+  String get createYourCourse => 'コースを作成';
+
+  @override
+  String get fillDetailsToCreateCourse => 'コース作成の詳細を入力してください';
+
+  @override
+  String get enterCourseTitle => 'コースタイトルを入力';
+
+  @override
+  String get pleaseEnterCourseTitle => 'コースタイトルを入力してください';
+
+  @override
+  String get description => '説明';
+
+  @override
+  String get describeCourse => 'コースについて説明してください';
+
+  @override
+  String get pleaseEnterCourseDescription => 'コースの説明を入力してください';
+
+  @override
+  String get totalSessionsHint => '例: 12';
+
+  @override
+  String get enterSessions => 'セッション数を入力';
+
+  @override
+  String get priceInDollars => '価格 (\$)';
+
+  @override
+  String get free => '無料';
+
+  @override
+  String get courseSchedule => 'コーススケジュール';
+
+  @override
+  String get selectDate => '日付を選択 *';
+
+  @override
+  String get courseThumbnail => 'コースサムネイル';
+
+  @override
+  String get selectCourseThumbnail => 'コースサムネイルを選択';
+
+  @override
+  String get jpgPngMax5MB => 'JPG、PNG（最大5MB）';
+
+  @override
+  String get imageSelected => '画像が選択されました';
+
+  @override
+  String get publishCourse => 'コースを公開';
+
+  @override
+  String get pleaseSelectStartEndDates => '開始日と終了日を選択してください';
+
+  @override
+  String get pleaseSelectCourseThumbnail => 'コースサムネイルを選択してください';
+
+  @override
+  String get coursePublishedSuccessfully => 'コースが正常に公開されました！';
+
+  @override
+  String get imagePickerFeatureWillBeImplemented => '画像選択機能は実装予定です';
+
+  @override
+  String get analytics => 'アナリティクス';
+
+  @override
+  String get searchYourCourses => 'コースを検索...';
+
+  @override
+  String get totalStudents => '総学生数';
+
+  @override
+  String get activeCourses => 'アクティブコース';
+
+  @override
+  String get totalCourses => '総コース数';
+
+  @override
+  String get upcomingCourses => '予定のコース';
+
+  @override
+  String get seeAll => 'すべて見る';
+
+  @override
+  String get completedCourses => '完了したコース';
+
+  @override
+  String get showAllSections => 'すべてのセクションを表示';
+
+  @override
+  String get tryAdjustingSearch => '検索条件を調整してください';
+
+  @override
+  String get instructorPortal => '講師ポータル';
+
+  @override
+  String get instructorSettings => '講師設定';
+
+  @override
+  String get completion => '完了率';
+
+  @override
+  String get notificationPreferences => '通知設定';
+
+  @override
+  String get officeHours => 'オフィスアワー';
+
+  @override
+  String get languageAndRegion => '言語と地域';
+
+  @override
+  String get notificationSettingsComingSoon => '通知設定は近日公開予定です';
+
+  @override
+  String get officeHoursSettingsComingSoon => 'オフィスアワー設定は近日公開予定です';
+
+  @override
+  String get languageSettingsComingSoon => '言語設定は近日公開予定です';
+
+  @override
+  String get studentsCount => '学生';
+
+  @override
+  String get coursesStudents => '学生';
+
+  @override
+  String get category => 'カテゴリー';
+
+  @override
+  String get starts => '開始';
+
+  @override
+  String get revenueAnalytics => '収益分析';
+
+  @override
+  String get coursePrice => 'コース価格';
+
+  @override
+  String get totalRevenue => '総収益';
+
+  @override
+  String get courseManagement => 'コース管理';
+
+  @override
+  String get editCourseDetails => 'コース詳細を編集';
+
+  @override
+  String get editCourseDetailsTitle => 'コース詳細を編集';
+
+  @override
+  String get title => 'タイトル';
+
+  @override
+  String get priceWithSymbol => '価格 (\$)';
+
+  @override
+  String get thumbnailUrl => 'サムネイルURL';
+
+  @override
+  String get saveChanges => '変更を保存';
+
+  @override
+  String get courseDetailsUpdatedSuccessfully => 'コース詳細が正常に更新されました';
+
+  @override
+  String get feedbackManagement => 'フィードバック管理';
+
+  @override
+  String get viewStudentReviewsDescription => '学生のレビューを確認し、個別のフィードバックを提供する';
+
+  @override
+  String get courseRating => 'コース評価';
+
+  @override
+  String get totalReviews => '総レビュー数';
+
+  @override
+  String get courseReviewsFromStudents => '学生からのコースレビュー';
+
+  @override
+  String get instructorReviewsFromStudents => '学生からの講師レビュー';
+
+  @override
+  String get giveStudentFeedback => '学生にフィードバックを与える';
+
+  @override
+  String get selectStudent => '学生を選択';
+
+  @override
+  String get chooseAStudent => '学生を選択してください...';
+
+  @override
+  String get rateStudentPerformance => '学生の成績を評価';
+
+  @override
+  String get feedbackMessage => 'フィードバックメッセージ';
+
+  @override
+  String get feedbackHintText => '学生のパフォーマンス、参加度、改善点についてのフィードバックを共有してください...';
+
+  @override
+  String get sendFeedbackToStudent => '学生にフィードバックを送信';
+
+  @override
+  String get pleaseWriteYourFeedback => 'フィードバックを記入してください';
+
+  @override
+  String get pleaseProvideARating => '評価を提供してください';
+
+  @override
+  String feedbackSentSuccessfully(String studentName) {
+    return '✅ $studentNameにフィードバックが正常に送信されました！';
+  }
+
+  @override
+  String get instructorPanel => '講師パネル';
+
+  @override
+  String onlineStudentsCount(int onlineCount, int totalCount) {
+    return '$onlineCount人オンライン • 合計$totalCount人の学生';
+  }
+
+  @override
+  String get messageYourStudents => '学生にメッセージを送る...';
+
+  @override
+  String get scheduleNewSession => '新しいセッションをスケジュール';
+
+  @override
+  String get sessionOverview => 'セッション概要';
+
+  @override
+  String get noSessionsScheduled => 'スケジュールされたセッションはありません';
+
+  @override
+  String get createYourFirstSession => '最初のセッションを作成する';
+
+  @override
+  String get scheduleSession => 'セッションをスケジュール';
+
+  @override
+  String get copyLink => 'リンクをコピー';
+
+  @override
+  String get copyPassword => 'パスワードをコピー';
+
+  @override
+  String get deleteSession => 'セッションを削除';
+
+  @override
+  String get deleteSessionConfirmation => 'このセッションを削除してもよろしいですか？この操作は元に戻せません。';
+
+  @override
+  String get sessionDeletedSuccessfully => 'セッションが正常に削除されました';
+
+  @override
+  String get sessionTitle => 'セッションタイトル';
+
+  @override
+  String get sessionTitleRequired => 'セッションタイトル *';
+
+  @override
+  String get platform => 'プラットフォーム';
+
+  @override
+  String get platformRequired => 'プラットフォーム *';
+
+  @override
+  String get selectTime => '時間を選択 *';
+
+  @override
+  String durationHours(String duration) {
+    return '所要時間：$duration時間';
+  }
+
+  @override
+  String get uploadNewVideo => '新しい動画をアップロード';
+
+  @override
+  String completePercentage(int percentage) {
+    return '$percentage% 完了';
+  }
+
+  @override
+  String videosProcessed(int loaded, int total) {
+    return '$loaded / $total 動画を処理済み';
+  }
+
+  @override
+  String get noRecordedVideosYet => '録画された動画はまだありません';
+
+  @override
+  String get uploadYourFirstRecordedClass => '最初の録画授業をアップロードしてください';
+
+  @override
+  String get editVideoDetails => '動画詳細を編集';
+
+  @override
+  String get videoUpdatedSuccessfully => '✅ 動画が正常に更新されました！';
+
+  @override
+  String get deleteVideo => '動画を削除';
+
+  @override
+  String get areYouSureDeleteVideo => 'この動画を削除してもよろしいですか？';
+
+  @override
+  String get thisActionCannotBeUndone => 'この操作は元に戻せません。';
+
+  @override
+  String videoDeleted(String title) {
+    return '🗑️ \"$title\" を削除しました';
+  }
+
+  @override
+  String get uploadNewVideoDialog => '新しい動画をアップロード';
+
+  @override
+  String get tapToSelectVideoFile => 'ストレージから動画ファイルを選択するためにタップしてください';
+
+  @override
+  String fileSelectedPrefix(String filename) {
+    return 'ファイルが選択されました: $filename';
+  }
+
+  @override
+  String fileSelected(String filename) {
+    return '📁 ファイルが選択されました: $filename';
+  }
+
+  @override
+  String get videoTitleRequired => '動画タイトル *';
+
+  @override
+  String get uploadButton => 'アップロード';
+
+  @override
+  String uploadingVideo(String title) {
+    return '📤 \"$title\" をアップロード中...';
+  }
+
+  @override
+  String videoPublishedSuccessfully(String title) {
+    return '✅ \"$title\" が正常に公開されました！';
+  }
+
+  @override
+  String metadataError(String error) {
+    return 'メタデータエラー: $error';
+  }
+
+  @override
+  String get sessionLinkRequired => 'セッションリンク *';
+
+  @override
+  String get passwordOptional => 'パスワード（任意）';
+
+  @override
+  String get sessionScheduledSuccessfully => 'セッションが正常にスケジュールされました！';
+
+  @override
+  String get fillAllRequiredFields => 'すべての必須フィールドに入力してください';
+
+  @override
+  String get editSession => 'セッションを編集';
+
+  @override
+  String get sessionUpdatedSuccessfully => 'セッションが正常に更新されました！';
+
+  @override
+  String startingSession(String platform) {
+    return '$platformセッションを開始しています...';
+  }
+
+  @override
+  String get uploadStudyMaterial => '学習教材をアップロード';
+
+  @override
+  String get noStudyMaterialsYet => 'まだ学習教材がありません';
+
+  @override
+  String get uploadYourFirstStudyMaterial => '最初の学習教材をアップロードしてください';
+
+  @override
+  String get noFileAvailableForThisMaterial => '❌ この教材にはファイルがありません';
+
+  @override
+  String openingFile(String fileName) {
+    return '📁 ファイルを開いています: $fileName';
+  }
+
+  @override
+  String get filePreview => 'ファイルプレビュー';
+
+  @override
+  String fileLabel(String fileName) {
+    return 'ファイル: $fileName';
+  }
+
+  @override
+  String sizeLabel(String fileSize) {
+    return 'サイズ: $fileSize';
+  }
+
+  @override
+  String typeLabel(String fileType) {
+    return 'タイプ: $fileType';
+  }
+
+  @override
+  String get inRealAppDescription => '実際のアプリでは、ここに実際のファイル内容が表示されます';
+
+  @override
+  String get openFile => 'ファイルを開く';
+
+  @override
+  String openingFileWithSystemViewer(String fileName) {
+    return '📂 $fileName をシステムビューアで開いています';
+  }
+
+  @override
+  String get editMaterialDetails => '教材詳細を編集';
+
+  @override
+  String get materialUpdatedSuccessfully => '✅ 教材が正常に更新されました！';
+
+  @override
+  String get deleteMaterial => '教材を削除';
+
+  @override
+  String get areYouSureDeleteMaterial => 'この教材を削除してもよろしいですか？';
+
+  @override
+  String materialDeleted(String materialTitle) {
+    return '🗑️ \"$materialTitle\" が削除されました';
+  }
+
+  @override
+  String selectFileType(String fileType) {
+    return '$fileType ファイルを選択';
+  }
+
+  @override
+  String get chooseFileFromDevice => 'デバイスからファイルを選択してください：';
+
+  @override
+  String get noFileSelected => 'ファイルが選択されていません';
+
+  @override
+  String get chooseFile => 'ファイルを選択';
+
+  @override
+  String get changeFile => 'ファイルを変更';
+
+  @override
+  String get titleRequired => 'タイトル *';
+
+  @override
+  String materialUploadedSuccessfully(String materialTitle) {
+    return '✅ \"$materialTitle\" が正常にアップロードされました！';
+  }
+
+  @override
+  String studyMaterialFor(String courseTitle) {
+    return '$courseTitle の学習教材';
   }
 }

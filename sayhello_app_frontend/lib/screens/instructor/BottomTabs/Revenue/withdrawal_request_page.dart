@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class WithdrawalRequestPage extends StatefulWidget {
   final double availableBalance;
@@ -31,13 +32,14 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          'Withdraw Money',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+        title: Text(
+          localizations.withdrawMoney,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
@@ -57,23 +59,23 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Available Balance Card
-              _buildBalanceCard(isDark),
+              _buildBalanceCard(isDark, localizations),
               const SizedBox(height: 16),
 
               // Withdrawal Amount
-              _buildWithdrawalAmount(isDark),
+              _buildWithdrawalAmount(isDark, localizations),
               const SizedBox(height: 16),
 
               // Bank Information
-              _buildBankInformation(isDark),
+              _buildBankInformation(isDark, localizations),
               const SizedBox(height: 20),
 
               // Submit Button
-              _buildSubmitButton(isDark),
+              _buildSubmitButton(isDark, localizations),
               const SizedBox(height: 16),
 
               // Terms and Processing Info
-              _buildTermsInfo(isDark),
+              _buildTermsInfo(isDark, localizations),
             ],
           ),
         ),
@@ -81,7 +83,7 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
     );
   }
 
-  Widget _buildBalanceCard(bool isDark) {
+  Widget _buildBalanceCard(bool isDark, AppLocalizations localizations) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -102,7 +104,7 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Available Balance',
+                  localizations.availableBalance,
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.white.withOpacity(0.9),
@@ -130,7 +132,7 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
     );
   }
 
-  Widget _buildWithdrawalAmount(bool isDark) {
+  Widget _buildWithdrawalAmount(bool isDark, AppLocalizations localizations) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -141,7 +143,7 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Withdrawal Amount',
+            localizations.withdrawalAmount,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -153,7 +155,7 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
             controller: _amountController,
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
-              hintText: 'Enter amount to withdraw',
+              hintText: localizations.enterAmountToWithdraw,
               hintStyle: const TextStyle(fontSize: 12),
               prefixText: '\$ ',
               contentPadding: const EdgeInsets.symmetric(
@@ -175,20 +177,20 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter withdrawal amount';
+                return localizations.pleaseEnterWithdrawalAmount;
               }
               final amount = double.tryParse(value);
               if (amount == null) {
-                return 'Please enter a valid amount';
+                return localizations.pleaseEnterValidAmount;
               }
               if (amount <= 0) {
-                return 'Amount must be greater than zero';
+                return localizations.amountMustBeGreaterThanZero;
               }
               if (amount > widget.availableBalance) {
-                return 'Amount exceeds available balance';
+                return localizations.amountExceedsAvailableBalance;
               }
               if (amount < 10) {
-                return 'Minimum withdrawal amount is \$10';
+                return localizations.minimumWithdrawalAmountIs;
               }
               return null;
             },
@@ -196,11 +198,19 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
           const SizedBox(height: 8),
           Row(
             children: [
-              _buildQuickAmountButton('\$50', 50, isDark),
+              _buildQuickAmountButton(localizations.quickAmount50, 50, isDark),
               const SizedBox(width: 6),
-              _buildQuickAmountButton('\$100', 100, isDark),
+              _buildQuickAmountButton(
+                localizations.quickAmount100,
+                100,
+                isDark,
+              ),
               const SizedBox(width: 6),
-              _buildQuickAmountButton('Max', widget.availableBalance, isDark),
+              _buildQuickAmountButton(
+                localizations.quickAmountMax,
+                widget.availableBalance,
+                isDark,
+              ),
             ],
           ),
         ],
@@ -227,7 +237,7 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
     );
   }
 
-  Widget _buildBankInformation(bool isDark) {
+  Widget _buildBankInformation(bool isDark, AppLocalizations localizations) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -238,7 +248,7 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Bank Information',
+            localizations.bankInformation,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -250,11 +260,11 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
           // Account Holder Name
           _buildTextField(
             controller: _accountHolderController,
-            label: 'Account Holder Name',
-            hint: 'Enter full name as on bank account',
+            label: localizations.accountHolderName,
+            hint: localizations.enterFullNameAsOnBankAccount,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter account holder name';
+                return localizations.pleaseEnterAccountHolderName;
               }
               return null;
             },
@@ -264,11 +274,11 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
           // Bank Name
           _buildTextField(
             controller: _bankNameController,
-            label: 'Bank Name',
-            hint: 'Enter your bank name',
+            label: localizations.bankName,
+            hint: localizations.enterYourBankName,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter bank name';
+                return localizations.pleaseEnterBankName;
               }
               return null;
             },
@@ -278,16 +288,16 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
           // Account Number
           _buildTextField(
             controller: _accountNumberController,
-            label: 'Account Number',
-            hint: 'Enter your account number',
+            label: localizations.accountNumber,
+            hint: localizations.enterYourAccountNumber,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter account number';
+                return localizations.pleaseEnterAccountNumber;
               }
               if (value.length < 8) {
-                return 'Account number must be at least 8 digits';
+                return localizations.accountNumberMustBeAtLeast8Digits;
               }
               return null;
             },
@@ -297,8 +307,8 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
           // Routing Number
           _buildTextField(
             controller: _routingNumberController,
-            label: 'Routing Number',
-            hint: 'Enter 9-digit routing number',
+            label: localizations.routingNumber,
+            hint: localizations.enter9DigitRoutingNumber,
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
@@ -306,10 +316,10 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter routing number';
+                return localizations.pleaseEnterRoutingNumber;
               }
               if (value.length != 9) {
-                return 'Routing number must be 9 digits';
+                return localizations.routingNumberMustBe9Digits;
               }
               return null;
             },
@@ -368,19 +378,19 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
     );
   }
 
-  Widget _buildSubmitButton(bool isDark) {
+  Widget _buildSubmitButton(bool isDark, AppLocalizations localizations) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: _submitWithdrawalRequest,
+        onPressed: () => _submitWithdrawalRequest(localizations),
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF7A54FF),
           padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
         ),
-        child: const Text(
-          'Submit Withdrawal Request',
-          style: TextStyle(
+        child: Text(
+          localizations.submitWithdrawalRequest,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -390,7 +400,7 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
     );
   }
 
-  Widget _buildTermsInfo(bool isDark) {
+  Widget _buildTermsInfo(bool isDark, AppLocalizations localizations) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -403,29 +413,29 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.info_outline,
-                color: const Color(0xFF7A54FF),
+                color: Color(0xFF7A54FF),
                 size: 14,
               ),
               const SizedBox(width: 6),
               Text(
-                'Important Information',
-                style: TextStyle(
+                localizations.importantInformation,
+                style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF7A54FF),
+                  color: Color(0xFF7A54FF),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 6),
           Text(
-            '• Processing time: 3-5 business days\n'
-            '• Minimum withdrawal: \$10\n'
-            '• No processing fees\n'
-            '• Withdrawals are processed Monday-Friday\n'
-            '• Bank information is encrypted and secure',
+            '• ${localizations.processingTime}\n'
+            '• ${localizations.minimumWithdrawal}\n'
+            '• ${localizations.noProcessingFees}\n'
+            '• ${localizations.withdrawalsProcessedMondayFriday}\n'
+            '• ${localizations.bankInformationEncrypted}',
             style: TextStyle(
               fontSize: 10,
               color: isDark ? Colors.grey[300] : Colors.grey[700],
@@ -437,28 +447,28 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
     );
   }
 
-  void _submitWithdrawalRequest() {
+  void _submitWithdrawalRequest(AppLocalizations localizations) {
     if (_formKey.currentState!.validate()) {
       // Show confirmation dialog
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Confirm Withdrawal'),
-          content: Text(
-            'Withdraw \$${_amountController.text} to your account ending in ${_accountNumberController.text.length > 4 ? _accountNumberController.text.substring(_accountNumberController.text.length - 4) : "****"}?',
-          ),
+          title: Text(localizations.confirmWithdrawal),
+          content: Text(_buildWithdrawalConfirmationMessage(localizations)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(localizations.cancel),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context); // Close dialog
                 Navigator.pop(context); // Go back to revenue page
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Withdrawal request submitted successfully!'),
+                  SnackBar(
+                    content: Text(
+                      localizations.withdrawalRequestSubmittedSuccessfully,
+                    ),
                     backgroundColor: Colors.green,
                   ),
                 );
@@ -466,14 +476,39 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF7A54FF),
               ),
-              child: const Text(
-                'Confirm',
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                localizations.confirm,
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],
         ),
       );
+    }
+  }
+
+  String _buildWithdrawalConfirmationMessage(AppLocalizations localizations) {
+    final amount = '\$${_amountController.text}';
+    final lastFour = _accountNumberController.text.length > 4
+        ? _accountNumberController.text.substring(
+            _accountNumberController.text.length - 4,
+          )
+        : "****";
+
+    // Build message based on language structure
+    final locale = Localizations.localeOf(context).languageCode;
+
+    switch (locale) {
+      case 'ja':
+        return '$amount を${localizations.withdrawToAccountEndingIn}$lastFour${localizations.withdrawConfirmationQuestion}';
+      case 'ko':
+        return '$lastFour${localizations.withdrawToAccountEndingIn} $amount${localizations.withdrawConfirmationQuestion}';
+      case 'bn':
+        return '$amount $lastFour${localizations.withdrawToAccountEndingIn} ${localizations.withdrawConfirmationQuestion}';
+      case 'es':
+        return '${localizations.withdrawToAccountEndingIn} $amount ${localizations.withdrawConfirmationQuestion} $lastFour?';
+      default: // English
+        return '${localizations.withdrawToAccountEndingIn} $amount ${localizations.withdrawConfirmationQuestion} $lastFour?';
     }
   }
 }

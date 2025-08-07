@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../l10n/app_localizations.dart';
 import 'instructor_course_portal.dart';
 import '../Revenue/revenue_page.dart';
 import '../../../../../providers/settings_provider.dart';
@@ -19,8 +20,8 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   final String instructorName = "John Doe";
   final String instructorProfileImage = "";
 
-  // Status filter options
-  final List<String> _statusFilters = ['All', 'Upcoming', 'Active', 'Expired'];
+  // Status filter options - will be initialized with localized values
+  List<String> _statusFilters = [];
 
   // Dynamic course data with dates for status calculation
   final List<Map<String, dynamic>> _allCourses = [
@@ -169,7 +170,9 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
 
   // Get courses by status for sections
   List<Map<String, dynamic>> get _upcomingCourses {
-    if (_selectedStatusFilter == 'All' || _selectedStatusFilter == 'Upcoming') {
+    final localizations = AppLocalizations.of(context)!;
+    if (_selectedStatusFilter == localizations.all ||
+        _selectedStatusFilter == localizations.upcoming) {
       List<Map<String, dynamic>> courses = _allCourses
           .where((course) => _getCourseStatus(course) == 'upcoming')
           .toList();
@@ -179,7 +182,9 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   }
 
   List<Map<String, dynamic>> get _activeCourses {
-    if (_selectedStatusFilter == 'All' || _selectedStatusFilter == 'Active') {
+    final localizations = AppLocalizations.of(context)!;
+    if (_selectedStatusFilter == localizations.all ||
+        _selectedStatusFilter == localizations.active) {
       List<Map<String, dynamic>> courses = _allCourses
           .where((course) => _getCourseStatus(course) == 'active')
           .toList();
@@ -189,7 +194,9 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   }
 
   List<Map<String, dynamic>> get _expiredCourses {
-    if (_selectedStatusFilter == 'All' || _selectedStatusFilter == 'Expired') {
+    final localizations = AppLocalizations.of(context)!;
+    if (_selectedStatusFilter == localizations.all ||
+        _selectedStatusFilter == localizations.expired) {
       List<Map<String, dynamic>> courses = _allCourses
           .where((course) => _getCourseStatus(course) == 'expired')
           .toList();
@@ -200,13 +207,21 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
 
   // Get all filtered courses for when a specific status is selected
   List<Map<String, dynamic>> get _filteredCourses {
+    final localizations = AppLocalizations.of(context)!;
     List<Map<String, dynamic>> courses = _allCourses;
 
     // Apply status filter
-    if (_selectedStatusFilter != 'All') {
+    if (_selectedStatusFilter != localizations.all) {
       courses = courses.where((course) {
         final status = _getCourseStatus(course);
-        return status == _selectedStatusFilter.toLowerCase();
+        if (_selectedStatusFilter == localizations.upcoming) {
+          return status == 'upcoming';
+        } else if (_selectedStatusFilter == localizations.active) {
+          return status == 'active';
+        } else if (_selectedStatusFilter == localizations.expired) {
+          return status == 'expired';
+        }
+        return false;
       }).toList();
     }
 
@@ -275,6 +290,18 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final localizations = AppLocalizations.of(context)!;
+
+    // Initialize status filters with localized values
+    if (_statusFilters.isEmpty) {
+      _statusFilters = [
+        localizations.all,
+        localizations.upcoming,
+        localizations.active,
+        localizations.expired,
+      ];
+      _selectedStatusFilter = localizations.all;
+    }
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -296,12 +323,12 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                     ),
                   );
                 },
-                tooltip: 'Analytics',
+                tooltip: localizations.analytics,
               ),
 
               Expanded(
                 child: Text(
-                  'My Courses',
+                  localizations.myCourses,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
@@ -329,8 +356,10 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   }
 
   Widget _buildMainContent(bool isDark) {
+    final localizations = AppLocalizations.of(context)!;
+
     // If a specific status filter is selected, show only those courses
-    if (_selectedStatusFilter != 'All') {
+    if (_selectedStatusFilter != localizations.all) {
       return SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -371,6 +400,8 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   }
 
   Widget _buildGreetingHeader(bool isDark) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
@@ -380,7 +411,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Welcome back!',
+                  localizations.welcomeBack,
                   style: TextStyle(
                     fontSize: 14,
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -445,6 +476,8 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   }
 
   Widget _buildSearchAndFilter(bool isDark) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -465,7 +498,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search your courses...',
+                hintText: localizations.searchYourCourses,
                 hintStyle: TextStyle(
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                   fontSize: 14,
@@ -541,6 +574,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
 
   Widget _buildQuickStats(bool isDark) {
     final stats = _quickStats;
+    final localizations = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -548,7 +582,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
         children: [
           Expanded(
             child: _buildStatCard(
-              'Total Students',
+              localizations.totalStudents,
               stats['totalStudents']!,
               Icons.people,
               isDark,
@@ -557,7 +591,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
           const SizedBox(width: 12),
           Expanded(
             child: _buildStatCard(
-              'Active Courses',
+              localizations.activeCourses,
               stats['activeCourses']!,
               Icons.school,
               isDark,
@@ -566,7 +600,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
           const SizedBox(width: 12),
           Expanded(
             child: _buildStatCard(
-              'Total Courses',
+              localizations.totalCourses,
               stats['totalCourses']!,
               Icons.library_books,
               isDark,
@@ -620,6 +654,8 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
     final upcomingCourses = _upcomingCourses;
     if (upcomingCourses.isEmpty) return const SizedBox.shrink();
 
+    final localizations = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -629,7 +665,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Upcoming Courses',
+                localizations.upcomingCourses,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -640,12 +676,15 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      _selectedStatusFilter = 'Upcoming';
+                      _selectedStatusFilter = localizations.upcoming;
                     });
                   },
-                  child: const Text(
-                    'See all',
-                    style: TextStyle(color: Color(0xFF7A54FF), fontSize: 14),
+                  child: Text(
+                    localizations.seeAll,
+                    style: const TextStyle(
+                      color: Color(0xFF7A54FF),
+                      fontSize: 14,
+                    ),
                   ),
                 ),
             ],
@@ -676,6 +715,8 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
     final activeCourses = _activeCourses;
     if (activeCourses.isEmpty) return const SizedBox.shrink();
 
+    final localizations = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -685,7 +726,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Active Courses',
+                localizations.activeCourses,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -696,12 +737,15 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      _selectedStatusFilter = 'Active';
+                      _selectedStatusFilter = localizations.active;
                     });
                   },
-                  child: const Text(
-                    'See all',
-                    style: TextStyle(color: Color(0xFF7A54FF), fontSize: 14),
+                  child: Text(
+                    localizations.seeAll,
+                    style: const TextStyle(
+                      color: Color(0xFF7A54FF),
+                      fontSize: 14,
+                    ),
                   ),
                 ),
             ],
@@ -724,6 +768,8 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
     final expiredCourses = _expiredCourses;
     if (expiredCourses.isEmpty) return const SizedBox.shrink();
 
+    final localizations = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -733,7 +779,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Completed Courses',
+                localizations.completedCourses,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -744,12 +790,15 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      _selectedStatusFilter = 'Expired';
+                      _selectedStatusFilter = localizations.expired;
                     });
                   },
-                  child: const Text(
-                    'See all',
-                    style: TextStyle(color: Color(0xFF7A54FF), fontSize: 14),
+                  child: Text(
+                    localizations.seeAll,
+                    style: const TextStyle(
+                      color: Color(0xFF7A54FF),
+                      fontSize: 14,
+                    ),
                   ),
                 ),
             ],
@@ -776,8 +825,9 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
 
   Widget _buildFilteredCoursesSection(bool isDark) {
     final filteredCourses = _filteredCourses;
-    final statusTitle = _selectedStatusFilter == 'Expired'
-        ? 'Completed'
+    final localizations = AppLocalizations.of(context)!;
+    final statusTitle = _selectedStatusFilter == localizations.expired
+        ? localizations.completed
         : _selectedStatusFilter;
 
     return Padding(
@@ -799,12 +849,15 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
               TextButton(
                 onPressed: () {
                   setState(() {
-                    _selectedStatusFilter = 'All';
+                    _selectedStatusFilter = localizations.all;
                   });
                 },
-                child: const Text(
-                  'Show all sections',
-                  style: TextStyle(color: Color(0xFF7A54FF), fontSize: 14),
+                child: Text(
+                  localizations.showAllSections,
+                  style: const TextStyle(
+                    color: Color(0xFF7A54FF),
+                    fontSize: 14,
+                  ),
                 ),
               ),
             ],
@@ -824,7 +877,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'No courses found',
+                      localizations.noCoursesFound,
                       style: TextStyle(
                         fontSize: 18,
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -832,7 +885,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                     ),
                     if (_searchQuery.isNotEmpty)
                       Text(
-                        'Try adjusting your search terms',
+                        localizations.tryAdjustingSearch,
                         style: TextStyle(
                           fontSize: 14,
                           color: isDark ? Colors.grey[500] : Colors.grey[500],
@@ -863,6 +916,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   }) {
     final status = _getCourseStatus(course);
     final progress = course['completedSessions'] / course['totalSessions'];
+    final localizations = AppLocalizations.of(context)!;
 
     if (isHorizontal) {
       return Container(
@@ -941,7 +995,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                       ),
                       const SizedBox(height: 3), // Reduced spacing
                       Text(
-                        '${course['enrolledStudents']} students',
+                        '${course['enrolledStudents']} ${localizations.students}',
                         style: TextStyle(
                           fontSize: 11,
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -1080,7 +1134,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
-                              '${course['enrolledStudents']} students',
+                              '${course['enrolledStudents']} ${localizations.students}',
                               style: TextStyle(
                                 fontSize: 11,
                                 color: isDark
@@ -1133,7 +1187,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Progress: ${(progress * 100).toInt()}%',
+                          '${localizations.progress}: ${(progress * 100).toInt()}%',
                           style: TextStyle(
                             fontSize: 9, // Reduced font size
                             color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -1152,25 +1206,26 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   }
 
   Widget _buildStatusBadge(String status) {
+    final localizations = AppLocalizations.of(context)!;
     Color badgeColor;
     String displayText;
 
     switch (status.toLowerCase()) {
       case 'upcoming':
         badgeColor = Colors.orange;
-        displayText = 'Upcoming';
+        displayText = localizations.upcoming;
         break;
       case 'active':
         badgeColor = Colors.blue;
-        displayText = 'Active';
+        displayText = localizations.active;
         break;
       case 'expired':
         badgeColor = Colors.green;
-        displayText = 'Completed';
+        displayText = localizations.completed;
         break;
       default:
         badgeColor = Colors.grey;
-        displayText = 'Unknown';
+        displayText = localizations.unknown;
     }
 
     return Container(

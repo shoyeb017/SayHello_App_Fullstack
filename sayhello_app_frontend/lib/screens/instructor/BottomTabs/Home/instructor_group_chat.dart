@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../l10n/app_localizations.dart';
 
 class InstructorGroupChatTab extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -85,6 +86,7 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = Color(0xFF7A54FF);
+    final localizations = AppLocalizations.of(context)!;
 
     // Consistent theme colors
     final textColor =
@@ -131,7 +133,7 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Instructor Panel - ${widget.course['title']}',
+                      '${localizations.instructorPanel} - ${widget.course['title']}',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -141,7 +143,10 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      '$onlineCount online • ${_enrolledStudents.length} total students',
+                      localizations.onlineStudentsCount(
+                        onlineCount,
+                        _enrolledStudents.length,
+                      ),
                       style: TextStyle(fontSize: 12, color: subTextColor),
                     ),
                   ],
@@ -154,7 +159,7 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'INSTRUCTOR',
+                  localizations.instructorRole,
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
@@ -302,7 +307,7 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
                 child: TextField(
                   controller: _controller,
                   decoration: InputDecoration(
-                    hintText: 'Message your students...',
+                    hintText: localizations.messageYourStudents,
                     hintStyle: TextStyle(color: subTextColor, fontSize: 13),
                     prefixIcon: Icon(
                       Icons.school,

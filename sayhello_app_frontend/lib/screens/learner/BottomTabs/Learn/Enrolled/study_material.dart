@@ -627,7 +627,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      AppLocalizations.of(context)!.fileType(
+                      AppLocalizations.of(context)!.typeLabel(
                         material['type']?.toString().toUpperCase() ?? 'FILE',
                       ),
                       style: TextStyle(fontSize: 12, color: Colors.grey[600]),
@@ -756,7 +756,9 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          AppLocalizations.of(context)!.linkCopiedToClipboard,
+                          AppLocalizations.of(
+                            context,
+                          )!.linkCopiedToClipboardViewer('Download link'),
                         ),
                         const SizedBox(height: 8),
                         Container(

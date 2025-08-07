@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../l10n/app_localizations.dart';
 
 class InstructorFeedbackTab extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -108,6 +109,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = Color(0xFF7A54FF);
+    final localizations = AppLocalizations.of(context)!;
 
     final textColor =
         Theme.of(context).textTheme.bodyLarge?.color ??
@@ -150,7 +152,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
                     SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        'Feedback Management',
+                        localizations.feedbackManagement,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -164,7 +166,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'View student reviews and provide personalized feedback',
+                  localizations.viewStudentReviewsDescription,
                   style: TextStyle(fontSize: 12, color: Colors.white70),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -180,7 +182,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
             children: [
               Expanded(
                 child: _buildStatCard(
-                  'Course Rating',
+                  localizations.courseRating,
                   '${(_courseReviews.fold<double>(0, (sum, r) => sum + r['courseRating']) / _courseReviews.length).toStringAsFixed(1)}',
                   Icons.school,
                   Colors.blue,
@@ -190,7 +192,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
               const SizedBox(width: 8),
               Expanded(
                 child: _buildStatCard(
-                  'Instructor Rating',
+                  localizations.instructorRating,
                   '${(_instructorReviews.fold<double>(0, (sum, r) => sum + r['instructorRating']) / _instructorReviews.length).toStringAsFixed(1)}',
                   Icons.person,
                   Colors.green,
@@ -200,7 +202,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
               const SizedBox(width: 8),
               Expanded(
                 child: _buildStatCard(
-                  'Total Reviews',
+                  localizations.totalReviews,
                   '${_courseReviews.length + _instructorReviews.length}',
                   Icons.comment,
                   primaryColor,
@@ -214,7 +216,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
 
           // Course Reviews Section
           Text(
-            'Course Reviews from Students',
+            localizations.courseReviewsFromStudents,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -328,7 +330,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
 
           // Instructor Reviews Section
           Text(
-            'Instructor Reviews from Students',
+            localizations.instructorReviewsFromStudents,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -444,7 +446,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
 
           // Give Student Feedback Section
           Text(
-            'Give Student Feedback',
+            localizations.giveStudentFeedback,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -473,7 +475,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
                 children: [
                   // Student Selection
                   Text(
-                    'Select Student',
+                    localizations.selectStudent,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -494,7 +496,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
                     child: DropdownButton<String>(
                       value: _selectedStudentId,
                       hint: Text(
-                        'Choose a student...',
+                        localizations.chooseAStudent,
                         style: TextStyle(color: subTextColor, fontSize: 12),
                       ),
                       isExpanded: true,
@@ -562,7 +564,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
 
                   // Rating
                   Text(
-                    'Rate Student Performance',
+                    localizations.rateStudentPerformance,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -592,7 +594,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
                       Text(
                         _studentRating > 0
                             ? '${_studentRating.toInt()}/5'
-                            : 'No rating',
+                            : localizations.noRating,
                         style: TextStyle(fontSize: 11, color: subTextColor),
                       ),
                     ],
@@ -602,7 +604,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
 
                   // Feedback Message
                   Text(
-                    'Feedback Message',
+                    localizations.feedbackMessage,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -614,8 +616,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
                     controller: _studentFeedbackController,
                     maxLines: 3,
                     decoration: InputDecoration(
-                      hintText:
-                          'Share your feedback about student\'s performance, participation, areas for improvement...',
+                      hintText: localizations.feedbackHintText,
                       hintStyle: TextStyle(color: subTextColor, fontSize: 11),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -651,7 +652,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
                       onPressed:
                           (_selectedStudentId == null || _isSubmittingFeedback)
                           ? null
-                          : _submitStudentFeedback,
+                          : () => _submitStudentFeedback(localizations),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryColor,
                         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -671,7 +672,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
                               ),
                             )
                           : Text(
-                              'Send Feedback to Student',
+                              localizations.sendFeedbackToStudent,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
@@ -747,11 +748,11 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
     }
   }
 
-  void _submitStudentFeedback() async {
+  void _submitStudentFeedback(AppLocalizations localizations) async {
     if (_studentFeedbackController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please write your feedback'),
+          content: Text(localizations.pleaseWriteYourFeedback),
           backgroundColor: Colors.red,
         ),
       );
@@ -761,7 +762,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
     if (_studentRating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please provide a rating'),
+          content: Text(localizations.pleaseProvideARating),
           backgroundColor: Colors.orange,
         ),
       );
@@ -789,7 +790,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          '✅ Feedback sent to ${selectedStudent['name']} successfully!',
+          localizations.feedbackSentSuccessfully(selectedStudent['name']),
         ),
         backgroundColor: Colors.green,
       ),

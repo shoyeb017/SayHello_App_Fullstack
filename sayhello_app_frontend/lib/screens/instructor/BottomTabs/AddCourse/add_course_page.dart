@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../../providers/settings_provider.dart';
 import '../../instructor_main_tab.dart';
 
@@ -15,13 +16,11 @@ class _AddCoursePageState extends State<AddCoursePage> {
   final _descriptionController = TextEditingController();
   final _totalSessionsController = TextEditingController();
 
-  String _selectedLevel = 'Beginner';
+  String _selectedLevel = '';
   double _price = 50.0;
   DateTime? _startDate;
   DateTime? _endDate;
   String? _thumbnailPath;
-
-  final List<String> _levels = ['Beginner', 'Intermediate', 'Advanced'];
 
   @override
   void dispose() {
@@ -34,6 +33,13 @@ class _AddCoursePageState extends State<AddCoursePage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final localizations = AppLocalizations.of(context)!;
+
+    // Initialize _selectedLevel with localized value if not already set
+    if (_selectedLevel.isEmpty) {
+      _selectedLevel = localizations.beginner;
+    }
+    ;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -62,7 +68,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
 
               Expanded(
                 child: Text(
-                  'Create New Course',
+                  localizations.createNewCourse,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                 ),
@@ -108,8 +114,8 @@ class _AddCoursePageState extends State<AddCoursePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Create Your Course',
+                    Text(
+                      localizations.createYourCourse,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -118,7 +124,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Fill in the details to create your course',
+                      localizations.fillDetailsToCreateCourse,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.white.withOpacity(0.9),
@@ -131,15 +137,20 @@ class _AddCoursePageState extends State<AddCoursePage> {
               const SizedBox(height: 20),
 
               // Course Title
-              _buildSectionTitle('Course Title', Icons.title, isDark),
+              _buildSectionTitle(
+                localizations.courseTitle,
+                Icons.title,
+                isDark,
+              ),
               const SizedBox(height: 8),
               _buildTextField(
                 controller: _titleController,
-                hintText: 'Enter course title',
+                hintText: localizations.enterCourseTitle,
                 isDark: isDark,
+                localizations: localizations,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter course title';
+                    return localizations.pleaseEnterCourseTitle;
                   }
                   return null;
                 },
@@ -148,16 +159,21 @@ class _AddCoursePageState extends State<AddCoursePage> {
               const SizedBox(height: 16),
 
               // Course Description
-              _buildSectionTitle('Description', Icons.description, isDark),
+              _buildSectionTitle(
+                localizations.description,
+                Icons.description,
+                isDark,
+              ),
               const SizedBox(height: 8),
               _buildTextField(
                 controller: _descriptionController,
-                hintText: 'Describe your course',
+                hintText: localizations.describeCourse,
                 isDark: isDark,
+                localizations: localizations,
                 maxLines: 3,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter course description';
+                    return localizations.pleaseEnterCourseDescription;
                   }
                   return null;
                 },
@@ -172,11 +188,19 @@ class _AddCoursePageState extends State<AddCoursePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildSectionTitle('Level', Icons.trending_up, isDark),
+                        _buildSectionTitle(
+                          localizations.level,
+                          Icons.trending_up,
+                          isDark,
+                        ),
                         const SizedBox(height: 8),
                         _buildDropdown(
                           value: _selectedLevel,
-                          items: _levels,
+                          items: [
+                            localizations.beginner,
+                            localizations.intermediate,
+                            localizations.advanced,
+                          ],
                           onChanged: (value) {
                             setState(() {
                               _selectedLevel = value!;
@@ -193,18 +217,19 @@ class _AddCoursePageState extends State<AddCoursePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildSectionTitle(
-                          'Total Sessions',
+                          localizations.totalSessions,
                           Icons.video_library,
                           isDark,
                         ),
                         const SizedBox(height: 8),
                         _buildTextField(
                           controller: _totalSessionsController,
-                          hintText: 'e.g., 12',
+                          hintText: localizations.totalSessionsHint,
                           isDark: isDark,
+                          localizations: localizations,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Enter sessions';
+                              return localizations.enterSessions;
                             }
                             return null;
                           },
@@ -218,7 +243,11 @@ class _AddCoursePageState extends State<AddCoursePage> {
               const SizedBox(height: 16),
 
               // Price Section
-              _buildSectionTitle('Price (\$)', Icons.attach_money, isDark),
+              _buildSectionTitle(
+                localizations.priceInDollars,
+                Icons.attach_money,
+                isDark,
+              ),
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -297,7 +326,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Free',
+                          localizations.free,
                           style: TextStyle(
                             fontSize: 12,
                             color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -320,7 +349,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
 
               // Course Schedule
               _buildSectionTitle(
-                'Course Schedule',
+                localizations.courseSchedule,
                 Icons.calendar_today,
                 isDark,
               ),
@@ -329,7 +358,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
                 children: [
                   Expanded(
                     child: _buildDateCard(
-                      'Start Date',
+                      localizations.startDate,
                       _startDate,
                       () => _selectDate(true),
                       isDark,
@@ -338,7 +367,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _buildDateCard(
-                      'End Date',
+                      localizations.endDate,
                       _endDate,
                       () => _selectDate(false),
                       isDark,
@@ -350,7 +379,11 @@ class _AddCoursePageState extends State<AddCoursePage> {
               const SizedBox(height: 16),
 
               // Thumbnail
-              _buildSectionTitle('Course Thumbnail', Icons.image, isDark),
+              _buildSectionTitle(
+                localizations.courseThumbnail,
+                Icons.image,
+                isDark,
+              ),
               const SizedBox(height: 8),
               _buildThumbnailPicker(isDark),
 
@@ -360,7 +393,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
               SizedBox(
                 width: double.infinity,
                 child: _buildActionButton(
-                  'Publish Course',
+                  localizations.publishCourse,
                   Icons.publish,
                   const Color(0xFF7A54FF),
                   () => _publishCourse(),
@@ -396,6 +429,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
     required TextEditingController controller,
     required String hintText,
     required bool isDark,
+    required AppLocalizations localizations,
     int maxLines = 1,
     String? Function(String?)? validator,
   }) {
@@ -499,7 +533,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
                   child: Text(
                     date != null
                         ? '${date.day}/${date.month}/${date.year}'
-                        : 'Select date',
+                        : AppLocalizations.of(context)!.selectDate,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -553,7 +587,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Image Selected',
+                            AppLocalizations.of(context)!.imageSelected,
                             style: TextStyle(
                               color: isDark ? Colors.white : Colors.black,
                               fontWeight: FontWeight.w500,
@@ -606,7 +640,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Select Course Thumbnail',
+                    AppLocalizations.of(context)!.selectCourseThumbnail,
                     style: TextStyle(
                       color: isDark ? Colors.grey[400] : Colors.grey[600],
                       fontWeight: FontWeight.w500,
@@ -690,7 +724,9 @@ class _AddCoursePageState extends State<AddCoursePage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Image picker feature will be implemented'),
+        content: Text(
+          AppLocalizations.of(context)!.imagePickerFeatureWillBeImplemented,
+        ),
         backgroundColor: const Color(0xFF7A54FF),
       ),
     );
@@ -700,8 +736,10 @@ class _AddCoursePageState extends State<AddCoursePage> {
     if (_formKey.currentState!.validate()) {
       if (_startDate == null || _endDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please select start and end dates'),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.pleaseSelectStartEndDates,
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -710,8 +748,10 @@ class _AddCoursePageState extends State<AddCoursePage> {
 
       if (_thumbnailPath == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please select a course thumbnail'),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.pleaseSelectCourseThumbnail,
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -719,8 +759,10 @@ class _AddCoursePageState extends State<AddCoursePage> {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Course published successfully!'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.coursePublishedSuccessfully,
+          ),
           backgroundColor: Colors.green,
         ),
       );

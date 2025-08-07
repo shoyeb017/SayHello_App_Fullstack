@@ -188,10 +188,10 @@ abstract class AppLocalizations {
   /// **'Instructor Sign In'**
   String get instructorSignIn;
 
-  /// Welcome message on sign in page
+  /// Greeting message for instructor
   ///
   /// In en, this message translates to:
-  /// **'Welcome Back'**
+  /// **'Welcome back!'**
   String get welcomeBack;
 
   /// Sign in page subtitle
@@ -494,7 +494,7 @@ abstract class AppLocalizations {
   /// **'Choose DOB'**
   String get chooseDOB;
 
-  /// Next button text
+  /// Label for upcoming sessions count
   ///
   /// In en, this message translates to:
   /// **'Next'**
@@ -548,7 +548,7 @@ abstract class AppLocalizations {
   /// **'Skill Level'**
   String get skillLevel;
 
-  /// Beginner level
+  /// Beginner level option
   ///
   /// In en, this message translates to:
   /// **'Beginner'**
@@ -560,13 +560,13 @@ abstract class AppLocalizations {
   /// **'Basic'**
   String get basic;
 
-  /// Intermediate level
+  /// Intermediate level option
   ///
   /// In en, this message translates to:
   /// **'Intermediate'**
   String get intermediate;
 
-  /// Advanced level
+  /// Advanced level option
   ///
   /// In en, this message translates to:
   /// **'Advanced'**
@@ -836,7 +836,7 @@ abstract class AppLocalizations {
   /// **'Failed'**
   String get failed;
 
-  /// Confirm button
+  /// Confirm button text
   ///
   /// In en, this message translates to:
   /// **'Confirm'**
@@ -860,7 +860,7 @@ abstract class AppLocalizations {
   /// **'OK'**
   String get ok;
 
-  /// Close button
+  /// Close button text
   ///
   /// In en, this message translates to:
   /// **'Close'**
@@ -890,7 +890,7 @@ abstract class AppLocalizations {
   /// **'Remove'**
   String get remove;
 
-  /// Update label
+  /// Button text to update session
   ///
   /// In en, this message translates to:
   /// **'Update'**
@@ -962,7 +962,7 @@ abstract class AppLocalizations {
   /// **'Receive'**
   String get receive;
 
-  /// Upload button
+  /// Upload button text
   ///
   /// In en, this message translates to:
   /// **'Upload'**
@@ -1016,7 +1016,7 @@ abstract class AppLocalizations {
   /// **'Finish'**
   String get finish;
 
-  /// Done button text
+  /// Label for completed sessions count
   ///
   /// In en, this message translates to:
   /// **'Done'**
@@ -1028,7 +1028,7 @@ abstract class AppLocalizations {
   /// **'Complete'**
   String get complete;
 
-  /// Start button
+  /// Button text to start session
   ///
   /// In en, this message translates to:
   /// **'Start'**
@@ -1124,7 +1124,7 @@ abstract class AppLocalizations {
   /// **'Support'**
   String get support;
 
-  /// Feedback section
+  /// Tab label for feedback
   ///
   /// In en, this message translates to:
   /// **'Feedback'**
@@ -1754,7 +1754,7 @@ abstract class AppLocalizations {
   /// **'Find Partners'**
   String get findPartners;
 
-  /// All filter option
+  /// Filter option for all courses
   ///
   /// In en, this message translates to:
   /// **'All'**
@@ -1862,16 +1862,16 @@ abstract class AppLocalizations {
   /// **'Other Courses'**
   String get otherCourses;
 
-  /// Students count text
+  /// Text label for number of students
   ///
   /// In en, this message translates to:
   /// **'students'**
   String get students;
 
-  /// Completed text
+  /// Status badge for completed courses
   ///
   /// In en, this message translates to:
-  /// **'completed'**
+  /// **'Completed'**
   String get completed;
 
   /// In progress status
@@ -1910,23 +1910,23 @@ abstract class AppLocalizations {
   /// **'Duration'**
   String get duration;
 
-  /// Start date label
+  /// Start date field label
   ///
   /// In en, this message translates to:
   /// **'Start Date'**
   String get startDate;
 
-  /// End date label
+  /// End date field label
   ///
   /// In en, this message translates to:
   /// **'End Date'**
   String get endDate;
 
-  /// Course price display
+  /// Course price label
   ///
   /// In en, this message translates to:
-  /// **'\${price}'**
-  String price(String price);
+  /// **'Price'**
+  String get price;
 
   /// Enroll button prefix
   ///
@@ -1940,19 +1940,19 @@ abstract class AppLocalizations {
   /// **'Enrolled successfully!'**
   String get enrolledSuccessfully;
 
-  /// Course details tab
+  /// Tab label for course details
   ///
   /// In en, this message translates to:
   /// **'Course Details'**
   String get courseDetails;
 
-  /// Online sessions tab
+  /// Tab label for online sessions
   ///
   /// In en, this message translates to:
   /// **'Online Sessions'**
   String get onlineSessions;
 
-  /// Recorded classes tab
+  /// Tab label for recorded classes
   ///
   /// In en, this message translates to:
   /// **'Recorded Classes'**
@@ -1988,7 +1988,7 @@ abstract class AppLocalizations {
   /// **'Total Size'**
   String get totalSize;
 
-  /// Loading message for video metadata
+  /// Loading message while video metadata is being loaded
   ///
   /// In en, this message translates to:
   /// **'Loading video metadata...'**
@@ -2000,7 +2000,7 @@ abstract class AppLocalizations {
   /// **'{percent}% Complete'**
   String completeProgress(int percent);
 
-  /// Error message for video metadata loading
+  /// Error message when video metadata loading fails
   ///
   /// In en, this message translates to:
   /// **'Failed to load video metadata'**
@@ -2078,7 +2078,7 @@ abstract class AppLocalizations {
   /// **'❌ Cannot play video: {error}'**
   String cannotPlayVideoError(String error);
 
-  /// Loading video player dialog message
+  /// Loading dialog message for video player
   ///
   /// In en, this message translates to:
   /// **'Loading Video Player...'**
@@ -2096,11 +2096,11 @@ abstract class AppLocalizations {
   /// **'📹 Video Information:'**
   String get videoInformation;
 
-  /// Video title display
+  /// Label for video title field
   ///
   /// In en, this message translates to:
-  /// **'• Title: {title}'**
-  String videoTitle(String title);
+  /// **'Video Title'**
+  String get videoTitle;
 
   /// Video duration in info
   ///
@@ -2192,7 +2192,7 @@ abstract class AppLocalizations {
   /// **'Unknown error'**
   String get unknownError;
 
-  /// Study materials tab
+  /// Tab label for study materials
   ///
   /// In en, this message translates to:
   /// **'Study Materials'**
@@ -2204,7 +2204,7 @@ abstract class AppLocalizations {
   /// **'Download and access course materials'**
   String get downloadAndAccessMaterials;
 
-  /// Total materials count label
+  /// Label for total sessions count
   ///
   /// In en, this message translates to:
   /// **'Total'**
@@ -2222,16 +2222,16 @@ abstract class AppLocalizations {
   /// **'Images'**
   String get images;
 
-  /// Show more button text
+  /// Button to expand description text
   ///
   /// In en, this message translates to:
-  /// **'Show more'**
+  /// **'Show More'**
   String get showMore;
 
-  /// Show less button text
+  /// Button to collapse description text
   ///
   /// In en, this message translates to:
-  /// **'Show less'**
+  /// **'Show Less'**
   String get showLess;
 
   /// Default title for materials without name
@@ -2270,11 +2270,11 @@ abstract class AppLocalizations {
   /// **'This will open the file in your browser for download.'**
   String get downloadConfirmation;
 
-  /// File type display
+  /// File type selection label
   ///
   /// In en, this message translates to:
-  /// **'Type: {type}'**
-  String fileType(String type);
+  /// **'File Type'**
+  String get fileType;
 
   /// Browser download explanation
   ///
@@ -2324,11 +2324,11 @@ abstract class AppLocalizations {
   /// **'Download Instructions'**
   String get downloadInstructions;
 
-  /// Link copied instruction
+  /// Snackbar message when item is copied to clipboard
   ///
   /// In en, this message translates to:
-  /// **'The download link has been copied to your clipboard:'**
-  String get linkCopiedToClipboard;
+  /// **'{item} copied to clipboard'**
+  String linkCopiedToClipboard(String item);
 
   /// Download steps header
   ///
@@ -2438,7 +2438,7 @@ abstract class AppLocalizations {
   /// **'Opening document in browser...'**
   String get openingDocumentInBrowser;
 
-  /// Error message when browser fails to open
+  /// Error message when there's an error opening browser
   ///
   /// In en, this message translates to:
   /// **'Error opening browser. Link copied to clipboard.'**
@@ -2462,13 +2462,13 @@ abstract class AppLocalizations {
   /// **'Document link'**
   String get documentLink;
 
-  /// Group chat tab
+  /// Tab label for group chat
   ///
   /// In en, this message translates to:
   /// **'Group Chat'**
   String get groupChat;
 
-  /// Progress tab
+  /// Progress indicator label
   ///
   /// In en, this message translates to:
   /// **'Progress'**
@@ -2522,7 +2522,7 @@ abstract class AppLocalizations {
   /// **'All Other Courses'**
   String get allOtherCourses;
 
-  /// No search results text
+  /// Message when no courses match search
   ///
   /// In en, this message translates to:
   /// **'No courses found'**
@@ -2540,7 +2540,7 @@ abstract class AppLocalizations {
   /// **'Join interactive sessions with your instructor'**
   String get joinInteractiveSessions;
 
-  /// Total sessions count label
+  /// Total sessions field label
   ///
   /// In en, this message translates to:
   /// **'Total Sessions'**
@@ -3098,7 +3098,7 @@ abstract class AppLocalizations {
   /// **'Select Learning Language & Level'**
   String get selectLearningLanguageLevel;
 
-  /// Level filter label
+  /// Course level label
   ///
   /// In en, this message translates to:
   /// **'Level'**
@@ -3230,7 +3230,7 @@ abstract class AppLocalizations {
   /// **'Azure credentials not configured'**
   String get azureCredentialsNotConfigured;
 
-  /// Unknown status
+  /// Default status when course status is unknown
   ///
   /// In en, this message translates to:
   /// **'Unknown'**
@@ -3317,7 +3317,7 @@ abstract class AppLocalizations {
   /// **'Search your course here...'**
   String get searchYourCourseHere;
 
-  /// My courses section title
+  /// Title for instructor courses page
   ///
   /// In en, this message translates to:
   /// **'My Courses'**
@@ -3341,10 +3341,10 @@ abstract class AppLocalizations {
   /// **'Expired Courses'**
   String get expiredCourses;
 
-  /// Sessions text for course cards
+  /// Sessions stat label
   ///
   /// In en, this message translates to:
-  /// **'sessions'**
+  /// **'Sessions'**
   String get sessions;
 
   /// Sessions count text
@@ -3377,7 +3377,7 @@ abstract class AppLocalizations {
   /// **'Completed'**
   String get coursesCompleted;
 
-  /// Expired course status
+  /// Filter option for expired courses
   ///
   /// In en, this message translates to:
   /// **'Expired'**
@@ -3401,13 +3401,13 @@ abstract class AppLocalizations {
   /// **'Status'**
   String get status;
 
-  /// Upcoming course status
+  /// Filter option for upcoming courses
   ///
   /// In en, this message translates to:
   /// **'Upcoming'**
   String get upcoming;
 
-  /// Active course status
+  /// Filter option for active courses
   ///
   /// In en, this message translates to:
   /// **'Active'**
@@ -3473,7 +3473,7 @@ abstract class AppLocalizations {
   /// **'Session Details'**
   String get sessionDetails;
 
-  /// Session link field label
+  /// Label for session link field
   ///
   /// In en, this message translates to:
   /// **'Session Link'**
@@ -3503,11 +3503,11 @@ abstract class AppLocalizations {
   /// **'Duration: {duration}'**
   String durationLabel(String duration);
 
-  /// Error message when copy fails
+  /// Snackbar error message when copying fails
   ///
   /// In en, this message translates to:
-  /// **'Failed to copy {label}'**
-  String failedToCopy(String label);
+  /// **'Failed to copy {item}'**
+  String failedToCopy(String item);
 
   /// Message when opening session
   ///
@@ -3515,7 +3515,7 @@ abstract class AppLocalizations {
   /// **'Opening {platform} session in browser...'**
   String openingSession(String platform);
 
-  /// Default course title
+  /// Course title field label
   ///
   /// In en, this message translates to:
   /// **'Course Title'**
@@ -3653,10 +3653,10 @@ abstract class AppLocalizations {
   /// **'Courses'**
   String get instructorCourses;
 
-  /// Instructor rating label
+  /// Instructor rating stat label
   ///
   /// In en, this message translates to:
-  /// **'Rating'**
+  /// **'Instructor Rating'**
   String get instructorRating;
 
   /// Course by instructor text
@@ -3707,7 +3707,7 @@ abstract class AppLocalizations {
   /// **'{rating}/5'**
   String ratingValue(int rating);
 
-  /// No rating given text
+  /// No rating text
   ///
   /// In en, this message translates to:
   /// **'No rating'**
@@ -3839,10 +3839,10 @@ abstract class AppLocalizations {
   /// **'{count} enrolled members'**
   String enrolledMembers(int count);
 
-  /// Instructor role label
+  /// Instructor role badge text
   ///
   /// In en, this message translates to:
-  /// **'Instructor'**
+  /// **'INSTRUCTOR'**
   String get instructorRole;
 
   /// Enrolled members modal title
@@ -3953,7 +3953,7 @@ abstract class AppLocalizations {
   /// **'Auto'**
   String get playbackQualityAuto;
 
-  /// Retry button text
+  /// Button text to retry failed operation
   ///
   /// In en, this message translates to:
   /// **'Retry'**
@@ -4108,6 +4108,1866 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} minutes ago'**
   String chatTimestampMinutesAgo(int count);
+
+  /// Payment page app bar title
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Purchase'**
+  String get paymentCompletePurchase;
+
+  /// Fallback course title
+  ///
+  /// In en, this message translates to:
+  /// **'Course'**
+  String get paymentCourseFallback;
+
+  /// Fallback instructor name
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor'**
+  String get paymentInstructorFallback;
+
+  /// Course instructor label
+  ///
+  /// In en, this message translates to:
+  /// **'by {instructor}'**
+  String paymentCourseBy(String instructor);
+
+  /// Payment method selection title
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Method'**
+  String get paymentMethod;
+
+  /// Credit/Debit card payment option
+  ///
+  /// In en, this message translates to:
+  /// **'Credit/Debit Card'**
+  String get paymentCreditDebitCard;
+
+  /// PayPal payment option
+  ///
+  /// In en, this message translates to:
+  /// **'PayPal'**
+  String get paymentPayPal;
+
+  /// Card information section title
+  ///
+  /// In en, this message translates to:
+  /// **'Card Information'**
+  String get paymentCardInformation;
+
+  /// Card number input label
+  ///
+  /// In en, this message translates to:
+  /// **'Card Number'**
+  String get paymentCardNumber;
+
+  /// Card number input hint
+  ///
+  /// In en, this message translates to:
+  /// **'1234 5678 9012 3456'**
+  String get paymentCardNumberHint;
+
+  /// Expiry date input label
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get paymentExpiryDate;
+
+  /// Expiry date input hint
+  ///
+  /// In en, this message translates to:
+  /// **'MM/YY'**
+  String get paymentExpiryHint;
+
+  /// CVV input label
+  ///
+  /// In en, this message translates to:
+  /// **'CVV'**
+  String get paymentCVV;
+
+  /// CVV input hint
+  ///
+  /// In en, this message translates to:
+  /// **'123'**
+  String get paymentCVVHint;
+
+  /// Billing information section title
+  ///
+  /// In en, this message translates to:
+  /// **'Billing Information'**
+  String get paymentBillingInformation;
+
+  /// Cardholder name input label
+  ///
+  /// In en, this message translates to:
+  /// **'Cardholder Name'**
+  String get paymentCardholderName;
+
+  /// Cardholder name input hint
+  ///
+  /// In en, this message translates to:
+  /// **'John Doe'**
+  String get paymentCardholderNameHint;
+
+  /// Email address input label
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get paymentEmailAddress;
+
+  /// Email input hint
+  ///
+  /// In en, this message translates to:
+  /// **'john@example.com'**
+  String get paymentEmailHint;
+
+  /// Order summary section title
+  ///
+  /// In en, this message translates to:
+  /// **'Order Summary'**
+  String get paymentOrderSummary;
+
+  /// Course price label in order summary
+  ///
+  /// In en, this message translates to:
+  /// **'Course Price'**
+  String get paymentCoursePrice;
+
+  /// Tax label in order summary
+  ///
+  /// In en, this message translates to:
+  /// **'Tax (10%)'**
+  String get paymentTax;
+
+  /// Total amount label
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get paymentTotal;
+
+  /// Processing payment button text
+  ///
+  /// In en, this message translates to:
+  /// **'Processing...'**
+  String get paymentProcessing;
+
+  /// Pay button text with amount
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {amount}'**
+  String paymentPay(String amount);
+
+  /// PayPal processing message
+  ///
+  /// In en, this message translates to:
+  /// **'Processing PayPal payment...'**
+  String get paymentProcessingPayPal;
+
+  /// Payment success dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Successful!'**
+  String get paymentSuccessTitle;
+
+  /// Payment success dialog message
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to {courseTitle}!\nYou can now access all course materials.'**
+  String paymentSuccessMessage(String courseTitle);
+
+  /// Start learning button text
+  ///
+  /// In en, this message translates to:
+  /// **'Start Learning'**
+  String get paymentStartLearning;
+
+  /// Card number required error message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter card number'**
+  String get paymentErrorCardNumber;
+
+  /// Invalid card number error message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid card number'**
+  String get paymentErrorInvalidCard;
+
+  /// Required field error message
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get paymentErrorRequired;
+
+  /// Invalid expiry date error message
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid date'**
+  String get paymentErrorInvalidDate;
+
+  /// Invalid CVV error message
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid CVV'**
+  String get paymentErrorInvalidCVV;
+
+  /// Cardholder name required error message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter cardholder name'**
+  String get paymentErrorCardholderName;
+
+  /// Email required error message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter email address'**
+  String get paymentErrorEmail;
+
+  /// Invalid email error message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email'**
+  String get paymentErrorInvalidEmail;
+
+  /// Fallback course title
+  ///
+  /// In en, this message translates to:
+  /// **'Course Title'**
+  String get courseDetailsFallbackTitle;
+
+  /// Fallback course description
+  ///
+  /// In en, this message translates to:
+  /// **'This is a comprehensive course designed to help you master the language.'**
+  String get courseDetailsFallbackDescription;
+
+  /// Fallback course language
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get courseDetailsFallbackLanguage;
+
+  /// Fallback course level
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get courseDetailsFallbackLevel;
+
+  /// Fallback instructor name
+  ///
+  /// In en, this message translates to:
+  /// **'John Doe'**
+  String get courseDetailsFallbackInstructor;
+
+  /// Fallback course duration
+  ///
+  /// In en, this message translates to:
+  /// **'4 weeks'**
+  String get courseDetailsFallbackDuration;
+
+  /// Fallback course status
+  ///
+  /// In en, this message translates to:
+  /// **'active'**
+  String get courseDetailsFallbackStatus;
+
+  /// Fallback course category
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get courseDetailsFallbackCategory;
+
+  /// Instructor byline format
+  ///
+  /// In en, this message translates to:
+  /// **'by {instructor}'**
+  String courseDetailsInstructorBy(String instructor);
+
+  /// Language info pill label
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get courseDetailsLanguageLabel;
+
+  /// Sessions info pill label
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get courseDetailsSessionsLabel;
+
+  /// Students info pill label
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get courseDetailsStudentsLabel;
+
+  /// Course overview section title
+  ///
+  /// In en, this message translates to:
+  /// **'Course Overview'**
+  String get courseDetailsOverviewTitle;
+
+  /// Course timeline section title
+  ///
+  /// In en, this message translates to:
+  /// **'Course Timeline'**
+  String get courseDetailsTimelineTitle;
+
+  /// Start date label
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get courseDetailsStartDateLabel;
+
+  /// End date label
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get courseDetailsEndDateLabel;
+
+  /// Duration and level info format
+  ///
+  /// In en, this message translates to:
+  /// **'Duration: {duration} • Level: {level}'**
+  String courseDetailsDurationLevel(String duration, String level);
+
+  /// Instructor spotlight title
+  ///
+  /// In en, this message translates to:
+  /// **'Expert Language Instructor'**
+  String get courseDetailsInstructorTitle;
+
+  /// Instructor description text
+  ///
+  /// In en, this message translates to:
+  /// **'Experienced educator with over 8 years of teaching experience. Specializes in modern language learning techniques.'**
+  String get courseDetailsInstructorDescription;
+
+  /// Years experience label
+  ///
+  /// In en, this message translates to:
+  /// **'Years Exp.'**
+  String get courseDetailsInstructorYearsExp;
+
+  /// Instructor rating label
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get courseDetailsInstructorRating;
+
+  /// Instructor students label
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get courseDetailsInstructorStudents;
+
+  /// Student feedback section title
+  ///
+  /// In en, this message translates to:
+  /// **'Student Feedback'**
+  String get courseDetailsFeedbackTitle;
+
+  /// Highly rated course label
+  ///
+  /// In en, this message translates to:
+  /// **'Highly Rated Course'**
+  String get courseDetailsHighlyRated;
+
+  /// Reviews count text
+  ///
+  /// In en, this message translates to:
+  /// **'Based on 124+ student reviews'**
+  String get courseDetailsReviewsCount;
+
+  /// Satisfaction rate badge
+  ///
+  /// In en, this message translates to:
+  /// **'95% Satisfaction Rate'**
+  String get courseDetailsSatisfactionRate;
+
+  /// One-time payment label
+  ///
+  /// In en, this message translates to:
+  /// **'One-time Payment'**
+  String get courseDetailsOneTimePayment;
+
+  /// Enroll now button text
+  ///
+  /// In en, this message translates to:
+  /// **'Enroll Now'**
+  String get courseDetailsEnrollNow;
+
+  /// Profile page title
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get instructorProfile;
+
+  /// Years of experience format
+  ///
+  /// In en, this message translates to:
+  /// **'{years} years experience'**
+  String instructorYearsExp(int years);
+
+  /// Courses stats label
+  ///
+  /// In en, this message translates to:
+  /// **'Courses'**
+  String get instructorStatsCourses;
+
+  /// Students stats label
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get instructorStatsStudents;
+
+  /// Rating stats label
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get instructorStatsRating;
+
+  /// Personal information section title
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get instructorPersonalInfo;
+
+  /// Professional information section title
+  ///
+  /// In en, this message translates to:
+  /// **'Professional Information'**
+  String get instructorProfessionalInfo;
+
+  /// Languages section title
+  ///
+  /// In en, this message translates to:
+  /// **'Languages'**
+  String get instructorLanguages;
+
+  /// About me section title
+  ///
+  /// In en, this message translates to:
+  /// **'About Me'**
+  String get instructorAboutMe;
+
+  /// Email field label
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get instructorEmail;
+
+  /// Date of birth field label
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get instructorDateOfBirth;
+
+  /// Gender field label
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get instructorGender;
+
+  /// Country field label
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get instructorCountry;
+
+  /// Years of experience field label
+  ///
+  /// In en, this message translates to:
+  /// **'Years of Experience'**
+  String get instructorYearsOfExperience;
+
+  /// Years format
+  ///
+  /// In en, this message translates to:
+  /// **'{years} years'**
+  String instructorYearsFormat(int years);
+
+  /// Native language field label
+  ///
+  /// In en, this message translates to:
+  /// **'Native Language'**
+  String get instructorNativeLanguage;
+
+  /// Teaching language field label
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching Language'**
+  String get instructorTeachingLanguage;
+
+  /// Edit profile image title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile Image'**
+  String get instructorEditProfileImage;
+
+  /// Take photo option
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photo'**
+  String get instructorTakePhoto;
+
+  /// Select from gallery option
+  ///
+  /// In en, this message translates to:
+  /// **'Select from Gallery'**
+  String get instructorSelectFromGallery;
+
+  /// Enter image URL option
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Image URL'**
+  String get instructorEnterImageUrl;
+
+  /// Camera feature message
+  ///
+  /// In en, this message translates to:
+  /// **'Camera feature will be implemented'**
+  String get instructorCameraFeatureMessage;
+
+  /// Gallery feature message
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery feature will be implemented'**
+  String get instructorGalleryFeatureMessage;
+
+  /// Edit dialog title format
+  ///
+  /// In en, this message translates to:
+  /// **'Edit {field}'**
+  String instructorEditTitle(String field);
+
+  /// Enter field placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Enter {field}'**
+  String instructorEnterField(String field);
+
+  /// Cancel button
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get instructorCancel;
+
+  /// Save button
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get instructorSave;
+
+  /// Field updated message
+  ///
+  /// In en, this message translates to:
+  /// **'{field} updated successfully'**
+  String instructorFieldUpdated(String field);
+
+  /// Edit bio title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Bio'**
+  String get instructorEditBio;
+
+  /// Bio placeholder text
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about yourself...'**
+  String get instructorBioPlaceholder;
+
+  /// Bio updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Bio updated successfully'**
+  String get instructorBioUpdated;
+
+  /// Date of birth updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth updated successfully'**
+  String get instructorDateOfBirthUpdated;
+
+  /// Select gender title
+  ///
+  /// In en, this message translates to:
+  /// **'Select Gender'**
+  String get instructorSelectGender;
+
+  /// Gender updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Gender updated successfully'**
+  String get instructorGenderUpdated;
+
+  /// Select country title
+  ///
+  /// In en, this message translates to:
+  /// **'Select Country'**
+  String get instructorSelectCountry;
+
+  /// Country updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Country updated successfully'**
+  String get instructorCountryUpdated;
+
+  /// Select native language title
+  ///
+  /// In en, this message translates to:
+  /// **'Select Native Language'**
+  String get instructorSelectNativeLanguage;
+
+  /// Select teaching language title
+  ///
+  /// In en, this message translates to:
+  /// **'Select Teaching Language'**
+  String get instructorSelectTeachingLanguage;
+
+  /// Native language updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Native language updated successfully'**
+  String get instructorNativeLanguageUpdated;
+
+  /// Teaching language updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching language updated successfully'**
+  String get instructorTeachingLanguageUpdated;
+
+  /// Experience updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Experience updated successfully'**
+  String get instructorExperienceUpdated;
+
+  /// Logout button
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get instructorLogout;
+
+  /// Logout confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get instructorLogoutConfirm;
+
+  /// Revenue dashboard page title
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue Dashboard'**
+  String get revenueDashboard;
+
+  /// Weekly revenue label
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get revenueWeekly;
+
+  /// Monthly revenue label
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get revenueMonthly;
+
+  /// This year revenue label
+  ///
+  /// In en, this message translates to:
+  /// **'This Year'**
+  String get revenueThisYear;
+
+  /// Total courses label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Courses'**
+  String get revenueTotalCourses;
+
+  /// Weekly revenue trend chart title
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Revenue Trend'**
+  String get revenueWeeklyTrend;
+
+  /// Total revenue label
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get revenueTotal;
+
+  /// Peak revenue label
+  ///
+  /// In en, this message translates to:
+  /// **'Peak'**
+  String get revenuePeak;
+
+  /// Course income section title
+  ///
+  /// In en, this message translates to:
+  /// **'Course Income'**
+  String get revenueCourseIncome;
+
+  /// Show less button text
+  ///
+  /// In en, this message translates to:
+  /// **'Show Less'**
+  String get revenueShowLess;
+
+  /// View all button text
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get revenueViewAll;
+
+  /// Price label
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get revenuePrice;
+
+  /// Enrolled students suffix
+  ///
+  /// In en, this message translates to:
+  /// **'enrolled'**
+  String get revenueEnrolled;
+
+  /// Transaction history section title
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction History'**
+  String get revenueTransactionHistory;
+
+  /// Withdrawal transaction type
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal'**
+  String get revenueWithdrawal;
+
+  /// Payment overview section title
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Overview'**
+  String get revenuePaymentOverview;
+
+  /// Available balance label
+  ///
+  /// In en, this message translates to:
+  /// **'Available Balance'**
+  String get revenueAvailableBalance;
+
+  /// Withdraw button text
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get revenueWithdrawButton;
+
+  /// Total earned label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Earned'**
+  String get revenueTotalEarned;
+
+  /// Withdrawn amount label
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn'**
+  String get revenueWithdrawn;
+
+  /// Withdrawal page title
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw Money'**
+  String get withdrawMoney;
+
+  /// Available balance label
+  ///
+  /// In en, this message translates to:
+  /// **'Available Balance'**
+  String get availableBalance;
+
+  /// Withdrawal amount section title
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal Amount'**
+  String get withdrawalAmount;
+
+  /// Amount input field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter amount to withdraw'**
+  String get enterAmountToWithdraw;
+
+  /// Amount validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter withdrawal amount'**
+  String get pleaseEnterWithdrawalAmount;
+
+  /// Invalid amount validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid amount'**
+  String get pleaseEnterValidAmount;
+
+  /// Zero amount validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Amount must be greater than zero'**
+  String get amountMustBeGreaterThanZero;
+
+  /// Exceeds balance validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Amount exceeds available balance'**
+  String get amountExceedsAvailableBalance;
+
+  /// Minimum amount validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum withdrawal amount is \$10'**
+  String get minimumWithdrawalAmountIs;
+
+  /// Quick amount button 50 dollars
+  ///
+  /// In en, this message translates to:
+  /// **'\$50'**
+  String get quickAmount50;
+
+  /// Quick amount button 100 dollars
+  ///
+  /// In en, this message translates to:
+  /// **'\$100'**
+  String get quickAmount100;
+
+  /// Quick amount button for maximum amount
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get quickAmountMax;
+
+  /// Bank information section title
+  ///
+  /// In en, this message translates to:
+  /// **'Bank Information'**
+  String get bankInformation;
+
+  /// Account holder name field label
+  ///
+  /// In en, this message translates to:
+  /// **'Account Holder Name'**
+  String get accountHolderName;
+
+  /// Account holder name field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter full name as on bank account'**
+  String get enterFullNameAsOnBankAccount;
+
+  /// Account holder name validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter account holder name'**
+  String get pleaseEnterAccountHolderName;
+
+  /// Bank name field label
+  ///
+  /// In en, this message translates to:
+  /// **'Bank Name'**
+  String get bankName;
+
+  /// Bank name field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your bank name'**
+  String get enterYourBankName;
+
+  /// Bank name validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter bank name'**
+  String get pleaseEnterBankName;
+
+  /// Account number field label
+  ///
+  /// In en, this message translates to:
+  /// **'Account Number'**
+  String get accountNumber;
+
+  /// Account number field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your account number'**
+  String get enterYourAccountNumber;
+
+  /// Account number validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter account number'**
+  String get pleaseEnterAccountNumber;
+
+  /// Account number length validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Account number must be at least 8 digits'**
+  String get accountNumberMustBeAtLeast8Digits;
+
+  /// Routing number field label
+  ///
+  /// In en, this message translates to:
+  /// **'Routing Number'**
+  String get routingNumber;
+
+  /// Routing number field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter 9-digit routing number'**
+  String get enter9DigitRoutingNumber;
+
+  /// Routing number validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter routing number'**
+  String get pleaseEnterRoutingNumber;
+
+  /// Routing number length validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Routing number must be 9 digits'**
+  String get routingNumberMustBe9Digits;
+
+  /// Submit button text
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Withdrawal Request'**
+  String get submitWithdrawalRequest;
+
+  /// Important information section title
+  ///
+  /// In en, this message translates to:
+  /// **'Important Information'**
+  String get importantInformation;
+
+  /// Processing time info
+  ///
+  /// In en, this message translates to:
+  /// **'Processing time: 3-5 business days'**
+  String get processingTime;
+
+  /// Minimum withdrawal info
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum withdrawal: \$10'**
+  String get minimumWithdrawal;
+
+  /// No fees info
+  ///
+  /// In en, this message translates to:
+  /// **'No processing fees'**
+  String get noProcessingFees;
+
+  /// Processing days info
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawals are processed Monday-Friday'**
+  String get withdrawalsProcessedMondayFriday;
+
+  /// Security info
+  ///
+  /// In en, this message translates to:
+  /// **'Bank information is encrypted and secure'**
+  String get bankInformationEncrypted;
+
+  /// Confirmation dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Withdrawal'**
+  String get confirmWithdrawal;
+
+  /// Withdrawal confirmation message start
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get withdrawToAccountEndingIn;
+
+  /// Withdrawal confirmation message middle part
+  ///
+  /// In en, this message translates to:
+  /// **'to your account ending in'**
+  String get withdrawConfirmationQuestion;
+
+  /// Success message for withdrawal request
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal request submitted successfully!'**
+  String get withdrawalRequestSubmittedSuccessfully;
+
+  /// Add course page title
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Course'**
+  String get createNewCourse;
+
+  /// Course creation header title
+  ///
+  /// In en, this message translates to:
+  /// **'Create Your Course'**
+  String get createYourCourse;
+
+  /// Course creation header subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the details to create your course'**
+  String get fillDetailsToCreateCourse;
+
+  /// Course title field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter course title'**
+  String get enterCourseTitle;
+
+  /// Course title validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter course title'**
+  String get pleaseEnterCourseTitle;
+
+  /// Description label for form fields
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// Course description field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your course'**
+  String get describeCourse;
+
+  /// Course description validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter course description'**
+  String get pleaseEnterCourseDescription;
+
+  /// Total sessions field hint
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 12'**
+  String get totalSessionsHint;
+
+  /// Total sessions validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Enter sessions'**
+  String get enterSessions;
+
+  /// Price field label
+  ///
+  /// In en, this message translates to:
+  /// **'Price (\$)'**
+  String get priceInDollars;
+
+  /// Free price label
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get free;
+
+  /// Course schedule section title
+  ///
+  /// In en, this message translates to:
+  /// **'Course Schedule'**
+  String get courseSchedule;
+
+  /// Placeholder text for date picker
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date *'**
+  String get selectDate;
+
+  /// Course thumbnail placeholder text
+  ///
+  /// In en, this message translates to:
+  /// **'Course Thumbnail'**
+  String get courseThumbnail;
+
+  /// Thumbnail picker placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Select Course Thumbnail'**
+  String get selectCourseThumbnail;
+
+  /// Thumbnail format info
+  ///
+  /// In en, this message translates to:
+  /// **'JPG, PNG (Max 5MB)'**
+  String get jpgPngMax5MB;
+
+  /// Image selected confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Image Selected'**
+  String get imageSelected;
+
+  /// Publish course button text
+  ///
+  /// In en, this message translates to:
+  /// **'Publish Course'**
+  String get publishCourse;
+
+  /// Date selection validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please select start and end dates'**
+  String get pleaseSelectStartEndDates;
+
+  /// Thumbnail selection validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a course thumbnail'**
+  String get pleaseSelectCourseThumbnail;
+
+  /// Course publish success message
+  ///
+  /// In en, this message translates to:
+  /// **'Course published successfully!'**
+  String get coursePublishedSuccessfully;
+
+  /// Image picker placeholder message
+  ///
+  /// In en, this message translates to:
+  /// **'Image picker feature will be implemented'**
+  String get imagePickerFeatureWillBeImplemented;
+
+  /// Analytics button tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get analytics;
+
+  /// Search bar placeholder text
+  ///
+  /// In en, this message translates to:
+  /// **'Search your courses...'**
+  String get searchYourCourses;
+
+  /// Stats card title for total students
+  ///
+  /// In en, this message translates to:
+  /// **'Total Students'**
+  String get totalStudents;
+
+  /// Stats card title for active courses
+  ///
+  /// In en, this message translates to:
+  /// **'Active Courses'**
+  String get activeCourses;
+
+  /// Stats card title for total courses
+  ///
+  /// In en, this message translates to:
+  /// **'Total Courses'**
+  String get totalCourses;
+
+  /// Section title for upcoming courses
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Courses'**
+  String get upcomingCourses;
+
+  /// Button text to see all courses in a section
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get seeAll;
+
+  /// Section title for completed courses
+  ///
+  /// In en, this message translates to:
+  /// **'Completed Courses'**
+  String get completedCourses;
+
+  /// Button text to show all course sections
+  ///
+  /// In en, this message translates to:
+  /// **'Show all sections'**
+  String get showAllSections;
+
+  /// Suggestion text when no courses found
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search terms'**
+  String get tryAdjustingSearch;
+
+  /// Subtitle text for instructor portal
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor Portal'**
+  String get instructorPortal;
+
+  /// Tooltip and title for instructor settings
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor Settings'**
+  String get instructorSettings;
+
+  /// Completion stat label
+  ///
+  /// In en, this message translates to:
+  /// **'Completion'**
+  String get completion;
+
+  /// Settings menu item for notifications
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Preferences'**
+  String get notificationPreferences;
+
+  /// Settings menu item for office hours
+  ///
+  /// In en, this message translates to:
+  /// **'Office Hours'**
+  String get officeHours;
+
+  /// Settings menu item for language settings
+  ///
+  /// In en, this message translates to:
+  /// **'Language & Region'**
+  String get languageAndRegion;
+
+  /// Snackbar message for notification settings
+  ///
+  /// In en, this message translates to:
+  /// **'Notification settings coming soon'**
+  String get notificationSettingsComingSoon;
+
+  /// Snackbar message for office hours settings
+  ///
+  /// In en, this message translates to:
+  /// **'Office hours settings coming soon'**
+  String get officeHoursSettingsComingSoon;
+
+  /// Snackbar message for language settings
+  ///
+  /// In en, this message translates to:
+  /// **'Language settings coming soon'**
+  String get languageSettingsComingSoon;
+
+  /// Students count label
+  ///
+  /// In en, this message translates to:
+  /// **'students'**
+  String get studentsCount;
+
+  /// Students stat label
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get coursesStudents;
+
+  /// Course category label
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get category;
+
+  /// Course start date label
+  ///
+  /// In en, this message translates to:
+  /// **'Starts'**
+  String get starts;
+
+  /// Revenue analytics section title
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue Analytics'**
+  String get revenueAnalytics;
+
+  /// Course price label in revenue section
+  ///
+  /// In en, this message translates to:
+  /// **'Course Price'**
+  String get coursePrice;
+
+  /// Total revenue label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Revenue'**
+  String get totalRevenue;
+
+  /// Course management section title
+  ///
+  /// In en, this message translates to:
+  /// **'Course Management'**
+  String get courseManagement;
+
+  /// Edit course details button text
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Course Details'**
+  String get editCourseDetails;
+
+  /// Edit course details dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Course Details'**
+  String get editCourseDetailsTitle;
+
+  /// Title label for form fields
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get title;
+
+  /// Price field label with currency symbol
+  ///
+  /// In en, this message translates to:
+  /// **'Price (\$)'**
+  String get priceWithSymbol;
+
+  /// Thumbnail URL field label
+  ///
+  /// In en, this message translates to:
+  /// **'Thumbnail URL'**
+  String get thumbnailUrl;
+
+  /// Save changes button text
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// Success message for course update
+  ///
+  /// In en, this message translates to:
+  /// **'Course details updated successfully'**
+  String get courseDetailsUpdatedSuccessfully;
+
+  /// Feedback management section title
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback Management'**
+  String get feedbackManagement;
+
+  /// Feedback management section description
+  ///
+  /// In en, this message translates to:
+  /// **'View student reviews and provide personalized feedback'**
+  String get viewStudentReviewsDescription;
+
+  /// Course rating stat label
+  ///
+  /// In en, this message translates to:
+  /// **'Course Rating'**
+  String get courseRating;
+
+  /// Total reviews stat label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Reviews'**
+  String get totalReviews;
+
+  /// Course reviews section title
+  ///
+  /// In en, this message translates to:
+  /// **'Course Reviews from Students'**
+  String get courseReviewsFromStudents;
+
+  /// Instructor reviews section title
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor Reviews from Students'**
+  String get instructorReviewsFromStudents;
+
+  /// Give student feedback section title
+  ///
+  /// In en, this message translates to:
+  /// **'Give Student Feedback'**
+  String get giveStudentFeedback;
+
+  /// Select student dropdown label
+  ///
+  /// In en, this message translates to:
+  /// **'Select Student'**
+  String get selectStudent;
+
+  /// Student selection dropdown hint
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a student...'**
+  String get chooseAStudent;
+
+  /// Rate student performance label
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Student Performance'**
+  String get rateStudentPerformance;
+
+  /// Feedback message label
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback Message'**
+  String get feedbackMessage;
+
+  /// Feedback text field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Share your feedback about student\'s performance, participation, areas for improvement...'**
+  String get feedbackHintText;
+
+  /// Send feedback button text
+  ///
+  /// In en, this message translates to:
+  /// **'Send Feedback to Student'**
+  String get sendFeedbackToStudent;
+
+  /// Empty feedback validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please write your feedback'**
+  String get pleaseWriteYourFeedback;
+
+  /// No rating validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide a rating'**
+  String get pleaseProvideARating;
+
+  /// Feedback sent success message
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Feedback sent to {studentName} successfully!'**
+  String feedbackSentSuccessfully(String studentName);
+
+  /// Instructor panel header text
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor Panel'**
+  String get instructorPanel;
+
+  /// Online students count text
+  ///
+  /// In en, this message translates to:
+  /// **'{onlineCount} online • {totalCount} total students'**
+  String onlineStudentsCount(int onlineCount, int totalCount);
+
+  /// Chat input hint text for instructor
+  ///
+  /// In en, this message translates to:
+  /// **'Message your students...'**
+  String get messageYourStudents;
+
+  /// Button text to schedule a new online session
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule New Session'**
+  String get scheduleNewSession;
+
+  /// Header text for session statistics overview
+  ///
+  /// In en, this message translates to:
+  /// **'Session Overview'**
+  String get sessionOverview;
+
+  /// Message when no sessions are available
+  ///
+  /// In en, this message translates to:
+  /// **'No sessions scheduled'**
+  String get noSessionsScheduled;
+
+  /// Subtitle message to create first session
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first session'**
+  String get createYourFirstSession;
+
+  /// Button text to schedule a session
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule Session'**
+  String get scheduleSession;
+
+  /// Button text to copy session link
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Link'**
+  String get copyLink;
+
+  /// Button text to copy session password
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Password'**
+  String get copyPassword;
+
+  /// Dialog title for deleting a session
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Session'**
+  String get deleteSession;
+
+  /// Confirmation message for deleting a session
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this session? This action cannot be undone.'**
+  String get deleteSessionConfirmation;
+
+  /// Success message after session deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Session deleted successfully'**
+  String get sessionDeletedSuccessfully;
+
+  /// Label for session title field
+  ///
+  /// In en, this message translates to:
+  /// **'Session Title'**
+  String get sessionTitle;
+
+  /// Required label for session title field
+  ///
+  /// In en, this message translates to:
+  /// **'Session Title *'**
+  String get sessionTitleRequired;
+
+  /// Label for platform field
+  ///
+  /// In en, this message translates to:
+  /// **'Platform'**
+  String get platform;
+
+  /// Required label for platform field
+  ///
+  /// In en, this message translates to:
+  /// **'Platform *'**
+  String get platformRequired;
+
+  /// Placeholder text for time picker
+  ///
+  /// In en, this message translates to:
+  /// **'Select Time *'**
+  String get selectTime;
+
+  /// Label showing session duration
+  ///
+  /// In en, this message translates to:
+  /// **'Duration: {duration} hours'**
+  String durationHours(String duration);
+
+  /// Button text to upload a new video
+  ///
+  /// In en, this message translates to:
+  /// **'Upload New Video'**
+  String get uploadNewVideo;
+
+  /// Completion percentage display
+  ///
+  /// In en, this message translates to:
+  /// **'{percentage}% complete'**
+  String completePercentage(int percentage);
+
+  /// Videos processing progress display
+  ///
+  /// In en, this message translates to:
+  /// **'{loaded} of {total} videos processed'**
+  String videosProcessed(int loaded, int total);
+
+  /// Empty state message when no videos are available
+  ///
+  /// In en, this message translates to:
+  /// **'No recorded videos yet'**
+  String get noRecordedVideosYet;
+
+  /// Empty state subtitle message
+  ///
+  /// In en, this message translates to:
+  /// **'Upload your first recorded class'**
+  String get uploadYourFirstRecordedClass;
+
+  /// Dialog title for editing video details
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Video Details'**
+  String get editVideoDetails;
+
+  /// Success message after video update
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Video updated successfully!'**
+  String get videoUpdatedSuccessfully;
+
+  /// Dialog title for deleting video
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Video'**
+  String get deleteVideo;
+
+  /// Confirmation message for deleting video
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this video?'**
+  String get areYouSureDeleteVideo;
+
+  /// Warning message about irreversible action
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone.'**
+  String get thisActionCannotBeUndone;
+
+  /// Success message after video deletion
+  ///
+  /// In en, this message translates to:
+  /// **'🗑️ \"{title}\" deleted'**
+  String videoDeleted(String title);
+
+  /// Dialog title for uploading new video
+  ///
+  /// In en, this message translates to:
+  /// **'Upload New Video'**
+  String get uploadNewVideoDialog;
+
+  /// Instruction text for file selection
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to select video file from storage'**
+  String get tapToSelectVideoFile;
+
+  /// Text showing selected filename
+  ///
+  /// In en, this message translates to:
+  /// **'File selected: {filename}'**
+  String fileSelectedPrefix(String filename);
+
+  /// Snackbar message when file is selected
+  ///
+  /// In en, this message translates to:
+  /// **'📁 File selected: {filename}'**
+  String fileSelected(String filename);
+
+  /// Required label for video title field
+  ///
+  /// In en, this message translates to:
+  /// **'Video Title *'**
+  String get videoTitleRequired;
+
+  /// Button text to upload video
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get uploadButton;
+
+  /// Upload progress message
+  ///
+  /// In en, this message translates to:
+  /// **'📤 Uploading \"{title}\"...'**
+  String uploadingVideo(String title);
+
+  /// Success message after video publish
+  ///
+  /// In en, this message translates to:
+  /// **'✅ \"{title}\" published successfully!'**
+  String videoPublishedSuccessfully(String title);
+
+  /// Error message for video metadata
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata error: {error}'**
+  String metadataError(String error);
+
+  /// Required label for session link field
+  ///
+  /// In en, this message translates to:
+  /// **'Session Link *'**
+  String get sessionLinkRequired;
+
+  /// Label for optional password field
+  ///
+  /// In en, this message translates to:
+  /// **'Password (optional)'**
+  String get passwordOptional;
+
+  /// Success message after scheduling session
+  ///
+  /// In en, this message translates to:
+  /// **'Session scheduled successfully!'**
+  String get sessionScheduledSuccessfully;
+
+  /// Error message for incomplete form
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in all required fields'**
+  String get fillAllRequiredFields;
+
+  /// Dialog title for editing a session
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Session'**
+  String get editSession;
+
+  /// Success message after updating session
+  ///
+  /// In en, this message translates to:
+  /// **'Session updated successfully!'**
+  String get sessionUpdatedSuccessfully;
+
+  /// Message when starting a session
+  ///
+  /// In en, this message translates to:
+  /// **'Starting {platform} session...'**
+  String startingSession(String platform);
+
+  /// Upload button text for study materials
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Study Material'**
+  String get uploadStudyMaterial;
+
+  /// Empty state message when no study materials are available
+  ///
+  /// In en, this message translates to:
+  /// **'No study materials yet'**
+  String get noStudyMaterialsYet;
+
+  /// Empty state subtitle encouraging first upload
+  ///
+  /// In en, this message translates to:
+  /// **'Upload your first study material'**
+  String get uploadYourFirstStudyMaterial;
+
+  /// Error message when file is not available for a material
+  ///
+  /// In en, this message translates to:
+  /// **'❌ No file available for this material'**
+  String get noFileAvailableForThisMaterial;
+
+  /// Success message when opening a file
+  ///
+  /// In en, this message translates to:
+  /// **'📁 Opening file: {fileName}'**
+  String openingFile(String fileName);
+
+  /// Title for file preview dialog
+  ///
+  /// In en, this message translates to:
+  /// **'File Preview'**
+  String get filePreview;
+
+  /// File name label in preview
+  ///
+  /// In en, this message translates to:
+  /// **'File: {fileName}'**
+  String fileLabel(String fileName);
+
+  /// File size label in preview
+  ///
+  /// In en, this message translates to:
+  /// **'Size: {fileSize}'**
+  String sizeLabel(String fileSize);
+
+  /// File type label in preview
+  ///
+  /// In en, this message translates to:
+  /// **'Type: {fileType}'**
+  String typeLabel(String fileType);
+
+  /// Description text in file preview placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'In real app, this would show the actual file content'**
+  String get inRealAppDescription;
+
+  /// Open file button text
+  ///
+  /// In en, this message translates to:
+  /// **'Open File'**
+  String get openFile;
+
+  /// Message when opening file with system viewer
+  ///
+  /// In en, this message translates to:
+  /// **'📂 Opening {fileName} with system viewer'**
+  String openingFileWithSystemViewer(String fileName);
+
+  /// Title for edit material dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Material Details'**
+  String get editMaterialDetails;
+
+  /// Success message when material is updated
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Material updated successfully!'**
+  String get materialUpdatedSuccessfully;
+
+  /// Title for delete material dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Material'**
+  String get deleteMaterial;
+
+  /// Confirmation message for deleting material
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this material?'**
+  String get areYouSureDeleteMaterial;
+
+  /// Message when material is deleted
+  ///
+  /// In en, this message translates to:
+  /// **'🗑️ \"{materialTitle}\" deleted'**
+  String materialDeleted(String materialTitle);
+
+  /// Title for file selection dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Select {fileType} File'**
+  String selectFileType(String fileType);
+
+  /// Instructions for file selection
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a file from your device:'**
+  String get chooseFileFromDevice;
+
+  /// Message when no file is selected
+  ///
+  /// In en, this message translates to:
+  /// **'No file selected'**
+  String get noFileSelected;
+
+  /// Button to choose file
+  ///
+  /// In en, this message translates to:
+  /// **'Choose File'**
+  String get chooseFile;
+
+  /// Button to change selected file
+  ///
+  /// In en, this message translates to:
+  /// **'Change File'**
+  String get changeFile;
+
+  /// Required title field label
+  ///
+  /// In en, this message translates to:
+  /// **'Title *'**
+  String get titleRequired;
+
+  /// Success message when material is uploaded
+  ///
+  /// In en, this message translates to:
+  /// **'✅ \"{materialTitle}\" uploaded successfully!'**
+  String materialUploadedSuccessfully(String materialTitle);
+
+  /// Default description for study materials
+  ///
+  /// In en, this message translates to:
+  /// **'Study material for {courseTitle}'**
+  String studyMaterialFor(String courseTitle);
 }
 
 class _AppLocalizationsDelegate

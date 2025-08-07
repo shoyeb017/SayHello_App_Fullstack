@@ -227,7 +227,7 @@ class _InstructorRecordClassVideoPlayerState
                     children: [
                       Text(AppLocalizations.of(context)!.videoInformation),
                       Text(
-                        AppLocalizations.of(context)!.videoTitle(widget.title),
+                        '${AppLocalizations.of(context)!.videoTitle}: ${widget.title}',
                       ),
                       Text(
                         AppLocalizations.of(

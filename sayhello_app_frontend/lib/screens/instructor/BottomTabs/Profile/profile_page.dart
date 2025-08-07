@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../providers/settings_provider.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../instructor_main_tab.dart';
 
 class InstructorProfilePage extends StatefulWidget {
@@ -41,6 +42,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -70,7 +72,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
 
               Expanded(
                 child: Text(
-                  'Profile',
+                  localizations.instructorProfile,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                 ),
@@ -105,27 +107,27 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
         child: Column(
           children: [
             // Profile Header Card
-            _buildProfileHeader(isDark),
+            _buildProfileHeader(isDark, localizations),
             const SizedBox(height: 16),
 
             // Quick Stats
-            _buildQuickStats(),
+            _buildQuickStats(localizations),
             const SizedBox(height: 16),
 
             // Personal Information
-            _buildPersonalInfoCard(isDark),
+            _buildPersonalInfoCard(isDark, localizations),
             const SizedBox(height: 16),
 
             // Professional Information
-            _buildProfessionalInfoCard(isDark),
+            _buildProfessionalInfoCard(isDark, localizations),
             const SizedBox(height: 16),
 
             // Language Information
-            _buildLanguageInfoCard(isDark),
+            _buildLanguageInfoCard(isDark, localizations),
             const SizedBox(height: 16),
 
             // About Section
-            _buildAboutSection(isDark),
+            _buildAboutSection(isDark, localizations),
 
             const SizedBox(height: 20),
           ],
@@ -134,7 +136,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
     );
   }
 
-  Widget _buildProfileHeader(bool isDark) {
+  Widget _buildProfileHeader(bool isDark, AppLocalizations localizations) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -151,7 +153,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => _showImageEditOptions(),
+            onTap: () => _showImageEditOptions(localizations),
             child: Stack(
               children: [
                 CircleAvatar(
@@ -188,6 +190,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
                     'Name',
                     instructorName,
                     (value) => setState(() => instructorName = value),
+                    localizations,
                   ),
                   child: Row(
                     children: [
@@ -207,7 +210,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Instructor • $yearsOfExperience years experience',
+                  '${localizations.instructorRole} • ${localizations.instructorYearsExp(yearsOfExperience)}',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.white.withOpacity(0.9),
@@ -229,7 +232,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
     );
   }
 
-  Widget _buildQuickStats() {
+  Widget _buildQuickStats(AppLocalizations localizations) {
     return Row(
       children: [
         Expanded(
@@ -250,8 +253,8 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
                   '15',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                const Text(
-                  'Courses',
+                Text(
+                  localizations.instructorStatsCourses,
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
@@ -277,8 +280,8 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
                   '1,234',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                const Text(
-                  'Students',
+                Text(
+                  localizations.instructorStatsStudents,
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
@@ -304,8 +307,8 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
                   '4.8',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                const Text(
-                  'Rating',
+                Text(
+                  localizations.instructorStatsRating,
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
@@ -316,7 +319,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
     );
   }
 
-  Widget _buildPersonalInfoCard(bool isDark) {
+  Widget _buildPersonalInfoCard(bool isDark, AppLocalizations localizations) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -330,40 +333,41 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
             children: [
               Icon(Icons.person, color: const Color(0xFF7A54FF), size: 20),
               const SizedBox(width: 8),
-              const Text(
-                'Personal Information',
+              Text(
+                localizations.personalInformation,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
           const SizedBox(height: 16),
           _buildInfoRow(
-            'Email',
+            localizations.email,
             email,
             Icons.email,
             () => _showEditDialog(
-              'Email',
+              localizations.email,
               email,
               (value) => setState(() => email = value),
+              localizations,
             ),
           ),
           const SizedBox(height: 12),
           _buildInfoRow(
-            'Date of Birth',
+            localizations.dateOfBirth,
             dateOfBirth,
             Icons.cake,
             () => _showDatePicker(),
           ),
           const SizedBox(height: 12),
           _buildInfoRow(
-            'Gender',
+            localizations.gender,
             gender,
             Icons.person_outline,
             () => _showGenderDialog(),
           ),
           const SizedBox(height: 12),
           _buildInfoRow(
-            'Country',
+            localizations.country,
             country,
             Icons.public,
             () => _showCountryDialog(),
@@ -373,7 +377,10 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
     );
   }
 
-  Widget _buildProfessionalInfoCard(bool isDark) {
+  Widget _buildProfessionalInfoCard(
+    bool isDark,
+    AppLocalizations localizations,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -387,15 +394,15 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
             children: [
               Icon(Icons.work, color: const Color(0xFF7A54FF), size: 20),
               const SizedBox(width: 8),
-              const Text(
-                'Professional Information',
+              Text(
+                localizations.instructorProfessionalInfo,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
           const SizedBox(height: 16),
           _buildInfoRow(
-            'Years of Experience',
+            localizations.instructorYearsOfExperience,
             '$yearsOfExperience years',
             Icons.timeline,
             () => _showExperienceDialog(),
@@ -405,7 +412,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
     );
   }
 
-  Widget _buildLanguageInfoCard(bool isDark) {
+  Widget _buildLanguageInfoCard(bool isDark, AppLocalizations localizations) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -419,22 +426,22 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
             children: [
               Icon(Icons.language, color: const Color(0xFF7A54FF), size: 20),
               const SizedBox(width: 8),
-              const Text(
-                'Languages',
+              Text(
+                localizations.instructorLanguages,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
           const SizedBox(height: 16),
           _buildInfoRow(
-            'Native Language',
+            localizations.nativeLanguage,
             nativeLanguage,
             Icons.home,
             () => _showLanguageDialog('native'),
           ),
           const SizedBox(height: 12),
           _buildInfoRow(
-            'Teaching Language',
+            localizations.teachingLanguage,
             teachingLanguage,
             Icons.school,
             () => _showLanguageDialog('teaching'),
@@ -444,7 +451,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
     );
   }
 
-  Widget _buildAboutSection(bool isDark) {
+  Widget _buildAboutSection(bool isDark, AppLocalizations localizations) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -458,8 +465,8 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
             children: [
               Icon(Icons.info, color: const Color(0xFF7A54FF), size: 20),
               const SizedBox(width: 8),
-              const Text(
-                'About Me',
+              Text(
+                localizations.aboutMe,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
@@ -541,7 +548,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
   }
 
   // Dialog methods
-  void _showImageEditOptions() {
+  void _showImageEditOptions(AppLocalizations localizations) {
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -590,6 +597,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
                   'Profile Image URL',
                   profileImageUrl,
                   (value) => setState(() => profileImageUrl = value),
+                  localizations,
                 );
               },
             ),
@@ -603,30 +611,33 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
     String title,
     String currentValue,
     Function(String) onSave,
+    AppLocalizations localizations,
   ) {
     final controller = TextEditingController(text: currentValue);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Edit $title'),
+        title: Text('${localizations.edit} $title'),
         content: TextField(
           controller: controller,
           decoration: InputDecoration(
-            hintText: 'Enter $title',
+            hintText: localizations.instructorEnterField(title),
             border: const OutlineInputBorder(),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(localizations.cancel),
           ),
           TextButton(
             onPressed: () {
               onSave(controller.text);
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('$title updated successfully')),
+                SnackBar(
+                  content: Text(localizations.instructorFieldUpdated(title)),
+                ),
               );
             },
             child: Text(

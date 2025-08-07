@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 class InstructorStudyMaterialsTab extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -121,8 +122,8 @@ class _InstructorStudyMaterialsTabState
                 color: Colors.white,
                 size: 18,
               ),
-              label: const Text(
-                'Upload Study Material',
+              label: Text(
+                AppLocalizations.of(context)!.uploadStudyMaterial,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 14,
@@ -275,8 +276,8 @@ class _InstructorStudyMaterialsTabState
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
-                  child: const Text(
-                    'Edit',
+                  child: Text(
+                    AppLocalizations.of(context)!.edit,
                     style: TextStyle(fontSize: 10, color: Colors.white),
                   ),
                 ),
@@ -295,7 +296,10 @@ class _InstructorStudyMaterialsTabState
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
-                  child: const Text('Delete', style: TextStyle(fontSize: 10)),
+                  child: Text(
+                    AppLocalizations.of(context)!.delete,
+                    style: TextStyle(fontSize: 10),
+                  ),
                 ),
               ),
             ],
@@ -338,7 +342,9 @@ class _InstructorStudyMaterialsTabState
             child: Padding(
               padding: const EdgeInsets.only(top: 2),
               child: Text(
-                isExpanded ? 'Show Less' : 'Show More',
+                isExpanded
+                    ? AppLocalizations.of(context)!.showLess
+                    : AppLocalizations.of(context)!.showMore,
                 style: TextStyle(
                   fontSize: 10,
                   color: Color(0xFF7A54FF),
@@ -363,7 +369,7 @@ class _InstructorStudyMaterialsTabState
           ),
           const SizedBox(height: 16),
           Text(
-            'No study materials yet',
+            AppLocalizations.of(context)!.noStudyMaterialsYet,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -372,7 +378,7 @@ class _InstructorStudyMaterialsTabState
           ),
           const SizedBox(height: 8),
           Text(
-            'Upload your first study material',
+            AppLocalizations.of(context)!.uploadYourFirstStudyMaterial,
             style: TextStyle(
               fontSize: 12,
               color: isDark ? Colors.grey[500] : Colors.grey[500],
@@ -425,7 +431,9 @@ class _InstructorStudyMaterialsTabState
     if (filePath == null || filePath.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('❌ No file available for this material'),
+          content: Text(
+            AppLocalizations.of(context)!.noFileAvailableForThisMaterial,
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -435,7 +443,9 @@ class _InstructorStudyMaterialsTabState
     // Show message that file will be opened from local storage
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('📁 Opening file: ${material['fileName']}'),
+        content: Text(
+          AppLocalizations.of(context)!.openingFile(material['fileName']),
+        ),
         backgroundColor: Color(0xFF7A54FF),
         duration: Duration(seconds: 2),
       ),
@@ -477,7 +487,7 @@ class _InstructorStudyMaterialsTabState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'File Preview',
+                AppLocalizations.of(context)!.filePreview,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black,
@@ -485,19 +495,21 @@ class _InstructorStudyMaterialsTabState
               ),
               const SizedBox(height: 8),
               Text(
-                'File: ${material['fileName']}',
+                AppLocalizations.of(context)!.fileLabel(material['fileName']),
                 style: TextStyle(
                   color: isDark ? Colors.grey[300] : Colors.grey[700],
                 ),
               ),
               Text(
-                'Size: ${material['fileSize']}',
+                AppLocalizations.of(context)!.sizeLabel(material['fileSize']),
                 style: TextStyle(
                   color: isDark ? Colors.grey[300] : Colors.grey[700],
                 ),
               ),
               Text(
-                'Type: ${material['type'].toUpperCase()}',
+                AppLocalizations.of(
+                  context,
+                )!.typeLabel(material['type'].toUpperCase()),
                 style: TextStyle(
                   color: isDark ? Colors.grey[300] : Colors.grey[700],
                 ),
@@ -523,14 +535,14 @@ class _InstructorStudyMaterialsTabState
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'File Preview',
+                      AppLocalizations.of(context)!.filePreview,
                       style: TextStyle(
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
                         fontSize: 12,
                       ),
                     ),
                     Text(
-                      'In real app, this would show the actual file content',
+                      AppLocalizations.of(context)!.inRealAppDescription,
                       style: TextStyle(
                         color: isDark ? Colors.grey[500] : Colors.grey[500],
                         fontSize: 10,
@@ -546,7 +558,7 @@ class _InstructorStudyMaterialsTabState
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Close',
+                AppLocalizations.of(context)!.close,
                 style: TextStyle(
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                 ),
@@ -558,7 +570,9 @@ class _InstructorStudyMaterialsTabState
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      '📂 Opening ${material['fileName']} with system viewer',
+                      AppLocalizations.of(
+                        context,
+                      )!.openingFileWithSystemViewer(material['fileName']),
                     ),
                     backgroundColor: Color(0xFF7A54FF),
                     duration: Duration(seconds: 2),
@@ -569,7 +583,7 @@ class _InstructorStudyMaterialsTabState
                 backgroundColor: Color(0xFF7A54FF),
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Open File'),
+              child: Text(AppLocalizations.of(context)!.openFile),
             ),
           ],
         );
@@ -590,7 +604,7 @@ class _InstructorStudyMaterialsTabState
         return AlertDialog(
           backgroundColor: isDark ? Colors.grey[850] : Colors.white,
           title: Text(
-            'Edit Material Details',
+            AppLocalizations.of(context)!.editMaterialDetails,
             style: TextStyle(
               color: isDark ? Colors.white : Colors.black,
               fontSize: 18,
@@ -604,7 +618,7 @@ class _InstructorStudyMaterialsTabState
                 TextField(
                   controller: titleController,
                   decoration: InputDecoration(
-                    labelText: 'Title',
+                    labelText: AppLocalizations.of(context)!.title,
                     labelStyle: TextStyle(
                       color: isDark ? Colors.grey[400] : Colors.grey[600],
                     ),
@@ -623,7 +637,7 @@ class _InstructorStudyMaterialsTabState
                   controller: descriptionController,
                   maxLines: 3,
                   decoration: InputDecoration(
-                    labelText: 'Description',
+                    labelText: AppLocalizations.of(context)!.description,
                     labelStyle: TextStyle(
                       color: isDark ? Colors.grey[400] : Colors.grey[600],
                     ),
@@ -644,7 +658,7 @@ class _InstructorStudyMaterialsTabState
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Cancel',
+                AppLocalizations.of(context)!.cancel,
                 style: TextStyle(
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                 ),
@@ -664,8 +678,10 @@ class _InstructorStudyMaterialsTabState
                 });
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('✅ Material updated successfully!'),
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.materialUpdatedSuccessfully,
+                    ),
                     backgroundColor: Colors.green,
                     duration: Duration(seconds: 2),
                   ),
@@ -675,7 +691,7 @@ class _InstructorStudyMaterialsTabState
                 backgroundColor: const Color(0xFF7A54FF),
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Save'),
+              child: Text(AppLocalizations.of(context)!.save),
             ),
           ],
         );
@@ -692,7 +708,7 @@ class _InstructorStudyMaterialsTabState
         return AlertDialog(
           backgroundColor: isDark ? Colors.grey[850] : Colors.white,
           title: Text(
-            'Delete Material',
+            AppLocalizations.of(context)!.deleteMaterial,
             style: TextStyle(
               color: isDark ? Colors.white : Colors.black,
               fontSize: 18,
@@ -703,7 +719,7 @@ class _InstructorStudyMaterialsTabState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Are you sure you want to delete this material?',
+                AppLocalizations.of(context)!.areYouSureDeleteMaterial,
                 style: TextStyle(
                   color: isDark ? Colors.grey[300] : Colors.grey[700],
                 ),
@@ -738,7 +754,7 @@ class _InstructorStudyMaterialsTabState
               ),
               const SizedBox(height: 12),
               Text(
-                'This action cannot be undone.',
+                AppLocalizations.of(context)!.thisActionCannotBeUndone,
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.red,
@@ -751,7 +767,7 @@ class _InstructorStudyMaterialsTabState
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Cancel',
+                AppLocalizations.of(context)!.cancel,
                 style: TextStyle(
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                 ),
@@ -765,7 +781,11 @@ class _InstructorStudyMaterialsTabState
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('🗑️ "${material['title']}" deleted'),
+                    content: Text(
+                      AppLocalizations.of(
+                        context,
+                      )!.materialDeleted(material['title']),
+                    ),
                     backgroundColor: Colors.red,
                     duration: Duration(seconds: 2),
                   ),
@@ -775,7 +795,7 @@ class _InstructorStudyMaterialsTabState
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Delete'),
+              child: Text(AppLocalizations.of(context)!.delete),
             ),
           ],
         );
@@ -810,7 +830,9 @@ class _InstructorStudyMaterialsTabState
           return AlertDialog(
             backgroundColor: isDark ? Colors.grey[850] : Colors.white,
             title: Text(
-              'Select ${selectedType.toUpperCase()} File',
+              AppLocalizations.of(
+                context,
+              )!.selectFileType(selectedType.toUpperCase()),
               style: TextStyle(
                 color: isDark ? Colors.white : Colors.black,
                 fontSize: 16,
@@ -820,7 +842,7 @@ class _InstructorStudyMaterialsTabState
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Choose a file from your device:',
+                  AppLocalizations.of(context)!.chooseFileFromDevice,
                   style: TextStyle(
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
                   ),
@@ -860,7 +882,7 @@ class _InstructorStudyMaterialsTabState
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 child: Text(
-                  'Cancel',
+                  AppLocalizations.of(context)!.cancel,
                   style: TextStyle(
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
                   ),
@@ -886,7 +908,7 @@ class _InstructorStudyMaterialsTabState
             return AlertDialog(
               backgroundColor: isDark ? Colors.grey[850] : Colors.white,
               title: Text(
-                'Upload Study Material',
+                AppLocalizations.of(context)!.uploadStudyMaterial,
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 18,
@@ -930,7 +952,9 @@ class _InstructorStudyMaterialsTabState
                                 Expanded(
                                   child: Text(
                                     selectedFileName.isEmpty
-                                        ? 'No file selected'
+                                        ? AppLocalizations.of(
+                                            context,
+                                          )!.noFileSelected
                                         : selectedFileName,
                                     style: TextStyle(
                                       color: selectedFileName.isEmpty
@@ -968,8 +992,10 @@ class _InstructorStudyMaterialsTabState
                                 icon: const Icon(Icons.folder_open),
                                 label: Text(
                                   selectedFileName.isEmpty
-                                      ? 'Choose File'
-                                      : 'Change File',
+                                      ? AppLocalizations.of(context)!.chooseFile
+                                      : AppLocalizations.of(
+                                          context,
+                                        )!.changeFile,
                                 ),
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: const Color(0xFF7A54FF),
@@ -989,7 +1015,9 @@ class _InstructorStudyMaterialsTabState
                       TextField(
                         controller: titleController,
                         decoration: InputDecoration(
-                          labelText: 'Title *',
+                          labelText: AppLocalizations.of(
+                            context,
+                          )!.titleRequired,
                           labelStyle: TextStyle(
                             color: isDark ? Colors.grey[400] : Colors.grey[600],
                           ),
@@ -1015,7 +1043,7 @@ class _InstructorStudyMaterialsTabState
                         controller: descriptionController,
                         maxLines: 2,
                         decoration: InputDecoration(
-                          labelText: 'Description',
+                          labelText: AppLocalizations.of(context)!.description,
                           labelStyle: TextStyle(
                             color: isDark ? Colors.grey[400] : Colors.grey[600],
                           ),
@@ -1038,7 +1066,7 @@ class _InstructorStudyMaterialsTabState
 
                       // Type Selection
                       Text(
-                        'File Type',
+                        AppLocalizations.of(context)!.fileType,
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           color: isDark ? Colors.white : Colors.black,
@@ -1075,7 +1103,7 @@ class _InstructorStudyMaterialsTabState
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(
-                    'Cancel',
+                    AppLocalizations.of(context)!.cancel,
                     style: TextStyle(
                       color: isDark ? Colors.grey[400] : Colors.grey[600],
                     ),
@@ -1101,7 +1129,7 @@ class _InstructorStudyMaterialsTabState
                     backgroundColor: const Color(0xFF7A54FF),
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('Upload'),
+                  child: Text(AppLocalizations.of(context)!.upload),
                 ),
               ],
             );
@@ -1125,7 +1153,9 @@ class _InstructorStudyMaterialsTabState
       'title': title,
       'description': description.isNotEmpty
           ? description
-          : 'Study material for ${widget.course['title']}',
+          : AppLocalizations.of(
+              context,
+            )!.studyMaterialFor(widget.course['title']),
       'type': type,
       'uploadDate': now.toString().split(' ')[0],
       'uploadTime':
@@ -1141,7 +1171,9 @@ class _InstructorStudyMaterialsTabState
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('✅ "$title" uploaded successfully!'),
+        content: Text(
+          AppLocalizations.of(context)!.materialUploadedSuccessfully(title),
+        ),
         backgroundColor: Colors.green,
         duration: Duration(seconds: 2),
       ),

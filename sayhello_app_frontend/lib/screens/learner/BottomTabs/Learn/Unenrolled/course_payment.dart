@@ -38,8 +38,12 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final price =
         double.tryParse(widget.course['price']?.toString() ?? '49.99') ?? 49.99;
-    final courseName = widget.course['title'] ?? 'Course';
-    final instructor = widget.course['instructor'] ?? 'Instructor';
+    final courseName =
+        widget.course['title'] ??
+        AppLocalizations.of(context)!.paymentCourseFallback;
+    final instructor =
+        widget.course['instructor'] ??
+        AppLocalizations.of(context)!.paymentInstructorFallback;
 
     // Consistent color theme
     final primaryColor = Color(0xFF7A54FF);
@@ -57,7 +61,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Complete Purchase',
+          AppLocalizations.of(context)!.paymentCompletePurchase,
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 16,
@@ -175,7 +179,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  'by $instructor',
+                  AppLocalizations.of(context)!.paymentCourseBy(instructor),
                   style: TextStyle(
                     fontSize: 12,
                     color: primaryColor,
@@ -217,7 +221,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Payment Method',
+            AppLocalizations.of(context)!.paymentMethod,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -253,7 +257,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                   Icon(Icons.credit_card, color: primaryColor, size: 20),
                   const SizedBox(width: 10),
                   Text(
-                    'Credit/Debit Card',
+                    AppLocalizations.of(context)!.paymentCreditDebitCard,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -298,7 +302,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'PayPal',
+                    AppLocalizations.of(context)!.paymentPayPal,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -332,7 +336,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Card Information',
+            AppLocalizations.of(context)!.paymentCardInformation,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -346,9 +350,9 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             controller: _cardNumberController,
             style: TextStyle(fontSize: 14),
             decoration: InputDecoration(
-              labelText: 'Card Number',
+              labelText: AppLocalizations.of(context)!.paymentCardNumber,
               labelStyle: TextStyle(fontSize: 12),
-              hintText: '1234 5678 9012 3456',
+              hintText: AppLocalizations.of(context)!.paymentCardNumberHint,
               hintStyle: TextStyle(fontSize: 12),
               prefixIcon: Icon(
                 Icons.credit_card,
@@ -375,10 +379,10 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter card number';
+                return AppLocalizations.of(context)!.paymentErrorCardNumber;
               }
               if (value.replaceAll(' ', '').length < 16) {
-                return 'Please enter a valid card number';
+                return AppLocalizations.of(context)!.paymentErrorInvalidCard;
               }
               return null;
             },
@@ -394,9 +398,9 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                   controller: _expiryController,
                   style: TextStyle(fontSize: 14),
                   decoration: InputDecoration(
-                    labelText: 'Expiry Date',
+                    labelText: AppLocalizations.of(context)!.paymentExpiryDate,
                     labelStyle: TextStyle(fontSize: 12),
-                    hintText: 'MM/YY',
+                    hintText: AppLocalizations.of(context)!.paymentExpiryHint,
                     hintStyle: TextStyle(fontSize: 12),
                     prefixIcon: Icon(
                       Icons.calendar_today,
@@ -422,10 +426,12 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                   ],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Required';
+                      return AppLocalizations.of(context)!.paymentErrorRequired;
                     }
                     if (value.length < 5) {
-                      return 'Invalid date';
+                      return AppLocalizations.of(
+                        context,
+                      )!.paymentErrorInvalidDate;
                     }
                     return null;
                   },
@@ -440,9 +446,9 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                   controller: _cvvController,
                   style: TextStyle(fontSize: 14),
                   decoration: InputDecoration(
-                    labelText: 'CVV',
+                    labelText: AppLocalizations.of(context)!.paymentCVV,
                     labelStyle: TextStyle(fontSize: 12),
-                    hintText: '123',
+                    hintText: AppLocalizations.of(context)!.paymentCVVHint,
                     hintStyle: TextStyle(fontSize: 12),
                     prefixIcon: Icon(Icons.lock, size: 18, color: primaryColor),
                     border: OutlineInputBorder(
@@ -464,10 +470,12 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                   ],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Required';
+                      return AppLocalizations.of(context)!.paymentErrorRequired;
                     }
                     if (value.length < 3) {
-                      return 'Invalid CVV';
+                      return AppLocalizations.of(
+                        context,
+                      )!.paymentErrorInvalidCVV;
                     }
                     return null;
                   },
@@ -498,7 +506,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Billing Information',
+            AppLocalizations.of(context)!.paymentBillingInformation,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -512,9 +520,9 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             controller: _nameController,
             style: TextStyle(fontSize: 14),
             decoration: InputDecoration(
-              labelText: 'Cardholder Name',
+              labelText: AppLocalizations.of(context)!.paymentCardholderName,
               labelStyle: TextStyle(fontSize: 12),
-              hintText: 'John Doe',
+              hintText: AppLocalizations.of(context)!.paymentCardholderNameHint,
               hintStyle: TextStyle(fontSize: 12),
               prefixIcon: Icon(Icons.person, size: 18, color: primaryColor),
               border: OutlineInputBorder(
@@ -531,7 +539,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter cardholder name';
+                return AppLocalizations.of(context)!.paymentErrorCardholderName;
               }
               return null;
             },
@@ -544,9 +552,9 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             controller: _emailController,
             style: TextStyle(fontSize: 14),
             decoration: InputDecoration(
-              labelText: 'Email Address',
+              labelText: AppLocalizations.of(context)!.paymentEmailAddress,
               labelStyle: TextStyle(fontSize: 12),
-              hintText: 'john@example.com',
+              hintText: AppLocalizations.of(context)!.paymentEmailHint,
               hintStyle: TextStyle(fontSize: 12),
               prefixIcon: Icon(Icons.email, size: 18, color: primaryColor),
               border: OutlineInputBorder(
@@ -564,10 +572,10 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter email address';
+                return AppLocalizations.of(context)!.paymentErrorEmail;
               }
               if (!value.contains('@')) {
-                return 'Please enter a valid email';
+                return AppLocalizations.of(context)!.paymentErrorInvalidEmail;
               }
               return null;
             },
@@ -598,7 +606,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Order Summary',
+            AppLocalizations.of(context)!.paymentOrderSummary,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -611,7 +619,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Course Price',
+                AppLocalizations.of(context)!.paymentCoursePrice,
                 style: TextStyle(
                   fontSize: 14,
                   color: isDark ? Colors.grey[300] : Colors.grey[700],
@@ -634,7 +642,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Tax (10%)',
+                AppLocalizations.of(context)!.paymentTax,
                 style: TextStyle(
                   fontSize: 14,
                   color: isDark ? Colors.grey[300] : Colors.grey[700],
@@ -659,7 +667,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Total',
+                AppLocalizations.of(context)!.paymentTotal,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -726,11 +734,16 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Text('Processing...', style: TextStyle(fontSize: 15)),
+                      Text(
+                        AppLocalizations.of(context)!.paymentProcessing,
+                        style: TextStyle(fontSize: 15),
+                      ),
                     ],
                   )
                 : Text(
-                    'Pay \$${total.toStringAsFixed(2)}',
+                    AppLocalizations.of(
+                      context,
+                    )!.paymentPay('\$${total.toStringAsFixed(2)}'),
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
           ),
@@ -743,7 +756,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
     if (_selectedPaymentMethod == 'paypal') {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Processing PayPal payment...'),
+          content: Text(AppLocalizations.of(context)!.paymentProcessingPayPal),
           backgroundColor: Color(0xFF7A54FF),
         ),
       );
@@ -782,12 +795,14 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             ),
             const SizedBox(height: 20),
             Text(
-              'Payment Successful!',
+              AppLocalizations.of(context)!.paymentSuccessTitle,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(
-              'Welcome to ${widget.course['title']}!\nYou can now access all course materials.',
+              AppLocalizations.of(
+                context,
+              )!.paymentSuccessMessage(widget.course['title']),
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
@@ -817,7 +832,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Text('Start Learning'),
+                child: Text(AppLocalizations.of(context)!.paymentStartLearning),
               ),
             ),
           ],

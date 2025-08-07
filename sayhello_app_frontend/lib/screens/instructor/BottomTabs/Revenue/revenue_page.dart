@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../providers/settings_provider.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../instructor_main_tab.dart';
 import 'withdrawal_request_page.dart';
 
@@ -141,6 +142,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -168,7 +170,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
               ),
               Expanded(
                 child: Text(
-                  'Revenue Dashboard',
+                  localizations.revenueDashboard,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                 ),
@@ -191,37 +193,37 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Payment Information (moved to top)
-            _buildPaymentInfo(isDark),
+            _buildPaymentInfo(isDark, localizations),
             const SizedBox(height: 16),
 
             // Revenue Summary Cards
-            _buildRevenueSummary(isDark),
+            _buildRevenueSummary(isDark, localizations),
             const SizedBox(height: 16),
 
             // Revenue Chart
-            _buildRevenueChart(isDark),
+            _buildRevenueChart(isDark, localizations),
             const SizedBox(height: 16),
 
             // Course Income Section
-            _buildCourseIncome(isDark),
+            _buildCourseIncome(isDark, localizations),
             const SizedBox(height: 16),
 
             // Transaction History Section
-            _buildTransactionHistory(isDark),
+            _buildTransactionHistory(isDark, localizations),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildRevenueSummary(bool isDark) {
+  Widget _buildRevenueSummary(bool isDark, AppLocalizations localizations) {
     return Column(
       children: [
         Row(
           children: [
             Expanded(
               child: _buildSummaryCard(
-                'Weekly',
+                localizations.revenueWeekly,
                 '\$${calculateWeeklyRevenue().toStringAsFixed(2)}',
                 Icons.calendar_view_week,
                 const Color(0xFF7A54FF),
@@ -231,7 +233,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             const SizedBox(width: 12),
             Expanded(
               child: _buildSummaryCard(
-                'Monthly',
+                localizations.revenueMonthly,
                 '\$${calculateMonthlyRevenue().toStringAsFixed(2)}',
                 Icons.calendar_month,
                 Colors.green,
@@ -245,7 +247,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
           children: [
             Expanded(
               child: _buildSummaryCard(
-                'This Year',
+                localizations.revenueThisYear,
                 '\$${calculateYearlyRevenue().toStringAsFixed(2)}',
                 Icons.calendar_today,
                 Colors.blue,
@@ -255,7 +257,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             const SizedBox(width: 12),
             Expanded(
               child: _buildSummaryCard(
-                'Total Courses',
+                localizations.revenueTotalCourses,
                 '${courseEnrollments.length}',
                 Icons.school,
                 Colors.orange,
@@ -320,7 +322,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     );
   }
 
-  Widget _buildRevenueChart(bool isDark) {
+  Widget _buildRevenueChart(bool isDark, AppLocalizations localizations) {
     // Calculate data points for the chart
     List<double> weeklyData = [];
     List<String> weekLabels = [];
@@ -360,7 +362,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Weekly Revenue Trend',
+            localizations.revenueWeeklyTrend,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -411,7 +413,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Total: \$${weeklyData.fold(0.0, (a, b) => a + b).toStringAsFixed(2)}',
+                '${localizations.revenueTotal}: \$${weeklyData.fold(0.0, (a, b) => a + b).toStringAsFixed(2)}',
                 style: TextStyle(
                   fontSize: 11,
                   color: const Color(0xFF7A54FF),
@@ -419,7 +421,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                 ),
               ),
               Text(
-                'Peak: \$${maxValue.toStringAsFixed(2)}',
+                '${localizations.revenuePeak}: \$${maxValue.toStringAsFixed(2)}',
                 style: TextStyle(
                   fontSize: 11,
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -432,7 +434,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     );
   }
 
-  Widget _buildCourseIncome(bool isDark) {
+  Widget _buildCourseIncome(bool isDark, AppLocalizations localizations) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -445,7 +447,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
           Row(
             children: [
               Text(
-                'Course Income',
+                localizations.revenueCourseIncome,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -460,7 +462,9 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                   });
                 },
                 child: Text(
-                  _showAllCourses ? 'Show Less' : 'View All',
+                  _showAllCourses
+                      ? localizations.revenueShowLess
+                      : localizations.revenueViewAll,
                   style: TextStyle(
                     color: const Color(0xFF7A54FF),
                     fontSize: 12,
@@ -477,7 +481,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             separatorBuilder: (_, __) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
               final course = courseEnrollments[index];
-              return _buildCourseIncomeItem(course, isDark);
+              return _buildCourseIncomeItem(course, isDark, localizations);
             },
           ),
         ],
@@ -485,7 +489,11 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     );
   }
 
-  Widget _buildCourseIncomeItem(Map<String, dynamic> course, bool isDark) {
+  Widget _buildCourseIncomeItem(
+    Map<String, dynamic> course,
+    bool isDark,
+    AppLocalizations localizations,
+  ) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -508,7 +516,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Price: \$${course['coursePrice'].toStringAsFixed(2)} • ${course['enrolledStudents']} enrolled',
+                  '${localizations.revenuePrice}: \$${course['coursePrice'].toStringAsFixed(2)} • ${course['enrolledStudents']} ${localizations.revenueEnrolled}',
                   style: TextStyle(
                     fontSize: 10,
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -530,7 +538,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     );
   }
 
-  Widget _buildTransactionHistory(bool isDark) {
+  Widget _buildTransactionHistory(bool isDark, AppLocalizations localizations) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -543,7 +551,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
           Row(
             children: [
               Text(
-                'Transaction History',
+                localizations.revenueTransactionHistory,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -558,7 +566,9 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                   });
                 },
                 child: Text(
-                  _showAllTransactions ? 'Show Less' : 'View All',
+                  _showAllTransactions
+                      ? localizations.revenueShowLess
+                      : localizations.revenueViewAll,
                   style: TextStyle(
                     color: const Color(0xFF7A54FF),
                     fontSize: 12,
@@ -575,7 +585,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             separatorBuilder: (_, __) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
               final transaction = transactionHistory[index];
-              return _buildTransactionItem(transaction, isDark);
+              return _buildTransactionItem(transaction, isDark, localizations);
             },
           ),
         ],
@@ -583,7 +593,11 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     );
   }
 
-  Widget _buildTransactionItem(Map<String, dynamic> transaction, bool isDark) {
+  Widget _buildTransactionItem(
+    Map<String, dynamic> transaction,
+    bool isDark,
+    AppLocalizations localizations,
+  ) {
     final isCompleted = transaction['status'] == 'Completed';
     final statusColor = isCompleted ? Colors.green : Colors.red;
 
@@ -613,7 +627,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Withdrawal - ${transaction['id']}',
+                  '${localizations.revenueWithdrawal} - ${transaction['id']}',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -665,7 +679,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     );
   }
 
-  Widget _buildPaymentInfo(bool isDark) {
+  Widget _buildPaymentInfo(bool isDark, AppLocalizations localizations) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -676,7 +690,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Payment Overview',
+            localizations.revenuePaymentOverview,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -706,7 +720,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Available Balance',
+                        localizations.revenueAvailableBalance,
                         style: TextStyle(
                           fontSize: 11,
                           color: Colors.white.withOpacity(0.8),
@@ -737,8 +751,8 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
-                  child: const Text(
-                    'Withdraw',
+                  child: Text(
+                    localizations.revenueWithdrawButton,
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -753,7 +767,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             children: [
               Expanded(
                 child: _buildPaymentInfoItem(
-                  'Total Earned',
+                  localizations.revenueTotalEarned,
                   '\$${totalIncome.toStringAsFixed(2)}',
                   Colors.green,
                   isDark,
@@ -762,7 +776,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
               const SizedBox(width: 16),
               Expanded(
                 child: _buildPaymentInfoItem(
-                  'Withdrawn',
+                  localizations.revenueWithdrawn,
                   '\$${totalWithdrawn.toStringAsFixed(2)}',
                   Colors.blue,
                   isDark,

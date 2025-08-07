@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 import 'record_class_video_player.dart';
 import '../../../../services/video_metadata_service.dart';
@@ -117,6 +118,7 @@ class _InstructorRecordedClassesTabState
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = Color(0xFF7A54FF);
     final textColor = isDark ? Colors.white : Colors.black;
@@ -140,7 +142,7 @@ class _InstructorRecordedClassesTabState
               ),
               const SizedBox(height: 24),
               Text(
-                'Loading video metadata...',
+                localizations.loadingVideoMetadata,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -149,7 +151,7 @@ class _InstructorRecordedClassesTabState
               ),
               const SizedBox(height: 8),
               Text(
-                '$percentage% complete',
+                localizations.completePercentage(percentage),
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -159,7 +161,7 @@ class _InstructorRecordedClassesTabState
               if (_totalVideos > 0) ...[
                 const SizedBox(height: 4),
                 Text(
-                  '$_loadedVideos of $_totalVideos videos processed',
+                  localizations.videosProcessed(_loadedVideos, _totalVideos),
                   style: TextStyle(fontSize: 12, color: subTextColor),
                 ),
               ],
@@ -178,7 +180,7 @@ class _InstructorRecordedClassesTabState
               Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 20),
               Text(
-                'Failed to load video metadata',
+                localizations.failedToLoadVideoMetadata,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -205,8 +207,8 @@ class _InstructorRecordedClassesTabState
                   ),
                 ),
                 icon: const Icon(Icons.refresh, color: Colors.white),
-                label: const Text(
-                  'Retry',
+                label: Text(
+                  localizations.retryButton,
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -226,8 +228,8 @@ class _InstructorRecordedClassesTabState
             child: ElevatedButton.icon(
               onPressed: _showUploadDialog,
               icon: const Icon(Icons.video_call, color: Colors.white, size: 18),
-              label: const Text(
-                'Upload New Video',
+              label: Text(
+                localizations.uploadNewVideo,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 14,
@@ -249,7 +251,7 @@ class _InstructorRecordedClassesTabState
         // Recordings List
         Expanded(
           child: _recordings.isEmpty
-              ? _buildEmptyState(isDark, primaryColor)
+              ? _buildEmptyState(isDark, primaryColor, localizations)
               : ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   itemCount: _getSortedRecordings().length,
@@ -272,6 +274,7 @@ class _InstructorRecordedClassesTabState
                       primaryColor,
                       textColor,
                       subTextColor,
+                      localizations,
                     );
                   },
                 ),
@@ -329,6 +332,7 @@ class _InstructorRecordedClassesTabState
     Color primaryColor,
     Color textColor,
     Color? subTextColor,
+    AppLocalizations localizations,
   ) {
     final status = recording['status'] as String;
     final showMeta = meta != null && meta.isValid;
@@ -447,7 +451,7 @@ class _InstructorRecordedClassesTabState
                   Padding(
                     padding: const EdgeInsets.only(top: 4.0),
                     child: Text(
-                      'Metadata error: ${meta.error}',
+                      localizations.metadataError(meta.error!),
                       style: TextStyle(fontSize: 10, color: Colors.red),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -467,7 +471,7 @@ class _InstructorRecordedClassesTabState
                 width: 70,
                 height: 28,
                 child: ElevatedButton(
-                  onPressed: () => _editRecording(recording),
+                  onPressed: () => _editRecording(recording, localizations),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
                     padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -475,8 +479,8 @@ class _InstructorRecordedClassesTabState
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
-                  child: const Text(
-                    'Edit',
+                  child: Text(
+                    localizations.edit,
                     style: TextStyle(fontSize: 11, color: Colors.white),
                   ),
                 ),
@@ -486,7 +490,7 @@ class _InstructorRecordedClassesTabState
                 width: 70,
                 height: 28,
                 child: OutlinedButton(
-                  onPressed: () => _deleteRecording(recording),
+                  onPressed: () => _deleteRecording(recording, localizations),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.red,
                     side: const BorderSide(color: Colors.red, width: 1),
@@ -495,7 +499,10 @@ class _InstructorRecordedClassesTabState
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
-                  child: const Text('Delete', style: TextStyle(fontSize: 11)),
+                  child: Text(
+                    localizations.delete,
+                    style: TextStyle(fontSize: 11),
+                  ),
                 ),
               ),
             ],
@@ -505,7 +512,11 @@ class _InstructorRecordedClassesTabState
     );
   }
 
-  Widget _buildEmptyState(bool isDark, Color primaryColor) {
+  Widget _buildEmptyState(
+    bool isDark,
+    Color primaryColor,
+    AppLocalizations localizations,
+  ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -517,7 +528,7 @@ class _InstructorRecordedClassesTabState
           ),
           const SizedBox(height: 16),
           Text(
-            'No recorded videos yet',
+            localizations.noRecordedVideosYet,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -526,7 +537,7 @@ class _InstructorRecordedClassesTabState
           ),
           const SizedBox(height: 8),
           Text(
-            'Upload your first recorded class',
+            localizations.uploadYourFirstRecordedClass,
             style: TextStyle(
               fontSize: 12,
               color: isDark ? Colors.grey[500] : Colors.grey[500],
@@ -538,6 +549,8 @@ class _InstructorRecordedClassesTabState
   }
 
   void _playVideo(Map<String, dynamic> recording) {
+    final localizations = AppLocalizations.of(context)!;
+
     // Show loading dialog
     showDialog(
       context: context,
@@ -558,7 +571,7 @@ class _InstructorRecordedClassesTabState
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Loading Video Player...',
+                  localizations.loadingVideoPlayer,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -588,7 +601,10 @@ class _InstructorRecordedClassesTabState
     });
   }
 
-  void _editRecording(Map<String, dynamic> recording) {
+  void _editRecording(
+    Map<String, dynamic> recording,
+    AppLocalizations localizations,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final titleController = TextEditingController(text: recording['title']);
     final descriptionController = TextEditingController(
@@ -601,7 +617,7 @@ class _InstructorRecordedClassesTabState
         return AlertDialog(
           backgroundColor: isDark ? Colors.grey[850] : Colors.white,
           title: Text(
-            'Edit Video Details',
+            localizations.editVideoDetails,
             style: TextStyle(
               color: isDark ? Colors.white : Colors.black,
               fontSize: 18,
@@ -615,7 +631,7 @@ class _InstructorRecordedClassesTabState
                 TextField(
                   controller: titleController,
                   decoration: InputDecoration(
-                    labelText: 'Video Title',
+                    labelText: localizations.videoTitle,
                     labelStyle: TextStyle(
                       color: isDark ? Colors.grey[400] : Colors.grey[600],
                     ),
@@ -634,7 +650,7 @@ class _InstructorRecordedClassesTabState
                   controller: descriptionController,
                   maxLines: 3,
                   decoration: InputDecoration(
-                    labelText: 'Description',
+                    labelText: localizations.description,
                     labelStyle: TextStyle(
                       color: isDark ? Colors.grey[400] : Colors.grey[600],
                     ),
@@ -655,7 +671,7 @@ class _InstructorRecordedClassesTabState
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Cancel',
+                localizations.cancel,
                 style: TextStyle(
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                 ),
@@ -675,8 +691,8 @@ class _InstructorRecordedClassesTabState
                 });
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('✅ Video updated successfully!'),
+                  SnackBar(
+                    content: Text(localizations.videoUpdatedSuccessfully),
                     backgroundColor: Colors.green,
                     duration: Duration(seconds: 2),
                   ),
@@ -686,7 +702,7 @@ class _InstructorRecordedClassesTabState
                 backgroundColor: const Color(0xFF7A54FF),
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Save'),
+              child: Text(localizations.save),
             ),
           ],
         );
@@ -694,7 +710,10 @@ class _InstructorRecordedClassesTabState
     );
   }
 
-  void _deleteRecording(Map<String, dynamic> recording) {
+  void _deleteRecording(
+    Map<String, dynamic> recording,
+    AppLocalizations localizations,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
@@ -703,7 +722,7 @@ class _InstructorRecordedClassesTabState
         return AlertDialog(
           backgroundColor: isDark ? Colors.grey[850] : Colors.white,
           title: Text(
-            'Delete Video',
+            localizations.deleteVideo,
             style: TextStyle(
               color: isDark ? Colors.white : Colors.black,
               fontSize: 18,
@@ -714,7 +733,7 @@ class _InstructorRecordedClassesTabState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Are you sure you want to delete this video?',
+                localizations.areYouSureDeleteVideo,
                 style: TextStyle(
                   color: isDark ? Colors.grey[300] : Colors.grey[700],
                 ),
@@ -749,7 +768,7 @@ class _InstructorRecordedClassesTabState
               ),
               const SizedBox(height: 12),
               Text(
-                'This action cannot be undone.',
+                localizations.thisActionCannotBeUndone,
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.red,
@@ -762,7 +781,7 @@ class _InstructorRecordedClassesTabState
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Cancel',
+                localizations.cancel,
                 style: TextStyle(
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                 ),
@@ -776,7 +795,9 @@ class _InstructorRecordedClassesTabState
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('🗑️ "${recording['title']}" deleted'),
+                    content: Text(
+                      localizations.videoDeleted(recording['title']),
+                    ),
                     backgroundColor: Colors.red,
                     duration: Duration(seconds: 2),
                   ),
@@ -786,7 +807,7 @@ class _InstructorRecordedClassesTabState
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Delete'),
+              child: Text(localizations.delete),
             ),
           ],
         );
@@ -795,6 +816,7 @@ class _InstructorRecordedClassesTabState
   }
 
   void _showUploadDialog() {
+    final localizations = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final titleController = TextEditingController();
     final descriptionController = TextEditingController();
@@ -808,7 +830,7 @@ class _InstructorRecordedClassesTabState
             return AlertDialog(
               backgroundColor: isDark ? Colors.grey[850] : Colors.white,
               title: Text(
-                'Upload New Video',
+                localizations.uploadNewVideoDialog,
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 18,
@@ -831,7 +853,9 @@ class _InstructorRecordedClassesTabState
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('📁 File selected: $selectedFile'),
+                            content: Text(
+                              localizations.fileSelected(selectedFile),
+                            ),
                             duration: Duration(seconds: 2),
                           ),
                         );
@@ -870,8 +894,10 @@ class _InstructorRecordedClassesTabState
                             const SizedBox(height: 8),
                             Text(
                               selectedFile.isEmpty
-                                  ? 'Tap to select video file from storage'
-                                  : 'File selected: $selectedFile',
+                                  ? localizations.tapToSelectVideoFile
+                                  : localizations.fileSelectedPrefix(
+                                      selectedFile,
+                                    ),
                               style: TextStyle(
                                 color: selectedFile.isEmpty
                                     ? (isDark
@@ -896,7 +922,7 @@ class _InstructorRecordedClassesTabState
                     TextField(
                       controller: titleController,
                       decoration: InputDecoration(
-                        labelText: 'Video Title *',
+                        labelText: localizations.videoTitleRequired,
                         labelStyle: TextStyle(
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
                         ),
@@ -922,7 +948,7 @@ class _InstructorRecordedClassesTabState
                       controller: descriptionController,
                       maxLines: 2,
                       decoration: InputDecoration(
-                        labelText: 'Description',
+                        labelText: localizations.description,
                         labelStyle: TextStyle(
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
                         ),
@@ -947,7 +973,7 @@ class _InstructorRecordedClassesTabState
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(
-                    'Cancel',
+                    localizations.cancel,
                     style: TextStyle(
                       color: isDark ? Colors.grey[400] : Colors.grey[600],
                     ),
@@ -961,6 +987,7 @@ class _InstructorRecordedClassesTabState
                             selectedFile,
                             titleController.text,
                             descriptionController.text,
+                            localizations,
                           );
                           Navigator.of(context).pop();
                         }
@@ -969,7 +996,7 @@ class _InstructorRecordedClassesTabState
                     backgroundColor: const Color(0xFF7A54FF),
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('Upload'),
+                  child: Text(localizations.uploadButton),
                 ),
               ],
             );
@@ -979,7 +1006,12 @@ class _InstructorRecordedClassesTabState
     );
   }
 
-  void _uploadVideo(String fileName, String title, String description) {
+  void _uploadVideo(
+    String fileName,
+    String title,
+    String description,
+    AppLocalizations localizations,
+  ) {
     final List<String> sampleVideoUrls = [
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
@@ -1013,7 +1045,7 @@ class _InstructorRecordedClassesTabState
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('📤 Uploading "$title"...'),
+        content: Text(localizations.uploadingVideo(title)),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -1035,7 +1067,7 @@ class _InstructorRecordedClassesTabState
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('✅ "$title" published successfully!'),
+            content: Text(localizations.videoPublishedSuccessfully(title)),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ),

@@ -1665,9 +1665,9 @@
   "@downloadConfirmation": {
     "description": "Download confirmation message"
   },
-  "fileType": "Type: {type}",
-  "@fileType": {
-    "description": "File type display",
+  "fileTypeLabel": "Type: {type}",
+  "@fileTypeLabel": {
+    "description": "File type display with label",
     "placeholders": {
       "type": {
         "type": "String"
@@ -3502,6 +3502,1745 @@
     "placeholders": {
       "count": {
         "type": "int"
+      }
+    }
+  },
+  "paymentCompletePurchase": "Complete Purchase",
+  "@paymentCompletePurchase": {
+    "description": "Payment page app bar title"
+  },
+  "paymentCourseFallback": "Course",
+  "@paymentCourseFallback": {
+    "description": "Fallback course title"
+  },
+  "paymentInstructorFallback": "Instructor",
+  "@paymentInstructorFallback": {
+    "description": "Fallback instructor name"
+  },
+  "paymentCourseBy": "by {instructor}",
+  "@paymentCourseBy": {
+    "description": "Course instructor label",
+    "placeholders": {
+      "instructor": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentMethod": "Payment Method",
+  "@paymentMethod": {
+    "description": "Payment method selection title"
+  },
+  "paymentCreditDebitCard": "Credit/Debit Card",
+  "@paymentCreditDebitCard": {
+    "description": "Credit/Debit card payment option"
+  },
+  "paymentPayPal": "PayPal",
+  "@paymentPayPal": {
+    "description": "PayPal payment option"
+  },
+  "paymentCardInformation": "Card Information",
+  "@paymentCardInformation": {
+    "description": "Card information section title"
+  },
+  "paymentCardNumber": "Card Number",
+  "@paymentCardNumber": {
+    "description": "Card number input label"
+  },
+  "paymentCardNumberHint": "1234 5678 9012 3456",
+  "@paymentCardNumberHint": {
+    "description": "Card number input hint"
+  },
+  "paymentExpiryDate": "Expiry Date",
+  "@paymentExpiryDate": {
+    "description": "Expiry date input label"
+  },
+  "paymentExpiryHint": "MM/YY",
+  "@paymentExpiryHint": {
+    "description": "Expiry date input hint"
+  },
+  "paymentCVV": "CVV",
+  "@paymentCVV": {
+    "description": "CVV input label"
+  },
+  "paymentCVVHint": "123",
+  "@paymentCVVHint": {
+    "description": "CVV input hint"
+  },
+  "paymentBillingInformation": "Billing Information",
+  "@paymentBillingInformation": {
+    "description": "Billing information section title"
+  },
+  "paymentCardholderName": "Cardholder Name",
+  "@paymentCardholderName": {
+    "description": "Cardholder name input label"
+  },
+  "paymentCardholderNameHint": "John Doe",
+  "@paymentCardholderNameHint": {
+    "description": "Cardholder name input hint"
+  },
+  "paymentEmailAddress": "Email Address",
+  "@paymentEmailAddress": {
+    "description": "Email address input label"
+  },
+  "paymentEmailHint": "john@example.com",
+  "@paymentEmailHint": {
+    "description": "Email input hint"
+  },
+  "paymentOrderSummary": "Order Summary",
+  "@paymentOrderSummary": {
+    "description": "Order summary section title"
+  },
+  "paymentCoursePrice": "Course Price",
+  "@paymentCoursePrice": {
+    "description": "Course price label in order summary"
+  },
+  "paymentTax": "Tax (10%)",
+  "@paymentTax": {
+    "description": "Tax label in order summary"
+  },
+  "paymentTotal": "Total",
+  "@paymentTotal": {
+    "description": "Total amount label"
+  },
+  "paymentProcessing": "Processing...",
+  "@paymentProcessing": {
+    "description": "Processing payment button text"
+  },
+  "paymentPay": "Pay {amount}",
+  "@paymentPay": {
+    "description": "Pay button text with amount",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentProcessingPayPal": "Processing PayPal payment...",
+  "@paymentProcessingPayPal": {
+    "description": "PayPal processing message"
+  },
+  "paymentSuccessTitle": "Payment Successful!",
+  "@paymentSuccessTitle": {
+    "description": "Payment success dialog title"
+  },
+  "paymentSuccessMessage": "Welcome to {courseTitle}!\nYou can now access all course materials.",
+  "@paymentSuccessMessage": {
+    "description": "Payment success dialog message",
+    "placeholders": {
+      "courseTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentStartLearning": "Start Learning",
+  "@paymentStartLearning": {
+    "description": "Start learning button text"
+  },
+  "paymentErrorCardNumber": "Please enter card number",
+  "@paymentErrorCardNumber": {
+    "description": "Card number required error message"
+  },
+  "paymentErrorInvalidCard": "Please enter a valid card number",
+  "@paymentErrorInvalidCard": {
+    "description": "Invalid card number error message"
+  },
+  "paymentErrorRequired": "Required",
+  "@paymentErrorRequired": {
+    "description": "Required field error message"
+  },
+  "paymentErrorInvalidDate": "Invalid date",
+  "@paymentErrorInvalidDate": {
+    "description": "Invalid expiry date error message"
+  },
+  "paymentErrorInvalidCVV": "Invalid CVV",
+  "@paymentErrorInvalidCVV": {
+    "description": "Invalid CVV error message"
+  },
+  "paymentErrorCardholderName": "Please enter cardholder name",
+  "@paymentErrorCardholderName": {
+    "description": "Cardholder name required error message"
+  },
+  "paymentErrorEmail": "Please enter email address",
+  "@paymentErrorEmail": {
+    "description": "Email required error message"
+  },
+  "paymentErrorInvalidEmail": "Please enter a valid email",
+  "@paymentErrorInvalidEmail": {
+    "description": "Invalid email error message"
+  },
+  "courseDetailsFallbackTitle": "Course Title",
+  "@courseDetailsFallbackTitle": {
+    "description": "Fallback course title"
+  },
+  "courseDetailsFallbackDescription": "This is a comprehensive course designed to help you master the language.",
+  "@courseDetailsFallbackDescription": {
+    "description": "Fallback course description"
+  },
+  "courseDetailsFallbackLanguage": "English",
+  "@courseDetailsFallbackLanguage": {
+    "description": "Fallback course language"
+  },
+  "courseDetailsFallbackLevel": "Beginner",
+  "@courseDetailsFallbackLevel": {
+    "description": "Fallback course level"
+  },
+  "courseDetailsFallbackInstructor": "John Doe",
+  "@courseDetailsFallbackInstructor": {
+    "description": "Fallback instructor name"
+  },
+  "courseDetailsFallbackDuration": "4 weeks",
+  "@courseDetailsFallbackDuration": {
+    "description": "Fallback course duration"
+  },
+  "courseDetailsFallbackStatus": "active",
+  "@courseDetailsFallbackStatus": {
+    "description": "Fallback course status"
+  },
+  "courseDetailsFallbackCategory": "Language",
+  "@courseDetailsFallbackCategory": {
+    "description": "Fallback course category"
+  },
+  "courseDetailsInstructorBy": "by {instructor}",
+  "@courseDetailsInstructorBy": {
+    "description": "Instructor byline format",
+    "placeholders": {
+      "instructor": {
+        "type": "String"
+      }
+    }
+  },
+  "courseDetailsLanguageLabel": "Language",
+  "@courseDetailsLanguageLabel": {
+    "description": "Language info pill label"
+  },
+  "courseDetailsSessionsLabel": "Sessions",
+  "@courseDetailsSessionsLabel": {
+    "description": "Sessions info pill label"
+  },
+  "courseDetailsStudentsLabel": "Students",
+  "@courseDetailsStudentsLabel": {
+    "description": "Students info pill label"
+  },
+  "courseDetailsOverviewTitle": "Course Overview",
+  "@courseDetailsOverviewTitle": {
+    "description": "Course overview section title"
+  },
+  "courseDetailsTimelineTitle": "Course Timeline",
+  "@courseDetailsTimelineTitle": {
+    "description": "Course timeline section title"
+  },
+  "courseDetailsStartDateLabel": "Start Date",
+  "@courseDetailsStartDateLabel": {
+    "description": "Start date label"
+  },
+  "courseDetailsEndDateLabel": "End Date",
+  "@courseDetailsEndDateLabel": {
+    "description": "End date label"
+  },
+  "courseDetailsDurationLevel": "Duration: {duration} • Level: {level}",
+  "@courseDetailsDurationLevel": {
+    "description": "Duration and level info format",
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      },
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "courseDetailsInstructorTitle": "Expert Language Instructor",
+  "@courseDetailsInstructorTitle": {
+    "description": "Instructor spotlight title"
+  },
+  "courseDetailsInstructorDescription": "Experienced educator with over 8 years of teaching experience. Specializes in modern language learning techniques.",
+  "@courseDetailsInstructorDescription": {
+    "description": "Instructor description text"
+  },
+  "courseDetailsInstructorYearsExp": "Years Exp.",
+  "@courseDetailsInstructorYearsExp": {
+    "description": "Years experience label"
+  },
+  "courseDetailsInstructorRating": "Rating",
+  "@courseDetailsInstructorRating": {
+    "description": "Instructor rating label"
+  },
+  "courseDetailsInstructorStudents": "Students",
+  "@courseDetailsInstructorStudents": {
+    "description": "Instructor students label"
+  },
+  "courseDetailsFeedbackTitle": "Student Feedback",
+  "@courseDetailsFeedbackTitle": {
+    "description": "Student feedback section title"
+  },
+  "courseDetailsHighlyRated": "Highly Rated Course",
+  "@courseDetailsHighlyRated": {
+    "description": "Highly rated course label"
+  },
+  "courseDetailsReviewsCount": "Based on 124+ student reviews",
+  "@courseDetailsReviewsCount": {
+    "description": "Reviews count text"
+  },
+  "courseDetailsSatisfactionRate": "95% Satisfaction Rate",
+  "@courseDetailsSatisfactionRate": {
+    "description": "Satisfaction rate badge"
+  },
+  "courseDetailsOneTimePayment": "One-time Payment",
+  "@courseDetailsOneTimePayment": {
+    "description": "One-time payment label"
+  },
+  "courseDetailsEnrollNow": "Enroll Now",
+  "@courseDetailsEnrollNow": {
+    "description": "Enroll now button text"
+  },
+  "instructorProfile": "Profile",
+  "@instructorProfile": {
+    "description": "Profile page title"
+  },
+  "instructorRole": "Instructor",
+  "@instructorRole": {
+    "description": "Instructor role label"
+  },
+  "instructorYearsExp": "{years} years experience",
+  "@instructorYearsExp": {
+    "description": "Years of experience format",
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "instructorStatsCourses": "Courses",
+  "@instructorStatsCourses": {
+    "description": "Courses stats label"
+  },
+  "instructorStatsStudents": "Students",
+  "@instructorStatsStudents": {
+    "description": "Students stats label"
+  },
+  "instructorStatsRating": "Rating",
+  "@instructorStatsRating": {
+    "description": "Rating stats label"
+  },
+  "instructorPersonalInfo": "Personal Information",
+  "@instructorPersonalInfo": {
+    "description": "Personal information section title"
+  },
+  "instructorProfessionalInfo": "Professional Information",
+  "@instructorProfessionalInfo": {
+    "description": "Professional information section title"
+  },
+  "instructorLanguages": "Languages",
+  "@instructorLanguages": {
+    "description": "Languages section title"
+  },
+  "instructorAboutMe": "About Me",
+  "@instructorAboutMe": {
+    "description": "About me section title"
+  },
+  "instructorEmail": "Email",
+  "@instructorEmail": {
+    "description": "Email field label"
+  },
+  "instructorDateOfBirth": "Date of Birth",
+  "@instructorDateOfBirth": {
+    "description": "Date of birth field label"
+  },
+  "instructorGender": "Gender",
+  "@instructorGender": {
+    "description": "Gender field label"
+  },
+  "instructorCountry": "Country",
+  "@instructorCountry": {
+    "description": "Country field label"
+  },
+  "instructorYearsOfExperience": "Years of Experience",
+  "@instructorYearsOfExperience": {
+    "description": "Years of experience field label"
+  },
+  "instructorYearsFormat": "{years} years",
+  "@instructorYearsFormat": {
+    "description": "Years format",
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "instructorNativeLanguage": "Native Language",
+  "@instructorNativeLanguage": {
+    "description": "Native language field label"
+  },
+  "instructorTeachingLanguage": "Teaching Language",
+  "@instructorTeachingLanguage": {
+    "description": "Teaching language field label"
+  },
+  "instructorEditProfileImage": "Edit Profile Image",
+  "@instructorEditProfileImage": {
+    "description": "Edit profile image title"
+  },
+  "instructorTakePhoto": "Take Photo",
+  "@instructorTakePhoto": {
+    "description": "Take photo option"
+  },
+  "instructorSelectFromGallery": "Select from Gallery",
+  "@instructorSelectFromGallery": {
+    "description": "Select from gallery option"
+  },
+  "instructorEnterImageUrl": "Enter Image URL",
+  "@instructorEnterImageUrl": {
+    "description": "Enter image URL option"
+  },
+  "instructorCameraFeatureMessage": "Camera feature will be implemented",
+  "@instructorCameraFeatureMessage": {
+    "description": "Camera feature message"
+  },
+  "instructorGalleryFeatureMessage": "Gallery feature will be implemented",
+  "@instructorGalleryFeatureMessage": {
+    "description": "Gallery feature message"
+  },
+  "instructorEditTitle": "Edit {field}",
+  "@instructorEditTitle": {
+    "description": "Edit dialog title format",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "instructorEnterField": "Enter {field}",
+  "@instructorEnterField": {
+    "description": "Enter field placeholder",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "instructorCancel": "Cancel",
+  "@instructorCancel": {
+    "description": "Cancel button"
+  },
+  "instructorSave": "Save",
+  "@instructorSave": {
+    "description": "Save button"
+  },
+  "instructorFieldUpdated": "{field} updated successfully",
+  "@instructorFieldUpdated": {
+    "description": "Field updated message",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "instructorEditBio": "Edit Bio",
+  "@instructorEditBio": {
+    "description": "Edit bio title"
+  },
+  "instructorBioPlaceholder": "Tell us about yourself...",
+  "@instructorBioPlaceholder": {
+    "description": "Bio placeholder text"
+  },
+  "instructorBioUpdated": "Bio updated successfully",
+  "@instructorBioUpdated": {
+    "description": "Bio updated message"
+  },
+  "instructorDateOfBirthUpdated": "Date of birth updated successfully",
+  "@instructorDateOfBirthUpdated": {
+    "description": "Date of birth updated message"
+  },
+  "instructorSelectGender": "Select Gender",
+  "@instructorSelectGender": {
+    "description": "Select gender title"
+  },
+  "instructorGenderUpdated": "Gender updated successfully",
+  "@instructorGenderUpdated": {
+    "description": "Gender updated message"
+  },
+  "instructorSelectCountry": "Select Country",
+  "@instructorSelectCountry": {
+    "description": "Select country title"
+  },
+  "instructorCountryUpdated": "Country updated successfully",
+  "@instructorCountryUpdated": {
+    "description": "Country updated message"
+  },
+  "instructorSelectNativeLanguage": "Select Native Language",
+  "@instructorSelectNativeLanguage": {
+    "description": "Select native language title"
+  },
+  "instructorSelectTeachingLanguage": "Select Teaching Language",
+  "@instructorSelectTeachingLanguage": {
+    "description": "Select teaching language title"
+  },
+  "instructorNativeLanguageUpdated": "Native language updated successfully",
+  "@instructorNativeLanguageUpdated": {
+    "description": "Native language updated message"
+  },
+  "instructorTeachingLanguageUpdated": "Teaching language updated successfully",
+  "@instructorTeachingLanguageUpdated": {
+    "description": "Teaching language updated message"
+  },
+  "instructorExperienceUpdated": "Experience updated successfully",
+  "@instructorExperienceUpdated": {
+    "description": "Experience updated message"
+  },
+  "instructorLogout": "Logout",
+  "@instructorLogout": {
+    "description": "Logout button"
+  },
+  "instructorLogoutConfirm": "Are you sure you want to logout?",
+  "@instructorLogoutConfirm": {
+    "description": "Logout confirmation message"
+  },
+  "revenueDashboard": "Revenue Dashboard",
+  "@revenueDashboard": {
+    "description": "Revenue dashboard page title"
+  },
+  "revenueWeekly": "Weekly",
+  "@revenueWeekly": {
+    "description": "Weekly revenue label"
+  },
+  "revenueMonthly": "Monthly",
+  "@revenueMonthly": {
+    "description": "Monthly revenue label"
+  },
+  "revenueThisYear": "This Year",
+  "@revenueThisYear": {
+    "description": "This year revenue label"
+  },
+  "revenueTotalCourses": "Total Courses",
+  "@revenueTotalCourses": {
+    "description": "Total courses label"
+  },
+  "revenueWeeklyTrend": "Weekly Revenue Trend",
+  "@revenueWeeklyTrend": {
+    "description": "Weekly revenue trend chart title"
+  },
+  "revenueTotal": "Total",
+  "@revenueTotal": {
+    "description": "Total revenue label"
+  },
+  "revenuePeak": "Peak",
+  "@revenuePeak": {
+    "description": "Peak revenue label"
+  },
+  "revenueCourseIncome": "Course Income",
+  "@revenueCourseIncome": {
+    "description": "Course income section title"
+  },
+  "revenueShowLess": "Show Less",
+  "@revenueShowLess": {
+    "description": "Show less button text"
+  },
+  "revenueViewAll": "View All",
+  "@revenueViewAll": {
+    "description": "View all button text"
+  },
+  "revenuePrice": "Price",
+  "@revenuePrice": {
+    "description": "Price label"
+  },
+  "revenueEnrolled": "enrolled",
+  "@revenueEnrolled": {
+    "description": "Enrolled students suffix"
+  },
+  "revenueTransactionHistory": "Transaction History",
+  "@revenueTransactionHistory": {
+    "description": "Transaction history section title"
+  },
+  "revenueWithdrawal": "Withdrawal",
+  "@revenueWithdrawal": {
+    "description": "Withdrawal transaction type"
+  },
+  "revenuePaymentOverview": "Payment Overview",
+  "@revenuePaymentOverview": {
+    "description": "Payment overview section title"
+  },
+  "revenueAvailableBalance": "Available Balance",
+  "@revenueAvailableBalance": {
+    "description": "Available balance label"
+  },
+  "revenueWithdrawButton": "Withdraw",
+  "@revenueWithdrawButton": {
+    "description": "Withdraw button text"
+  },
+  "revenueTotalEarned": "Total Earned",
+  "@revenueTotalEarned": {
+    "description": "Total earned label"
+  },
+  "revenueWithdrawn": "Withdrawn",
+  "@revenueWithdrawn": {
+    "description": "Withdrawn amount label"
+  },
+  "withdrawMoney": "Withdraw Money",
+  "@withdrawMoney": {
+    "description": "Withdrawal page title"
+  },
+  "availableBalance": "Available Balance",
+  "@availableBalance": {
+    "description": "Available balance label"
+  },
+  "withdrawalAmount": "Withdrawal Amount",
+  "@withdrawalAmount": {
+    "description": "Withdrawal amount section title"
+  },
+  "enterAmountToWithdraw": "Enter amount to withdraw",
+  "@enterAmountToWithdraw": {
+    "description": "Amount input field hint"
+  },
+  "pleaseEnterWithdrawalAmount": "Please enter withdrawal amount",
+  "@pleaseEnterWithdrawalAmount": {
+    "description": "Amount validation error"
+  },
+  "pleaseEnterValidAmount": "Please enter a valid amount",
+  "@pleaseEnterValidAmount": {
+    "description": "Invalid amount validation error"
+  },
+  "amountMustBeGreaterThanZero": "Amount must be greater than zero",
+  "@amountMustBeGreaterThanZero": {
+    "description": "Zero amount validation error"
+  },
+  "amountExceedsAvailableBalance": "Amount exceeds available balance",
+  "@amountExceedsAvailableBalance": {
+    "description": "Exceeds balance validation error"
+  },
+  "minimumWithdrawalAmountIs": "Minimum withdrawal amount is $10",
+  "@minimumWithdrawalAmountIs": {
+    "description": "Minimum amount validation error"
+  },
+  "quickAmount50": "$50",
+  "@quickAmount50": {
+    "description": "Quick amount button 50 dollars"
+  },
+  "quickAmount100": "$100",
+  "@quickAmount100": {
+    "description": "Quick amount button 100 dollars"
+  },
+  "quickAmountMax": "Max",
+  "@quickAmountMax": {
+    "description": "Quick amount button for maximum amount"
+  },
+  "bankInformation": "Bank Information",
+  "@bankInformation": {
+    "description": "Bank information section title"
+  },
+  "accountHolderName": "Account Holder Name",
+  "@accountHolderName": {
+    "description": "Account holder name field label"
+  },
+  "enterFullNameAsOnBankAccount": "Enter full name as on bank account",
+  "@enterFullNameAsOnBankAccount": {
+    "description": "Account holder name field hint"
+  },
+  "pleaseEnterAccountHolderName": "Please enter account holder name",
+  "@pleaseEnterAccountHolderName": {
+    "description": "Account holder name validation error"
+  },
+  "bankName": "Bank Name",
+  "@bankName": {
+    "description": "Bank name field label"
+  },
+  "enterYourBankName": "Enter your bank name",
+  "@enterYourBankName": {
+    "description": "Bank name field hint"
+  },
+  "pleaseEnterBankName": "Please enter bank name",
+  "@pleaseEnterBankName": {
+    "description": "Bank name validation error"
+  },
+  "accountNumber": "Account Number",
+  "@accountNumber": {
+    "description": "Account number field label"
+  },
+  "enterYourAccountNumber": "Enter your account number",
+  "@enterYourAccountNumber": {
+    "description": "Account number field hint"
+  },
+  "pleaseEnterAccountNumber": "Please enter account number",
+  "@pleaseEnterAccountNumber": {
+    "description": "Account number validation error"
+  },
+  "accountNumberMustBeAtLeast8Digits": "Account number must be at least 8 digits",
+  "@accountNumberMustBeAtLeast8Digits": {
+    "description": "Account number length validation error"
+  },
+  "routingNumber": "Routing Number",
+  "@routingNumber": {
+    "description": "Routing number field label"
+  },
+  "enter9DigitRoutingNumber": "Enter 9-digit routing number",
+  "@enter9DigitRoutingNumber": {
+    "description": "Routing number field hint"
+  },
+  "pleaseEnterRoutingNumber": "Please enter routing number",
+  "@pleaseEnterRoutingNumber": {
+    "description": "Routing number validation error"
+  },
+  "routingNumberMustBe9Digits": "Routing number must be 9 digits",
+  "@routingNumberMustBe9Digits": {
+    "description": "Routing number length validation error"
+  },
+  "submitWithdrawalRequest": "Submit Withdrawal Request",
+  "@submitWithdrawalRequest": {
+    "description": "Submit button text"
+  },
+  "importantInformation": "Important Information",
+  "@importantInformation": {
+    "description": "Important information section title"
+  },
+  "processingTime": "Processing time: 3-5 business days",
+  "@processingTime": {
+    "description": "Processing time info"
+  },
+  "minimumWithdrawal": "Minimum withdrawal: $10",
+  "@minimumWithdrawal": {
+    "description": "Minimum withdrawal info"
+  },
+  "noProcessingFees": "No processing fees",
+  "@noProcessingFees": {
+    "description": "No fees info"
+  },
+  "withdrawalsProcessedMondayFriday": "Withdrawals are processed Monday-Friday",
+  "@withdrawalsProcessedMondayFriday": {
+    "description": "Processing days info"
+  },
+  "bankInformationEncrypted": "Bank information is encrypted and secure",
+  "@bankInformationEncrypted": {
+    "description": "Security info"
+  },
+  "confirmWithdrawal": "Confirm Withdrawal",
+  "@confirmWithdrawal": {
+    "description": "Confirmation dialog title"
+  },
+  "withdrawToAccountEndingIn": "Withdraw",
+  "@withdrawToAccountEndingIn": {
+    "description": "Withdrawal confirmation message start"
+  },
+  "withdrawConfirmationQuestion": "to your account ending in",
+  "@withdrawConfirmationQuestion": {
+    "description": "Withdrawal confirmation message middle part"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button text"
+  },
+  "withdrawalRequestSubmittedSuccessfully": "Withdrawal request submitted successfully!",
+  "@withdrawalRequestSubmittedSuccessfully": {
+    "description": "Success message for withdrawal request"
+  },
+  "createNewCourse": "Create New Course",
+  "@createNewCourse": {
+    "description": "Add course page title"
+  },
+  "createYourCourse": "Create Your Course",
+  "@createYourCourse": {
+    "description": "Course creation header title"
+  },
+  "fillDetailsToCreateCourse": "Fill in the details to create your course",
+  "@fillDetailsToCreateCourse": {
+    "description": "Course creation header subtitle"
+  },
+  "courseTitle": "Course Title",
+  "@courseTitle": {
+    "description": "Course title field label"
+  },
+  "enterCourseTitle": "Enter course title",
+  "@enterCourseTitle": {
+    "description": "Course title field hint"
+  },
+  "pleaseEnterCourseTitle": "Please enter course title",
+  "@pleaseEnterCourseTitle": {
+    "description": "Course title validation message"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Course description field label"
+  },
+  "describeCourse": "Describe your course",
+  "@describeCourse": {
+    "description": "Course description field hint"
+  },
+  "pleaseEnterCourseDescription": "Please enter course description",
+  "@pleaseEnterCourseDescription": {
+    "description": "Course description validation message"
+  },
+  "level": "Level",
+  "@level": {
+    "description": "Course level field label"
+  },
+  "beginner": "Beginner",
+  "@beginner": {
+    "description": "Beginner level option"
+  },
+  "intermediate": "Intermediate",
+  "@intermediate": {
+    "description": "Intermediate level option"
+  },
+  "advanced": "Advanced",
+  "@advanced": {
+    "description": "Advanced level option"
+  },
+  "totalSessions": "Total Sessions",
+  "@totalSessions": {
+    "description": "Total sessions field label"
+  },
+  "totalSessionsHint": "e.g., 12",
+  "@totalSessionsHint": {
+    "description": "Total sessions field hint"
+  },
+  "enterSessions": "Enter sessions",
+  "@enterSessions": {
+    "description": "Total sessions validation message"
+  },
+  "priceInDollars": "Price ($)",
+  "@priceInDollars": {
+    "description": "Price field label"
+  },
+  "free": "Free",
+  "@free": {
+    "description": "Free price label"
+  },
+  "courseSchedule": "Course Schedule",
+  "@courseSchedule": {
+    "description": "Course schedule section title"
+  },
+  "startDate": "Start Date",
+  "@startDate": {
+    "description": "Start date field label"
+  },
+  "endDate": "End Date",
+  "@endDate": {
+    "description": "End date field label"
+  },
+  "selectDate": "Select date",
+  "@selectDate": {
+    "description": "Date picker placeholder"
+  },
+  "courseThumbnail": "Course Thumbnail",
+  "@courseThumbnail": {
+    "description": "Course thumbnail section title"
+  },
+  "selectCourseThumbnail": "Select Course Thumbnail",
+  "@selectCourseThumbnail": {
+    "description": "Thumbnail picker placeholder"
+  },
+  "jpgPngMax5MB": "JPG, PNG (Max 5MB)",
+  "@jpgPngMax5MB": {
+    "description": "Thumbnail format info"
+  },
+  "imageSelected": "Image Selected",
+  "@imageSelected": {
+    "description": "Image selected confirmation"
+  },
+  "publishCourse": "Publish Course",
+  "@publishCourse": {
+    "description": "Publish course button text"
+  },
+  "pleaseSelectStartEndDates": "Please select start and end dates",
+  "@pleaseSelectStartEndDates": {
+    "description": "Date selection validation message"
+  },
+  "pleaseSelectCourseThumbnail": "Please select a course thumbnail",
+  "@pleaseSelectCourseThumbnail": {
+    "description": "Thumbnail selection validation message"
+  },
+  "coursePublishedSuccessfully": "Course published successfully!",
+  "@coursePublishedSuccessfully": {
+    "description": "Course publish success message"
+  },
+  "imagePickerFeatureWillBeImplemented": "Image picker feature will be implemented",
+  "@imagePickerFeatureWillBeImplemented": {
+    "description": "Image picker placeholder message"
+  },
+  "analytics": "Analytics",
+  "@analytics": {
+    "description": "Analytics button tooltip"
+  },
+  "myCourses": "My Courses",
+  "@myCourses": {
+    "description": "Title for instructor courses page"
+  },
+  "welcomeBack": "Welcome back!",
+  "@welcomeBack": {
+    "description": "Greeting message for instructor"
+  },
+  "searchYourCourses": "Search your courses...",
+  "@searchYourCourses": {
+    "description": "Search bar placeholder text"
+  },
+  "all": "All",
+  "@all": {
+    "description": "Filter option for all courses"
+  },
+  "upcoming": "Upcoming",
+  "@upcoming": {
+    "description": "Filter option for upcoming courses"
+  },
+  "active": "Active",
+  "@active": {
+    "description": "Filter option for active courses"
+  },
+  "expired": "Expired",
+  "@expired": {
+    "description": "Filter option for expired courses"
+  },
+  "totalStudents": "Total Students",
+  "@totalStudents": {
+    "description": "Stats card title for total students"
+  },
+  "activeCourses": "Active Courses",
+  "@activeCourses": {
+    "description": "Stats card title for active courses"
+  },
+  "totalCourses": "Total Courses",
+  "@totalCourses": {
+    "description": "Stats card title for total courses"
+  },
+  "upcomingCourses": "Upcoming Courses",
+  "@upcomingCourses": {
+    "description": "Section title for upcoming courses"
+  },
+  "seeAll": "See all",
+  "@seeAll": {
+    "description": "Button text to see all courses in a section"
+  },
+  "completedCourses": "Completed Courses",
+  "@completedCourses": {
+    "description": "Section title for completed courses"
+  },
+  "students": "students",
+  "@students": {
+    "description": "Text label for number of students"
+  },
+  "showAllSections": "Show all sections",
+  "@showAllSections": {
+    "description": "Button text to show all course sections"
+  },
+  "noCoursesFound": "No courses found",
+  "@noCoursesFound": {
+    "description": "Message when no courses match search"
+  },
+  "tryAdjustingSearch": "Try adjusting your search terms",
+  "@tryAdjustingSearch": {
+    "description": "Suggestion text when no courses found"
+  },
+  "completed": "Completed",
+  "@completed": {
+    "description": "Status badge for completed courses"
+  },
+  "progress": "Progress",
+  "@progress": {
+    "description": "Progress indicator label"
+  },
+  "unknown": "Unknown",
+  "@unknown": {
+    "description": "Default status when course status is unknown"
+  },
+  "courseDetails": "Course Details",
+  "@courseDetails": {
+    "description": "Tab label for course details"
+  },
+  "onlineSessions": "Online Sessions",
+  "@onlineSessions": {
+    "description": "Tab label for online sessions"
+  },
+  "recordedClasses": "Recorded Classes",
+  "@recordedClasses": {
+    "description": "Tab label for recorded classes"
+  },
+  "studyMaterials": "Study Materials",
+  "@studyMaterials": {
+    "description": "Tab label for study materials"
+  },
+  "groupChat": "Group Chat",
+  "@groupChat": {
+    "description": "Tab label for group chat"
+  },
+  "feedback": "Feedback",
+  "@feedback": {
+    "description": "Tab label for feedback"
+  },
+  "navigationMenu": "Navigation Menu",
+  "@navigationMenu": {
+    "description": "Tooltip for navigation menu button"
+  },
+  "instructorPortal": "Instructor Portal",
+  "@instructorPortal": {
+    "description": "Subtitle text for instructor portal"
+  },
+  "instructorSettings": "Instructor Settings",
+  "@instructorSettings": {
+    "description": "Tooltip and title for instructor settings"
+  },
+  "closeCourse": "Close Course",
+  "@closeCourse": {
+    "description": "Tooltip for close course button"
+  },
+  "completion": "Completion",
+  "@completion": {
+    "description": "Label for completion percentage"
+  },
+  "notificationPreferences": "Notification Preferences",
+  "@notificationPreferences": {
+    "description": "Settings menu item for notifications"
+  },
+  "officeHours": "Office Hours",
+  "@officeHours": {
+    "description": "Settings menu item for office hours"
+  },
+  "languageAndRegion": "Language & Region",
+  "@languageAndRegion": {
+    "description": "Settings menu item for language settings"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Button text to close dialog"
+  },
+  "notificationSettingsComingSoon": "Notification settings coming soon",
+  "@notificationSettingsComingSoon": {
+    "description": "Snackbar message for notification settings"
+  },
+  "officeHoursSettingsComingSoon": "Office hours settings coming soon",
+  "@officeHoursSettingsComingSoon": {
+    "description": "Snackbar message for office hours settings"
+  },
+  "languageSettingsComingSoon": "Language settings coming soon",
+  "@languageSettingsComingSoon": {
+    "description": "Snackbar message for language settings"
+  },
+  "courseThumbnail": "Course Thumbnail",
+  "@courseThumbnail": {
+    "description": "Course thumbnail placeholder text"
+  },
+  "studentsCount": "students",
+  "@studentsCount": {
+    "description": "Students count label"
+  },
+  "coursesStudents": "Students",
+  "@coursesStudents": {
+    "description": "Students stat label"
+  },
+  "completion": "Completion",
+  "@completion": {
+    "description": "Completion stat label"
+  },
+  "sessions": "Sessions",
+  "@sessions": {
+    "description": "Sessions stat label"
+  },
+  "category": "Category",
+  "@category": {
+    "description": "Course category label"
+  },
+  "level": "Level",
+  "@level": {
+    "description": "Course level label"
+  },
+  "duration": "Duration",
+  "@duration": {
+    "description": "Course duration label"
+  },
+  "price": "Price",
+  "@price": {
+    "description": "Course price label"
+  },
+  "starts": "Starts",
+  "@starts": {
+    "description": "Course start date label"
+  },
+  "courseDescription": "Course Description",
+  "@courseDescription": {
+    "description": "Course description section title"
+  },
+  "revenueAnalytics": "Revenue Analytics",
+  "@revenueAnalytics": {
+    "description": "Revenue analytics section title"
+  },
+  "coursePrice": "Course Price",
+  "@coursePrice": {
+    "description": "Course price label in revenue section"
+  },
+  "totalRevenue": "Total Revenue",
+  "@totalRevenue": {
+    "description": "Total revenue label"
+  },
+  "courseManagement": "Course Management",
+  "@courseManagement": {
+    "description": "Course management section title"
+  },
+  "editCourseDetails": "Edit Course Details",
+  "@editCourseDetails": {
+    "description": "Edit course details button text"
+  },
+  "editCourseDetailsTitle": "Edit Course Details",
+  "@editCourseDetailsTitle": {
+    "description": "Edit course details dialog title"
+  },
+  "title": "Title",
+  "@title": {
+    "description": "Title field label"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Description field label"
+  },
+  "totalSessions": "Total Sessions",
+  "@totalSessions": {
+    "description": "Total sessions field label"
+  },
+  "priceWithSymbol": "Price ($)",
+  "@priceWithSymbol": {
+    "description": "Price field label with currency symbol"
+  },
+  "thumbnailUrl": "Thumbnail URL",
+  "@thumbnailUrl": {
+    "description": "Thumbnail URL field label"
+  },
+  "startDate": "Start Date",
+  "@startDate": {
+    "description": "Start date field label"
+  },
+  "endDate": "End Date",
+  "@endDate": {
+    "description": "End date field label"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "saveChanges": "Save Changes",
+  "@saveChanges": {
+    "description": "Save changes button text"
+  },
+  "courseDetailsUpdatedSuccessfully": "Course details updated successfully",
+  "@courseDetailsUpdatedSuccessfully": {
+    "description": "Success message for course update"
+  },
+  "feedbackManagement": "Feedback Management",
+  "@feedbackManagement": {
+    "description": "Feedback management section title"
+  },
+  "viewStudentReviewsDescription": "View student reviews and provide personalized feedback",
+  "@viewStudentReviewsDescription": {
+    "description": "Feedback management section description"
+  },
+  "courseRating": "Course Rating",
+  "@courseRating": {
+    "description": "Course rating stat label"
+  },
+  "instructorRating": "Instructor Rating",
+  "@instructorRating": {
+    "description": "Instructor rating stat label"
+  },
+  "totalReviews": "Total Reviews",
+  "@totalReviews": {
+    "description": "Total reviews stat label"
+  },
+  "courseReviewsFromStudents": "Course Reviews from Students",
+  "@courseReviewsFromStudents": {
+    "description": "Course reviews section title"
+  },
+  "instructorReviewsFromStudents": "Instructor Reviews from Students",
+  "@instructorReviewsFromStudents": {
+    "description": "Instructor reviews section title"
+  },
+  "giveStudentFeedback": "Give Student Feedback",
+  "@giveStudentFeedback": {
+    "description": "Give student feedback section title"
+  },
+  "selectStudent": "Select Student",
+  "@selectStudent": {
+    "description": "Select student dropdown label"
+  },
+  "chooseAStudent": "Choose a student...",
+  "@chooseAStudent": {
+    "description": "Student selection dropdown hint"
+  },
+  "rateStudentPerformance": "Rate Student Performance",
+  "@rateStudentPerformance": {
+    "description": "Rate student performance label"
+  },
+  "noRating": "No rating",
+  "@noRating": {
+    "description": "No rating text"
+  },
+  "feedbackMessage": "Feedback Message",
+  "@feedbackMessage": {
+    "description": "Feedback message label"
+  },
+  "feedbackHintText": "Share your feedback about student's performance, participation, areas for improvement...",
+  "@feedbackHintText": {
+    "description": "Feedback text field hint"
+  },
+  "sendFeedbackToStudent": "Send Feedback to Student",
+  "@sendFeedbackToStudent": {
+    "description": "Send feedback button text"
+  },
+  "pleaseWriteYourFeedback": "Please write your feedback",
+  "@pleaseWriteYourFeedback": {
+    "description": "Empty feedback validation message"
+  },
+  "pleaseProvideARating": "Please provide a rating",
+  "@pleaseProvideARating": {
+    "description": "No rating validation message"
+  },
+  "feedbackSentSuccessfully": "✅ Feedback sent to {studentName} successfully!",
+  "@feedbackSentSuccessfully": {
+    "description": "Feedback sent success message",
+    "placeholders": {
+      "studentName": {
+        "type": "String"
+      }
+    }
+  },
+  "instructorPanel": "Instructor Panel",
+  "@instructorPanel": {
+    "description": "Instructor panel header text"
+  },
+  "onlineStudentsCount": "{onlineCount} online • {totalCount} total students",
+  "@onlineStudentsCount": {
+    "description": "Online students count text",
+    "placeholders": {
+      "onlineCount": {
+        "type": "int"
+      },
+      "totalCount": {
+        "type": "int"
+      }
+    }
+  },
+  "instructorRole": "INSTRUCTOR",
+  "@instructorRole": {
+    "description": "Instructor role badge text"
+  },
+  "messageYourStudents": "Message your students...",
+  "@messageYourStudents": {
+    "description": "Chat input hint text for instructor"
+  },
+  "scheduleNewSession": "Schedule New Session",
+  "@scheduleNewSession": {
+    "description": "Button text to schedule a new online session"
+  },
+  "sessionOverview": "Session Overview",
+  "@sessionOverview": {
+    "description": "Header text for session statistics overview"
+  },
+  "total": "Total",
+  "@total": {
+    "description": "Label for total sessions count"
+  },
+  "done": "Done",
+  "@done": {
+    "description": "Label for completed sessions count"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "Label for upcoming sessions count"
+  },
+  "noSessionsScheduled": "No sessions scheduled",
+  "@noSessionsScheduled": {
+    "description": "Message when no sessions are available"
+  },
+  "createYourFirstSession": "Create your first session",
+  "@createYourFirstSession": {
+    "description": "Subtitle message to create first session"
+  },
+  "scheduleSession": "Schedule Session",
+  "@scheduleSession": {
+    "description": "Button text to schedule a session"
+  },
+  "showLess": "Show less",
+  "@showLess": {
+    "description": "Button text to collapse expanded content"
+  },
+  "showMore": "Show more",
+  "@showMore": {
+    "description": "Button text to expand collapsed content"
+  },
+  "copyLink": "Copy Link",
+  "@copyLink": {
+    "description": "Button text to copy session link"
+  },
+  "copyPassword": "Copy Password",
+  "@copyPassword": {
+    "description": "Button text to copy session password"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Button text to edit session"
+  },
+  "start": "Start",
+  "@start": {
+    "description": "Button text to start session"
+  },
+  "linkCopiedToClipboard": "{item} copied to clipboard",
+  "@linkCopiedToClipboard": {
+    "description": "Snackbar message when item is copied to clipboard",
+    "placeholders": {
+      "item": {
+        "type": "String",
+        "description": "The item that was copied"
+      }
+    }
+  },
+  "failedToCopy": "Failed to copy {item}",
+  "@failedToCopy": {
+    "description": "Snackbar error message when copying fails",
+    "placeholders": {
+      "item": {
+        "type": "String",
+        "description": "The item that failed to copy"
+      }
+    }
+  },
+  "deleteSession": "Delete Session",
+  "@deleteSession": {
+    "description": "Dialog title for deleting a session"
+  },
+  "deleteSessionConfirmation": "Are you sure you want to delete this session? This action cannot be undone.",
+  "@deleteSessionConfirmation": {
+    "description": "Confirmation message for deleting a session"
+  },
+  "sessionDeletedSuccessfully": "Session deleted successfully",
+  "@sessionDeletedSuccessfully": {
+    "description": "Success message after session deletion"
+  },
+  "sessionTitle": "Session Title",
+  "@sessionTitle": {
+    "description": "Label for session title field"
+  },
+  "sessionTitleRequired": "Session Title *",
+  "@sessionTitleRequired": {
+    "description": "Required label for session title field"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Label for description field"
+  },
+  "platform": "Platform",
+  "@platform": {
+    "description": "Label for platform field"
+  },
+  "platformRequired": "Platform *",
+  "@platformRequired": {
+    "description": "Required label for platform field"
+  },
+  "selectDate": "Select Date *",
+  "@selectDate": {
+    "description": "Placeholder text for date picker"
+  },
+  "selectTime": "Select Time *",
+  "@selectTime": {
+    "description": "Placeholder text for time picker"
+  },
+  "durationHours": "Duration: {duration} hours",
+  "@durationHours": {
+    "description": "Label showing session duration",
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "description": "The duration in hours"
+      }
+    }
+  },
+  "uploadNewVideo": "Upload New Video",
+  "@uploadNewVideo": {
+    "description": "Button text to upload a new video"
+  },
+  "loadingVideoMetadata": "Loading video metadata...",
+  "@loadingVideoMetadata": {
+    "description": "Loading message while video metadata is being loaded"
+  },
+  "completePercentage": "{percentage}% complete",
+  "@completePercentage": {
+    "description": "Completion percentage display",
+    "placeholders": {
+      "percentage": {
+        "type": "int"
+      }
+    }
+  },
+  "videosProcessed": "{loaded} of {total} videos processed",
+  "@videosProcessed": {
+    "description": "Videos processing progress display",
+    "placeholders": {
+      "loaded": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "failedToLoadVideoMetadata": "Failed to load video metadata",
+  "@failedToLoadVideoMetadata": {
+    "description": "Error message when video metadata loading fails"
+  },
+  "retryButton": "Retry",
+  "@retryButton": {
+    "description": "Button text to retry failed operation"
+  },
+  "noRecordedVideosYet": "No recorded videos yet",
+  "@noRecordedVideosYet": {
+    "description": "Empty state message when no videos are available"
+  },
+  "uploadYourFirstRecordedClass": "Upload your first recorded class",
+  "@uploadYourFirstRecordedClass": {
+    "description": "Empty state subtitle message"
+  },
+  "loadingVideoPlayer": "Loading Video Player...",
+  "@loadingVideoPlayer": {
+    "description": "Loading dialog message for video player"
+  },
+  "editVideoDetails": "Edit Video Details",
+  "@editVideoDetails": {
+    "description": "Dialog title for editing video details"
+  },
+  "videoTitle": "Video Title",
+  "@videoTitle": {
+    "description": "Label for video title field"
+  },
+  "videoUpdatedSuccessfully": "✅ Video updated successfully!",
+  "@videoUpdatedSuccessfully": {
+    "description": "Success message after video update"
+  },
+  "deleteVideo": "Delete Video",
+  "@deleteVideo": {
+    "description": "Dialog title for deleting video"
+  },
+  "areYouSureDeleteVideo": "Are you sure you want to delete this video?",
+  "@areYouSureDeleteVideo": {
+    "description": "Confirmation message for deleting video"
+  },
+  "thisActionCannotBeUndone": "This action cannot be undone.",
+  "@thisActionCannotBeUndone": {
+    "description": "Warning message that action is irreversible"
+  },
+  "videoDeleted": "🗑️ \"{title}\" deleted",
+  "@videoDeleted": {
+    "description": "Success message after video deletion",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadNewVideoDialog": "Upload New Video",
+  "@uploadNewVideoDialog": {
+    "description": "Dialog title for uploading new video"
+  },
+  "tapToSelectVideoFile": "Tap to select video file from storage",
+  "@tapToSelectVideoFile": {
+    "description": "Instruction text for file selection"
+  },
+  "fileSelectedPrefix": "File selected: {filename}",
+  "@fileSelectedPrefix": {
+    "description": "Text showing selected filename",
+    "placeholders": {
+      "filename": {
+        "type": "String"
+      }
+    }
+  },
+  "fileSelected": "📁 File selected: {filename}",
+  "@fileSelected": {
+    "description": "Snackbar message when file is selected",
+    "placeholders": {
+      "filename": {
+        "type": "String"
+      }
+    }
+  },
+  "videoTitleRequired": "Video Title *",
+  "@videoTitleRequired": {
+    "description": "Required label for video title field"
+  },
+  "uploadButton": "Upload",
+  "@uploadButton": {
+    "description": "Button text to upload video"
+  },
+  "uploadingVideo": "📤 Uploading \"{title}\"...",
+  "@uploadingVideo": {
+    "description": "Upload progress message",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "videoPublishedSuccessfully": "✅ \"{title}\" published successfully!",
+  "@videoPublishedSuccessfully": {
+    "description": "Success message after video publish",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "metadataError": "Metadata error: {error}",
+  "@metadataError": {
+    "description": "Error message for video metadata",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "sessionLink": "Session Link",
+  "@sessionLink": {
+    "description": "Label for session link field"
+  },
+  "sessionLinkRequired": "Session Link *",
+  "@sessionLinkRequired": {
+    "description": "Required label for session link field"
+  },
+  "passwordOptional": "Password (optional)",
+  "@passwordOptional": {
+    "description": "Label for optional password field"
+  },
+  "sessionScheduledSuccessfully": "Session scheduled successfully!",
+  "@sessionScheduledSuccessfully": {
+    "description": "Success message after scheduling session"
+  },
+  "fillAllRequiredFields": "Please fill in all required fields",
+  "@fillAllRequiredFields": {
+    "description": "Error message for incomplete form"
+  },
+  "editSession": "Edit Session",
+  "@editSession": {
+    "description": "Dialog title for editing a session"
+  },
+  "update": "Update",
+  "@update": {
+    "description": "Button text to update session"
+  },
+  "sessionUpdatedSuccessfully": "Session updated successfully!",
+  "@sessionUpdatedSuccessfully": {
+    "description": "Success message after updating session"
+  },
+  "startingSession": "Starting {platform} session...",
+  "@startingSession": {
+    "description": "Message when starting a session",
+    "placeholders": {
+      "platform": {
+        "type": "String",
+        "description": "The platform name"
+      }
+    }
+  },
+  "couldNotOpenBrowser": "Could not open browser. Link copied to clipboard.",
+  "@couldNotOpenBrowser": {
+    "description": "Error message when browser cannot be opened"
+  },
+  "errorOpeningBrowser": "Error opening browser. Link copied to clipboard.",
+  "@errorOpeningBrowser": {
+    "description": "Error message when there's an error opening browser"
+  },
+  "uploadStudyMaterial": "Upload Study Material",
+  "@uploadStudyMaterial": {
+    "description": "Upload button text for study materials"
+  },
+  "noStudyMaterialsYet": "No study materials yet",
+  "@noStudyMaterialsYet": {
+    "description": "Empty state message when no study materials are available"
+  },
+  "uploadYourFirstStudyMaterial": "Upload your first study material",
+  "@uploadYourFirstStudyMaterial": {
+    "description": "Empty state subtitle encouraging first upload"
+  },
+  "showLess": "Show Less",
+  "@showLess": {
+    "description": "Button to collapse description text"
+  },
+  "showMore": "Show More",
+  "@showMore": {
+    "description": "Button to expand description text"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button text"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "noFileAvailableForThisMaterial": "❌ No file available for this material",
+  "@noFileAvailableForThisMaterial": {
+    "description": "Error message when file is not available for a material"
+  },
+  "openingFile": "📁 Opening file: {fileName}",
+  "@openingFile": {
+    "description": "Success message when opening a file",
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "description": "Name of the file being opened"
+      }
+    }
+  },
+  "filePreview": "File Preview",
+  "@filePreview": {
+    "description": "Title for file preview dialog"
+  },
+  "fileLabel": "File: {fileName}",
+  "@fileLabel": {
+    "description": "File name label in preview",
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "description": "Name of the file"
+      }
+    }
+  },
+  "sizeLabel": "Size: {fileSize}",
+  "@sizeLabel": {
+    "description": "File size label in preview",
+    "placeholders": {
+      "fileSize": {
+        "type": "String",
+        "description": "Size of the file"
+      }
+    }
+  },
+  "typeLabel": "Type: {fileType}",
+  "@typeLabel": {
+    "description": "File type label in preview",
+    "placeholders": {
+      "fileType": {
+        "type": "String",
+        "description": "Type of the file"
+      }
+    }
+  },
+  "inRealAppDescription": "In real app, this would show the actual file content",
+  "@inRealAppDescription": {
+    "description": "Description text in file preview placeholder"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button text"
+  },
+  "openFile": "Open File",
+  "@openFile": {
+    "description": "Open file button text"
+  },
+  "openingFileWithSystemViewer": "📂 Opening {fileName} with system viewer",
+  "@openingFileWithSystemViewer": {
+    "description": "Message when opening file with system viewer",
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "description": "Name of the file being opened"
+      }
+    }
+  },
+  "editMaterialDetails": "Edit Material Details",
+  "@editMaterialDetails": {
+    "description": "Title for edit material dialog"
+  },
+  "title": "Title",
+  "@title": {
+    "description": "Title label for form fields"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Description label for form fields"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+  "materialUpdatedSuccessfully": "✅ Material updated successfully!",
+  "@materialUpdatedSuccessfully": {
+    "description": "Success message when material is updated"
+  },
+  "deleteMaterial": "Delete Material",
+  "@deleteMaterial": {
+    "description": "Title for delete material dialog"
+  },
+  "areYouSureDeleteMaterial": "Are you sure you want to delete this material?",
+  "@areYouSureDeleteMaterial": {
+    "description": "Confirmation message for deleting material"
+  },
+  "thisActionCannotBeUndone": "This action cannot be undone.",
+  "@thisActionCannotBeUndone": {
+    "description": "Warning message about irreversible action"
+  },
+  "materialDeleted": "🗑️ \"{materialTitle}\" deleted",
+  "@materialDeleted": {
+    "description": "Message when material is deleted",
+    "placeholders": {
+      "materialTitle": {
+        "type": "String",
+        "description": "Title of the deleted material"
+      }
+    }
+  },
+  "selectFileType": "Select {fileType} File",
+  "@selectFileType": {
+    "description": "Title for file selection dialog",
+    "placeholders": {
+      "fileType": {
+        "type": "String",
+        "description": "Type of file to select"
+      }
+    }
+  },
+  "chooseFileFromDevice": "Choose a file from your device:",
+  "@chooseFileFromDevice": {
+    "description": "Instructions for file selection"
+  },
+  "noFileSelected": "No file selected",
+  "@noFileSelected": {
+    "description": "Message when no file is selected"
+  },
+  "chooseFile": "Choose File",
+  "@chooseFile": {
+    "description": "Button to choose file"
+  },
+  "changeFile": "Change File",
+  "@changeFile": {
+    "description": "Button to change selected file"
+  },
+  "titleRequired": "Title *",
+  "@titleRequired": {
+    "description": "Required title field label"
+  },
+  "fileType": "File Type",
+  "@fileType": {
+    "description": "File type selection label"
+  },
+  "upload": "Upload",
+  "@upload": {
+    "description": "Upload button text"
+  },
+  "materialUploadedSuccessfully": "✅ \"{materialTitle}\" uploaded successfully!",
+  "@materialUploadedSuccessfully": {
+    "description": "Success message when material is uploaded",
+    "placeholders": {
+      "materialTitle": {
+        "type": "String",
+        "description": "Title of the uploaded material"
+      }
+    }
+  },
+  "studyMaterialFor": "Study material for {courseTitle}",
+  "@studyMaterialFor": {
+    "description": "Default description for study materials",
+    "placeholders": {
+      "courseTitle": {
+        "type": "String",
+        "description": "Title of the course"
       }
     }
   }
