@@ -21,77 +21,97 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
   ];
 
   String name = '', email = '', username = '', password = '';
-  String nativeLanguage = '', learningLanguage = '';
-  double skillLevel = 0.0;
+  String nativeLanguage = '', learningLanguage = '', languageLevel = '';
   DateTime? dob;
   String gender = '', country = '', bio = '';
   List<String> interests = [];
   File? profileImage;
 
-  final languageOptions = ['English', 'Spanish', 'Japanese', 'Bangla', 'Korean'];
+  final languageOptions = [
+    'English',
+    'Spanish',
+    'Japanese',
+    'Korean',
+    'Bangla',
+  ];
 
-  final genderOptionsKeys = ['Male', 'Female', 'Other'];
+  final genderOptionsKeys = ['Male', 'Female'];
   List<String> get genderOptions => [
     AppLocalizations.of(context)!.male,
     AppLocalizations.of(context)!.female,
-    AppLocalizations.of(context)!.other,
   ];
 
-  final countryOptionsKeys = [
-    'Bangladesh',
-    'USA',
-    'Japan',
-    'Korea',
-    'Saudi Arabia',
-    'Other',
-  ];
+  final countryOptionsKeys = ['USA', 'Spain', 'Japan', 'Korea', 'Bangladesh'];
   List<String> get countryOptions => [
-    AppLocalizations.of(context)!.bangladesh,
     AppLocalizations.of(context)!.usa,
+    'Spain',
     AppLocalizations.of(context)!.japan,
     AppLocalizations.of(context)!.korea,
-    AppLocalizations.of(context)!.saudiArabia,
-    AppLocalizations.of(context)!.other,
+    AppLocalizations.of(context)!.bangladesh,
   ];
+
+  final languageLevelOptions = [
+    'Beginner',
+    'Elementary',
+    'Intermediate',
+    'Advanced',
+    'Proficient',
+  ];
+  List<String> get languageLevelOptionsLocalized => [
+    AppLocalizations.of(context)!.beginner,
+    'Elementary',
+    AppLocalizations.of(context)!.intermediate,
+    AppLocalizations.of(context)!.advanced,
+    'Proficient',
+  ];
+
   final allInterests = [
-    'Music',
-    'Travel',
-    'Books',
-    'Gaming',
-    'Cooking',
-    'Movies',
-    'Photography',
-    'Fitness',
     'Art',
-    'Others',
+    'Music',
+    'Reading',
+    'Writing',
+    'Sports',
+    'Gaming',
+    'Travel',
+    'Cooking',
+    'Fashion',
+    'Photography',
+    'Crafting',
+    'Gardening',
+    'Fitness',
+    'Movies',
+    'Technology',
+    'Nature',
+    'Animals',
+    'Science',
+    'Socializing',
   ];
 
   List<String> getLocalizedInterests() {
     return [
-      AppLocalizations.of(context)!.music,
-      AppLocalizations.of(context)!.travel,
-      AppLocalizations.of(context)!.books,
-      AppLocalizations.of(context)!.gaming,
-      AppLocalizations.of(context)!.cooking,
-      AppLocalizations.of(context)!.movies,
-      AppLocalizations.of(context)!.photography,
-      AppLocalizations.of(context)!.fitness,
       AppLocalizations.of(context)!.art,
-      AppLocalizations.of(context)!.others,
+      AppLocalizations.of(context)!.music,
+      'Reading',
+      'Writing',
+      'Sports',
+      AppLocalizations.of(context)!.gaming,
+      AppLocalizations.of(context)!.travel,
+      AppLocalizations.of(context)!.cooking,
+      'Fashion',
+      AppLocalizations.of(context)!.photography,
+      'Crafting',
+      'Gardening',
+      AppLocalizations.of(context)!.fitness,
+      AppLocalizations.of(context)!.movies,
+      'Technology',
+      'Nature',
+      'Animals',
+      'Science',
+      'Socializing',
     ];
   }
 
   final Color primaryColor = const Color(0xFF7A54FF);
-
-  List<String> getSkillLevels() {
-    return [
-      AppLocalizations.of(context)!.beginner,
-      AppLocalizations.of(context)!.basic,
-      AppLocalizations.of(context)!.intermediate,
-      AppLocalizations.of(context)!.advanced,
-      AppLocalizations.of(context)!.fluent,
-    ];
-  }
 
   Color get grayBackground => Theme.of(context).brightness == Brightness.dark
       ? Colors.grey[800]!
@@ -295,20 +315,12 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                             (val) => setState(() => learningLanguage = val),
                             fontSize: 14,
                           ),
-                          const SizedBox(height: 12),
-                          Text(
-                            AppLocalizations.of(context)!.skillLevel,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          Slider(
-                            value: skillLevel,
-                            divisions: 4,
-                            label: getSkillLevels()[skillLevel.toInt()],
-                            onChanged: (val) =>
-                                setState(() => skillLevel = val),
-                            min: 0,
-                            max: 4,
-                            activeColor: primaryColor,
+                          _dropdown(
+                            'Language Level',
+                            languageLevel,
+                            languageLevelOptionsLocalized,
+                            (val) => setState(() => languageLevel = val),
+                            fontSize: 14,
                           ),
                           const SizedBox(height: 20),
                           Row(
