@@ -3,9 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
+import 'services/supabase_config.dart';
 import 'providers/theme_provider.dart';
 import 'providers/language_provider.dart';
+import 'providers/learner_provider.dart';
 import 'l10n/app_localizations.dart';
+import 'providers/instructor_provider.dart';
+import 'providers/auth_provider.dart';
 
 import 'screens/auth/landing_page.dart';
 import 'screens/permission_wrapper.dart';
@@ -21,6 +25,9 @@ void main() async {
   // Ensure proper Flutter binding initialization
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Supabase
+  await SupabaseConfig.initialize();
+
   // Set preferred orientations for better video experience
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -34,6 +41,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ChangeNotifierProvider(create: (_) => LearnerProvider()),
+        ChangeNotifierProvider(create: (_) => InstructorProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: const MyApp(),
     ),

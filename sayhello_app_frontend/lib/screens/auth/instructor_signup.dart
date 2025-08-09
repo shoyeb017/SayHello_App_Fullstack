@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/instructor_provider.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/instructor.dart';
+import '../../providers/settings_provider.dart';
 
 class InstructorSignupPage extends StatefulWidget {
   const InstructorSignupPage({super.key});
@@ -17,10 +20,12 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
   final _formKeyStep2 = GlobalKey<FormState>();
   int currentStep = 0;
 
-  String name = '', bio = '', gender = '', country = '';
+  String name = '', email = '', username = '', password = '';
+  String bio = '', gender = '', country = '';
   DateTime? dateOfBirth;
-  String nativeLanguage = '', learningLanguage = '';
-  File? profileImage;
+  String nativeLanguage = '', teachingLanguage = '';
+  int yearsOfExperience = 0;
+  File? profileImage; // Not used currently - using dummy image
 
   List<String> get languageOptions => [
     AppLocalizations.of(context)!.english,
@@ -72,16 +77,76 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
     setState(() => currentStep--);
   }
 
-  void submitForm() {
+  void submitForm() async {
     if (_formKeyStep2.currentState!.validate()) {
       _formKeyStep2.currentState!.save();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.instructorRegisteredSuccessfully,
-          ),
-        ),
+
+      final instructor = Instructor(
+        id: '', // Supabase will generate
+        profileImage:
+            'https://wallpapers.com/images/hd/anime-pictures-bj226rrdwe326upu.jpg',
+        name: name,
+        email: email,
+        username: username,
+        password: password,
+        dateOfBirth: dateOfBirth ?? DateTime(1990),
+        gender: gender.toLowerCase(),
+        country: country.toLowerCase(),
+        bio: bio.isNotEmpty ? bio : null,
+        nativeLanguage: nativeLanguage.toLowerCase(),
+        teachingLanguage: teachingLanguage.toLowerCase(),
+        yearsOfExperience: yearsOfExperience,
+        createdAt: DateTime.now(),
       );
+
+      final instructorProvider = Provider.of<InstructorProvider>(
+        context,
+        listen: false,
+      );
+
+      try {
+        print('Attempting to create instructor with data:');
+        print('Name: $name');
+        print('Email: $email');
+        print('Username: $username');
+        print('Gender: $gender');
+        print('Country: $country');
+        print('Native Language: $nativeLanguage');
+        print('Teaching Language: $teachingLanguage');
+        print('Years of Experience: $yearsOfExperience');
+        print('Bio: $bio');
+        print('Profile Image: ${profileImage?.path}');
+
+        final success = await instructorProvider.createInstructor(instructor);
+
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)!.instructorRegisteredSuccessfully,
+              ),
+            ),
+          );
+          Navigator.pop(context);
+        } else {
+          final error = instructorProvider.error;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error ?? 'Failed to register instructor'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          print('Registration failed. Provider error: $error');
+        }
+      } catch (e) {
+        print('Exception during registration: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Registration error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -101,17 +166,14 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
+          // 🔧 SETTINGS ICON - This is the settings button in the app bar
+          // Click this to open the settings bottom sheet with theme and language options
           IconButton(
             icon: Icon(
-              themeProvider.themeMode == ThemeMode.dark
-                  ? Icons.light_mode
-                  : Icons.dark_mode,
+              Icons.settings,
               color: isDark ? Colors.white : Colors.black,
             ),
-            onPressed: () {
-              bool toDark = themeProvider.themeMode != ThemeMode.dark;
-              themeProvider.toggleTheme(toDark);
-            },
+            onPressed: () => SettingsProvider.showSettingsBottomSheet(context),
           ),
         ],
       ),
@@ -147,6 +209,45 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
             Text(
               AppLocalizations.of(context)!.step1PersonalInfo,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+
+            _inputField('Email', (val) => email = val ?? ''),
+            const SizedBox(height: 12),
+
+            _inputField('Username', (val) => username = val ?? ''),
+            const SizedBox(height: 12),
+
+            TextFormField(
+              obscureText: true,
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+              ),
+              decoration: InputDecoration(
+                labelText: 'Password',
+                labelStyle: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey[400]
+                      : Colors.grey[700],
+                ),
+                filled: true,
+                fillColor: inputFieldColor,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
+              ),
+              onSaved: (val) => password = val ?? '',
+              validator: (val) => val == null || val.isEmpty
+                  ? AppLocalizations.of(context)!.required
+                  : null,
             ),
             const SizedBox(height: 12),
 
@@ -291,9 +392,43 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
 
             _dropdown(
               AppLocalizations.of(context)!.teachingLanguage,
-              learningLanguage,
+              teachingLanguage,
               languageOptions,
-              (val) => setState(() => learningLanguage = val),
+              (val) => setState(() => teachingLanguage = val),
+            ),
+            const SizedBox(height: 12),
+
+            TextFormField(
+              keyboardType: TextInputType.number,
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+              ),
+              decoration: InputDecoration(
+                labelText: 'Years of Experience',
+                labelStyle: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey[400]
+                      : Colors.grey[700],
+                ),
+                filled: true,
+                fillColor: inputFieldColor,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
+              ),
+              onSaved: (val) =>
+                  yearsOfExperience = int.tryParse(val ?? '0') ?? 0,
+              validator: (val) => val == null || val.isEmpty
+                  ? AppLocalizations.of(context)!.required
+                  : null,
             ),
             const SizedBox(height: 12),
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../l10n/app_localizations.dart';
+import '../../providers/settings_provider.dart';
 
 class InstructorSignInPage extends StatefulWidget {
   const InstructorSignInPage({super.key});
@@ -14,6 +16,7 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,17 +33,14 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
         elevation: 0,
         foregroundColor: isDark ? Colors.white : primaryColor,
         actions: [
+          // 🔧 SETTINGS ICON - This is the settings button in the app bar
+          // Click this to open the settings bottom sheet with theme and language options
           IconButton(
             icon: Icon(
-              themeProvider.themeMode == ThemeMode.dark
-                  ? Icons.light_mode
-                  : Icons.dark_mode,
+              Icons.settings,
               color: isDark ? Colors.white : Colors.black,
             ),
-            onPressed: () {
-              bool toDark = themeProvider.themeMode != ThemeMode.dark;
-              themeProvider.toggleTheme(toDark);
-            },
+            onPressed: () => SettingsProvider.showSettingsBottomSheet(context),
           ),
         ],
       ),
@@ -175,23 +175,83 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed: () {
-                          final username = _usernameController.text.trim();
-                          final password = _passwordController.text.trim();
-                          // TODO: Add sign-in logic here
-                          debugPrint(
-                            'Instructor Username: $username, Password: $password',
-                          );
-                          Navigator.pushNamed(context, '/instructor-main');
-                        },
-                        icon: const Icon(Icons.login, color: Colors.white),
+                        onPressed: _isLoading
+                            ? null
+                            : () async {
+                                final username = _usernameController.text
+                                    .trim();
+                                final password = _passwordController.text
+                                    .trim();
+
+                                if (username.isEmpty || password.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        AppLocalizations.of(context)!.required,
+                                      ),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                setState(() => _isLoading = true);
+
+                                try {
+                                  final authProvider =
+                                      Provider.of<AuthProvider>(
+                                        context,
+                                        listen: false,
+                                      );
+
+                                  final success = await authProvider
+                                      .signInInstructor(username, password);
+
+                                  if (success) {
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      '/instructor-main',
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          authProvider.error ??
+                                              'Sign in failed',
+                                        ),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                } finally {
+                                  if (mounted) {
+                                    setState(() => _isLoading = false);
+                                  }
+                                }
+                              },
+                        icon: _isLoading
+                            ? Container(
+                                width: 24,
+                                height: 24,
+                                padding: const EdgeInsets.all(2.0),
+                                child: const CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 3,
+                                ),
+                              )
+                            : const Icon(Icons.login, color: Colors.white),
                         label: Text(
-                          AppLocalizations.of(context)!.signIn,
+                          _isLoading
+                              ? 'Signing in...'
+                              : AppLocalizations.of(context)!.signIn,
                           style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           backgroundColor: primaryColor,
+                          disabledBackgroundColor: primaryColor.withOpacity(
+                            0.6,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),

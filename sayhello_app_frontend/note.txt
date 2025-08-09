@@ -12,6 +12,9 @@ learner:
   profile_image (link)
   name
   email
+  username
+  password
+  acc_type (learner,instructor)
   date_of_birth
   gender (male,female)
   nativeLanguage (english,spanish,japanese,korean,bangla)
@@ -28,6 +31,9 @@ Table instructors:
   name               
   profile_image (link)
   email
+  username
+  password
+  acc_type (learner,instructor)
   date_of_birth      
   gender (male,female)        
   country           
@@ -171,17 +177,10 @@ Table notifications
   is_read
   created_at
 
+
+
+
 Color(0xFF7A54FF)
-
-translate
-chat
-others profile
-feed
-notification
-
-i want to have the multi-language support for all files in attached here. and it should be for every single text item. dont miss like snackbar or const text or textspan or others where text might be there. and dont update the dummy data where the backend data will come. update all file and update also arb and I10n files.
-
-and dont do everytime flutter gen-l10n . i do it by myself
 
 
 
@@ -357,3 +356,440 @@ Table notifications {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+==============================
+ 1. USER MANAGEMENT
+==============================
+
+learners:
+  learner_id
+  profile_image
+  name
+  email
+  username
+  password
+  acc_type (learner, instructor)
+  date_of_birth
+  gender (male, female)
+  native_language (english, spanish, japanese, korean, bangla)
+  learning_language (english, spanish, japanese, korean, bangla)
+  language_level (beginner, elementary, intermediate, advanced, proficient)
+  bio
+  interests (Art, Music, Reading, Writing, Sports, Gaming, Travel, Cooking, Fashion, Photography, Crafting, Gardening, Fitness, Movies, Technology, Nature, Animals, Science, Socializing)
+  country (USA, Spain, Japan, Korea, Bangladesh)
+  created_at
+
+instructors:
+  instructor_id
+  profile_image
+  name
+  email
+  username
+  password
+  acc_type (learner, instructor)
+  date_of_birth
+  gender (male, female)
+  country (USA, Spain, Japan, Korea, Bangladesh)
+  bio
+  native_language (english, spanish, japanese, korean, bangla)
+  teaching_language (english, spanish, japanese, korean, bangla)
+  years_of_experience
+  created_at
+
+followers:
+  follower_id
+  follower_user_id (learner_id)
+  followed_user_id (learner_id)
+
+
+==============================
+ 2. COMMUNICATION
+==============================
+
+chats:
+  chat_id
+  user1_id
+  user2_id
+  created_at
+  updated_at
+
+messages:
+  message_id
+  chat_id
+  sender_id
+  content_text
+  type ('text', 'image')
+  sent_at_time
+  sent_at_date
+  status (read, unread)
+  correction
+  translated_content
+  parent_msg_id
+
+
+==============================
+ 3. SOCIAL FEED
+==============================
+
+feed:
+  feed_id
+  user_id
+  content_text
+  content_image_url
+  created_at
+
+feed_likes:
+  feed_like_id
+  feed_id
+  user_id
+  created_at
+
+feed_comments:
+  feed_comment_id
+  feed_id
+  user_id
+  content_text
+  translated_content
+  created_at
+  parent_comment_id
+
+
+==============================
+ 4. COURSES & LEARNING CONTENT
+==============================
+
+courses:
+  course_id
+  instructor_id
+  title
+  description
+  language (english, spanish, japanese, korean, bangla)
+  level ('Beginner', 'Intermediate', 'Advanced')
+  total_sessions
+  price
+  thumbnail_url
+  start_date
+  end_date
+  status (upcoming, active, expired)
+  created_at
+
+course_enrollments:
+  enrollment_id
+  course_id
+  learner_id
+  enrolled_at
+  status
+  created_at
+
+course_sessions:
+  session_id
+  course_id
+  session_name
+  session_description
+  session_date
+  session_time
+  session_duration
+  session_link
+  session_password
+  session_platform (meet, zoom)
+
+recorded_classes:
+  recorded_id
+  course_id
+  recorded_name
+  recorded_description
+  recorded_date
+  recorded_time
+  recorded_duration
+  recorded_size
+  recorded_link
+
+study_materials:
+  material_id
+  course_id
+  material_title
+  material_description
+  material_file
+  material_type ('pdf', 'document', 'image')
+
+group_chat:
+  group_chat_id
+  course_id
+  sender_id
+  type
+  content_text
+  parent_message_id
+  sent_at
+
+
+==============================
+ 5. FEEDBACK & NOTIFICATIONS
+==============================
+
+feedback:
+  feedback_id
+  course_id
+  instructor_id
+  learner_id
+  feedback_type ('learner', 'instructor', 'courses')
+  feedback_text
+  feedback_about
+  rating
+  created_at
+
+notifications:
+  notification_id
+  learner_id
+  course_id
+  notification_type (session alert, feedback)
+  content_title
+  content_text
+  is_read
+  created_at
+
+
+
+
+
+
+
+
+
+
+
+// ==============================
+// 1. learners
+// ==============================
+{
+  _id: ObjectId,
+  profile_image: String,
+  name: String,
+  email: String,
+  username: String,
+  password: String,
+  acc_type: "learner",
+  date_of_birth: Date,
+  gender: "male" | "female",
+  country: "USA" | "Spain" | "Japan" | "Korea" | "Bangladesh",
+  bio: String,
+  native_language: "english" | "spanish" | "japanese" | "korean" | "bangla",
+  learning_language: "english" | "spanish" | "japanese" | "korean" | "bangla",
+  language_level: "beginner" | "elementary" | "intermediate" | "advanced" | "proficient",
+  interests: [String],
+  created_at: Date
+}
+
+// ==============================
+// 2. instructors
+// ==============================
+{
+  _id: ObjectId,
+  profile_image: String,
+  name: String,
+  email: String,
+  username: String,
+  password: String,
+  acc_type: "instructor",
+  date_of_birth: Date,
+  gender: "male" | "female",
+  country: "USA" | "Spain" | "Japan" | "Korea" | "Bangladesh",
+  bio: String,
+  native_language: "english" | "spanish" | "japanese" | "korean" | "bangla",
+  teaching_language: "english" | "spanish" | "japanese" | "korean" | "bangla",
+  years_of_experience: Number,
+  created_at: Date
+}
+
+// ==============================
+// 3. followers  (learner only)
+// ==============================
+{
+  _id: ObjectId,
+  follower_user_id: ObjectId, // learner _id
+  followed_user_id: ObjectId  // learner _id
+}
+
+// ==============================
+// 4. chats  (learner only)
+// ==============================
+{
+  _id: ObjectId,
+  user1_id: ObjectId, // learner _id
+  user2_id: ObjectId, // learner _id
+  created_at: Date
+}
+
+// ==============================
+// 5. messages
+// ==============================
+{
+  _id: ObjectId,
+  chat_id: ObjectId,   // chats _id
+  sender_id: ObjectId, // learner _id
+  content_text: String,
+  type: "text" | "image",
+  status: "read" | "unread",
+  correction: String,
+  translated_content: String,
+  parent_msg_id: ObjectId,
+  created_at: Date
+}
+
+// ==============================
+// 6. feed
+// ==============================
+{
+  _id: ObjectId,
+  learner_id: ObjectId, // learner _id
+  content_text: String,
+  content_image_url: String,
+  created_at: Date
+}
+
+// ==============================
+// 7. feed_likes
+// ==============================
+{
+  _id: ObjectId,
+  feed_id: ObjectId,
+  learner_id: ObjectId,   // learner _id
+  created_at: Date
+}
+
+// ==============================
+// 8. feed_comments
+// ==============================
+{
+  _id: ObjectId,
+  feed_id: ObjectId,
+  learner_id: ObjectId,   // learner _id
+  content_text: String,
+  translated_content: String,
+  parent_comment_id: ObjectId,
+  created_at: Date
+}
+
+// ==============================
+// 9. courses
+// ==============================
+{
+  _id: ObjectId,
+  instructor_id: ObjectId,
+  title: String,
+  description: String,
+  language: "english" | "spanish" | "japanese" | "korean" | "bangla",
+  level: "Beginner" | "Intermediate" | "Advanced",
+  total_sessions: Number,
+  price: Number,
+  thumbnail_url: String,
+  start_date: Date,
+  end_date: Date,
+  status: "upcoming" | "active" | "expired",
+  created_at: Date
+}
+
+// ==============================
+// 10. course_sessions
+// ==============================
+{
+  _id: ObjectId,
+  course_id: ObjectId,    // courses _id
+  session_name: String,
+  session_description: String,
+  session_date: Date,
+  session_time: String,
+  session_duration: String,
+  session_link: String,
+  session_password: String,
+  session_platform: "meet" | "zoom",
+  created_at: Date
+}
+
+// ==============================
+// 11. recorded_classes
+// ==============================
+{
+  _id: ObjectId,
+  course_id: ObjectId,    // courses _id
+  recorded_name: String,
+  recorded_description: String,
+  recorded_duration: String,
+  recorded_size: String,
+  recorded_link: String,
+  created_at: Date
+}
+
+// ==============================
+// 12. study_materials
+// ==============================
+{
+  _id: ObjectId,
+  course_id: ObjectId,     // courses _id
+  material_title: String,
+  material_description: String,
+  material_link: String,
+  material_type: "pdf" | "document" | "image",
+  created_at: Date
+}
+
+// ==============================
+// 13. group_chat
+// ==============================
+{
+  _id: ObjectId,
+  course_id: ObjectId,     // courses _id
+  sender_id: ObjectId,     // learner or instructor _id
+  type: "learner" | "instructor",
+  content_text: String,
+  parent_message_id: ObjectId,
+  created_at: Date
+}
+
+// ==============================
+// 14. course_enrollments
+// ==============================
+{
+  _id: ObjectId,
+  course_id: ObjectId,     // courses _id
+  learner_id: ObjectId,
+  created_at: Date
+}
+
+// ==============================
+// 15. feedback
+// ==============================
+{
+  _id: ObjectId,
+  course_id: ObjectId,     // courses _id
+  instructor_id: ObjectId,
+  learner_id: ObjectId,
+  feedback_type: "learner" | "instructor" | "course",
+  feedback_text: String,
+  feedback_about: String,
+  rating: Number,
+  created_at: Date
+}
+
+// ==============================
+// 16. notifications
+// ==============================
+{
+  _id: ObjectId,
+  learner_id: ObjectId,
+  course_id: ObjectId,
+  notification_type: "session alert" | "feedback",
+  content_title: String,
+  content_text: String,
+  is_read: Boolean,
+  created_at: Date
+}

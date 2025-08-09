@@ -1,0 +1,180 @@
+/// Instructor Repository - Handles all instructor-related database operations
+/// Provides CRUD operations and instructor management functionality
+
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../models/models.dart';
+import '../services/supabase_config.dart';
+
+class InstructorRepository {
+  final SupabaseClient _client = SupabaseConfig.client;
+
+  // =============================
+  // INSTRUCTOR CRUD OPERATIONS
+  // =============================
+
+  /// Create new instructor profile
+  Future<Instructor> createInstructor(Instructor instructor) async {
+    final data = instructor.toJson();
+    data.remove('id'); // Remove ID for creation
+    final response = await _client
+        .from('instructors')
+        .insert(data)
+        .select()
+        .single();
+    return Instructor.fromJson(response);
+  }
+
+  /// Get instructor by ID
+  Future<Instructor?> getInstructorById(String id) async {
+    final response = await _client
+        .from('instructors')
+        .select()
+        .eq('id', id)
+        .maybeSingle();
+    if (response == null) return null;
+    return Instructor.fromJson(response);
+  }
+
+  /// Update instructor
+  Future<Instructor> updateInstructor(Instructor instructor) async {
+    final response = await _client
+        .from('instructors')
+        .update(instructor.toJson())
+        .eq('id', instructor.id)
+        .select()
+        .single();
+    return Instructor.fromJson(response);
+  }
+
+  /// Delete instructor
+  Future<void> deleteInstructor(String id) async {
+    await _client.from('instructors').delete().eq('id', id);
+  }
+
+  // =============================
+  // INSTRUCTOR SEARCH & FILTER
+  // =============================
+
+  /// Get all instructors with pagination
+  Future<List<Instructor>> getAllInstructors({
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    final response = await _client
+        .from('instructors')
+        .select()
+        .range(offset, offset + limit - 1);
+    return (response as List).map((json) => Instructor.fromJson(json)).toList();
+  }
+
+  /// Search instructors by name or bio
+  Future<List<Instructor>> searchInstructors({
+    String? query,
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    var queryBuilder = _client.from('instructors').select();
+
+    // Text search in name and bio
+    if (query != null && query.isNotEmpty) {
+      queryBuilder = queryBuilder.or('name.ilike.%$query%,bio.ilike.%$query%');
+    }
+
+    final response = await queryBuilder.range(offset, offset + limit - 1);
+    return (response as List).map((json) => Instructor.fromJson(json)).toList();
+  }
+
+  // =============================
+  // INSTRUCTOR STATISTICS
+  // =============================
+
+  /// Get instructor statistics
+  Future<Map<String, dynamic>> getInstructorStats(String instructorId) async {
+    // Get course count
+    final courseCountResponse = await _client
+        .from('courses')
+        .select('id')
+        .eq('instructor_id', instructorId);
+    final courseCount = (courseCountResponse as List).length;
+
+    // Get total students (from enrollments)
+    final courseIds = await _getCourseIds(instructorId);
+    int uniqueStudents = 0;
+    if (courseIds.isNotEmpty) {
+      final enrollmentResponse = await _client
+          .from('course_enrollments')
+          .select('learner_id')
+          .inFilter('course_id', courseIds);
+      uniqueStudents = (enrollmentResponse as List)
+          .map((e) => e['learner_id'])
+          .toSet()
+          .length;
+    }
+
+    // Get average rating from feedback
+    final feedbackResponse = await _client
+        .from('feedback')
+        .select('rating')
+        .eq('instructor_id', instructorId);
+
+    double avgRating = 0.0;
+    if (feedbackResponse.isNotEmpty) {
+      final ratings = (feedbackResponse as List)
+          .map((r) => (r['rating'] as num).toDouble())
+          .toList();
+      avgRating = ratings.reduce((a, b) => a + b) / ratings.length;
+    }
+
+    return {
+      'total_courses': courseCount,
+      'total_students': uniqueStudents,
+      'average_rating': avgRating,
+      'total_feedbacks': feedbackResponse.length,
+    };
+  }
+
+  /// Helper method to get course IDs for instructor
+  Future<List<String>> _getCourseIds(String instructorId) async {
+    final response = await _client
+        .from('courses')
+        .select('id')
+        .eq('instructor_id', instructorId);
+    return (response as List).map((course) => course['id'] as String).toList();
+  }
+
+  /// Update instructor statistics (after new feedback)
+  Future<void> updateInstructorStats(String instructorId) async {
+    // final stats = await getInstructorStats(instructorId);
+    await _client
+        .from('instructors')
+        .update({
+          // You may want to store average_rating, total_courses, total_students in instructor table
+        })
+        .eq('id', instructorId);
+  }
+
+  // =============================
+  // REAL-TIME SUBSCRIPTIONS (Commented out due to API compatibility)
+  // =============================
+
+  /*
+  /// Subscribe to instructor updates
+  Stream<Instructor> subscribeToInstructor(String instructorId) {
+    return _client
+        .from('instructors')
+        .stream(primaryKey: ['id'])
+        .eq('id', instructorId)
+        .map((data) => Instructor.fromJson(data.first));
+  }
+
+  /// Subscribe to instructors list updates
+  Stream<List<Instructor>> subscribeToInstructors() {
+    return _client
+        .from('instructors')
+        .stream(primaryKey: ['id'])
+        .map((data) => (data as List)
+            .map((json) => Instructor.fromJson(json))
+            .toList());
+  }
+  */
+}

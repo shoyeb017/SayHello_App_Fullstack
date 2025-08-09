@@ -4,6 +4,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/learner.dart';
+import '../../providers/learner_provider.dart';
+import '../../providers/settings_provider.dart';
 
 class LearnerSignupPage extends StatefulWidget {
   const LearnerSignupPage({super.key});
@@ -35,13 +38,11 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
     'Bangla',
   ];
 
-  final genderOptionsKeys = ['Male', 'Female'];
   List<String> get genderOptions => [
     AppLocalizations.of(context)!.male,
     AppLocalizations.of(context)!.female,
   ];
 
-  final countryOptionsKeys = ['USA', 'Spain', 'Japan', 'Korea', 'Bangladesh'];
   List<String> get countryOptions => [
     AppLocalizations.of(context)!.usa,
     'Spain',
@@ -130,18 +131,84 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
 
   void previousStep() => setState(() => currentStep--);
 
-  void submitForm() {
+  void submitForm() async {
     if (_formKeys[2].currentState!.validate()) {
       for (var key in _formKeys) {
         key.currentState!.save();
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.learnerRegisteredSuccessfully,
-          ),
-        ),
+      // Prepare Learner data
+      final learner = Learner(
+        id: '', // Supabase will generate
+        profileImage:
+            'https://wallpapers.com/images/hd/anime-pictures-bj226rrdwe326upu.jpg', // Always use dummy link
+        name: name,
+        email: email,
+        username: username,
+        password: password,
+        dateOfBirth: dob ?? DateTime(2000, 1, 1),
+        gender: gender.toLowerCase(), // Convert to lowercase for database
+        country: country.toLowerCase(), // Convert to lowercase for database
+        bio: bio.isNotEmpty ? bio : null,
+        nativeLanguage: nativeLanguage
+            .toLowerCase(), // Convert to lowercase for database
+        learningLanguage: learningLanguage
+            .toLowerCase(), // Convert to lowercase for database
+        languageLevel: languageLevel
+            .toLowerCase(), // Convert to lowercase for database
+        interests: interests,
+        createdAt: DateTime.now(),
       );
+      // Insert into Supabase via Provider
+      final learnerProvider = Provider.of<LearnerProvider>(
+        context,
+        listen: false,
+      );
+
+      try {
+        print('Attempting to create learner with data:');
+        print('Name: $name');
+        print('Email: $email');
+        print('Username: $username');
+        print('Gender: $gender');
+        print('Country: $country');
+        print('Native Language: $nativeLanguage');
+        print('Learning Language: $learningLanguage');
+        print('Language Level: $languageLevel');
+
+        final success = await learnerProvider.createLearner(learner);
+        print('Provider createLearner result: $success');
+        print('Provider error state: ${learnerProvider.error}');
+
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)!.learnerRegisteredSuccessfully,
+              ),
+            ),
+          );
+          Navigator.pop(context);
+        } else {
+          final error = learnerProvider.error;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error ?? 'Failed to register learner'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 5),
+            ),
+          );
+          print('Registration failed. Provider error: $error');
+        }
+      } catch (e) {
+        print('Exception during registration: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Registration error: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
     }
   }
 
@@ -174,17 +241,14 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
+          // 🔧 SETTINGS ICON - This is the settings button in the app bar
+          // Click this to open the settings bottom sheet with theme and language options
           IconButton(
             icon: Icon(
-              themeProvider.themeMode == ThemeMode.dark
-                  ? Icons.light_mode
-                  : Icons.dark_mode,
+              Icons.settings,
               color: isDark ? Colors.white : Colors.black,
             ),
-            onPressed: () {
-              bool toDark = themeProvider.themeMode != ThemeMode.dark;
-              themeProvider.toggleTheme(toDark);
-            },
+            onPressed: () => SettingsProvider.showSettingsBottomSheet(context),
           ),
         ],
       ),
