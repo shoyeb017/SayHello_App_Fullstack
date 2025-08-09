@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/permission_service.dart';
-import '../screens/permission_request_page.dart';
-import '../screens/auth/landing_page.dart';
+import '../../services/permission_service.dart';
+import 'permission_request_page.dart';
+import '../auth/landing_page.dart';
 
 class PermissionWrapper extends StatefulWidget {
   const PermissionWrapper({super.key});

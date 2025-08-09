@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../services/permission_service.dart';
+import '../../services/permission_service.dart';
 
 class PermissionRequestPage extends StatefulWidget {
   final VoidCallback onPermissionsHandled;

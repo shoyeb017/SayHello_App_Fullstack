@@ -12,7 +12,7 @@ import 'providers/instructor_provider.dart';
 import 'providers/auth_provider.dart';
 
 import 'screens/auth/landing_page.dart';
-import 'screens/permission_wrapper.dart';
+import 'screens/permissions/permission_wrapper.dart';
 import 'package:sayhello_app_frontend/screens/auth/learner_signin.dart';
 import 'package:sayhello_app_frontend/screens/auth/instructor_signin.dart';
 import 'package:sayhello_app_frontend/screens/auth/learner_signup.dart';
