@@ -1,6 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../../providers/settings_provider.dart';
+import '../../../../../providers/course_provider.dart';
+import '../../../../../providers/auth_provider.dart';
+import '../../../../../models/instructor.dart';
 import '../../instructor_main_tab.dart';
 
 class AddCoursePage extends StatefulWidget {
@@ -20,7 +26,8 @@ class _AddCoursePageState extends State<AddCoursePage> {
   double _price = 50.0;
   DateTime? _startDate;
   DateTime? _endDate;
-  String? _thumbnailPath;
+  File? _thumbnailFile;
+  final _imagePicker = ImagePicker();
 
   @override
   void dispose() {
@@ -565,7 +572,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
             style: BorderStyle.solid,
           ),
         ),
-        child: _thumbnailPath != null
+        child: _thumbnailFile != null
             ? Stack(
                 children: [
                   ClipRRect(
@@ -574,39 +581,9 @@ class _AddCoursePageState extends State<AddCoursePage> {
                       width: double.infinity,
                       height: double.infinity,
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.grey[800] : Colors.grey[300],
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.image,
-                            color: const Color(0xFF7A54FF),
-                            size: 32,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            AppLocalizations.of(context)!.imageSelected,
-                            style: TextStyle(
-                              color: isDark ? Colors.white : Colors.black,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Text(
-                            _thumbnailPath!.split('/').last,
-                            style: TextStyle(
-                              color: isDark
-                                  ? Colors.grey[400]
-                                  : Colors.grey[600],
-                              fontSize: 12,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
+                      child: Image.file(_thumbnailFile!, fit: BoxFit.cover),
                     ),
                   ),
                   Positioned(
@@ -615,7 +592,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
                     child: GestureDetector(
                       onTap: () {
                         setState(() {
-                          _thumbnailPath = null;
+                          _thumbnailFile = null;
                         });
                       },
                       child: Container(
@@ -716,23 +693,31 @@ class _AddCoursePageState extends State<AddCoursePage> {
     }
   }
 
-  void _selectThumbnail() {
-    // TODO: Implement image picker from local storage
-    setState(() {
-      _thumbnailPath = 'course_thumbnail.jpg'; // Placeholder
-    });
+  Future<void> _selectThumbnail() async {
+    try {
+      final XFile? pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context)!.imagePickerFeatureWillBeImplemented,
+      if (pickedFile != null) {
+        setState(() {
+          _thumbnailFile = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to pick image: $e'),
+          backgroundColor: Colors.red,
         ),
-        backgroundColor: const Color(0xFF7A54FF),
-      ),
-    );
+      );
+    }
   }
 
-  void _publishCourse() {
+  Future<void> _publishCourse() async {
     if (_formKey.currentState!.validate()) {
       if (_startDate == null || _endDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -746,7 +731,7 @@ class _AddCoursePageState extends State<AddCoursePage> {
         return;
       }
 
-      if (_thumbnailPath == null) {
+      if (_thumbnailFile == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -758,14 +743,71 @@ class _AddCoursePageState extends State<AddCoursePage> {
         return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.coursePublishedSuccessfully,
+      try {
+        // Get the current instructor from auth provider
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final currentUser = authProvider.currentUser;
+
+        if (currentUser == null || currentUser is! Instructor) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please login as an instructor'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+
+        final currentInstructorId = currentUser.id;
+        print('Creating course with instructor ID: $currentInstructorId');
+
+        final courseData = {
+          'title': _titleController.text.trim(),
+          'description': _descriptionController.text.trim(),
+          'language': 'english', // TODO: Get from settings provider
+          'level': _selectedLevel.toLowerCase(),
+          'total_sessions': int.parse(_totalSessionsController.text),
+          'price': _price,
+          'start_date': _startDate!.toIso8601String(),
+          'end_date': _endDate!.toIso8601String(),
+          'status': DateTime.now().isBefore(_startDate!)
+              ? 'upcoming'
+              : 'active',
+          'created_at': DateTime.now().toIso8601String(),
+          'instructor_id': currentInstructorId,
+        };
+
+        final courseProvider = Provider.of<CourseProvider>(
+          context,
+          listen: false,
+        );
+        final success = await courseProvider.createCourse(
+          courseData,
+          _thumbnailFile,
+        );
+
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)!.coursePublishedSuccessfully,
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const InstructorMainTab()),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to publish course: $e'),
+            backgroundColor: Colors.red,
           ),
-          backgroundColor: Colors.green,
-        ),
-      );
+        );
+      }
     }
   }
 }

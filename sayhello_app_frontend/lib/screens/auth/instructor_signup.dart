@@ -2,10 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import '../../providers/theme_provider.dart';
 import '../../providers/instructor_provider.dart';
 import '../../l10n/app_localizations.dart';
-import '../../models/instructor.dart';
 import '../../providers/settings_provider.dart';
 
 class InstructorSignupPage extends StatefulWidget {
@@ -81,23 +79,22 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
     if (_formKeyStep2.currentState!.validate()) {
       _formKeyStep2.currentState!.save();
 
-      final instructor = Instructor(
-        id: '', // Supabase will generate
-        profileImage:
-            'https://wallpapers.com/images/hd/anime-pictures-bj226rrdwe326upu.jpg',
-        name: name,
-        email: email,
-        username: username,
-        password: password,
-        dateOfBirth: dateOfBirth ?? DateTime(1990),
-        gender: gender.toLowerCase(),
-        country: country.toLowerCase(),
-        bio: bio.isNotEmpty ? bio : null,
-        nativeLanguage: nativeLanguage.toLowerCase(),
-        teachingLanguage: teachingLanguage.toLowerCase(),
-        yearsOfExperience: yearsOfExperience,
-        createdAt: DateTime.now(),
-      );
+      final instructorData = {
+        'profile_image':
+            null, // Will be updated after creation if image selected
+        'name': name,
+        'email': email,
+        'username': username,
+        'password': password,
+        'date_of_birth': (dateOfBirth ?? DateTime(1990)).toIso8601String(),
+        'gender': gender.toLowerCase(),
+        'country': country.toLowerCase(),
+        'bio': bio.isNotEmpty ? bio : null,
+        'native_language': nativeLanguage.toLowerCase(),
+        'teaching_language': teachingLanguage.toLowerCase(),
+        'years_of_experience': yearsOfExperience,
+        'created_at': DateTime.now().toIso8601String(),
+      };
 
       final instructorProvider = Provider.of<InstructorProvider>(
         context,
@@ -115,9 +112,12 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
         print('Teaching Language: $teachingLanguage');
         print('Years of Experience: $yearsOfExperience');
         print('Bio: $bio');
-        print('Profile Image: ${profileImage?.path}');
+        print('Has Profile Image: ${profileImage != null}');
 
-        final success = await instructorProvider.createInstructor(instructor);
+        final success = await instructorProvider.createInstructor(
+          instructorData,
+          profileImage,
+        );
 
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -152,7 +152,6 @@ class _InstructorSignupPageState extends State<InstructorSignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(

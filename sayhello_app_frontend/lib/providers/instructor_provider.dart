@@ -5,8 +5,12 @@ import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../data/data.dart';
 
+import 'dart:io';
+import '../services/storage_service.dart';
+
 class InstructorProvider extends ChangeNotifier {
   final InstructorRepository _repository = InstructorRepository();
+  final StorageService _storage = StorageService();
 
   // Instructor state
   List<Instructor> _instructors = [];
@@ -87,13 +91,36 @@ class InstructorProvider extends ChangeNotifier {
     }
   }
 
-  /// Create new instructor
-  Future<bool> createInstructor(Instructor instructor) async {
+  /// Create new instructor with optional profile photo
+  Future<bool> createInstructor(
+    Map<String, dynamic> instructorData, [
+    File? profileImage,
+  ]) async {
     _setLoading(true);
     _clearError();
 
     try {
-      final newInstructor = await _repository.createInstructor(instructor);
+      print('Creating instructor with data: $instructorData');
+
+      // First create the instructor record
+      final newInstructor = await _repository.createInstructor(instructorData);
+      _currentInstructor = newInstructor;
+
+      // If we have a profile image, upload it
+      if (profileImage != null) {
+        final imageUrl = await _storage.uploadProfilePhoto(
+          profileImage,
+          newInstructor.id,
+        );
+        print('Uploaded profile image, URL: $imageUrl');
+
+        // Update the instructor record with the image URL
+        final updates = {'profile_image': imageUrl};
+        _currentInstructor = await _repository.updateInstructor(
+          newInstructor.id,
+          updates,
+        );
+      }
       _instructors.insert(0, newInstructor);
       _currentInstructor = newInstructor;
 
@@ -117,32 +144,10 @@ class InstructorProvider extends ChangeNotifier {
         _setError('No instructor loaded');
         return false;
       }
+
       final updatedInstructor = await _repository.updateInstructor(
-        _currentInstructor!.copyWith(
-          id: _currentInstructor!.id,
-          profileImage:
-              updates['profile_image'] ?? _currentInstructor!.profileImage,
-          name: updates['name'] ?? _currentInstructor!.name,
-          email: updates['email'] ?? _currentInstructor!.email,
-          username: updates['username'] ?? _currentInstructor!.username,
-          dateOfBirth: updates['date_of_birth'] != null
-              ? DateTime.parse(updates['date_of_birth'])
-              : _currentInstructor!.dateOfBirth,
-          gender: updates['gender'] ?? _currentInstructor!.gender,
-          country: updates['country'] ?? _currentInstructor!.country,
-          bio: updates['bio'] ?? _currentInstructor!.bio,
-          nativeLanguage:
-              updates['native_language'] ?? _currentInstructor!.nativeLanguage,
-          teachingLanguage:
-              updates['teaching_language'] ??
-              _currentInstructor!.teachingLanguage,
-          yearsOfExperience:
-              updates['years_of_experience'] ??
-              _currentInstructor!.yearsOfExperience,
-          createdAt: updates['created_at'] != null
-              ? DateTime.parse(updates['created_at'])
-              : _currentInstructor!.createdAt,
-        ),
+        _currentInstructor!.id,
+        updates,
       );
       // Update in list
       final index = _instructors.indexWhere(

@@ -403,7 +403,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
           const SizedBox(height: 16),
           _buildInfoRow(
             localizations.instructorYearsOfExperience,
-            '$yearsOfExperience years',
+            '$yearsOfExperience y ears',
             Icons.timeline,
             () => _showExperienceDialog(),
           ),

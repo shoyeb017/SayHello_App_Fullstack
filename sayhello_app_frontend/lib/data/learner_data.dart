@@ -5,78 +5,110 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/models.dart';
 
 class LearnerRepository {
-  final SupabaseClient _client = Supabase.instance.client;
+  final SupabaseClient _supabase = Supabase.instance.client;
 
   // =============================
   // LEARNER CRUD OPERATIONS
   // =============================
 
   /// Create a new learner profile
-  Future<Learner> createLearner(Learner learner) async {
-    final data = learner.toJson();
-    data.remove('id');
-    final response = await _client
-        .from('learners')
-        .insert(data)
-        .select()
-        .single();
-    return Learner.fromJson(response);
+  Future<Learner> createLearner(Map<String, dynamic> learnerData) async {
+    try {
+      final response = await _supabase
+          .from('learners')
+          .insert(learnerData)
+          .select()
+          .single();
+
+      return Learner.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to create learner: $e');
+    }
   }
 
   /// Get learner by ID
   Future<Learner?> getLearnerById(String id) async {
-    final response = await _client
-        .from('learners')
-        .select()
-        .eq('id', id)
-        .maybeSingle();
-    return response != null ? Learner.fromJson(response) : null;
+    try {
+      final response = await _supabase
+          .from('learners')
+          .select()
+          .eq('id', id)
+          .maybeSingle();
+
+      return response != null ? Learner.fromJson(response) : null;
+    } catch (e) {
+      throw Exception('Failed to get learner: $e');
+    }
   }
 
   /// Get learner by email
   Future<Learner?> getLearnerByEmail(String email) async {
-    final response = await _client
-        .from('learners')
-        .select()
-        .eq('email', email)
-        .maybeSingle();
-    return response != null ? Learner.fromJson(response) : null;
+    try {
+      final response = await _supabase
+          .from('learners')
+          .select()
+          .eq('email', email)
+          .maybeSingle();
+
+      return response != null ? Learner.fromJson(response) : null;
+    } catch (e) {
+      throw Exception('Failed to get learner by email: $e');
+    }
   }
 
   /// Get learner by username
   Future<Learner?> getLearnerByUsername(String username) async {
-    final response = await _client
-        .from('learners')
-        .select()
-        .eq('username', username)
-        .maybeSingle();
-    return response != null ? Learner.fromJson(response) : null;
+    try {
+      final response = await _supabase
+          .from('learners')
+          .select()
+          .eq('username', username)
+          .maybeSingle();
+
+      return response != null ? Learner.fromJson(response) : null;
+    } catch (e) {
+      throw Exception('Failed to get learner by username: $e');
+    }
   }
 
   /// Update learner profile
-  Future<Learner> updateLearner(Learner learner) async {
-    final response = await _client
-        .from('learners')
-        .update(learner.toJson())
-        .eq('id', learner.id)
-        .select()
-        .single();
-    return Learner.fromJson(response);
+  Future<Learner> updateLearner(String id, Map<String, dynamic> updates) async {
+    try {
+      final response = await _supabase
+          .from('learners')
+          .update(updates)
+          .eq('id', id)
+          .select()
+          .single();
+
+      return Learner.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to update learner: $e');
+    }
   }
 
   /// Delete learner profile
   Future<void> deleteLearner(String id) async {
-    await _client.from('learners').delete().eq('id', id);
+    try {
+      await _supabase.from('learners').delete().eq('id', id);
+    } catch (e) {
+      throw Exception('Failed to delete learner: $e');
+    }
   }
 
   /// Search learners by name or username
   Future<List<Learner>> searchLearners(String query, {int limit = 20}) async {
-    final response = await _client
-        .from('learners')
-        .select()
-        .or('name.ilike.%$query%,username.ilike.%$query%')
-        .limit(limit);
-    return (response as List).map((json) => Learner.fromJson(json)).toList();
+    try {
+      final response = await _supabase
+          .from('learners')
+          .select()
+          .or('name.ilike.%$query%,username.ilike.%$query%')
+          .limit(limit);
+
+      return response.map((json) => Learner.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to search learners: $e');
+    }
   }
 
   /// Get learners by learning language
@@ -84,12 +116,17 @@ class LearnerRepository {
     String language, {
     int limit = 50,
   }) async {
-    final response = await _client
-        .from('learners')
-        .select()
-        .eq('learning_language', language)
-        .limit(limit);
-    return (response as List).map((json) => Learner.fromJson(json)).toList();
+    try {
+      final response = await _supabase
+          .from('learners')
+          .select()
+          .eq('learning_language', language)
+          .limit(limit);
+
+      return response.map((json) => Learner.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to get learners by language: $e');
+    }
   }
 
   // =============================
@@ -98,27 +135,37 @@ class LearnerRepository {
 
   /// Follow another learner
   Future<Follower> followLearner(String followerId, String followedId) async {
-    final follower = Follower(
-      id: '', // Will be generated by Supabase
-      followerUserId: followerId,
-      followedUserId: followedId,
-      createdAt: DateTime.now(),
-    );
-    final response = await _client
-        .from('followers')
-        .insert(follower.toJson())
-        .select()
-        .single();
-    return Follower.fromJson(response);
+    try {
+      final follower = Follower(
+        id: '', // Will be generated by Supabase
+        followerUserId: followerId,
+        followedUserId: followedId,
+        createdAt: DateTime.now(),
+      );
+
+      final response = await _supabase
+          .from('followers')
+          .insert(follower.toJson())
+          .select()
+          .single();
+
+      return Follower.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to follow learner: $e');
+    }
   }
 
   /// Unfollow a learner
   Future<void> unfollowLearner(String followerId, String followedId) async {
-    await _client
-        .from('followers')
-        .delete()
-        .eq('follower_user_id', followerId)
-        .eq('followed_user_id', followedId);
+    try {
+      await _supabase
+          .from('followers')
+          .delete()
+          .eq('follower_user_id', followerId)
+          .eq('followed_user_id', followedId);
+    } catch (e) {
+      throw Exception('Failed to unfollow learner: $e');
+    }
   }
 
   /// Get followers of a learner
@@ -126,12 +173,17 @@ class LearnerRepository {
     String learnerId, {
     int limit = 100,
   }) async {
-    final response = await _client
-        .from('followers')
-        .select()
-        .eq('followed_user_id', learnerId)
-        .limit(limit);
-    return (response as List).map((json) => Follower.fromJson(json)).toList();
+    try {
+      final response = await _supabase
+          .from('followers')
+          .select()
+          .eq('followed_user_id', learnerId)
+          .limit(limit);
+
+      return response.map((json) => Follower.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to get followers: $e');
+    }
   }
 
   /// Get learners that a user is following
@@ -139,63 +191,72 @@ class LearnerRepository {
     String learnerId, {
     int limit = 100,
   }) async {
-    final response = await _client
-        .from('followers')
-        .select()
-        .eq('follower_user_id', learnerId)
-        .limit(limit);
-    return (response as List).map((json) => Follower.fromJson(json)).toList();
+    try {
+      final response = await _supabase
+          .from('followers')
+          .select()
+          .eq('follower_user_id', learnerId)
+          .limit(limit);
+
+      return response.map((json) => Follower.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to get following: $e');
+    }
   }
 
   /// Check if user is following another user
   Future<bool> isFollowing(String followerId, String followedId) async {
-    final response = await _client
-        .from('followers')
-        .select('id')
-        .eq('follower_user_id', followerId)
-        .eq('followed_user_id', followedId)
-        .maybeSingle();
-    return response != null;
+    try {
+      final response = await _supabase
+          .from('followers')
+          .select('id')
+          .eq('follower_user_id', followerId)
+          .eq('followed_user_id', followedId)
+          .maybeSingle();
+
+      return response != null;
+    } catch (e) {
+      throw Exception('Failed to check following status: $e');
+    }
   }
 
   /// Get follower count for a learner
   Future<int> getFollowerCount(String learnerId) async {
-    final response = await _client
-        .from('followers')
-        .select()
-        .eq('followed_user_id', learnerId);
-    return (response as List).length;
+    try {
+      final response = await _supabase
+          .from('followers')
+          .select()
+          .eq('followed_user_id', learnerId);
+
+      return (response as List).length;
+    } catch (e) {
+      throw Exception('Failed to get follower count: $e');
+    }
   }
 
   /// Get following count for a learner
   Future<int> getFollowingCount(String learnerId) async {
-    final response = await _client
-        .from('followers')
-        .select()
-        .eq('follower_user_id', learnerId);
-    return (response as List).length;
+    try {
+      final response = await _supabase
+          .from('followers')
+          .select()
+          .eq('follower_user_id', learnerId);
+
+      return (response as List).length;
+    } catch (e) {
+      throw Exception('Failed to get following count: $e');
+    }
   }
 
   // =============================
   // REAL-TIME SUBSCRIPTIONS
   // =============================
 
-  /// Subscribe to learner profile changes
-  /// Note: Real-time API may vary by Supabase version
-  // RealtimeChannel subscribeToLearner(String learnerId, Function(Learner) onUpdate) {
-  //   return _supabase.channel('learner_$learnerId')...
-  // }
-
-  /// Subscribe to follower changes
-  // RealtimeChannel subscribeToFollowers(String learnerId, Function(List<Follower>) onUpdate) {
-  //   return _supabase.channel('followers_$learnerId')...
-  // }
-
   /// Real-time subscription to learners table
   Stream<List<Learner>> subscribeLearners() {
-    return _client
+    return _supabase
         .from('learners')
         .stream(primaryKey: ['id'])
-        .map((data) => (data as List).map((e) => Learner.fromJson(e)).toList());
+        .map((data) => data.map((e) => Learner.fromJson(e)).toList());
   }
 }

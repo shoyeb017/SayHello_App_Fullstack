@@ -1,9 +1,11 @@
 /// Learner Provider - State management for learner-related operations
 /// Handles learner profile, follower relationships, and UI state
 
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../data/data.dart';
+import '../services/storage_service.dart';
 
 class LearnerProvider extends ChangeNotifier {
   final LearnerRepository _repository = LearnerRepository();
@@ -92,12 +94,12 @@ class LearnerProvider extends ChangeNotifier {
   }
 
   /// Create new learner profile
-  Future<bool> createLearner(Learner learner) async {
+  Future<bool> createLearner(Map<String, dynamic> learnerData) async {
     _setLoading(true);
     _clearError();
 
     try {
-      final newLearner = await _repository.createLearner(learner);
+      final newLearner = await _repository.createLearner(learnerData);
       _currentLearner = newLearner;
       notifyListeners();
       return true;
@@ -120,32 +122,8 @@ class LearnerProvider extends ChangeNotifier {
         return false;
       }
       final updatedLearner = await _repository.updateLearner(
-        _currentLearner!.copyWith(
-          id: _currentLearner!.id,
-          profileImage:
-              updates['profile_image'] ?? _currentLearner!.profileImage,
-          name: updates['name'] ?? _currentLearner!.name,
-          email: updates['email'] ?? _currentLearner!.email,
-          username: updates['username'] ?? _currentLearner!.username,
-          dateOfBirth: updates['date_of_birth'] != null
-              ? DateTime.parse(updates['date_of_birth'])
-              : _currentLearner!.dateOfBirth,
-          gender: updates['gender'] ?? _currentLearner!.gender,
-          country: updates['country'] ?? _currentLearner!.country,
-          bio: updates['bio'] ?? _currentLearner!.bio,
-          nativeLanguage:
-              updates['native_language'] ?? _currentLearner!.nativeLanguage,
-          learningLanguage:
-              updates['learning_language'] ?? _currentLearner!.learningLanguage,
-          languageLevel:
-              updates['language_level'] ?? _currentLearner!.languageLevel,
-          interests: updates['interests'] != null
-              ? List<String>.from(updates['interests'])
-              : _currentLearner!.interests,
-          createdAt: updates['created_at'] != null
-              ? DateTime.parse(updates['created_at'])
-              : _currentLearner!.createdAt,
-        ),
+        _currentLearner!.id,
+        updates,
       );
       _currentLearner = updatedLearner;
       notifyListeners();
@@ -333,6 +311,57 @@ class LearnerProvider extends ChangeNotifier {
 
   void _clearError() {
     _error = null;
+  }
+
+  /// Upload profile photo and update learner profile
+  Future<bool> uploadProfilePhoto(File imageFile, [String? email]) async {
+    _setLoading(true);
+    _clearError();
+
+    try {
+      // First ensure we have the learner loaded
+      if (email != null) {
+        // For new registrations, load the learner first
+        final learner = await getLearnerByEmail(email);
+        if (learner == null) {
+          _setError('Could not find learner profile');
+          return false;
+        }
+        _currentLearner = learner;
+      } else if (_currentLearner == null) {
+        _setError('No learner loaded');
+        return false;
+      }
+
+      if (_currentLearner?.id == null) {
+        _setError('Cannot update profile image: Learner ID is null');
+        return false;
+      }
+
+      // Upload photo using storage service
+      final String imageUrl = await StorageService().uploadProfilePhoto(
+        imageFile,
+        _currentLearner!.id,
+      );
+      print('Uploaded image URL: $imageUrl');
+
+      // Update learner profile with new image URL
+      final Map<String, dynamic> updates = {'profile_image': imageUrl};
+      print('Updating learner with image URL: $updates');
+
+      // Update learner in database
+      _currentLearner = await _repository.updateLearner(
+        _currentLearner!.id,
+        updates,
+      );
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _setError('Failed to upload profile photo: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
   }
 
   /// Clear all data

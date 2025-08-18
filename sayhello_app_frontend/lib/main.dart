@@ -4,9 +4,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'services/supabase_config.dart';
+import 'services/storage_service.dart';
 import 'providers/theme_provider.dart';
 import 'providers/language_provider.dart';
 import 'providers/learner_provider.dart';
+import 'providers/course_provider.dart';
 import 'l10n/app_localizations.dart';
 import 'providers/instructor_provider.dart';
 import 'providers/auth_provider.dart';
@@ -28,6 +30,14 @@ void main() async {
   // Initialize Supabase
   await SupabaseConfig.initialize();
 
+  // Initialize storage
+  try {
+    await StorageService().initializeStorage();
+    print('Storage initialized successfully');
+  } catch (e) {
+    print('Failed to initialize storage: $e');
+  }
+
   // Set preferred orientations for better video experience
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -43,6 +53,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
         ChangeNotifierProvider(create: (_) => LearnerProvider()),
         ChangeNotifierProvider(create: (_) => InstructorProvider()),
+        ChangeNotifierProvider(create: (_) => CourseProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: const MyApp(),

@@ -2,9 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import '../../providers/theme_provider.dart';
 import '../../l10n/app_localizations.dart';
-import '../../models/learner.dart';
 import '../../providers/learner_provider.dart';
 import '../../providers/settings_provider.dart';
 
@@ -136,28 +134,24 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
       for (var key in _formKeys) {
         key.currentState!.save();
       }
-      // Prepare Learner data
-      final learner = Learner(
-        id: '', // Supabase will generate
-        profileImage:
-            'https://wallpapers.com/images/hd/anime-pictures-bj226rrdwe326upu.jpg', // Always use dummy link
-        name: name,
-        email: email,
-        username: username,
-        password: password,
-        dateOfBirth: dob ?? DateTime(2000, 1, 1),
-        gender: gender.toLowerCase(), // Convert to lowercase for database
-        country: country.toLowerCase(), // Convert to lowercase for database
-        bio: bio.isNotEmpty ? bio : null,
-        nativeLanguage: nativeLanguage
-            .toLowerCase(), // Convert to lowercase for database
-        learningLanguage: learningLanguage
-            .toLowerCase(), // Convert to lowercase for database
-        languageLevel: languageLevel
-            .toLowerCase(), // Convert to lowercase for database
-        interests: interests,
-        createdAt: DateTime.now(),
-      );
+      // Prepare learner data matching database column names
+      final learnerData = {
+        'profile_image':
+            null, // Will be updated after signup if image was selected
+        'name': name,
+        'email': email,
+        'username': username,
+        'password': password,
+        'date_of_birth': (dob ?? DateTime(2000, 1, 1)).toIso8601String(),
+        'gender': gender.toLowerCase(),
+        'country': country.toLowerCase(),
+        'bio': bio.isNotEmpty ? bio : null,
+        'native_language': nativeLanguage.toLowerCase(),
+        'learning_language': learningLanguage.toLowerCase(),
+        'language_level': languageLevel.toLowerCase(),
+        'interests': interests,
+        'created_at': DateTime.now().toIso8601String(),
+      };
       // Insert into Supabase via Provider
       final learnerProvider = Provider.of<LearnerProvider>(
         context,
@@ -175,7 +169,7 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
         print('Learning Language: $learningLanguage');
         print('Language Level: $languageLevel');
 
-        final success = await learnerProvider.createLearner(learner);
+        final success = await learnerProvider.createLearner(learnerData);
         print('Provider createLearner result: $success');
         print('Provider error state: ${learnerProvider.error}');
 
@@ -199,6 +193,43 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
           );
           print('Registration failed. Provider error: $error');
         }
+
+        // If registration was successful and we have an image to upload
+        if (success && profileImage != null && mounted) {
+          try {
+            print('Starting profile photo upload for email: $email');
+            final photoSuccess = await learnerProvider.uploadProfilePhoto(
+              profileImage!,
+              email,
+            );
+            print('Photo upload success: $photoSuccess');
+
+            if (!photoSuccess && mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Profile photo upload failed. You can try updating it later.',
+                  ),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+            } else if (mounted) {
+              print('Profile photo uploaded and updated successfully');
+            }
+          } catch (e) {
+            print('Failed to upload profile photo: $e');
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Error uploading profile photo: ${e.toString()}',
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          }
+        }
       } catch (e) {
         print('Exception during registration: $e');
         ScaffoldMessenger.of(context).showSnackBar(
@@ -214,7 +245,6 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDark ? Colors.grey[900] : const Color(0xFFF5F5F5);
     final cardColor = isDark ? Colors.grey[850] : Colors.white;
@@ -690,9 +720,13 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscure ? Icons.visibility_off : Icons.visibility,
-                    color: primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
-                  onPressed: () => setStateSB(() => _obscure = !_obscure),
+                  onPressed: () {
+                    setState(() {
+                      _obscure = !_obscure;
+                    });
+                  },
                 ),
               ),
               onSaved: (val) => password = val ?? '',

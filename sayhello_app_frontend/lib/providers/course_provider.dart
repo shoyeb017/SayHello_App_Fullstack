@@ -1,12 +1,15 @@
 /// Course Provider - State management for course-related operations
 /// Handles courses, enrollments, and course portal functionality
 
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../data/data.dart';
+import '../services/storage_service.dart';
 
 class CourseProvider extends ChangeNotifier {
   final CourseRepository _repository = CourseRepository();
+  final StorageService _storage = StorageService();
 
   // Course state
   List<Course> _courses = [];
@@ -93,13 +96,25 @@ class CourseProvider extends ChangeNotifier {
     }
   }
 
-  /// Create new course
-  Future<bool> createCourse(Course course) async {
+  /// Create new course with optional thumbnail
+  Future<bool> createCourse(
+    Map<String, dynamic> courseData, [
+    File? thumbnail,
+  ]) async {
     _setLoading(true);
     _clearError();
 
     try {
-      final newCourse = await _repository.createCourse(course);
+      // If thumbnail provided, upload it first
+      if (thumbnail != null) {
+        final thumbnailUrl = await _storage.uploadCourseThumbnail(
+          thumbnail,
+          DateTime.now().millisecondsSinceEpoch.toString(),
+        );
+        courseData['thumbnail_url'] = thumbnailUrl;
+      }
+
+      final newCourse = await _repository.createCourse(courseData);
       _courses.insert(0, newCourse);
       notifyListeners();
       return true;

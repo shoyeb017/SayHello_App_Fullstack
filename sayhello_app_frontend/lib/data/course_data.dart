@@ -1,37 +1,54 @@
 /// Course Repository - Handles all course-related database operations
 /// Provides CRUD operations, enrollments, and course management functionality
-///
-/// TODO: Add Supabase dependency to pubspec.yaml:
-/// dependencies:
-///   supabase_flutter: ^2.0.0
 
+import 'dart:io';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/models.dart';
+import '../services/storage_service.dart';
 
 class CourseRepository {
-  // TODO: Initialize Supabase client
-  // final SupabaseClient _supabase = Supabase.instance.client;
+  final _supabase = Supabase.instance.client;
+  final _storage = StorageService();
 
   // =============================
   // COURSE CRUD OPERATIONS
   // =============================
 
   /// Create a new course
-  Future<Course> createCourse(Course course) async {
-    // TODO: Implement with Supabase
-    /*
+  Future<Course> createCourse(Map<String, dynamic> courseData) async {
     try {
+      print('Attempting to create course with data: $courseData');
+
+      // Ensure all required fields are present and correctly formatted
+      final validatedData = {
+        'title': courseData['title'],
+        'description': courseData['description'],
+        'language': courseData['language'],
+        'level': courseData['level'],
+        'total_sessions': courseData['total_sessions'],
+        'price': courseData['price'],
+        'start_date': courseData['start_date'],
+        'end_date': courseData['end_date'],
+        'status': courseData['status'],
+        'instructor_id': courseData['instructor_id'],
+        'thumbnail_url': courseData['thumbnail_url'],
+        'created_at': courseData['created_at'],
+      };
+
+      print('Inserting course into Supabase...');
       final response = await _supabase
           .from('courses')
-          .insert(course.toJson())
+          .insert(validatedData)
           .select()
           .single();
-      
+
+      print('Course created successfully. Response: $response');
       return Course.fromJson(response);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('Failed to create course: $e');
+      print('Stack trace: $stackTrace');
       throw Exception('Failed to create course: $e');
     }
-    */
-    throw UnimplementedError('Add Supabase dependency first');
   }
 
   /// Get course by ID
