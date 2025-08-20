@@ -152,9 +152,8 @@
   course_id: ObjectId,    // courses _id
   recorded_name: String,
   recorded_description: String,
-  recorded_duration: String,
-  recorded_size: String,
   recorded_link: String,
+  recorded_thumbnail: String, // Auto-generated from video link
   created_at: Date
 }
 

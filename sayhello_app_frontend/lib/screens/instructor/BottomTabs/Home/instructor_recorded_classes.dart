@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../../../../../l10n/app_localizations.dart';
-
+import '../../../../../providers/recorded_class_provider.dart';
+import '../../../../../models/recorded_class.dart';
+import '../../../../../utils/video_thumbnail_generator.dart';
 import 'record_class_video_player.dart';
-import '../../../../services/video_metadata_service.dart';
 
 class InstructorRecordedClassesTab extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -15,136 +18,24 @@ class InstructorRecordedClassesTab extends StatefulWidget {
 
 class _InstructorRecordedClassesTabState
     extends State<InstructorRecordedClassesTab> {
-  // Dynamic recorded classes data - replace with backend API later
-  List<Map<String, dynamic>> _recordings = [
-    {
-      'id': 'recording_001',
-      'title': 'English Grammar Fundamentals - Tenses',
-      'description':
-          'Complete guide to English tenses with examples and practice exercises',
-      'duration': '45:30',
-      'uploadDate': '2025-08-05',
-      'uploadTime': '14:30',
-      'views': 156,
-      'fileSize': '485 MB',
-      'format': 'MP4',
-      'thumbnail': 'https://picsum.photos/300/200?random=11',
-      'videoUrl':
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-      'status': 'published',
-    },
-    {
-      'id': 'recording_002',
-      'title': 'Business English - Email Writing',
-      'description':
-          'Professional email writing techniques and formal business communication',
-      'duration': '38:15',
-      'uploadDate': '2025-08-04',
-      'uploadTime': '10:15',
-      'views': 203,
-      'fileSize': '421 MB',
-      'format': 'MP4',
-      'thumbnail': 'https://picsum.photos/300/200?random=12',
-      'videoUrl':
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-      'status': 'published',
-    },
-    {
-      'id': 'recording_003',
-      'title': 'English Speaking - Pronunciation Tips',
-      'description':
-          'Improve your English pronunciation with phonetics and practice drills',
-      'duration': '52:40',
-      'uploadDate': '2025-08-03',
-      'uploadTime': '16:45',
-      'views': 89,
-      'fileSize': '567 MB',
-      'format': 'MP4',
-      'thumbnail': 'https://picsum.photos/300/200?random=13',
-      'videoUrl':
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-      'status': 'published',
-    },
-    {
-      'id': 'recording_004',
-      'title': 'IELTS Writing Task 1 - Graph Descriptions',
-      'description':
-          'Master IELTS Academic Writing Task 1 with graph analysis and description techniques',
-      'duration': '41:20',
-      'uploadDate': '2025-08-02',
-      'uploadTime': '11:00',
-      'views': 124,
-      'fileSize': '398 MB',
-      'format': 'MP4',
-      'thumbnail': 'https://picsum.photos/300/200?random=14',
-      'videoUrl':
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
-      'status': 'published',
-    },
-    {
-      'id': 'recording_005',
-      'title': 'English Vocabulary Building - Academic Words',
-      'description':
-          'Essential academic vocabulary for advanced English learners and test preparation',
-      'duration': '36:55',
-      'uploadDate': '2025-08-01',
-      'uploadTime': '13:20',
-      'views': 87,
-      'fileSize': '354 MB',
-      'format': 'MP4',
-      'thumbnail': 'https://picsum.photos/300/200?random=15',
-      'videoUrl':
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-      'status': 'published',
-    },
-  ];
-
-  bool _isLoading = true;
-  String? _error;
-  List<VideoMetadata> _videoMetadataList = [];
-  int _loadedVideos = 0;
-  int _totalVideos = 0;
-
   @override
   void initState() {
     super.initState();
-    _loadVideoMetadata();
+    // Load recorded classes when widget initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadRecordedClasses();
+    });
   }
 
-  Future<void> _loadVideoMetadata() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-      _loadedVideos = 0;
-      _totalVideos = _recordings.length;
-    });
-    try {
-      final urls = _recordings.map((r) => r['videoUrl'] as String).toList();
-      final titles = _recordings.map((r) => r['title'] as String).toList();
-      final metadataList =
-          await VideoMetadataService.extractMultipleVideoMetadata(
-            urls,
-            titles: titles,
-            onProgress: (completed, total) {
-              if (mounted) {
-                setState(() {
-                  _loadedVideos = completed;
-                  _totalVideos = total;
-                });
-              }
-            },
-          );
-      if (mounted) {
-        setState(() {
-          _videoMetadataList = metadataList;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
+  /// Load recorded classes for this course
+  void _loadRecordedClasses() {
+    if (!mounted) return;
+
+    final recordedClassProvider = context.read<RecordedClassProvider>();
+    final courseId = widget.course['id']?.toString();
+
+    if (courseId != null) {
+      recordedClassProvider.loadRecordedClasses(courseId);
     }
   }
 
@@ -152,392 +43,408 @@ class _InstructorRecordedClassesTabState
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = Color(0xFF7A54FF);
+    final primaryColor = const Color(0xFF7A54FF);
     final textColor = isDark ? Colors.white : Colors.black;
     final subTextColor = isDark ? Colors.grey[400] : Colors.grey[600];
 
-    if (_isLoading) {
-      final progress = _totalVideos > 0 ? _loadedVideos / _totalVideos : 0.0;
-      final percentage = (progress * 100).round();
+    return Consumer<RecordedClassProvider>(
+      builder: (context, recordedClassProvider, child) {
+        final recordedClasses = recordedClassProvider.recordedClasses;
 
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(
-                value: progress,
-                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
-                strokeWidth: 4,
-                backgroundColor: isDark ? Colors.grey[700] : Colors.grey[300],
-              ),
-              const SizedBox(height: 24),
-              Text(
-                localizations.loadingVideoMetadata,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: textColor,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                localizations.completePercentage(percentage),
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: primaryColor,
-                ),
-              ),
-              if (_totalVideos > 0) ...[
-                const SizedBox(height: 4),
-                Text(
-                  localizations.videosProcessed(_loadedVideos, _totalVideos),
-                  style: TextStyle(fontSize: 12, color: subTextColor),
-                ),
-              ],
-            ],
-          ),
-        ),
-      );
-    }
-    if (_error != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 20),
-              Text(
-                localizations.failedToLoadVideoMetadata,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _error!,
-                style: TextStyle(fontSize: 14, color: Colors.red),
-                textAlign: TextAlign.center,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: _loadVideoMetadata,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryColor,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
+        return Column(
+          children: [
+            // Add Record Class Button
+            Container(
+              margin: const EdgeInsets.all(12),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => _showAddVideoLinkDialog(localizations),
+                  icon: const Icon(
+                    Icons.add_link,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                  label: Text(
+                    'Add Record Class',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 2,
                   ),
                 ),
-                icon: const Icon(Icons.refresh, color: Colors.white),
-                label: Text(
-                  localizations.retryButton,
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return Column(
-      children: [
-        // Upload Video Button - Compact Design
-        Container(
-          margin: const EdgeInsets.all(12),
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _showUploadDialog,
-              icon: const Icon(Icons.video_call, color: Colors.white, size: 18),
-              label: Text(
-                localizations.uploadNewVideo,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 2,
               ),
             ),
-          ),
-        ),
 
-        // Recordings List
-        Expanded(
-          child: _recordings.isEmpty
-              ? _buildEmptyState(isDark, primaryColor, localizations)
-              : ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  itemCount: _getSortedRecordings().length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
-                  itemBuilder: (context, index) {
-                    final sortedRecordings = _getSortedRecordings();
-                    // Find the corresponding metadata by videoUrl
-                    final rec = sortedRecordings[index];
-                    final metaIdx = _recordings.indexWhere(
-                      (r) => r['videoUrl'] == rec['videoUrl'],
-                    );
-                    final meta =
-                        (metaIdx >= 0 && metaIdx < _videoMetadataList.length)
-                        ? _videoMetadataList[metaIdx]
-                        : null;
-                    return _buildCompactRecordingCard(
-                      rec,
-                      meta,
-                      isDark,
-                      primaryColor,
-                      textColor,
-                      subTextColor,
-                      localizations,
-                    );
-                  },
-                ),
-        ),
-      ],
+            // Recorded Classes List
+            Expanded(
+              child: recordedClassProvider.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : recordedClasses.isEmpty
+                  ? _buildEmptyState(isDark, primaryColor, localizations)
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      itemCount: recordedClasses.length,
+                      itemBuilder: (context, index) {
+                        return _buildRecordedClassCard(
+                          recordedClasses[index],
+                          isDark,
+                          primaryColor,
+                          textColor,
+                          subTextColor,
+                          localizations,
+                        );
+                      },
+                    ),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  // Sort recordings by date and time (newest first)
-  List<Map<String, dynamic>> _getSortedRecordings() {
-    List<Map<String, dynamic>> sortedRecordings = List.from(_recordings);
-
-    sortedRecordings.sort((a, b) {
-      try {
-        DateTime dateA = DateTime.parse(a['uploadDate'] ?? '1970-01-01');
-        DateTime dateB = DateTime.parse(b['uploadDate'] ?? '1970-01-01');
-
-        if (dateA.isAtSameMomentAs(dateB)) {
-          TimeOfDay timeA = _parseTime(a['uploadTime'] ?? '00:00');
-          TimeOfDay timeB = _parseTime(b['uploadTime'] ?? '00:00');
-
-          int minutesA = timeA.hour * 60 + timeA.minute;
-          int minutesB = timeB.hour * 60 + timeB.minute;
-
-          return minutesB.compareTo(minutesA);
-        }
-
-        return dateB.compareTo(dateA);
-      } catch (e) {
-        return 0;
-      }
-    });
-
-    return sortedRecordings;
-  }
-
-  TimeOfDay _parseTime(String timeString) {
-    try {
-      List<String> parts = timeString.split(':');
-      if (parts.length >= 2) {
-        int hour = int.parse(parts[0]);
-        int minute = int.parse(parts[1]);
-        return TimeOfDay(hour: hour, minute: minute);
-      }
-    } catch (e) {
-      // Return default time if parsing fails
-    }
-    return const TimeOfDay(hour: 0, minute: 0);
-  }
-
-  Widget _buildCompactRecordingCard(
-    Map<String, dynamic> recording,
-    VideoMetadata? meta,
+  Widget _buildRecordedClassCard(
+    RecordedClass recordedClass,
     bool isDark,
     Color primaryColor,
     Color textColor,
     Color? subTextColor,
     AppLocalizations localizations,
   ) {
-    final status = recording['status'] as String;
-    final showMeta = meta != null && meta.isValid;
-
     return Container(
+      margin: const EdgeInsets.only(bottom: 6),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[850] : Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black26 : Colors.grey[200]!,
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            color: isDark ? Colors.black12 : Colors.grey.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(
+          color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
+          width: 0.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          // Thumbnail Section
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(12),
+              bottomLeft: Radius.circular(12),
+            ),
+            child: Container(
+              width: 100,
+              height: 80,
+              decoration: BoxDecoration(
+                color: isDark ? Colors.grey[800] : Colors.grey[200],
+              ),
+              child: Stack(
+                children: [
+                  // Dynamic Thumbnail Generation
+                  FutureBuilder<String?>(
+                    future: VideoThumbnailGenerator.getBestThumbnail(
+                      recordedClass.recordedLink,
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
+                          width: 100,
+                          height: 80,
+                          color: isDark ? Colors.grey[800] : Colors.grey[200],
+                          child: Center(
+                            child: SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                color: primaryColor,
+                                strokeWidth: 1.5,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                        return Image.network(
+                          snapshot.data!,
+                          width: 100,
+                          height: 80,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildCompactFallbackThumbnail(isDark);
+                          },
+                        );
+                      }
+
+                      return _buildCompactFallbackThumbnail(isDark);
+                    },
+                  ),
+                  // Play Button Overlay
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.2),
+                          ],
+                        ),
+                      ),
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: () => _playVideo(recordedClass),
+                          child: Container(
+                            width: 28,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.9),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.play_arrow,
+                              color: primaryColor,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Content Section
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title Row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          recordedClass.recordedName,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: textColor,
+                            height: 1.2,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Action Icons
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          InkWell(
+                            onTap: () => _editRecordedClass(
+                              recordedClass,
+                              localizations,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.edit_outlined,
+                                color: primaryColor,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          InkWell(
+                            onTap: () => _deleteRecordedClass(
+                              recordedClass,
+                              localizations,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              child: const Icon(
+                                Icons.delete_outline,
+                                color: Colors.red,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  // Description (if available)
+                  if (recordedClass.recordedDescription.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      recordedClass.recordedDescription,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: subTextColor,
+                        height: 1.2,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+
+                  const SizedBox(height: 6),
+
+                  // Bottom Row - Date and Actions
+                  Row(
+                    children: [
+                      // Date
+                      Icon(Icons.access_time, size: 10, color: subTextColor),
+                      const SizedBox(width: 3),
+                      Text(
+                        recordedClass.formattedCreatedAt,
+                        style: TextStyle(fontSize: 10, color: subTextColor),
+                      ),
+
+                      const Spacer(),
+
+                      // Action Buttons
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Copy Link Button
+                          InkWell(
+                            onTap: () =>
+                                _copyVideoLink(recordedClass, localizations),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: primaryColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: primaryColor.withOpacity(0.3),
+                                  width: 0.5,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.link,
+                                    size: 10,
+                                    color: primaryColor,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    'Copy',
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      color: primaryColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          // Play Button
+                          InkWell(
+                            onTap: () => _playVideo(recordedClass),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: primaryColor,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.play_arrow,
+                                    size: 10,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  const Text(
+                                    'Play',
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(12),
-      child: Row(
+    );
+  }
+
+  Widget _buildCompactFallbackThumbnail(bool isDark) {
+    return Container(
+      width: 100,
+      height: 80,
+      color: isDark ? Colors.grey[800] : Colors.grey[200],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Compact Video Thumbnail
-          GestureDetector(
-            onTap: () => status == 'published' ? _playVideo(recording) : null,
-            child: Container(
-              width: 60,
-              height: 45,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.grey[300],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Stack(
-                  children: [
-                    Image.network(
-                      recording['thumbnail'],
-                      width: 60,
-                      height: 45,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[400],
-                          child: const Icon(
-                            Icons.video_library,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        );
-                      },
-                    ),
-                    if (status == 'published')
-                      const Center(
-                        child: Icon(
-                          Icons.play_circle_fill,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
+          Icon(
+            Icons.video_library_outlined,
+            size: 20,
+            color: isDark ? Colors.grey[600] : Colors.grey[400],
           ),
-
-          const SizedBox(width: 12),
-
-          // Video Details - Compact
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  recording['title'],
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: textColor,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-
-                const SizedBox(height: 4),
-
-                Text(
-                  recording['description'],
-                  style: TextStyle(fontSize: 11, color: subTextColor),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-
-                const SizedBox(height: 6),
-
-                Row(
-                  children: [
-                    Icon(Icons.access_time, size: 11, color: subTextColor),
-                    const SizedBox(width: 3),
-                    Text(
-                      showMeta ? meta.formattedDuration : '--:--',
-                      style: TextStyle(fontSize: 10, color: subTextColor),
-                    ),
-                    const SizedBox(width: 12),
-                    Icon(Icons.sd_storage, size: 11, color: subTextColor),
-                    const SizedBox(width: 3),
-                    Text(
-                      showMeta ? meta.formattedSize : '--',
-                      style: TextStyle(fontSize: 10, color: subTextColor),
-                    ),
-                    const Spacer(),
-                    Text(
-                      recording['uploadDate'],
-                      style: TextStyle(fontSize: 10, color: subTextColor),
-                    ),
-                  ],
-                ),
-                if (meta != null && !meta.isValid && meta.error != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4.0),
-                    child: Text(
-                      localizations.metadataError(meta.error!),
-                      style: TextStyle(fontSize: 10, color: Colors.red),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-              ],
+          const SizedBox(height: 3),
+          Text(
+            'Video',
+            style: TextStyle(
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
+              fontSize: 8,
             ),
-          ),
-
-          const SizedBox(width: 8),
-
-          // Action Buttons - Compact
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: 70,
-                height: 28,
-                child: ElevatedButton(
-                  onPressed: () => _editRecording(recording, localizations),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  child: Text(
-                    localizations.edit,
-                    style: TextStyle(fontSize: 11, color: Colors.white),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 4),
-              SizedBox(
-                width: 70,
-                height: 28,
-                child: OutlinedButton(
-                  onPressed: () => _deleteRecording(recording, localizations),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.red,
-                    side: const BorderSide(color: Colors.red, width: 1),
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  child: Text(
-                    localizations.delete,
-                    style: TextStyle(fontSize: 11),
-                  ),
-                ),
-              ),
-            ],
           ),
         ],
       ),
@@ -553,23 +460,30 @@ class _InstructorRecordedClassesTabState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.video_library_outlined,
-            size: 64,
-            color: isDark ? Colors.grey[600] : Colors.grey[400],
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: primaryColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.video_library_outlined,
+              size: 48,
+              color: primaryColor.withOpacity(0.7),
+            ),
           ),
           const SizedBox(height: 16),
           Text(
             localizations.noRecordedVideosYet,
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: isDark ? Colors.grey[400] : Colors.grey[600],
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.grey[300] : Colors.grey[700],
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            localizations.uploadYourFirstRecordedClass,
+            'Tap "Add Record Class" to get started',
             style: TextStyle(
               fontSize: 12,
               color: isDark ? Colors.grey[500] : Colors.grey[500],
@@ -580,67 +494,334 @@ class _InstructorRecordedClassesTabState
     );
   }
 
-  void _playVideo(Map<String, dynamic> recording) {
-    final localizations = AppLocalizations.of(context)!;
+  void _showAddVideoLinkDialog(AppLocalizations localizations) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final titleController = TextEditingController();
+    final descriptionController = TextEditingController();
+    final linkController = TextEditingController();
 
-    // Show loading dialog
     showDialog(
       context: context,
-      barrierDismissible: false,
       builder: (BuildContext context) {
-        return Center(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Color(0xFF7A54FF),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  localizations.loadingVideoPlayer,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
+        return AlertDialog(
+          backgroundColor: isDark ? Colors.grey[850] : Colors.white,
+          title: Text(
+            'Add Record Class',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+              fontSize: 16, // Reduced from 18
+              fontWeight: FontWeight.bold,
             ),
           ),
+          content: SizedBox(
+            width: double.maxFinite,
+            height:
+                MediaQuery.of(context).size.height * 0.45, // Reduced from 0.5
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Video Link Input
+                  TextField(
+                    controller: linkController,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontSize: 13, // Reduced from default
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'Video Link (Required)',
+                      hintText:
+                          'https://youtube.com/watch?v=... or https://example.com/video.mp4',
+                      labelStyle: TextStyle(
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        fontSize: 12, // Reduced from default
+                      ),
+                      hintStyle: TextStyle(
+                        color: isDark ? Colors.grey[500] : Colors.grey[500],
+                        fontSize: 11, // Reduced from 12
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Color(0xFF7A54FF)),
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.link,
+                        color: Color(0xFF7A54FF),
+                        size: 18, // Reduced icon size
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 12,
+                      ), // Reduced padding
+                    ),
+                  ),
+                  const SizedBox(height: 12), // Reduced from 16
+                  // Title Input
+                  TextField(
+                    controller: titleController,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontSize: 13, // Reduced from default
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'Video Title (Required)',
+                      labelStyle: TextStyle(
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        fontSize: 12, // Reduced from default
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Color(0xFF7A54FF)),
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.title,
+                        color: Color(0xFF7A54FF),
+                        size: 18, // Reduced icon size
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 12,
+                      ), // Reduced padding
+                    ),
+                  ),
+                  const SizedBox(height: 12), // Reduced from 16
+                  // Description Input
+                  TextField(
+                    controller: descriptionController,
+                    maxLines: 2, // Reduced from 3
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontSize: 13, // Reduced from default
+                    ),
+                    decoration: InputDecoration(
+                      labelText: localizations.description,
+                      labelStyle: TextStyle(
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        fontSize: 12, // Reduced from default
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Color(0xFF7A54FF)),
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.description,
+                        color: Color(0xFF7A54FF),
+                        size: 18, // Reduced icon size
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 12,
+                      ), // Reduced padding
+                    ),
+                  ),
+                  const SizedBox(height: 10), // Reduced from 12
+                  // Help Text
+                  Container(
+                    padding: const EdgeInsets.all(10), // Reduced from 12
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF7A54FF).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: const Color(0xFF7A54FF).withOpacity(0.3),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Supported Video Sources',
+                          style: TextStyle(
+                            fontSize: 11, // Reduced from 12
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF7A54FF),
+                          ),
+                        ),
+                        const SizedBox(height: 3), // Reduced from 4
+                        Text(
+                          'YouTube, Vimeo, Dailymotion, or direct video file links (.mp4, .mov, .avi, etc.)\nThumbnails are automatically generated from video sources.',
+                          style: TextStyle(
+                            fontSize: 10, // Reduced from 11
+                            color: isDark ? Colors.grey[300] : Colors.grey[700],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                localizations.cancel,
+                style: TextStyle(
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _addVideoLink(
+                  linkController.text,
+                  titleController.text,
+                  descriptionController.text,
+                  localizations,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF7A54FF),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ), // Reduced padding
+              ),
+              child: const Text(
+                'Add Record Class',
+                style: TextStyle(fontSize: 13), // Reduced from default
+              ),
+            ),
+          ],
         );
       },
     );
-
-    // Close loading dialog and open video player
-    Future.delayed(const Duration(milliseconds: 800), () {
-      Navigator.of(context).pop(); // Close loading dialog
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => InstructorRecordClassVideoPlayer(
-            videoUrl: recording['videoUrl'],
-            title: recording['title'],
-            thumbnail: recording['thumbnail'] ?? '',
-            duration: recording['duration'],
-          ),
-        ),
-      );
-    });
   }
 
-  void _editRecording(
-    Map<String, dynamic> recording,
+  void _addVideoLink(
+    String videoLink,
+    String title,
+    String description,
+    AppLocalizations localizations,
+  ) async {
+    if (videoLink.isEmpty || title.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizations.fillAllRequiredFields),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Validate URL format
+    if (!_isValidVideoUrl(videoLink)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please enter a valid video URL'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    Navigator.of(context).pop();
+
+    final recordedClassProvider = context.read<RecordedClassProvider>();
+    final courseId = widget.course['id']?.toString();
+
+    if (courseId != null) {
+      final success = await recordedClassProvider.addVideoLink(
+        courseId: courseId,
+        recordedName: title,
+        recordedDescription: description,
+        videoLink: videoLink,
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              success
+                  ? 'Video link added successfully!'
+                  : recordedClassProvider.error ?? 'Failed to add video',
+            ),
+            backgroundColor: success ? Colors.green : Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  bool _isValidVideoUrl(String url) {
+    try {
+      final uri = Uri.parse(url);
+
+      // Check if it's a valid URL with http/https scheme
+      if (!uri.hasScheme ||
+          (!url.startsWith('http://') && !url.startsWith('https://'))) {
+        return false;
+      }
+
+      // Check for supported video sources
+      final host = uri.host.toLowerCase();
+
+      // YouTube URLs (multiple formats)
+      if (host.contains('youtube.com') ||
+          host.contains('youtu.be') ||
+          host.contains('youtube-nocookie.com') ||
+          host.contains('m.youtube.com')) {
+        return true;
+      }
+
+      // Vimeo URLs
+      if (host.contains('vimeo.com') || host.contains('player.vimeo.com')) {
+        return true;
+      }
+
+      // Dailymotion URLs
+      if (host.contains('dailymotion.com') || host.contains('dai.ly')) {
+        return true;
+      }
+
+      // Twitch URLs
+      if (host.contains('twitch.tv') || host.contains('clips.twitch.tv')) {
+        return true;
+      }
+
+      // Direct video file URLs (check file extension)
+      final path = uri.path.toLowerCase();
+      if (path.endsWith('.mp4') ||
+          path.endsWith('.mov') ||
+          path.endsWith('.avi') ||
+          path.endsWith('.mkv') ||
+          path.endsWith('.webm') ||
+          path.endsWith('.m4v') ||
+          path.endsWith('.flv') ||
+          path.endsWith('.3gp') ||
+          path.endsWith('.wmv') ||
+          path.endsWith('.ogv')) {
+        return true;
+      }
+
+      // If it's a valid URL but not a recognized video platform,
+      // still allow it (might be a custom video hosting)
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  void _editRecordedClass(
+    RecordedClass recordedClass,
     AppLocalizations localizations,
   ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final titleController = TextEditingController(text: recording['title']);
+    final titleController = TextEditingController(
+      text: recordedClass.recordedName,
+    );
     final descriptionController = TextEditingController(
-      text: recording['description'],
+      text: recordedClass.recordedDescription,
     );
 
     showDialog(
@@ -710,26 +891,12 @@ class _InstructorRecordedClassesTabState
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  final index = _recordings.indexWhere(
-                    (r) => r['id'] == recording['id'],
-                  );
-                  if (index != -1) {
-                    _recordings[index]['title'] = titleController.text;
-                    _recordings[index]['description'] =
-                        descriptionController.text;
-                  }
-                });
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(localizations.videoUpdatedSuccessfully),
-                    backgroundColor: Colors.green,
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              },
+              onPressed: () => _updateRecordedClass(
+                recordedClass.id,
+                titleController.text,
+                descriptionController.text,
+                localizations,
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF7A54FF),
                 foregroundColor: Colors.white,
@@ -742,8 +909,37 @@ class _InstructorRecordedClassesTabState
     );
   }
 
-  void _deleteRecording(
-    Map<String, dynamic> recording,
+  void _updateRecordedClass(
+    String recordedClassId,
+    String title,
+    String description,
+    AppLocalizations localizations,
+  ) async {
+    Navigator.of(context).pop();
+
+    final recordedClassProvider = context.read<RecordedClassProvider>();
+    final success = await recordedClassProvider.updateRecordedClass(
+      recordedClassId: recordedClassId,
+      recordedName: title,
+      recordedDescription: description,
+    );
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            success
+                ? 'Video updated successfully!'
+                : recordedClassProvider.error ?? 'Failed to update video',
+          ),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _deleteRecordedClass(
+    RecordedClass recordedClass,
     AppLocalizations localizations,
   ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -781,7 +977,7 @@ class _InstructorRecordedClassesTabState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      recording['title'],
+                      recordedClass.recordedName,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: isDark ? Colors.white : Colors.black,
@@ -789,7 +985,7 @@ class _InstructorRecordedClassesTabState
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${recording['views']} views • ${recording['uploadDate']}',
+                      recordedClass.formattedCreatedAt,
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -801,7 +997,7 @@ class _InstructorRecordedClassesTabState
               const SizedBox(height: 12),
               Text(
                 localizations.thisActionCannotBeUndone,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   color: Colors.red,
                   fontWeight: FontWeight.w500,
@@ -820,21 +1016,8 @@ class _InstructorRecordedClassesTabState
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _recordings.removeWhere((r) => r['id'] == recording['id']);
-                });
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      localizations.videoDeleted(recording['title']),
-                    ),
-                    backgroundColor: Colors.red,
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              },
+              onPressed: () =>
+                  _confirmDeleteRecordedClass(recordedClass.id, localizations),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
@@ -847,264 +1030,67 @@ class _InstructorRecordedClassesTabState
     );
   }
 
-  void _showUploadDialog() {
-    final localizations = AppLocalizations.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final titleController = TextEditingController();
-    final descriptionController = TextEditingController();
-    String selectedFile = '';
+  void _confirmDeleteRecordedClass(
+    String recordedClassId,
+    AppLocalizations localizations,
+  ) async {
+    Navigator.of(context).pop();
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              backgroundColor: isDark ? Colors.grey[850] : Colors.white,
-              title: Text(
-                localizations.uploadNewVideoDialog,
-                style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black,
-                  fontSize: 18,
-                ),
-              ),
-              content: SizedBox(
-                width: double.maxFinite,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // File Selection Area
-                    GestureDetector(
-                      onTap: () async {
-                        // Simulate file picker
-                        setState(() {
-                          selectedFile =
-                              'recorded_lesson_${DateTime.now().millisecondsSinceEpoch}.mp4';
-                        });
+    final recordedClassProvider = context.read<RecordedClassProvider>();
+    final success = await recordedClassProvider.deleteRecordedClass(
+      recordedClassId,
+    );
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              localizations.fileSelected(selectedFile),
-                            ),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: selectedFile.isEmpty
-                                ? (isDark
-                                      ? Colors.grey[600]!
-                                      : Colors.grey[300]!)
-                                : Color(0xFF7A54FF),
-                            width: 2,
-                            style: BorderStyle.solid,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                          color: selectedFile.isEmpty
-                              ? null
-                              : Color(0xFF7A54FF).withOpacity(0.1),
-                        ),
-                        child: Column(
-                          children: [
-                            Icon(
-                              selectedFile.isEmpty
-                                  ? Icons.upload_file
-                                  : Icons.check_circle,
-                              size: 32,
-                              color: selectedFile.isEmpty
-                                  ? (isDark
-                                        ? Colors.grey[600]
-                                        : Colors.grey[400])
-                                  : Color(0xFF7A54FF),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              selectedFile.isEmpty
-                                  ? localizations.tapToSelectVideoFile
-                                  : localizations.fileSelectedPrefix(
-                                      selectedFile,
-                                    ),
-                              style: TextStyle(
-                                color: selectedFile.isEmpty
-                                    ? (isDark
-                                          ? Colors.grey[500]
-                                          : Colors.grey[600])
-                                    : (isDark ? Colors.white : Colors.black),
-                                fontSize: 12,
-                                fontWeight: selectedFile.isEmpty
-                                    ? FontWeight.normal
-                                    : FontWeight.w500,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            success
+                ? 'Video deleted successfully!'
+                : recordedClassProvider.error ?? 'Failed to delete video',
+          ),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
+    }
+  }
 
-                    const SizedBox(height: 16),
-
-                    // Title Input
-                    TextField(
-                      controller: titleController,
-                      decoration: InputDecoration(
-                        labelText: localizations.videoTitleRequired,
-                        labelStyle: TextStyle(
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF7A54FF),
-                          ),
-                        ),
-                      ),
-                      style: TextStyle(
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // Description Input
-                    TextField(
-                      controller: descriptionController,
-                      maxLines: 2,
-                      decoration: InputDecoration(
-                        labelText: localizations.description,
-                        labelStyle: TextStyle(
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF7A54FF),
-                          ),
-                        ),
-                      ),
-                      style: TextStyle(
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(
-                    localizations.cancel,
-                    style: TextStyle(
-                      color: isDark ? Colors.grey[400] : Colors.grey[600],
-                    ),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed:
-                      selectedFile.isNotEmpty && titleController.text.isNotEmpty
-                      ? () {
-                          _uploadVideo(
-                            selectedFile,
-                            titleController.text,
-                            descriptionController.text,
-                            localizations,
-                          );
-                          Navigator.of(context).pop();
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7A54FF),
-                    foregroundColor: Colors.white,
-                  ),
-                  child: Text(localizations.uploadButton),
-                ),
-              ],
-            );
-          },
-        );
-      },
+  void _playVideo(RecordedClass recordedClass) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => InstructorRecordClassVideoPlayer(
+          videoUrl: recordedClass.recordedLink,
+          title: recordedClass.recordedName,
+        ),
+      ),
     );
   }
 
-  void _uploadVideo(
-    String fileName,
-    String title,
-    String description,
+  void _copyVideoLink(
+    RecordedClass recordedClass,
     AppLocalizations localizations,
-  ) {
-    final List<String> sampleVideoUrls = [
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
-    ];
-
-    final now = DateTime.now();
-    final newRecording = {
-      'id': 'recording_${now.millisecondsSinceEpoch}',
-      'title': title,
-      'description': description.isNotEmpty
-          ? description
-          : 'Recorded class video',
-      'duration': '00:00',
-      'uploadDate': now.toString().split(' ')[0],
-      'uploadTime':
-          '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
-      'views': 0,
-      'fileSize': '0 MB',
-      'format': 'MP4',
-      'thumbnail':
-          'https://picsum.photos/300/200?random=${_recordings.length + 20}',
-      'videoUrl': sampleVideoUrls[_recordings.length % sampleVideoUrls.length],
-      'status': 'processing',
-    };
-
-    setState(() {
-      _recordings.insert(0, newRecording); // Add to top (newest first)
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(localizations.uploadingVideo(title)),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-
-    // Simulate processing completion
-    Future.delayed(const Duration(seconds: 3), () {
+  ) async {
+    try {
+      await Clipboard.setData(ClipboardData(text: recordedClass.recordedLink));
       if (mounted) {
-        setState(() {
-          final index = _recordings.indexWhere(
-            (r) => r['id'] == newRecording['id'],
-          );
-          if (index != -1) {
-            _recordings[index]['status'] = 'published';
-            _recordings[index]['duration'] =
-                '${(15 + (index * 3))}:${(30 + (index * 5)).toString().padLeft(2, '0')}';
-            _recordings[index]['fileSize'] = '${200 + (index * 30)} MB';
-          }
-        });
-
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(localizations.videoPublishedSuccessfully(title)),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
+            content: Text('Video link copied to clipboard!'),
+            backgroundColor: const Color(0xFF7A54FF),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
-    });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to copy link'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
   }
 }

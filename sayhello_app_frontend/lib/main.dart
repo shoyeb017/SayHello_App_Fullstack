@@ -13,6 +13,7 @@ import 'l10n/app_localizations.dart';
 import 'providers/instructor_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/session_provider.dart';
+import 'providers/recorded_class_provider.dart';
 
 import 'screens/auth/landing_page.dart';
 import 'screens/permissions/permission_wrapper.dart';
@@ -56,6 +57,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => InstructorProvider()),
         ChangeNotifierProvider(create: (_) => CourseProvider()),
         ChangeNotifierProvider(create: (_) => SessionProvider()),
+        ChangeNotifierProvider(create: (_) => RecordedClassProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: const MyApp(),

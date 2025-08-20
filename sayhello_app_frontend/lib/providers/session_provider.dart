@@ -113,7 +113,7 @@ class SessionProvider extends ChangeNotifier {
         default:
           platformEnum = 'zoom'; // Default fallback
       }
-      
+
       print('Platform mapping: "$platform" -> "$platformEnum"');
 
       final newSession = CourseSession(
@@ -181,7 +181,7 @@ class SessionProvider extends ChangeNotifier {
         default:
           platformEnum = 'zoom'; // Default fallback
       }
-      
+
       print('Update platform mapping: "$platform" -> "$platformEnum"');
 
       final updates = {

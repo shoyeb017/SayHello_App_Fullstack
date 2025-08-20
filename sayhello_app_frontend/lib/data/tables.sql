@@ -169,8 +169,6 @@ CREATE TABLE recorded_classes (
     course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
     recorded_name TEXT,
     recorded_description TEXT,
-    recorded_duration TEXT,
-    recorded_size TEXT,
     recorded_link TEXT,
     created_at TIMESTAMP DEFAULT NOW()
 );
