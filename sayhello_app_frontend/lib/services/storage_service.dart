@@ -21,20 +21,29 @@ class StorageService {
     try {
       // Check if buckets exist
       final buckets = await _supabase.storage.listBuckets();
+      print(
+        'StorageService: Available buckets: ${buckets.map((b) => b.id).toList()}',
+      );
 
       // Initialize profile bucket
       if (!buckets.any((b) => b.id == profileBucket)) {
-        await _supabase.storage.createBucket(profileBucket);
-        print('Created profile_pics bucket');
+        print('StorageService: profile_pics bucket not found');
+        // await _supabase.storage.createBucket(profileBucket);
+        // print('Created profile_pics bucket');
+      } else {
+        print('StorageService: profile_pics bucket exists');
       }
 
       // Initialize course bucket
       if (!buckets.any((b) => b.id == courseBucket)) {
-        await _supabase.storage.createBucket(courseBucket);
-        print('Created course_thumbnails bucket');
+        print('StorageService: course_thumbnails bucket not found');
+        // await _supabase.storage.createBucket(courseBucket);
+        // print('Created course_thumbnails bucket');
+      } else {
+        print('StorageService: course_thumbnails bucket exists');
       }
     } catch (e) {
-      print('Error initializing storage: $e');
+      print('StorageService: Error initializing storage: $e');
       rethrow;
     }
   }
@@ -98,13 +107,19 @@ class StorageService {
   /// Upload course thumbnail
   Future<String> uploadCourseThumbnail(File imageFile, String courseId) async {
     try {
+      print('StorageService: Starting upload for course $courseId');
+      print('StorageService: File path: ${imageFile.path}');
+      print('StorageService: File exists: ${await imageFile.exists()}');
+
       _validateFile(imageFile);
 
       // Generate unique filename using course ID and UUID
       final extension = path.extension(imageFile.path).toLowerCase();
       final fileName = 'course_${courseId}_${_uuid.v4()}$extension';
+      print('StorageService: Generated filename: $fileName');
 
       // Upload to Supabase Storage
+      print('StorageService: Uploading to bucket: $courseBucket');
       await _supabase.storage
           .from(courseBucket)
           .upload(
@@ -120,14 +135,15 @@ class StorageService {
       final imageUrl = _supabase.storage
           .from(courseBucket)
           .getPublicUrl(fileName);
-      print('Uploaded course thumbnail: $imageUrl');
+      print('StorageService: Upload successful, URL: $imageUrl');
 
       return imageUrl;
     } on StorageException catch (e) {
-      print('Storage error: ${e.message}');
+      print('StorageService: Storage error: ${e.message}');
+      print('StorageService: Error details: ${e.toString()}');
       throw Exception('Failed to upload course thumbnail: ${e.message}');
     } catch (e) {
-      print('Upload error: $e');
+      print('StorageService: Upload error: $e');
       throw Exception('Failed to upload course thumbnail: $e');
     }
   }

@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../../l10n/app_localizations.dart';
+import '../../../../../models/instructor.dart';
+import '../../../../../models/course.dart';
+import '../../../../../providers/auth_provider.dart';
+import '../../../../../providers/course_provider.dart';
+import '../../../../../providers/instructor_provider.dart';
+import '../../../../../providers/settings_provider.dart';
 import 'instructor_course_portal.dart';
 import '../Revenue/revenue_page.dart';
-import '../../../../../providers/settings_provider.dart';
 
 class InstructorHomePage extends StatefulWidget {
   const InstructorHomePage({super.key});
@@ -15,157 +21,29 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String _selectedStatusFilter = 'All';
-
-  // Instructor name and profile data
-  final String instructorName = "John Doe";
-  final String instructorProfileImage = "";
-
   // Status filter options - will be initialized with localized values
   List<String> _statusFilters = [];
 
-  // Dynamic course data with dates for status calculation - English Language Learning Courses
-  final List<Map<String, dynamic>> _allCourses = [
-    {
-      'id': 'course_001',
-      'title': 'English Grammar Fundamentals',
-      'description':
-          'Master English grammar from basics to advanced levels with practical exercises',
-      'enrolledStudents': 65,
-      'totalSessions': 20,
-      'completedSessions': 12,
-      'rating': 4.8,
-      'price': 149.99,
-      'icon': Icons.menu_book,
-      'thumbnail': '',
-      'category': 'Grammar',
-      'level': 'Beginner',
-      'startDate': '2025-07-15',
-      'endDate': '2025-09-15',
-      'duration': '8 weeks',
-    },
-    {
-      'id': 'course_002',
-      'title': 'Business English Communication',
-      'description':
-          'Professional English skills for workplace communication and presentations',
-      'enrolledStudents': 42,
-      'totalSessions': 16,
-      'completedSessions': 8,
-      'rating': 4.7,
-      'price': 199.99,
-      'icon': Icons.business,
-      'thumbnail': '',
-      'category': 'Business English',
-      'level': 'Intermediate',
-      'startDate': '2025-08-10',
-      'endDate': '2025-10-05',
-      'duration': '8 weeks',
-    },
-    {
-      'id': 'course_003',
-      'title': 'IELTS Preparation Course',
-      'description':
-          'Comprehensive IELTS exam preparation with practice tests and strategies',
-      'enrolledStudents': 89,
-      'totalSessions': 24,
-      'completedSessions': 24,
-      'rating': 4.9,
-      'price': 249.99,
-      'icon': Icons.quiz,
-      'thumbnail': '',
-      'category': 'Test Preparation',
-      'level': 'Advanced',
-      'startDate': '2025-04-01',
-      'endDate': '2025-06-15',
-      'duration': '10 weeks',
-    },
-    {
-      'id': 'course_004',
-      'title': 'English Speaking & Pronunciation',
-      'description':
-          'Improve your English speaking skills and master pronunciation techniques',
-      'enrolledStudents': 73,
-      'totalSessions': 18,
-      'completedSessions': 18,
-      'rating': 4.8,
-      'price': 179.99,
-      'icon': Icons.record_voice_over,
-      'thumbnail': '',
-      'category': 'Speaking',
-      'level': 'Intermediate',
-      'startDate': '2025-05-01',
-      'endDate': '2025-07-15',
-      'duration': '10 weeks',
-    },
-    {
-      'id': 'course_005',
-      'title': 'Academic Writing Skills',
-      'description':
-          'Master academic writing for essays, research papers, and dissertations',
-      'enrolledStudents': 56,
-      'totalSessions': 20,
-      'completedSessions': 20,
-      'rating': 4.6,
-      'price': 169.99,
-      'icon': Icons.edit,
-      'thumbnail': '',
-      'category': 'Writing',
-      'level': 'Advanced',
-      'startDate': '2025-03-15',
-      'endDate': '2025-05-30',
-      'duration': '11 weeks',
-    },
-    {
-      'id': 'course_006',
-      'title': 'English for Travel & Tourism',
-      'description':
-          'Essential English phrases and vocabulary for travelers and tourism professionals',
-      'enrolledStudents': 34,
-      'totalSessions': 12,
-      'completedSessions': 5,
-      'rating': 4.5,
-      'price': 99.99,
-      'icon': Icons.flight,
-      'thumbnail': '',
-      'category': 'Travel English',
-      'level': 'Beginner',
-      'startDate': '2025-08-20',
-      'endDate': '2025-10-20',
-      'duration': '6 weeks',
-    },
-    {
-      'id': 'course_007',
-      'title': 'Advanced English Literature',
-      'description':
-          'Explore classic and contemporary English literature with critical analysis',
-      'enrolledStudents': 0,
-      'totalSessions': 22,
-      'completedSessions': 0,
-      'rating': 0.0,
-      'price': 199.99,
-      'icon': Icons.library_books,
-      'thumbnail': '',
-      'category': 'Literature',
-      'level': 'Advanced',
-      'startDate': '2025-09-01',
-      'endDate': '2025-11-15',
-      'duration': '12 weeks',
-    },
-  ];
+  // Get all courses from the CourseProvider
+  List<Course> get _allCourses {
+    final courseProvider = Provider.of<CourseProvider>(context);
+
+    // Log provider state
+    print(
+      'CourseProvider state - loading: ${courseProvider.isLoading}, error: ${courseProvider.error}',
+    );
+    print('Loaded courses: ${courseProvider.courses.length}');
+
+    return courseProvider.courses;
+  }
 
   // Method to calculate course status based on dates
-  String _getCourseStatus(Map<String, dynamic> course) {
+  String _getCourseStatus(Course course) {
     final now = DateTime.now();
-    final startDate = DateTime.tryParse(course['startDate'] ?? '');
-    final endDate = DateTime.tryParse(course['endDate'] ?? '');
 
-    if (startDate == null || endDate == null) {
-      return 'active'; // Default status if dates are missing
-    }
-
-    if (now.isBefore(startDate)) {
+    if (now.isBefore(course.startDate)) {
       return 'upcoming';
-    } else if (now.isAfter(endDate)) {
+    } else if (now.isAfter(course.endDate)) {
       return 'expired';
     } else {
       return 'active';
@@ -173,11 +51,11 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   }
 
   // Get courses by status for sections
-  List<Map<String, dynamic>> get _upcomingCourses {
+  List<Course> get _upcomingCourses {
     final localizations = AppLocalizations.of(context)!;
     if (_selectedStatusFilter == localizations.all ||
         _selectedStatusFilter == localizations.upcoming) {
-      List<Map<String, dynamic>> courses = _allCourses
+      List<Course> courses = _allCourses
           .where((course) => _getCourseStatus(course) == 'upcoming')
           .toList();
       return _applySearchFilter(courses);
@@ -185,11 +63,11 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
     return [];
   }
 
-  List<Map<String, dynamic>> get _activeCourses {
+  List<Course> get _activeCourses {
     final localizations = AppLocalizations.of(context)!;
     if (_selectedStatusFilter == localizations.all ||
         _selectedStatusFilter == localizations.active) {
-      List<Map<String, dynamic>> courses = _allCourses
+      List<Course> courses = _allCourses
           .where((course) => _getCourseStatus(course) == 'active')
           .toList();
       return _applySearchFilter(courses);
@@ -197,11 +75,11 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
     return [];
   }
 
-  List<Map<String, dynamic>> get _expiredCourses {
+  List<Course> get _expiredCourses {
     final localizations = AppLocalizations.of(context)!;
     if (_selectedStatusFilter == localizations.all ||
         _selectedStatusFilter == localizations.expired) {
-      List<Map<String, dynamic>> courses = _allCourses
+      List<Course> courses = _allCourses
           .where((course) => _getCourseStatus(course) == 'expired')
           .toList();
       return _applySearchFilter(courses);
@@ -210,9 +88,9 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   }
 
   // Get all filtered courses for when a specific status is selected
-  List<Map<String, dynamic>> get _filteredCourses {
+  List<Course> get _filteredCourses {
     final localizations = AppLocalizations.of(context)!;
-    List<Map<String, dynamic>> courses = _allCourses;
+    List<Course> courses = _allCourses;
 
     // Apply status filter
     if (_selectedStatusFilter != localizations.all) {
@@ -234,20 +112,15 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   }
 
   // Apply search filter to course list
-  List<Map<String, dynamic>> _applySearchFilter(
-    List<Map<String, dynamic>> courses,
-  ) {
+  List<Course> _applySearchFilter(List<Course> courses) {
     if (_searchQuery.isEmpty) return courses;
 
     return courses.where((course) {
-      final title = course['title'].toString().toLowerCase();
-      final description = course['description'].toString().toLowerCase();
-      final category = course['category'].toString().toLowerCase();
+      final title = course.title.toLowerCase();
+      final description = course.description.toLowerCase();
       final query = _searchQuery.toLowerCase();
 
-      return title.contains(query) ||
-          description.contains(query) ||
-          category.contains(query);
+      return title.contains(query) || description.contains(query);
     }).toList();
   }
 
@@ -259,7 +132,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
     int expiredCourses = 0;
 
     for (var course in _allCourses) {
-      totalStudents += course['enrolledStudents'] as int;
+      totalStudents += 0; // TODO: Add enrolledStudents to Course model
       final status = _getCourseStatus(course);
       if (status == 'active') activeCourses++;
       if (status == 'upcoming') upcomingCourses++;
@@ -282,6 +155,19 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
       setState(() {
         _searchQuery = _searchController.text;
       });
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = context.read<AuthProvider>();
+      final courseProvider = context.read<CourseProvider>();
+      final instructorProvider = context.read<InstructorProvider>();
+
+      if (authProvider.currentUser != null &&
+          authProvider.currentUser is Instructor) {
+        courseProvider.loadInstructorCourses(authProvider.currentUser!.id);
+        // Load the current instructor data
+        instructorProvider.loadInstructorById(authProvider.currentUser!.id);
+      }
     });
   }
 
@@ -307,55 +193,101 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
       _selectedStatusFilter = localizations.all;
     }
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(52),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          scrolledUnderElevation: 0,
-          title: Row(
-            children: [
-              // Revenue/Analytics Icon
-              IconButton(
-                icon: const Icon(Icons.analytics),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const InstructorRevenuePage(),
-                    ),
-                  );
-                },
-                tooltip: localizations.analytics,
-              ),
+    return Consumer3<AuthProvider, CourseProvider, InstructorProvider>(
+      builder: (context, authProvider, courseProvider, instructorProvider, _) {
+        // Show loading state
+        if (courseProvider.isLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
-              Expanded(
-                child: Text(
-                  localizations.myCourses,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                    color: isDark ? Colors.white : Colors.black,
+        // Show error state if any
+        if (courseProvider.error != null) {
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: Colors.red.withOpacity(0.8),
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Failed to load courses',
+                    style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () {
+                      if (authProvider.currentUser != null) {
+                        courseProvider.loadInstructorCourses(
+                          authProvider.currentUser!.id,
+                        );
+                      }
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
               ),
+            ),
+          );
+        }
 
-              // Settings Icon
-              IconButton(
-                icon: Icon(
-                  Icons.settings,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-                onPressed: () =>
-                    SettingsProvider.showSettingsBottomSheet(context),
+        // Main content
+        return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(52),
+            child: AppBar(
+              automaticallyImplyLeading: false,
+              scrolledUnderElevation: 0,
+              title: Row(
+                children: [
+                  // Revenue/Analytics Icon
+                  IconButton(
+                    icon: const Icon(Icons.analytics),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const InstructorRevenuePage(),
+                        ),
+                      );
+                    },
+                    tooltip: localizations.analytics,
+                  ),
+
+                  Expanded(
+                    child: Text(
+                      localizations.myCourses,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  ),
+
+                  // Settings Icon
+                  IconButton(
+                    icon: Icon(
+                      Icons.settings,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                    onPressed: () =>
+                        SettingsProvider.showSettingsBottomSheet(context),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-      body: SafeArea(child: _buildMainContent(isDark)),
+          body: SafeArea(child: _buildMainContent(isDark)),
+        );
+      },
     );
   }
 
@@ -405,6 +337,8 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
 
   Widget _buildGreetingHeader(bool isDark) {
     final localizations = AppLocalizations.of(context)!;
+    final instructorProvider = context.watch<InstructorProvider>();
+    final instructor = instructorProvider.currentInstructor;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -423,7 +357,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  instructorName,
+                  instructor?.name ?? 'Instructor',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -448,10 +382,10 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                 ),
               ],
             ),
-            child: instructorProfileImage.isNotEmpty
+            child: instructor?.profileImage != null
                 ? ClipOval(
                     child: Image.network(
-                      instructorProfileImage,
+                      instructor!.profileImage!,
                       fit: BoxFit.cover,
                     ),
                   )
@@ -914,12 +848,11 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
   }
 
   Widget _buildCourseCard(
-    Map<String, dynamic> course,
+    Course course,
     bool isDark, {
     bool isHorizontal = false,
   }) {
     final status = _getCourseStatus(course);
-    final progress = course['completedSessions'] / course['totalSessions'];
     final localizations = AppLocalizations.of(context)!;
 
     if (isHorizontal) {
@@ -964,7 +897,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                   children: [
                     Center(
                       child: Icon(
-                        course['icon'] ?? Icons.school,
+                        Icons.school,
                         color: Colors.white,
                         size: 28, // Reduced icon size from 32 to 28
                       ),
@@ -988,7 +921,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        course['title'],
+                        course.title,
                         style: TextStyle(
                           fontSize: 13, // Slightly smaller font
                           fontWeight: FontWeight.bold,
@@ -1000,7 +933,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                       ),
                       const SizedBox(height: 3), // Reduced spacing
                       Text(
-                        '${course['enrolledStudents']} ${localizations.students}',
+                        '0 ${localizations.students}', // TODO: Add enrolledStudents to Course model
                         style: TextStyle(
                           fontSize: 11,
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -1012,7 +945,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                         children: [
                           Flexible(
                             child: Text(
-                              '\$${course['price'].toStringAsFixed(0)}',
+                              '\$${course.price.toStringAsFixed(0)}',
                               style: const TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
@@ -1021,27 +954,8 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          if (course['rating'] > 0)
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.star,
-                                  size: 12,
-                                  color: Colors.amber,
-                                ),
-                                const SizedBox(width: 2),
-                                Text(
-                                  course['rating'].toStringAsFixed(1),
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: isDark
-                                        ? Colors.grey[400]
-                                        : Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
+                          // TODO: Add rating to Course model
+                          // Rating UI removed until model is updated
                         ],
                       ),
                     ],
@@ -1089,7 +1003,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                     ),
                   ),
                   child: Icon(
-                    course['icon'] ?? Icons.school,
+                    Icons.school,
                     color: Colors.white,
                     size: 22, // Reduced icon size
                   ),
@@ -1105,7 +1019,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                         children: [
                           Expanded(
                             child: Text(
-                              course['title'],
+                              course.title,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -1122,7 +1036,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                       ),
                       const SizedBox(height: 3), // Reduced spacing
                       Text(
-                        course['description'],
+                        course.description,
                         style: TextStyle(
                           fontSize: 12,
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -1141,7 +1055,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
-                              '${course['enrolledStudents']} ${localizations.students}',
+                              '0 ${localizations.students}', // TODO: Add enrolledStudents to Course model
                               style: TextStyle(
                                 fontSize: 11,
                                 color: isDark
@@ -1151,28 +1065,9 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          if (course['rating'] > 0) ...[
-                            const Icon(
-                              Icons.star,
-                              size: 14,
-                              color: Colors.amber,
-                            ),
-                            const SizedBox(width: 2),
-                            Text(
-                              course['rating'].toStringAsFixed(1),
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: isDark
-                                    ? Colors.grey[400]
-                                    : Colors.grey[600],
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                          ],
                           const Spacer(),
                           Text(
-                            '\$${course['price'].toStringAsFixed(0)}',
+                            '\$${course.price.toStringAsFixed(0)}',
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -1181,26 +1076,6 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                           ),
                         ],
                       ),
-                      if (status == 'active' && progress > 0) ...[
-                        const SizedBox(height: 6), // Reduced spacing
-                        LinearProgressIndicator(
-                          value: progress,
-                          backgroundColor: isDark
-                              ? Colors.grey[700]
-                              : Colors.grey[300],
-                          valueColor: const AlwaysStoppedAnimation<Color>(
-                            Color(0xFF7A54FF),
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '${localizations.progress}: ${(progress * 100).toInt()}%',
-                          style: TextStyle(
-                            fontSize: 9, // Reduced font size
-                            color: isDark ? Colors.grey[400] : Colors.grey[600],
-                          ),
-                        ),
-                      ],
                     ],
                   ),
                 ),
@@ -1214,8 +1089,10 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
 
   Widget _buildStatusBadge(String status) {
     final localizations = AppLocalizations.of(context)!;
-    Color badgeColor;
-    String displayText;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    late Color badgeColor;
+    late String displayText;
 
     switch (status.toLowerCase()) {
       case 'upcoming':
@@ -1223,7 +1100,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
         displayText = localizations.upcoming;
         break;
       case 'active':
-        badgeColor = Colors.blue;
+        badgeColor = colorScheme.primary;
         displayText = localizations.active;
         break;
       case 'expired':
@@ -1253,11 +1130,26 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
     );
   }
 
-  void _navigateToCourse(Map<String, dynamic> course) {
+  void _navigateToCourse(Course course) {
+    Map<String, dynamic> courseData = {
+      'id': course.id,
+      'title': course.title,
+      'description': course.description,
+      'language': course.language,
+      'level': course.level,
+      'total_sessions': course.totalSessions,
+      'price': course.price,
+      'thumbnail_url': course.thumbnailUrl ?? '',
+      'start_date': course.startDate.toIso8601String(),
+      'end_date': course.endDate.toIso8601String(),
+      'status': course.status,
+      'instructor_id': course.instructorId,
+    };
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => InstructorCoursePortalPage(course: course),
+        builder: (context) => InstructorCoursePortalPage(course: courseData),
       ),
     );
   }

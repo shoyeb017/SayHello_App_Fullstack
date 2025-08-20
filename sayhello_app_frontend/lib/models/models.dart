@@ -4,6 +4,7 @@
 export 'learner.dart';
 export 'instructor.dart';
 export 'course.dart';
+export 'course_session.dart';
 export 'enrollment.dart';
 export 'course_portal.dart';
 export 'chat.dart';

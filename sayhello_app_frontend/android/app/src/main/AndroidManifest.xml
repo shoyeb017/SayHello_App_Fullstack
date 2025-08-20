@@ -68,5 +68,46 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- For url_launcher to work with web URLs -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+        <!-- For Zoom app integration -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="zoomus" />
+        </intent>
+        <!-- For Google Meet app integration -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="meet" />
+        </intent>
+        <!-- Additional Google Meet patterns -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" 
+                  android:host="meet.google.com" />
+        </intent>
+        <!-- Microsoft Teams integration -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="msteams" />
+        </intent>
+        <!-- General browser activity query -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="http" />
+        </intent>
     </queries>
 </manifest>

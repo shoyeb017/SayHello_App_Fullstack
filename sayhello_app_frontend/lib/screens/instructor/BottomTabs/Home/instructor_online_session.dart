@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:provider/provider.dart';
 import '../../../../../l10n/app_localizations.dart';
+import '../../../../../providers/session_provider.dart';
+import '../../../../../models/course_session.dart';
 
 class InstructorOnlineSessionTab extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -14,82 +17,29 @@ class InstructorOnlineSessionTab extends StatefulWidget {
 
 class _InstructorOnlineSessionTabState
     extends State<InstructorOnlineSessionTab> {
-  // Dynamic session data - replace with backend API later
-  List<Map<String, dynamic>> _sessions = [
-    {
-      'id': 'session_001',
-      'title': 'English Grammar Fundamentals',
-      'platform': 'Zoom',
-      'date': '2025-08-15',
-      'time': '6:00 PM',
-      'duration': '2 hours',
-      'link': 'https://zoom.us/j/1234567890',
-      'password': 'Grammar123',
-      'status': 'scheduled',
-      'attendees': 23,
-      'description':
-          'Master essential English grammar rules and sentence structures',
-    },
-    {
-      'id': 'session_002',
-      'title': 'Business English Communication',
-      'platform': 'Google Meet',
-      'date': '2025-08-20',
-      'time': '4:30 PM',
-      'duration': '1.5 hours',
-      'link': 'https://meet.google.com/abc-defg-hij',
-      'password': 'BizEng456',
-      'status': 'scheduled',
-      'attendees': 18,
-      'description':
-          'Professional English for workplace meetings and presentations',
-    },
-    {
-      'id': 'session_003',
-      'title': 'English Speaking & Pronunciation',
-      'platform': 'Zoom',
-      'date': '2025-07-20',
-      'time': '6:00 PM',
-      'duration': '2 hours',
-      'link': 'https://zoom.us/j/0987654321',
-      'password': 'Speak789',
-      'status': 'completed',
-      'attendees': 45,
-      'description':
-          'Interactive speaking practice with pronunciation techniques',
-    },
-    {
-      'id': 'session_004',
-      'title': 'IELTS Writing Task Preparation',
-      'platform': 'Google Meet',
-      'date': '2025-08-25',
-      'time': '5:00 PM',
-      'duration': '1.5 hours',
-      'link': 'https://meet.google.com/ielts-write-prep',
-      'password': 'IELTS2025',
-      'status': 'scheduled',
-      'attendees': 31,
-      'description':
-          'Master IELTS Task 1 and Task 2 writing strategies and techniques',
-    },
-    {
-      'id': 'session_005',
-      'title': 'English Conversation Practice',
-      'platform': 'Zoom',
-      'date': '2025-08-12',
-      'time': '3:00 PM',
-      'duration': '1 hour',
-      'link': 'https://zoom.us/j/conversation123',
-      'password': 'Talk2024',
-      'status': 'completed',
-      'attendees': 28,
-      'description':
-          'Casual English conversation practice for everyday situations',
-    },
-  ];
-
   // Track expanded state for each session
   Map<String, bool> _expandedSessions = {};
+
+  @override
+  void initState() {
+    super.initState();
+    // Use addPostFrameCallback to avoid calling provider during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadSessions();
+    });
+  }
+
+  /// Load sessions for this course
+  void _loadSessions() {
+    if (!mounted) return;
+
+    final sessionProvider = context.read<SessionProvider>();
+    final courseId = widget.course['id']?.toString();
+
+    if (courseId != null) {
+      sessionProvider.loadSessions(courseId);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,147 +49,158 @@ class _InstructorOnlineSessionTabState
     final textColor = isDark ? Colors.white : Colors.black;
     final subTextColor = isDark ? Colors.grey[400] : Colors.grey[600];
 
-    // Get session statistics
-    final totalSessions = _sessions.length;
-    final completedSessions = _sessions
-        .where((s) => s['status'] == 'completed')
-        .length;
-    final upcomingSessions = _sessions
-        .where((s) => s['status'] == 'scheduled')
-        .length;
+    return Consumer<SessionProvider>(
+      builder: (context, sessionProvider, child) {
+        final sessions = sessionProvider.sessions;
 
-    return Column(
-      children: [
-        // Add Session Button - More Visible
-        Container(
-          margin: const EdgeInsets.all(12),
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () => _showAddSessionDialog(localizations),
-              icon: const Icon(Icons.add_circle, color: Colors.white, size: 20),
-              label: Text(
-                localizations.scheduleNewSession,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 4,
-                shadowColor: primaryColor.withOpacity(0.3),
-              ),
-            ),
-          ),
-        ),
+        // Get session statistics
+        final totalSessions = sessions.length;
+        final completedSessions = sessions.where((s) => s.isCompleted).length;
+        final upcomingSessions = sessions.where((s) => s.isUpcoming).length;
 
-        // Compact Header Stats
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 12),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                primaryColor.withOpacity(0.1),
-                primaryColor.withOpacity(0.05),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: primaryColor.withOpacity(0.2)),
-          ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.video_camera_front, color: primaryColor, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    localizations.sessionOverview,
-                    style: TextStyle(
+        return Column(
+          children: [
+            // Add Session Button - More Visible
+            Container(
+              margin: const EdgeInsets.all(12),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => _showAddSessionDialog(localizations),
+                  icon: const Icon(
+                    Icons.add_circle,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  label: Text(
+                    localizations.scheduleNewSession,
+                    style: const TextStyle(
+                      color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: textColor,
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  _buildQuickStat(
-                    localizations.total,
-                    totalSessions.toString(),
-                    Icons.event,
-                    primaryColor,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 4,
+                    shadowColor: primaryColor.withOpacity(0.3),
                   ),
-                  const SizedBox(width: 12),
-                  _buildQuickStat(
-                    localizations.done,
-                    completedSessions.toString(),
-                    Icons.check_circle,
-                    primaryColor,
-                  ),
-                  const SizedBox(width: 12),
-                  _buildQuickStat(
-                    localizations.next,
-                    upcomingSessions.toString(),
-                    Icons.schedule,
-                    primaryColor,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-
-        // Sessions List
-        Expanded(
-          child: _sessions.isEmpty
-              ? _buildEmptyState(isDark, primaryColor, localizations)
-              : ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  itemCount: _getSortedSessions().length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
-                  itemBuilder: (context, index) {
-                    final sortedSessions = _getSortedSessions();
-                    return _buildSessionCard(
-                      sortedSessions[index],
-                      isDark,
-                      primaryColor,
-                      textColor,
-                      subTextColor,
-                      localizations,
-                    );
-                  },
                 ),
-        ),
-      ],
+              ),
+            ),
+
+            // Compact Header Stats
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    primaryColor.withOpacity(0.1),
+                    primaryColor.withOpacity(0.05),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: primaryColor.withOpacity(0.2)),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.video_camera_front,
+                        color: primaryColor,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        localizations.sessionOverview,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      _buildQuickStat(
+                        localizations.total,
+                        totalSessions.toString(),
+                        Icons.event,
+                        primaryColor,
+                      ),
+                      const SizedBox(width: 12),
+                      _buildQuickStat(
+                        localizations.done,
+                        completedSessions.toString(),
+                        Icons.check_circle,
+                        primaryColor,
+                      ),
+                      const SizedBox(width: 12),
+                      _buildQuickStat(
+                        localizations.next,
+                        upcomingSessions.toString(),
+                        Icons.schedule,
+                        primaryColor,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // Sessions List
+            Expanded(
+              child: sessionProvider.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : sessions.isEmpty
+                  ? _buildEmptyState(isDark, primaryColor, localizations)
+                  : ListView.separated(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      itemCount: _getSortedSessions(sessions).length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final sortedSessions = _getSortedSessions(sessions);
+                        return _buildSessionCard(
+                          sortedSessions[index],
+                          isDark,
+                          primaryColor,
+                          textColor,
+                          subTextColor,
+                          localizations,
+                        );
+                      },
+                    ),
+            ),
+          ],
+        );
+      },
     );
   }
 
   // Method to sort sessions by date and time (newest first)
-  List<Map<String, dynamic>> _getSortedSessions() {
-    List<Map<String, dynamic>> sortedSessions = List.from(_sessions);
+  List<CourseSession> _getSortedSessions(List<CourseSession> sessions) {
+    List<CourseSession> sortedSessions = List.from(sessions);
 
     sortedSessions.sort((a, b) {
       try {
-        // Parse dates
-        DateTime dateA = DateTime.parse(a['date'] ?? '1970-01-01');
-        DateTime dateB = DateTime.parse(b['date'] ?? '1970-01-01');
+        // Compare session dates
+        int dateComparison = b.sessionDate.compareTo(a.sessionDate);
 
         // If dates are the same, compare by time
-        if (dateA.isAtSameMomentAs(dateB)) {
-          // Parse times - handle both 12-hour and 24-hour formats
-          TimeOfDay timeA = _parseTime(a['time'] ?? '00:00');
-          TimeOfDay timeB = _parseTime(b['time'] ?? '00:00');
+        if (dateComparison == 0) {
+          // Parse times and compare
+          _TimeOfDay timeA = _parseTime(a.sessionTime);
+          _TimeOfDay timeB = _parseTime(b.sessionTime);
 
           // Convert to minutes for easier comparison
           int minutesA = timeA.hour * 60 + timeA.minute;
@@ -248,7 +209,7 @@ class _InstructorOnlineSessionTabState
           return minutesB.compareTo(minutesA); // Newer time first
         }
 
-        return dateB.compareTo(dateA); // Newer date first
+        return dateComparison; // Newer date first
       } catch (e) {
         // If parsing fails, maintain original order
         return 0;
@@ -259,7 +220,7 @@ class _InstructorOnlineSessionTabState
   }
 
   // Helper method to parse time strings
-  TimeOfDay _parseTime(String timeString) {
+  _TimeOfDay _parseTime(String timeString) {
     try {
       // Remove any extra spaces and convert to lowercase
       String cleanTime = timeString.trim().toLowerCase();
@@ -283,13 +244,13 @@ class _InstructorOnlineSessionTabState
           hour = 0;
         }
 
-        return TimeOfDay(hour: hour, minute: minute);
+        return _TimeOfDay(hour: hour, minute: minute);
       }
     } catch (e) {
       // Return default time if parsing fails
     }
 
-    return const TimeOfDay(hour: 0, minute: 0);
+    return const _TimeOfDay(hour: 0, minute: 0);
   }
 
   Widget _buildQuickStat(
@@ -332,19 +293,19 @@ class _InstructorOnlineSessionTabState
   }
 
   Widget _buildSessionCard(
-    Map<String, dynamic> session,
+    CourseSession session,
     bool isDark,
     Color primaryColor,
     Color? textColor,
     Color? subTextColor,
     AppLocalizations localizations,
   ) {
-    final status = session['status'] as String;
+    final status = session.status;
     final statusColor = _getStatusColor(status);
-    final sessionId = session['id'] as String;
+    final sessionId = session.id;
 
-    final title = session['title']?.toString() ?? 'Untitled Session';
-    final description = session['description']?.toString() ?? '';
+    final title = session.sessionName;
+    final description = session.sessionDescription;
     final shouldShowToggle = title.length > 30 || description.length > 50;
     final isExpanded = _expandedSessions[sessionId] ?? false;
 
@@ -412,7 +373,7 @@ class _InstructorOnlineSessionTabState
 
               // Platform Icon
               Icon(
-                _getPlatformIcon(session['platform']),
+                _getPlatformIcon(session.sessionPlatform),
                 color: statusColor,
                 size: 16,
               ),
@@ -420,7 +381,7 @@ class _InstructorOnlineSessionTabState
 
               // Delete Button
               InkWell(
-                onTap: () => _deleteSession(session['id'], localizations),
+                onTap: () => _deleteSession(session.id, localizations),
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
@@ -502,7 +463,7 @@ class _InstructorOnlineSessionTabState
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        '${session['date']} • ${session['time']}',
+                        '${session.formattedDate} • ${session.sessionTime}',
                         style: TextStyle(fontSize: 11, color: primaryColor),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -520,7 +481,7 @@ class _InstructorOnlineSessionTabState
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        session['duration'] ?? '',
+                        session.sessionDuration,
                         style: TextStyle(fontSize: 11, color: primaryColor),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -536,11 +497,11 @@ class _InstructorOnlineSessionTabState
           // Individual Copy Buttons Row
           Row(
             children: [
-              if (session['link'] != null) ...[
+              if (session.sessionLink.isNotEmpty) ...[
                 Expanded(
                   child: InkWell(
                     onTap: () => _copyToClipboard(
-                      session['link'],
+                      session.sessionLink,
                       localizations.copyLink,
                       localizations,
                     ),
@@ -575,13 +536,16 @@ class _InstructorOnlineSessionTabState
                   ),
                 ),
               ],
-              if (session['link'] != null && session['password'] != null)
+              if (session.sessionLink.isNotEmpty &&
+                  session.sessionPassword != null &&
+                  session.sessionPassword!.isNotEmpty)
                 const SizedBox(width: 8),
-              if (session['password'] != null) ...[
+              if (session.sessionPassword != null &&
+                  session.sessionPassword!.isNotEmpty) ...[
                 Expanded(
                   child: InkWell(
                     onTap: () => _copyToClipboard(
-                      session['password'],
+                      session.sessionPassword!,
                       localizations.copyPassword,
                       localizations,
                     ),
@@ -623,6 +587,55 @@ class _InstructorOnlineSessionTabState
 
           // Compact Action Buttons (removed view report)
           if (status == 'scheduled') ...[
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 32,
+                    child: OutlinedButton(
+                      onPressed: () => _editSession(session, localizations),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: primaryColor,
+                        side: BorderSide(color: primaryColor, width: 1),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      child: Text(
+                        localizations.edit,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: SizedBox(
+                    height: 32,
+                    child: ElevatedButton(
+                      onPressed: () => _startSession(session, localizations),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      child: Text(
+                        localizations.start,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ] else if (session.isUpcoming) ...[
+            // For upcoming sessions that aren't exactly 'scheduled'
             Row(
               children: [
                 Expanded(
@@ -809,19 +822,32 @@ class _InstructorOnlineSessionTabState
               ),
             ),
             TextButton(
-              onPressed: () {
-                setState(() {
-                  _sessions.removeWhere(
-                    (session) => session['id'] == sessionId,
+              onPressed: () async {
+                final sessionProvider = context.read<SessionProvider>();
+                final courseId = widget.course['id']?.toString();
+
+                if (courseId != null) {
+                  final success = await sessionProvider.deleteSession(
+                    sessionId,
+                    courseId,
                   );
-                });
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(localizations.sessionDeletedSuccessfully),
-                    backgroundColor: Colors.red,
-                  ),
-                );
+
+                  if (mounted) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          success
+                              ? localizations.sessionDeletedSuccessfully
+                              : sessionProvider.error?.isNotEmpty == true
+                              ? sessionProvider.error!
+                              : 'Failed to delete session',
+                        ),
+                        backgroundColor: success ? Colors.green : Colors.red,
+                      ),
+                    );
+                  }
+                }
               },
               child: Text(
                 localizations.delete,
@@ -860,254 +886,152 @@ class _InstructorOnlineSessionTabState
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Title
-                    TextField(
-                      controller: titleController,
-                      style: TextStyle(
-                        color: isDark ? Colors.white : Colors.black,
-                        fontSize: 14,
-                      ),
-                      decoration: InputDecoration(
-                        labelText: 'Session Title *',
-                        labelStyle: TextStyle(
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                          fontSize: 12,
+              content: SizedBox(
+                width: double.maxFinite,
+                height:
+                    MediaQuery.of(context).size.height * 0.6, // Limit height
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Title
+                      TextField(
+                        controller: titleController,
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black,
+                          fontSize: 14,
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.title,
-                          size: 20,
-                          color: const Color(0xFF7A54FF),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Description
-                    TextField(
-                      controller: descriptionController,
-                      maxLines: 2,
-                      style: TextStyle(
-                        color: isDark ? Colors.white : Colors.black,
-                        fontSize: 14,
-                      ),
-                      decoration: InputDecoration(
-                        labelText: 'Description',
-                        labelStyle: TextStyle(
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                          fontSize: 12,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.description,
-                          size: 20,
-                          color: const Color(0xFF7A54FF),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Platform Dropdown
-                    DropdownButtonFormField<String>(
-                      value: selectedPlatform,
-                      style: TextStyle(
-                        color: isDark ? Colors.white : Colors.black,
-                        fontSize: 14,
-                      ),
-                      decoration: InputDecoration(
-                        labelText: 'Platform *',
-                        labelStyle: TextStyle(
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                          fontSize: 12,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.video_call,
-                          size: 20,
-                          color: const Color(0xFF7A54FF),
-                        ),
-                      ),
-                      dropdownColor: isDark ? Colors.grey[800] : Colors.white,
-                      items: ['Zoom', 'Google Meet', 'Teams'].map((
-                        String platform,
-                      ) {
-                        return DropdownMenuItem<String>(
-                          value: platform,
-                          child: Text(platform, style: TextStyle(fontSize: 14)),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedPlatform = newValue!;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Date Picker
-                    InkWell(
-                      onTap: () async {
-                        final DateTime? picked = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime.now(),
-                          lastDate: DateTime.now().add(
-                            const Duration(days: 365),
-                          ),
-                          builder: (context, child) {
-                            return Theme(
-                              data: Theme.of(context).copyWith(
-                                colorScheme: Theme.of(context).colorScheme
-                                    .copyWith(primary: const Color(0xFF7A54FF)),
-                              ),
-                              child: child!,
-                            );
-                          },
-                        );
-                        if (picked != null) {
-                          setState(() {
-                            selectedDate = picked;
-                          });
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 16,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.grey[600]!
-                                : Colors.grey[400]!,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.calendar_today,
-                              size: 20,
-                              color: const Color(0xFF7A54FF),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              selectedDate != null
-                                  ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
-                                  : 'Select Date *',
-                              style: TextStyle(
-                                color: selectedDate != null
-                                    ? (isDark ? Colors.white : Colors.black)
-                                    : (isDark
-                                          ? Colors.grey[400]
-                                          : Colors.grey[600]),
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Time Picker
-                    InkWell(
-                      onTap: () async {
-                        final TimeOfDay? picked = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                          builder: (context, child) {
-                            return Theme(
-                              data: Theme.of(context).copyWith(
-                                colorScheme: Theme.of(context).colorScheme
-                                    .copyWith(primary: const Color(0xFF7A54FF)),
-                              ),
-                              child: child!,
-                            );
-                          },
-                        );
-                        if (picked != null) {
-                          setState(() {
-                            selectedTime = picked;
-                          });
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 16,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.grey[600]!
-                                : Colors.grey[400]!,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.access_time,
-                              size: 20,
-                              color: const Color(0xFF7A54FF),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              selectedTime != null
-                                  ? selectedTime!.format(context)
-                                  : 'Select Time *',
-                              style: TextStyle(
-                                color: selectedTime != null
-                                    ? (isDark ? Colors.white : Colors.black)
-                                    : (isDark
-                                          ? Colors.grey[400]
-                                          : Colors.grey[600]),
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Duration Slider
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Duration: ${sessionDuration.toStringAsFixed(1)} hours',
-                          style: TextStyle(
+                        decoration: InputDecoration(
+                          labelText: 'Session Title *',
+                          labelStyle: TextStyle(
                             color: isDark ? Colors.grey[400] : Colors.grey[600],
                             fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.title,
+                            size: 20,
+                            color: const Color(0xFF7A54FF),
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Container(
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Description
+                      TextField(
+                        controller: descriptionController,
+                        maxLines: 2,
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black,
+                          fontSize: 14,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: 'Description',
+                          labelStyle: TextStyle(
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                            fontSize: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.description,
+                            size: 20,
+                            color: const Color(0xFF7A54FF),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Platform Dropdown
+                      DropdownButtonFormField<String>(
+                        value: selectedPlatform,
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black,
+                          fontSize: 14,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: 'Platform *',
+                          labelStyle: TextStyle(
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                            fontSize: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.video_call,
+                            size: 20,
+                            color: const Color(0xFF7A54FF),
+                          ),
+                        ),
+                        dropdownColor: isDark ? Colors.grey[800] : Colors.white,
+                        items: ['Zoom', 'Google Meet', 'Teams'].map((
+                          String platform,
+                        ) {
+                          return DropdownMenuItem<String>(
+                            value: platform,
+                            child: Text(
+                              platform,
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedPlatform = newValue!;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Date Picker
+                      InkWell(
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime.now().add(
+                              const Duration(days: 365),
+                            ),
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: Theme.of(context).colorScheme
+                                      .copyWith(
+                                        primary: const Color(0xFF7A54FF),
+                                      ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          if (picked != null) {
+                            setState(() {
+                              selectedDate = picked;
+                            });
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 16,
+                          ),
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: isDark
@@ -1118,95 +1042,211 @@ class _InstructorOnlineSessionTabState
                           ),
                           child: Row(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 12),
-                                child: Icon(
-                                  Icons.schedule,
-                                  size: 20,
-                                  color: const Color(0xFF7A54FF),
-                                ),
+                              Icon(
+                                Icons.calendar_today,
+                                size: 20,
+                                color: const Color(0xFF7A54FF),
                               ),
-                              Expanded(
-                                child: Slider(
-                                  value: sessionDuration,
-                                  min: 0.5,
-                                  max: 4.0,
-                                  divisions: 7,
-                                  activeColor: const Color(0xFF7A54FF),
-                                  inactiveColor: const Color(
-                                    0xFF7A54FF,
-                                  ).withOpacity(0.3),
-                                  onChanged: (double value) {
-                                    setState(() {
-                                      sessionDuration = value;
-                                    });
-                                  },
+                              const SizedBox(width: 12),
+                              Text(
+                                selectedDate != null
+                                    ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
+                                    : 'Select Date *',
+                                style: TextStyle(
+                                  color: selectedDate != null
+                                      ? (isDark ? Colors.white : Colors.black)
+                                      : (isDark
+                                            ? Colors.grey[400]
+                                            : Colors.grey[600]),
+                                  fontSize: 14,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
+                      ),
+                      const SizedBox(height: 12),
 
-                    // Session Link
-                    TextField(
-                      controller: linkController,
-                      style: TextStyle(
-                        color: isDark ? Colors.white : Colors.black,
-                        fontSize: 14,
+                      // Time Picker
+                      InkWell(
+                        onTap: () async {
+                          final TimeOfDay? picked = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: Theme.of(context).colorScheme
+                                      .copyWith(
+                                        primary: const Color(0xFF7A54FF),
+                                      ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          if (picked != null) {
+                            setState(() {
+                              selectedTime = picked;
+                            });
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 16,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: isDark
+                                  ? Colors.grey[600]!
+                                  : Colors.grey[400]!,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.access_time,
+                                size: 20,
+                                color: const Color(0xFF7A54FF),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                selectedTime != null
+                                    ? selectedTime!.format(context)
+                                    : 'Select Time *',
+                                style: TextStyle(
+                                  color: selectedTime != null
+                                      ? (isDark ? Colors.white : Colors.black)
+                                      : (isDark
+                                            ? Colors.grey[400]
+                                            : Colors.grey[600]),
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      decoration: InputDecoration(
-                        labelText: 'Session Link *',
-                        labelStyle: TextStyle(
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                          fontSize: 12,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.link,
-                          size: 20,
-                          color: const Color(0xFF7A54FF),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
+                      const SizedBox(height: 12),
 
-                    // Password
-                    TextField(
-                      controller: passwordController,
-                      style: TextStyle(
-                        color: isDark ? Colors.white : Colors.black,
-                        fontSize: 14,
+                      // Duration Slider
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Duration: ${sessionDuration.toStringAsFixed(1)} hours',
+                            style: TextStyle(
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: isDark
+                                    ? Colors.grey[600]!
+                                    : Colors.grey[400]!,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 12),
+                                  child: Icon(
+                                    Icons.schedule,
+                                    size: 20,
+                                    color: const Color(0xFF7A54FF),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Slider(
+                                    value: sessionDuration,
+                                    min: 0.5,
+                                    max: 4.0,
+                                    divisions: 7,
+                                    activeColor: const Color(0xFF7A54FF),
+                                    inactiveColor: const Color(
+                                      0xFF7A54FF,
+                                    ).withOpacity(0.3),
+                                    onChanged: (double value) {
+                                      setState(() {
+                                        sessionDuration = value;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      decoration: InputDecoration(
-                        labelText: 'Password (optional)',
-                        labelStyle: TextStyle(
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                          fontSize: 12,
+                      const SizedBox(height: 12),
+
+                      // Session Link
+                      TextField(
+                        controller: linkController,
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black,
+                          fontSize: 14,
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.lock,
-                          size: 20,
-                          color: const Color(0xFF7A54FF),
+                        decoration: InputDecoration(
+                          labelText: 'Session Link *',
+                          labelStyle: TextStyle(
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                            fontSize: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.link,
+                            size: 20,
+                            color: const Color(0xFF7A54FF),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 12),
+
+                      // Password
+                      TextField(
+                        controller: passwordController,
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black,
+                          fontSize: 14,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: 'Password (optional)',
+                          labelStyle: TextStyle(
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                            fontSize: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            size: 20,
+                            color: const Color(0xFF7A54FF),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               actions: [
@@ -1218,41 +1258,46 @@ class _InstructorOnlineSessionTabState
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {
+                  onPressed: () async {
                     if (titleController.text.isNotEmpty &&
                         selectedDate != null &&
                         selectedTime != null &&
                         linkController.text.isNotEmpty) {
-                      final newSession = {
-                        'id':
-                            'session_${DateTime.now().millisecondsSinceEpoch}',
-                        'title': titleController.text,
-                        'description': descriptionController.text,
-                        'platform': selectedPlatform,
-                        'date':
-                            '${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}',
-                        'time': selectedTime!.format(context),
-                        'duration':
-                            '${sessionDuration.toStringAsFixed(1)} hours',
-                        'link': linkController.text,
-                        'password': passwordController.text,
-                        'status': 'scheduled',
-                        'attendees': 0,
-                      };
+                      final sessionProvider = context.read<SessionProvider>();
+                      final courseId = widget.course['id']?.toString();
 
-                      setState(() {
-                        _sessions.add(newSession);
-                      });
+                      if (courseId != null) {
+                        final success = await sessionProvider.createSession(
+                          courseId: courseId,
+                          title: titleController.text,
+                          description: descriptionController.text,
+                          platform: selectedPlatform,
+                          date: selectedDate!,
+                          time: selectedTime!.format(context),
+                          duration:
+                              '${sessionDuration.toStringAsFixed(1)} hours',
+                          link: linkController.text,
+                          password: passwordController.text.isNotEmpty
+                              ? passwordController.text
+                              : null,
+                        );
 
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            localizations.sessionScheduledSuccessfully,
-                          ),
-                          backgroundColor: const Color(0xFF7A54FF),
-                        ),
-                      );
+                        if (mounted) {
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success
+                                    ? localizations.sessionScheduledSuccessfully
+                                    : 'Failed to create session',
+                              ),
+                              backgroundColor: success
+                                  ? const Color(0xFF7A54FF)
+                                  : Colors.red,
+                            ),
+                          );
+                        }
+                      }
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -1287,59 +1332,44 @@ class _InstructorOnlineSessionTabState
     );
   }
 
-  void _editSession(
-    Map<String, dynamic> session,
-    AppLocalizations localizations,
-  ) {
+  void _editSession(CourseSession session, AppLocalizations localizations) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final titleController = TextEditingController(text: session['title']);
+    final titleController = TextEditingController(text: session.sessionName);
     final descriptionController = TextEditingController(
-      text: session['description'],
+      text: session.sessionDescription,
     );
-    final linkController = TextEditingController(text: session['link']);
-    final passwordController = TextEditingController(text: session['password']);
-    String selectedPlatform = session['platform'] ?? 'Zoom';
+    final linkController = TextEditingController(text: session.sessionLink);
+    final passwordController = TextEditingController(
+      text: session.sessionPassword ?? '',
+    );
+    String selectedPlatform = session.displayPlatform;
 
     // Parse existing date and time
-    DateTime? selectedDate;
+    DateTime? selectedDate = session.sessionDate;
     TimeOfDay? selectedTime;
     double sessionDuration = 1.0;
 
     try {
-      if (session['date'] != null) {
-        final dateParts = session['date'].split('-');
-        if (dateParts.length == 3) {
-          selectedDate = DateTime(
-            int.parse(dateParts[0]),
-            int.parse(dateParts[1]),
-            int.parse(dateParts[2]),
-          );
-        }
+      // Parse time from session
+      final timeString = session.sessionTime;
+      final timeParts = timeString.replaceAll(RegExp(r'[^\d:]'), '').split(':');
+      if (timeParts.length >= 2) {
+        int hour = int.parse(timeParts[0]);
+        int minute = int.parse(timeParts[1]);
+        if (timeString.toLowerCase().contains('pm') && hour != 12) hour += 12;
+        if (timeString.toLowerCase().contains('am') && hour == 12) hour = 0;
+        selectedTime = TimeOfDay(hour: hour, minute: minute);
       }
 
-      if (session['time'] != null) {
-        final timeString = session['time'] as String;
-        final timeParts = timeString
-            .replaceAll(RegExp(r'[^\d:]'), '')
-            .split(':');
-        if (timeParts.length >= 2) {
-          int hour = int.parse(timeParts[0]);
-          int minute = int.parse(timeParts[1]);
-          if (timeString.toLowerCase().contains('pm') && hour != 12) hour += 12;
-          if (timeString.toLowerCase().contains('am') && hour == 12) hour = 0;
-          selectedTime = TimeOfDay(hour: hour, minute: minute);
-        }
-      }
-
-      if (session['duration'] != null) {
-        final durationString = session['duration'] as String;
-        final match = RegExp(r'(\d+\.?\d*)').firstMatch(durationString);
-        if (match != null) {
-          sessionDuration = double.parse(match.group(1)!);
-        }
+      // Parse duration from session
+      final durationString = session.sessionDuration;
+      final match = RegExp(r'(\d+\.?\d*)').firstMatch(durationString);
+      if (match != null) {
+        sessionDuration = double.parse(match.group(1)!);
       }
     } catch (e) {
       // Use default values if parsing fails
+      selectedTime = TimeOfDay.now();
     }
 
     showDialog(
@@ -1715,41 +1745,47 @@ class _InstructorOnlineSessionTabState
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {
+                  onPressed: () async {
                     if (titleController.text.isNotEmpty &&
                         selectedDate != null &&
                         selectedTime != null &&
                         linkController.text.isNotEmpty) {
-                      final sessionIndex = _sessions.indexWhere(
-                        (s) => s['id'] == session['id'],
-                      );
-                      if (sessionIndex != -1) {
-                        setState(() {
-                          _sessions[sessionIndex] = {
-                            ..._sessions[sessionIndex],
-                            'title': titleController.text,
-                            'description': descriptionController.text,
-                            'platform': selectedPlatform,
-                            'date':
-                                '${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}',
-                            'time': selectedTime!.format(context),
-                            'duration':
-                                '${sessionDuration.toStringAsFixed(1)} hours',
-                            'link': linkController.text,
-                            'password': passwordController.text,
-                          };
-                        });
-                      }
+                      final sessionProvider = context.read<SessionProvider>();
+                      final courseId = widget.course['id']?.toString();
 
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            localizations.sessionUpdatedSuccessfully,
-                          ),
-                          backgroundColor: const Color(0xFF7A54FF),
-                        ),
-                      );
+                      if (courseId != null) {
+                        final success = await sessionProvider.updateSession(
+                          sessionId: session.id,
+                          courseId: courseId,
+                          title: titleController.text,
+                          description: descriptionController.text,
+                          platform: selectedPlatform,
+                          date: selectedDate!,
+                          time: selectedTime!.format(context),
+                          duration:
+                              '${sessionDuration.toStringAsFixed(1)} hours',
+                          link: linkController.text,
+                          password: passwordController.text.isNotEmpty
+                              ? passwordController.text
+                              : null,
+                        );
+
+                        if (mounted) {
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success
+                                    ? localizations.sessionUpdatedSuccessfully
+                                    : 'Failed to update session',
+                              ),
+                              backgroundColor: success
+                                  ? const Color(0xFF7A54FF)
+                                  : Colors.red,
+                            ),
+                          );
+                        }
+                      }
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -1785,57 +1821,177 @@ class _InstructorOnlineSessionTabState
   }
 
   void _startSession(
-    Map<String, dynamic> session,
+    CourseSession session,
     AppLocalizations localizations,
   ) async {
-    final link = session['link'] as String;
+    final link = session.sessionLink;
 
     try {
-      // Parse the URL
-      final uri = Uri.parse(link);
+      // Debug: Log the original link
+      print('Original session link: $link');
 
       // Show starting message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(localizations.startingSession(session['platform'])),
+            content: Text('Starting ${session.displayPlatform} session...'),
             backgroundColor: const Color(0xFF7A54FF),
             duration: const Duration(seconds: 2),
           ),
         );
       }
 
-      // Launch the URL in browser
-      final launched = await launchUrl(
-        uri,
-        mode: LaunchMode.platformDefault, // This will open in browser/app
-      );
+      // Validate and parse the URL
+      Uri uri;
+      try {
+        // Clean the link first (remove extra spaces, etc.)
+        String cleanLink = link.trim();
 
+        // Check if the link already has a protocol
+        if (!cleanLink.startsWith('http://') &&
+            !cleanLink.startsWith('https://')) {
+          // Add https:// if no protocol is specified
+          uri = Uri.parse('https://$cleanLink');
+          print('Added https:// protocol. New URL: ${uri.toString()}');
+        } else {
+          uri = Uri.parse(cleanLink);
+          print('Using original URL: ${uri.toString()}');
+        }
+
+        // Validate that it's a proper URL
+        if (!uri.hasScheme || uri.host.isEmpty) {
+          throw Exception('Invalid URL structure');
+        }
+      } catch (e) {
+        print('URL parsing error: $e');
+        throw Exception('Invalid URL format: $link');
+      }
+
+      // Skip canLaunchUrl check as it seems to fail incorrectly on some devices
+      // Instead, directly try launching with different modes
+
+      bool launched = false;
+      List<String> attemptLog = [];
+
+      // Strategy 1: Try platform default first (best for web URLs)
+      try {
+        print('Attempting launch with platform default...');
+        launched = await launchUrl(uri, mode: LaunchMode.platformDefault);
+        attemptLog.add('Platform default: $launched');
+        print('Platform default result: $launched');
+      } catch (e) {
+        attemptLog.add('Platform default failed: $e');
+        print('Failed to launch with platform default: $e');
+      }
+
+      // Strategy 2: Try external application if first attempt failed
       if (!launched) {
-        // Fallback: copy link to clipboard
+        try {
+          print('Attempting launch with external application...');
+          launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+          attemptLog.add('External app: $launched');
+          print('External application result: $launched');
+        } catch (e) {
+          attemptLog.add('External app failed: $e');
+          print('Failed to launch in external app: $e');
+        }
+      }
+
+      // Strategy 3: Try external non-browser application
+      if (!launched) {
+        try {
+          print('Attempting launch with external non-browser...');
+          launched = await launchUrl(
+            uri,
+            mode: LaunchMode.externalNonBrowserApplication,
+          );
+          attemptLog.add('External non-browser: $launched');
+          print('External non-browser result: $launched');
+        } catch (e) {
+          attemptLog.add('External non-browser failed: $e');
+          print('Failed to launch with external non-browser: $e');
+        }
+      }
+
+      // Strategy 4: Try in-app web view as last resort
+      if (!launched) {
+        try {
+          print('Attempting launch with in-app web view...');
+          launched = await launchUrl(uri, mode: LaunchMode.inAppWebView);
+          attemptLog.add('In-app web view: $launched');
+          print('In-app web view result: $launched');
+        } catch (e) {
+          attemptLog.add('In-app web view failed: $e');
+          print('Failed to launch in web view: $e');
+        }
+      }
+
+      print('Launch attempt summary: ${attemptLog.join(', ')}');
+
+      if (launched) {
+        print('Successfully launched URL with one of the methods');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Session started successfully!'),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      } else {
+        print('All launch attempts failed - providing fallback');
+        // Fallback: copy link to clipboard and show instructions
         _copyToClipboard(link, 'Session link', localizations);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(localizations.couldNotOpenBrowser),
+              content: Text(
+                'Unable to auto-launch session. Link copied to clipboard - please paste in your browser.',
+              ),
               backgroundColor: Colors.orange,
-              duration: const Duration(seconds: 3),
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'OK',
+                textColor: Colors.white,
+                onPressed: () {},
+              ),
             ),
           );
         }
       }
     } catch (e) {
+      print('Error starting session: $e');
       // Error handling: copy link to clipboard as fallback
       _copyToClipboard(link, 'Session link', localizations);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(localizations.errorOpeningBrowser),
+            content: Text(
+              'Error opening session: ${e.toString()}. Link copied to clipboard.',
+            ),
             backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 4),
+            action: SnackBarAction(
+              label: 'OK',
+              textColor: Colors.white,
+              onPressed: () {},
+            ),
           ),
         );
       }
     }
   }
+}
+
+/// Helper class for time parsing
+class _TimeOfDay {
+  final int hour;
+  final int minute;
+
+  const _TimeOfDay({required this.hour, required this.minute});
+
+  @override
+  String toString() =>
+      '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
 }

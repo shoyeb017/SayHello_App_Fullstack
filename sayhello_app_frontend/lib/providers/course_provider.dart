@@ -83,16 +83,53 @@ class CourseProvider extends ChangeNotifier {
 
   /// Load courses by instructor
   Future<void> loadInstructorCourses(String instructorId) async {
+    if (_courses.isNotEmpty &&
+        !_courses.any((c) => c.instructorId != instructorId)) {
+      // Return cached data if we have it and it's for the same instructor
+      return;
+    }
+
     _setLoading(true);
     _clearError();
 
     try {
-      _courses = await _repository.getCoursesByInstructor(instructorId);
+      _courses = await _repository.getCoursesByInstructor(
+        instructorId,
+        limit: 10, // Start with fewer courses for faster initial load
+      );
       notifyListeners();
+
+      // Load more courses in the background
+      _loadMoreInstructorCourses(instructorId, skip: 10);
     } catch (e) {
       _setError('Failed to load instructor courses: $e');
     } finally {
       _setLoading(false);
+    }
+  }
+
+  /// Load additional instructor courses in the background
+  Future<void> _loadMoreInstructorCourses(
+    String instructorId, {
+    int skip = 10,
+  }) async {
+    try {
+      final moreCourses = await _repository.getCoursesByInstructor(
+        instructorId,
+        limit: 40,
+      );
+
+      // Add only new courses that aren't already in the list
+      final newCourses = moreCourses
+          .where((course) => !_courses.any((c) => c.id == course.id))
+          .toList();
+
+      if (newCourses.isNotEmpty) {
+        _courses.addAll(newCourses);
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Background load failed: $e');
     }
   }
 
@@ -390,6 +427,16 @@ class CourseProvider extends ChangeNotifier {
     _isSearching = false;
     _error = null;
     notifyListeners();
+  }
+
+  /// Get average rating for a course
+  Future<double> getCourseAverageRating(String courseId) async {
+    try {
+      return await _repository.getCourseAverageRating(courseId);
+    } catch (e) {
+      debugPrint('Failed to get course average rating: $e');
+      return 0.0;
+    }
   }
 
   @override

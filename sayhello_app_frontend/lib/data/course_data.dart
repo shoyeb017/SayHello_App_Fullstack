@@ -1,14 +1,11 @@
 /// Course Repository - Handles all course-related database operations
 /// Provides CRUD operations, enrollments, and course management functionality
 
-import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/models.dart';
-import '../services/storage_service.dart';
 
 class CourseRepository {
   final _supabase = Supabase.instance.client;
-  final _storage = StorageService();
 
   // =============================
   // COURSE CRUD OPERATIONS
@@ -53,21 +50,26 @@ class CourseRepository {
 
   /// Get course by ID
   Future<Course?> getCourseById(String id) async {
-    // TODO: Implement with Supabase
-    /*
     try {
+      print('Fetching course by ID: $id');
       final response = await _supabase
           .from('courses')
           .select()
           .eq('id', id)
           .maybeSingle();
-      
-      return response != null ? Course.fromJson(response) : null;
-    } catch (e) {
+
+      if (response == null) {
+        print('No course found with ID: $id');
+        return null;
+      }
+
+      print('Course retrieved: $response');
+      return Course.fromJson(response);
+    } catch (e, stackTrace) {
+      print('Error fetching course by ID: $e');
+      print('Stack trace: $stackTrace');
       throw Exception('Failed to get course: $e');
     }
-    */
-    throw UnimplementedError('Add Supabase dependency first');
   }
 
   /// Get all courses with pagination
@@ -93,21 +95,31 @@ class CourseRepository {
     String instructorId, {
     int limit = 50,
   }) async {
-    // TODO: Implement with Supabase
-    /*
     try {
+      print('Fetching courses for instructor: $instructorId');
       final response = await _supabase
           .from('courses')
           .select()
           .eq('instructor_id', instructorId)
+          .order('created_at', ascending: false)
           .limit(limit);
-      
-      return response.map((json) => Course.fromJson(json)).toList();
-    } catch (e) {
+
+      print('Retrieved courses from Supabase: $response');
+
+      if (response.isEmpty) {
+        print('No courses found for instructor');
+        return [];
+      }
+
+      final courses = response.map((json) => Course.fromJson(json)).toList();
+
+      print('Parsed ${courses.length} courses');
+      return courses;
+    } catch (e, stackTrace) {
+      print('Error fetching instructor courses: $e');
+      print('Stack trace: $stackTrace');
       throw Exception('Failed to get instructor courses: $e');
     }
-    */
-    throw UnimplementedError('Add Supabase dependency first');
   }
 
   /// Get courses by language
@@ -155,14 +167,44 @@ class CourseRepository {
 
   /// Update course
   Future<Course> updateCourse(String id, Map<String, dynamic> updates) async {
-    // TODO: Implement with Supabase
-    throw UnimplementedError('Add Supabase dependency first');
+    try {
+      print('Updating course $id with data: $updates');
+
+      // Remove any fields that shouldn't be updated
+      final sanitizedUpdates = Map<String, dynamic>.from(updates);
+      sanitizedUpdates.remove('id');
+      sanitizedUpdates.remove('created_at');
+      sanitizedUpdates.remove('updated_at'); // This column doesn't exist
+
+      final response = await _supabase
+          .from('courses')
+          .update(sanitizedUpdates)
+          .eq('id', id)
+          .select()
+          .single();
+
+      print('Course updated successfully: $response');
+      return Course.fromJson(response);
+    } catch (e, stackTrace) {
+      print('Error updating course: $e');
+      print('Stack trace: $stackTrace');
+      throw Exception('Failed to update course: $e');
+    }
   }
 
   /// Delete course
   Future<void> deleteCourse(String id) async {
-    // TODO: Implement with Supabase
-    throw UnimplementedError('Add Supabase dependency first');
+    try {
+      print('Deleting course: $id');
+
+      await _supabase.from('courses').delete().eq('id', id);
+
+      print('Course deleted successfully');
+    } catch (e, stackTrace) {
+      print('Error deleting course: $e');
+      print('Stack trace: $stackTrace');
+      throw Exception('Failed to delete course: $e');
+    }
   }
 
   // =============================
@@ -268,8 +310,22 @@ class CourseRepository {
 
   /// Get enrollment count for course
   Future<int> getEnrollmentCount(String courseId) async {
-    // TODO: Implement with Supabase
-    throw UnimplementedError('Add Supabase dependency first');
+    try {
+      print('Getting enrollment count for course: $courseId');
+
+      final response = await _supabase
+          .from('course_enrollments')
+          .select('id')
+          .eq('course_id', courseId);
+
+      final count = response.length;
+      print('Enrollment count for course $courseId: $count');
+      return count;
+    } catch (e, stackTrace) {
+      print('Error getting enrollment count: $e');
+      print('Stack trace: $stackTrace');
+      throw Exception('Failed to get enrollment count: $e');
+    }
   }
 
   // =============================
@@ -339,6 +395,34 @@ class CourseRepository {
     }
     */
     throw UnimplementedError('Add Supabase dependency first');
+  }
+
+  // =============================
+  // COURSE RATING OPERATIONS
+  // =============================
+
+  /// Get average rating for a course based on feedback
+  Future<double> getCourseAverageRating(String courseId) async {
+    try {
+      final response = await _supabase
+          .from('feedback')
+          .select('rating')
+          .eq('course_id', courseId);
+
+      if (response.isEmpty) {
+        return 0.0;
+      }
+
+      final ratings = response
+          .map((item) => (item['rating'] as num).toDouble())
+          .toList();
+      final averageRating = ratings.reduce((a, b) => a + b) / ratings.length;
+
+      return double.parse(averageRating.toStringAsFixed(1));
+    } catch (e) {
+      print('Failed to get course average rating: $e');
+      return 0.0;
+    }
   }
 
   // =============================

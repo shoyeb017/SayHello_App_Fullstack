@@ -12,6 +12,7 @@ import 'providers/course_provider.dart';
 import 'l10n/app_localizations.dart';
 import 'providers/instructor_provider.dart';
 import 'providers/auth_provider.dart';
+import 'providers/session_provider.dart';
 
 import 'screens/auth/landing_page.dart';
 import 'screens/permissions/permission_wrapper.dart';
@@ -54,6 +55,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => LearnerProvider()),
         ChangeNotifierProvider(create: (_) => InstructorProvider()),
         ChangeNotifierProvider(create: (_) => CourseProvider()),
+        ChangeNotifierProvider(create: (_) => SessionProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: const MyApp(),
@@ -116,14 +118,16 @@ class MyApp extends StatelessWidget {
 
       initialRoute: '/',
       routes: {
-        '/': (context) => const PermissionWrapper(),
-        '/landing': (context) => const LandingPage(),
-        '/learner-signin': (context) => const LearnerSignInPage(),
-        '/instructor-signin': (context) => const InstructorSignInPage(),
-        '/learner-signup': (context) => const LearnerSignupPage(),
-        '/instructor-signup': (context) => const InstructorSignupPage(),
-        '/learner-main': (context) => const LearnerMainTab(),
-        '/instructor-main': (context) => const InstructorMainTab(),
+        '/': (BuildContext context) => const PermissionWrapper(),
+        '/landing': (BuildContext context) => const LandingPage(),
+        '/learner-signin': (BuildContext context) => const LearnerSignInPage(),
+        '/instructor-signin': (BuildContext context) =>
+            const InstructorSignInPage(),
+        '/learner-signup': (BuildContext context) => const LearnerSignupPage(),
+        '/instructor-signup': (BuildContext context) =>
+            const InstructorSignupPage(),
+        '/learner-main': (BuildContext context) => const LearnerMainTab(),
+        '/instructor-main': (BuildContext context) => const InstructorMainTab(),
       },
     );
   }

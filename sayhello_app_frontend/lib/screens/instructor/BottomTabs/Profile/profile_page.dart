@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../../../../../providers/settings_provider.dart';
+import '../../../../../providers/instructor_provider.dart';
+import '../../../../../providers/auth_provider.dart';
 import '../../../../../l10n/app_localizations.dart';
+import '../../../../../services/supabase_config.dart';
 import '../../instructor_main_tab.dart';
 
 class InstructorProfilePage extends StatefulWidget {
@@ -11,18 +17,36 @@ class InstructorProfilePage extends StatefulWidget {
 }
 
 class _InstructorProfilePageState extends State<InstructorProfilePage> {
-  // Instructor profile data
-  String instructorName = "Dr. Sarah Johnson";
-  String profileImageUrl = "https://i.pravatar.cc/150?img=5";
-  String email = "sarah.johnson@university.edu";
-  String dateOfBirth = "January 15, 1985";
-  String gender = "Female";
-  String country = "USA";
-  String bio =
-      "Passionate educator with extensive experience in programming and software development. I love helping students achieve their coding goals! 💻📚";
-  String nativeLanguage = "English";
-  String teachingLanguage = "English";
-  int yearsOfExperience = 8;
+  InstructorProvider? _instructorProvider;
+  bool _initialized = false;
+  ScaffoldMessengerState? _scaffoldMessenger;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      _scaffoldMessenger = ScaffoldMessenger.of(context);
+      _initializeData();
+    }
+  }
+
+  Future<void> _initializeData() async {
+    if (!mounted) return;
+
+    _instructorProvider = Provider.of<InstructorProvider>(
+      context,
+      listen: false,
+    );
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    if (_instructorProvider?.currentInstructor == null &&
+        authProvider.currentUser != null) {
+      await _instructorProvider?.loadInstructorById(
+        authProvider.currentUser.id,
+      );
+    }
+  }
 
   final List<String> languages = [
     'English',
@@ -31,19 +55,33 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
     'Korean',
     'Bangla',
   ];
-  final List<String> genders = ['Male', 'Female'];
+  final List<String> genders = ['male', 'female'];
   final List<String> countries = [
-    'USA',
-    'Spain',
-    'Japan',
-    'Korea',
-    'Bangladesh',
+    'usa', // United States
+    'spain', // Spain
+    'japan', // Japan
+    'korea', // Korea
+    'bangladesh', // Bangladesh
   ];
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final instructorProvider = Provider.of<InstructorProvider>(context);
+    final instructor = instructorProvider.currentInstructor;
+
+    if (instructorProvider.isLoading || instructor == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (instructorProvider.hasError) {
+      return Scaffold(
+        body: Center(
+          child: Text(instructorProvider.error ?? 'Unknown error occurred'),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -137,6 +175,10 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
   }
 
   Widget _buildProfileHeader(bool isDark, AppLocalizations localizations) {
+    final instructor = Provider.of<InstructorProvider>(
+      context,
+    ).currentInstructor!;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -158,7 +200,10 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
               children: [
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: NetworkImage(profileImageUrl),
+                  backgroundImage: instructor.profileImage != null
+                      ? NetworkImage(instructor.profileImage!)
+                      : const AssetImage('assets/default_avatar.png')
+                            as ImageProvider,
                   backgroundColor: Colors.white,
                 ),
                 Positioned(
@@ -186,17 +231,17 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GestureDetector(
-                  onTap: () => _showEditDialog(
-                    'Name',
-                    instructorName,
-                    (value) => setState(() => instructorName = value),
-                    localizations,
-                  ),
+                  onTap: () =>
+                      _showEditDialog('Name', instructor.name, (value) async {
+                        await _instructorProvider?.updateInstructor({
+                          'name': value,
+                        });
+                      }, localizations),
                   child: Row(
                     children: [
                       Expanded(
                         child: Text(
-                          instructorName,
+                          instructor.name,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -210,7 +255,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${localizations.instructorRole} • ${localizations.instructorYearsExp(yearsOfExperience)}',
+                  '${localizations.instructorRole} • ${localizations.instructorYearsExp(instructor.yearsOfExperience)}',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.white.withOpacity(0.9),
@@ -218,7 +263,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  country,
+                  getCountryName(instructor.country),
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.white.withOpacity(0.8),
@@ -233,6 +278,9 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
   }
 
   Widget _buildQuickStats(AppLocalizations localizations) {
+    final instructorProvider = Provider.of<InstructorProvider>(context);
+    final stats = instructorProvider.instructorStats;
+
     return Row(
       children: [
         Expanded(
@@ -249,9 +297,12 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
               children: [
                 Icon(Icons.school, color: const Color(0xFF7A54FF), size: 24),
                 const SizedBox(height: 8),
-                const Text(
-                  '15',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  stats?['total_courses']?.toString() ?? '0',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
                   localizations.instructorStatsCourses,
@@ -276,9 +327,12 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
               children: [
                 Icon(Icons.people, color: const Color(0xFF7A54FF), size: 24),
                 const SizedBox(height: 8),
-                const Text(
-                  '1,234',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  stats?['total_students']?.toString() ?? '0',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
                   localizations.instructorStatsStudents,
@@ -303,9 +357,12 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
               children: [
                 Icon(Icons.star, color: const Color(0xFF7A54FF), size: 24),
                 const SizedBox(height: 8),
-                const Text(
-                  '4.8',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  (stats?['average_rating'] ?? 0.0).toStringAsFixed(1),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
                   localizations.instructorStatsRating,
@@ -320,6 +377,10 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
   }
 
   Widget _buildPersonalInfoCard(bool isDark, AppLocalizations localizations) {
+    final instructor = Provider.of<InstructorProvider>(
+      context,
+    ).currentInstructor!;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -342,33 +403,39 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
           const SizedBox(height: 16),
           _buildInfoRow(
             localizations.email,
-            email,
+            instructor.email,
             Icons.email,
-            () => _showEditDialog(
-              localizations.email,
-              email,
-              (value) => setState(() => email = value),
-              localizations,
-            ),
+            () => _showEditDialog(localizations.email, instructor.email, (
+              value,
+            ) async {
+              await _instructorProvider?.updateInstructor({'email': value});
+            }, localizations),
+          ),
+          const SizedBox(height: 12),
+          _buildInfoRow(
+            'Password',
+            '••••••••',
+            Icons.lock,
+            () => _showPasswordChangeDialog(),
           ),
           const SizedBox(height: 12),
           _buildInfoRow(
             localizations.dateOfBirth,
-            dateOfBirth,
+            instructor.dateOfBirth.toString().split(' ')[0],
             Icons.cake,
             () => _showDatePicker(),
           ),
           const SizedBox(height: 12),
           _buildInfoRow(
             localizations.gender,
-            gender,
+            getGenderDisplayName(instructor.gender),
             Icons.person_outline,
             () => _showGenderDialog(),
           ),
           const SizedBox(height: 12),
           _buildInfoRow(
             localizations.country,
-            country,
+            instructor.country,
             Icons.public,
             () => _showCountryDialog(),
           ),
@@ -381,6 +448,10 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
     bool isDark,
     AppLocalizations localizations,
   ) {
+    final instructor = Provider.of<InstructorProvider>(
+      context,
+    ).currentInstructor!;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -403,7 +474,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
           const SizedBox(height: 16),
           _buildInfoRow(
             localizations.instructorYearsOfExperience,
-            '$yearsOfExperience y ears',
+            '${instructor.yearsOfExperience} years',
             Icons.timeline,
             () => _showExperienceDialog(),
           ),
@@ -413,6 +484,10 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
   }
 
   Widget _buildLanguageInfoCard(bool isDark, AppLocalizations localizations) {
+    final instructor = Provider.of<InstructorProvider>(
+      context,
+    ).currentInstructor!;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -433,18 +508,16 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
             ],
           ),
           const SizedBox(height: 16),
-          _buildInfoRow(
+          _buildInfoRowReadOnly(
             localizations.nativeLanguage,
-            nativeLanguage,
+            instructor.nativeLanguage,
             Icons.home,
-            () => _showLanguageDialog('native'),
           ),
           const SizedBox(height: 12),
-          _buildInfoRow(
+          _buildInfoRowReadOnly(
             localizations.teachingLanguage,
-            teachingLanguage,
+            instructor.teachingLanguage,
             Icons.school,
-            () => _showLanguageDialog('teaching'),
           ),
         ],
       ),
@@ -452,6 +525,10 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
   }
 
   Widget _buildAboutSection(bool isDark, AppLocalizations localizations) {
+    final instructor = Provider.of<InstructorProvider>(
+      context,
+    ).currentInstructor!;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -488,7 +565,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
                     children: [
                       Expanded(
                         child: Text(
-                          bio,
+                          instructor.bio ?? '',
                           style: TextStyle(
                             fontSize: 14,
                             color: isDark ? Colors.white : Colors.black,
@@ -547,8 +624,40 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
     );
   }
 
+  Widget _buildInfoRowReadOnly(String label, String value, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, color: const Color(0xFF7A54FF), size: 18),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   // Dialog methods
   void _showImageEditOptions(AppLocalizations localizations) {
+    final instructor = Provider.of<InstructorProvider>(
+      context,
+      listen: false,
+    ).currentInstructor!;
+
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -566,11 +675,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
               title: const Text('Take Photo'),
               onTap: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Camera feature will be implemented'),
-                  ),
-                );
+                _pickImageFromCamera();
               },
             ),
             ListTile(
@@ -581,11 +686,7 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
               title: const Text('Select from Gallery'),
               onTap: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Gallery feature will be implemented'),
-                  ),
-                );
+                _pickImageFromGallery();
               },
             ),
             ListTile(
@@ -595,8 +696,12 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
                 Navigator.pop(context);
                 _showEditDialog(
                   'Profile Image URL',
-                  profileImageUrl,
-                  (value) => setState(() => profileImageUrl = value),
+                  instructor.profileImage ?? '',
+                  (value) async {
+                    await _instructorProvider?.updateInstructor({
+                      'profile_image': value,
+                    });
+                  },
                   localizations,
                 );
               },
@@ -634,7 +739,8 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
             onPressed: () {
               onSave(controller.text);
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
+              if (!mounted) return;
+              _showSnackBar(
                 SnackBar(
                   content: Text(localizations.instructorFieldUpdated(title)),
                 ),
@@ -651,7 +757,12 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
   }
 
   void _showBioEditDialog() {
-    final controller = TextEditingController(text: bio);
+    final instructor = Provider.of<InstructorProvider>(
+      context,
+      listen: false,
+    ).currentInstructor!;
+    final controller = TextEditingController(text: instructor.bio ?? '');
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -671,10 +782,13 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              setState(() => bio = controller.text);
+            onPressed: () async {
+              await _instructorProvider?.updateInstructor({
+                'bio': controller.text,
+              });
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
+              if (!mounted) return;
+              _showSnackBar(
                 const SnackBar(content: Text('Bio updated successfully')),
               );
             },
@@ -689,9 +803,13 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
   }
 
   void _showDatePicker() {
+    final instructor = Provider.of<InstructorProvider>(
+      context,
+      listen: false,
+    ).currentInstructor!;
     showDatePicker(
       context: context,
-      initialDate: DateTime(1985, 1, 15),
+      initialDate: instructor.dateOfBirth,
       firstDate: DateTime(1950),
       lastDate: DateTime.now(),
       builder: (context, child) {
@@ -704,13 +822,13 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
           child: child!,
         );
       },
-    ).then((selectedDate) {
+    ).then((selectedDate) async {
       if (selectedDate != null) {
-        setState(() {
-          dateOfBirth =
-              "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+        await _instructorProvider?.updateInstructor({
+          'date_of_birth': selectedDate.toIso8601String(),
         });
-        ScaffoldMessenger.of(context).showSnackBar(
+        if (!mounted) return;
+        _showSnackBar(
           const SnackBar(content: Text('Date of birth updated successfully')),
         );
       }
@@ -718,6 +836,10 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
   }
 
   void _showGenderDialog() {
+    final instructor = Provider.of<InstructorProvider>(
+      context,
+      listen: false,
+    ).currentInstructor!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -727,11 +849,15 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
           children: genders
               .map(
                 (g) => ListTile(
-                  title: Text(g),
-                  onTap: () {
-                    setState(() => gender = g);
+                  title: Text(getGenderDisplayName(g)),
+                  trailing: instructor.gender.toLowerCase() == g.toLowerCase()
+                      ? Icon(Icons.check, color: const Color(0xFF7A54FF))
+                      : null,
+                  onTap: () async {
+                    await _instructorProvider?.updateInstructor({'gender': g});
                     Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    if (!mounted) return;
+                    _showSnackBar(
                       const SnackBar(
                         content: Text('Gender updated successfully'),
                       ),
@@ -745,7 +871,56 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
     );
   }
 
+  // Country code to display name mapping
+  final Map<String, String> countryNames = {
+    'usa': 'United States',
+    'spain': 'Spain',
+    'japan': 'Japan',
+    'korea': 'South Korea',
+    'bangladesh': 'Bangladesh',
+  };
+
+  String getCountryName(String code) {
+    return countryNames[code.toLowerCase()] ?? code;
+  }
+
+  String getGenderDisplayName(String genderCode) {
+    switch (genderCode.toLowerCase()) {
+      case 'male':
+        return 'Male';
+      case 'female':
+        return 'Female';
+      default:
+        return genderCode;
+    }
+  }
+
+  void _showSnackBar(SnackBar snackBar) {
+    if (!mounted || _scaffoldMessenger == null) return;
+    _scaffoldMessenger!.showSnackBar(snackBar);
+  }
+
+  Future<bool> _safeUpdate(Map<String, dynamic> updates) async {
+    if (_instructorProvider == null) return false;
+    try {
+      return await _instructorProvider!.updateInstructor(updates);
+    } catch (e) {
+      _showSnackBar(
+        SnackBar(
+          content: Text('Failed to update: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return false;
+    }
+  }
+
   void _showCountryDialog() {
+    final instructor = Provider.of<InstructorProvider>(
+      context,
+      listen: false,
+    ).currentInstructor!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -754,16 +929,23 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
           mainAxisSize: MainAxisSize.min,
           children: countries
               .map(
-                (c) => ListTile(
-                  title: Text(c),
-                  onTap: () {
-                    setState(() => country = c);
+                (code) => ListTile(
+                  title: Text(getCountryName(code)),
+                  trailing:
+                      instructor.country.toLowerCase() == code.toLowerCase()
+                      ? Icon(Icons.check, color: const Color(0xFF7A54FF))
+                      : null,
+                  onTap: () async {
                     Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Country updated successfully'),
-                      ),
-                    );
+                    final success = await _safeUpdate({'country': code});
+                    if (success) {
+                      if (!mounted) return;
+                      _showSnackBar(
+                        const SnackBar(
+                          content: Text('Country updated successfully'),
+                        ),
+                      );
+                    }
                   },
                 ),
               )
@@ -773,52 +955,253 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
     );
   }
 
-  void _showLanguageDialog(String type) {
-    final currentLanguage = type == 'native'
-        ? nativeLanguage
-        : teachingLanguage;
+  void _showPasswordChangeDialog() {
+    final currentPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+    bool isCurrentPasswordVisible = false;
+    bool isNewPasswordVisible = false;
+    bool isConfirmPasswordVisible = false;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Select ${type == 'native' ? 'Native' : 'Teaching'} Language',
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: languages
-              .map(
-                (lang) => ListTile(
-                  title: Text(lang),
-                  trailing: currentLanguage == lang
-                      ? Icon(Icons.check, color: const Color(0xFF7A54FF))
-                      : null,
-                  onTap: () {
-                    setState(() {
-                      if (type == 'native') {
-                        nativeLanguage = lang;
-                      } else {
-                        teachingLanguage = lang;
-                      }
-                    });
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Change Password'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: currentPasswordController,
+                obscureText: !isCurrentPasswordVisible,
+                decoration: InputDecoration(
+                  labelText: 'Current Password',
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isCurrentPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isCurrentPasswordVisible = !isCurrentPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: newPasswordController,
+                obscureText: !isNewPasswordVisible,
+                decoration: InputDecoration(
+                  labelText: 'New Password',
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isNewPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isNewPasswordVisible = !isNewPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: confirmPasswordController,
+                obscureText: !isConfirmPasswordVisible,
+                decoration: InputDecoration(
+                  labelText: 'Confirm New Password',
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isConfirmPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isConfirmPasswordVisible = !isConfirmPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (newPasswordController.text !=
+                    confirmPasswordController.text) {
+                  _showSnackBar(
+                    const SnackBar(
+                      content: Text('New passwords do not match'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                if (newPasswordController.text.isEmpty) {
+                  _showSnackBar(
+                    const SnackBar(
+                      content: Text('Password cannot be empty'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                try {
+                  // Update password using instructor provider
+                  final success = await _safeUpdate({
+                    'password': newPasswordController.text,
+                  });
+
+                  if (success) {
                     Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          '${type == 'native' ? 'Native' : 'Teaching'} language updated successfully',
-                        ),
+                    if (!mounted) return;
+                    _showSnackBar(
+                      const SnackBar(
+                        content: Text('Password updated successfully'),
+                        backgroundColor: Colors.green,
                       ),
                     );
-                  },
-                ),
-              )
-              .toList(),
+                  }
+                } catch (e) {
+                  if (!mounted) return;
+                  _showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to update password: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: Text(
+                'Update',
+                style: TextStyle(color: const Color(0xFF7A54FF)),
+              ),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 80,
+      );
+
+      if (image != null) {
+        await _uploadAndUpdateProfileImage(image);
+      }
+    } catch (e) {
+      _showSnackBar(
+        SnackBar(
+          content: Text('Failed to take photo: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 80,
+      );
+
+      if (image != null) {
+        await _uploadAndUpdateProfileImage(image);
+      }
+    } catch (e) {
+      _showSnackBar(
+        SnackBar(
+          content: Text('Failed to select image: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _uploadAndUpdateProfileImage(XFile imageFile) async {
+    try {
+      // Show loading
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+
+      final bytes = await File(imageFile.path).readAsBytes();
+      final fileExt = imageFile.path.split('.').last;
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}.$fileExt';
+      final filePath = 'profile_images/$fileName';
+
+      // Upload to Supabase Storage
+      await SupabaseConfig.client.storage
+          .from('profile_pics')
+          .uploadBinary(filePath, bytes);
+
+      // Get public URL
+      final imageUrl = SupabaseConfig.client.storage
+          .from('profile_pics')
+          .getPublicUrl(filePath);
+
+      // Update instructor profile
+      await _instructorProvider?.updateInstructor({'profile_image': imageUrl});
+
+      // Close loading dialog
+      if (mounted) Navigator.pop(context);
+
+      _showSnackBar(
+        const SnackBar(
+          content: Text('Profile image updated successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      // Close loading dialog
+      if (mounted) Navigator.pop(context);
+
+      _showSnackBar(
+        SnackBar(
+          content: Text('Failed to update profile image: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _showExperienceDialog() {
-    int selectedExperience = yearsOfExperience;
+    final instructor = Provider.of<InstructorProvider>(
+      context,
+      listen: false,
+    ).currentInstructor!;
+    int selectedExperience = instructor.yearsOfExperience;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -846,14 +1229,19 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              setState(() => yearsOfExperience = selectedExperience);
+            onPressed: () async {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Experience updated successfully'),
-                ),
-              );
+              final success = await _safeUpdate({
+                'years_of_experience': selectedExperience,
+              });
+              if (success) {
+                if (!mounted) return;
+                _showSnackBar(
+                  const SnackBar(
+                    content: Text('Experience updated successfully'),
+                  ),
+                );
+              }
             },
             child: Text(
               'Save',
@@ -877,10 +1265,27 @@ class _InstructorProfilePageState extends State<InstructorProfilePage> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // Navigate to landing page and clear all previous routes
-              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+            onPressed: () async {
+              try {
+                await SupabaseConfig.client.auth.signOut();
+                _instructorProvider?.clear();
+
+                if (mounted) {
+                  Navigator.pop(context);
+                  // Navigate to landing page and clear all previous routes
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/',
+                    (route) => false,
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  _showSnackBar(
+                    SnackBar(content: Text('Error logging out: $e')),
+                  );
+                }
+              }
             },
             child: const Text('Logout', style: TextStyle(color: Colors.red)),
           ),
