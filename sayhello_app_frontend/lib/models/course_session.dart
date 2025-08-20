@@ -157,6 +157,8 @@ class CourseSession {
         return 'Zoom';
       case 'meet':
         return 'Google Meet';
+      case 'teams':
+        return 'Teams';
       default:
         return sessionPlatform;
     }
