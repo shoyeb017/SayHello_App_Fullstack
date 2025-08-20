@@ -10,3 +10,5 @@ export 'course_portal.dart';
 export 'chat.dart';
 export 'feed.dart';
 export 'notification.dart';
+export 'recorded_class.dart';
+export 'study_material.dart';
