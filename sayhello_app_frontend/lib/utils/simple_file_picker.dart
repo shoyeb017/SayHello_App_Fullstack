@@ -1,26 +1,33 @@
 import 'package:file_picker/file_picker.dart';
+import 'dart:typed_data';
 
-class FilePickerHelper {
+class SimpleFilePicker {
   static Future<Map<String, dynamic>?> pickFile() async {
     try {
+      print('Starting simple file picker...');
+
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
         withData: true,
       );
 
-      if (result != null) {
-        PlatformFile file = result.files.first;
+      if (result != null && result.files.isNotEmpty) {
+        final file = result.files.first;
+        print('File selected: ${file.name}, size: ${file.size} bytes');
+
         return {
           'name': file.name,
           'bytes': file.bytes,
           'size': file.size,
-          'path': file.path,
           'extension': file.extension,
+          'path': file.path,
         };
       }
+
+      print('No file selected');
       return null;
     } catch (e) {
-      print('File picker error: $e');
+      print('Simple file picker error: $e');
       return null;
     }
   }

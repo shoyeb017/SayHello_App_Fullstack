@@ -104,7 +104,7 @@ class StudyMaterialProvider with ChangeNotifier {
       print('StudyMaterialProvider: Updating study material: $studyMaterialId');
 
       final updatedMaterial = await _studyMaterialService.updateStudyMaterial(
-        studyMaterialId: studyMaterialId,
+        id: studyMaterialId,
         title: title,
         description: description,
       );
@@ -167,7 +167,7 @@ class StudyMaterialProvider with ChangeNotifier {
   /// Get study materials by type
   List<StudyMaterial> getStudyMaterialsByType(String type) {
     return _studyMaterials
-        .where((m) => m.type.toLowerCase() == type.toLowerCase())
+        .where((m) => m.materialType.toLowerCase() == type.toLowerCase())
         .toList();
   }
 
@@ -177,9 +177,9 @@ class StudyMaterialProvider with ChangeNotifier {
 
     final lowerQuery = query.toLowerCase();
     return _studyMaterials.where((m) {
-      return m.title.toLowerCase().contains(lowerQuery) ||
-          m.description.toLowerCase().contains(lowerQuery) ||
-          m.fileName.toLowerCase().contains(lowerQuery);
+      return m.materialTitle.toLowerCase().contains(lowerQuery) ||
+          m.materialDescription.toLowerCase().contains(lowerQuery) ||
+          m.materialType.toLowerCase().contains(lowerQuery);
     }).toList();
   }
 
@@ -204,8 +204,9 @@ class StudyMaterialProvider with ChangeNotifier {
   /// Initialize storage bucket
   Future<void> initializeStorage() async {
     try {
-      await _studyMaterialService.initializeBucket();
-      print('StudyMaterialProvider: Storage initialized successfully');
+      print(
+        'StudyMaterialProvider: Storage initialization skipped (handled by service)',
+      );
     } catch (e) {
       print('StudyMaterialProvider: Error initializing storage: $e');
       _setError('Failed to initialize storage: ${e.toString()}');
@@ -215,7 +216,8 @@ class StudyMaterialProvider with ChangeNotifier {
   /// Test database connection and schema
   Future<bool> testDatabaseConnection() async {
     try {
-      await _studyMaterialService.testDatabaseSchema();
+      // Test by trying to load study materials for a dummy course
+      await _studyMaterialService.getStudyMaterials('test');
       print('StudyMaterialProvider: Database connection test successful');
       return true;
     } catch (e) {
@@ -228,7 +230,8 @@ class StudyMaterialProvider with ChangeNotifier {
   /// Get download URL for a study material
   Future<String> getDownloadUrl(String filePath) async {
     try {
-      return await _studyMaterialService.getDownloadUrl(filePath);
+      // Since materialLink already contains the full URL, return it directly
+      return filePath;
     } catch (e) {
       print('StudyMaterialProvider: Error getting download URL: $e');
       return '';

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:file_picker/file_picker.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../../providers/study_material_provider.dart';
 import '../../../../../models/study_material.dart';
-import '../../../../../utils/file_picker_helper.dart';
+import '../../../../../utils/simple_file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class InstructorStudyMaterialsTab extends StatefulWidget {
@@ -190,7 +189,7 @@ class _InstructorStudyMaterialsTabState
     Color textColor,
     Color? subTextColor,
   ) {
-    final type = material.type;
+    final type = material.materialType;
     final typeColor = _getTypeColor(type);
 
     return Container(
@@ -232,7 +231,7 @@ class _InstructorStudyMaterialsTabState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  material.title,
+                  material.materialTitle,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
@@ -247,7 +246,7 @@ class _InstructorStudyMaterialsTabState
                 // Expandable Description
                 _buildExpandableDescription(
                   material.id,
-                  material.description,
+                  material.materialDescription,
                   subTextColor!,
                 ),
 
@@ -259,13 +258,13 @@ class _InstructorStudyMaterialsTabState
                     Icon(Icons.file_present, size: 10, color: subTextColor),
                     const SizedBox(width: 2),
                     Text(
-                      material.fileSize,
+                      "Unknown size",
                       style: TextStyle(fontSize: 9, color: subTextColor),
                     ),
                     const Spacer(),
                     // Upload Date
                     Text(
-                      material.uploadDate.toString().split(' ')[0],
+                      material.createdAt.toString().split(' ')[0],
                       style: TextStyle(fontSize: 10, color: subTextColor),
                     ),
                   ],
@@ -409,6 +408,7 @@ class _InstructorStudyMaterialsTabState
     switch (type.toLowerCase()) {
       case 'pdf':
         return Icons.picture_as_pdf;
+      case 'document':
       case 'doc':
       case 'docx':
         return Icons.description;
@@ -427,6 +427,7 @@ class _InstructorStudyMaterialsTabState
     switch (type.toLowerCase()) {
       case 'pdf':
         return Colors.red;
+      case 'document':
       case 'doc':
       case 'docx':
         return Colors.blue;
@@ -441,10 +442,23 @@ class _InstructorStudyMaterialsTabState
     }
   }
 
-  void _viewMaterial(StudyMaterial material) {
-    final downloadUrl = material.downloadUrl;
+  String _getTypeDisplayName(String type) {
+    switch (type.toLowerCase()) {
+      case 'document':
+        return 'DOC';
+      case 'pdf':
+        return 'PDF';
+      case 'image':
+        return 'IMAGE';
+      default:
+        return type.toUpperCase();
+    }
+  }
 
-    if (downloadUrl == null || downloadUrl.isEmpty) {
+  void _viewMaterial(StudyMaterial material) {
+    final downloadUrl = material.materialLink;
+
+    if (downloadUrl.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -460,7 +474,7 @@ class _InstructorStudyMaterialsTabState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          AppLocalizations.of(context)!.openingFile(material.fileName),
+          AppLocalizations.of(context)!.openingFile(material.materialTitle),
         ),
         backgroundColor: Color(0xFF7A54FF),
         duration: Duration(seconds: 2),
@@ -575,9 +589,9 @@ class _InstructorStudyMaterialsTabState
 
   void _editMaterial(StudyMaterial material) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final titleController = TextEditingController(text: material.title);
+    final titleController = TextEditingController(text: material.materialTitle);
     final descriptionController = TextEditingController(
-      text: material.description,
+      text: material.materialDescription,
     );
 
     showDialog(
@@ -648,7 +662,12 @@ class _InstructorStudyMaterialsTabState
             ),
             ElevatedButton(
               onPressed: () async {
-                Navigator.of(context).pop();
+                // Capture references before async operations
+                final localizations = AppLocalizations.of(context)!;
+                final navigator = Navigator.of(context);
+                final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+                navigator.pop();
 
                 final studyMaterialProvider = context
                     .read<StudyMaterialProvider>();
@@ -659,13 +678,9 @@ class _InstructorStudyMaterialsTabState
                 );
 
                 if (success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  scaffoldMessenger.showSnackBar(
                     SnackBar(
-                      content: Text(
-                        AppLocalizations.of(
-                          context,
-                        )!.materialUpdatedSuccessfully,
-                      ),
+                      content: Text(localizations.materialUpdatedSuccessfully),
                       backgroundColor: Colors.green,
                       duration: Duration(seconds: 2),
                     ),
@@ -720,7 +735,7 @@ class _InstructorStudyMaterialsTabState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      material.title,
+                      material.materialTitle,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: isDark ? Colors.white : Colors.black,
@@ -728,7 +743,7 @@ class _InstructorStudyMaterialsTabState
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${material.type.toUpperCase()} • ${material.uploadDate.toString().split(' ')[0]}',
+                      '${_getTypeDisplayName(material.materialType)} • ${material.createdAt.toString().split(' ')[0]}',
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -760,7 +775,12 @@ class _InstructorStudyMaterialsTabState
             ),
             ElevatedButton(
               onPressed: () async {
-                Navigator.of(context).pop();
+                // Capture references before async operations
+                final localizations = AppLocalizations.of(context)!;
+                final navigator = Navigator.of(context);
+                final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+                navigator.pop();
 
                 final studyMaterialProvider = context
                     .read<StudyMaterialProvider>();
@@ -769,12 +789,10 @@ class _InstructorStudyMaterialsTabState
                 );
 
                 if (success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  scaffoldMessenger.showSnackBar(
                     SnackBar(
                       content: Text(
-                        AppLocalizations.of(
-                          context,
-                        )!.materialDeleted(material.title),
+                        localizations.materialDeleted(material.materialTitle),
                       ),
                       backgroundColor: Colors.red,
                       duration: Duration(seconds: 2),
@@ -803,244 +821,49 @@ class _InstructorStudyMaterialsTabState
     Uint8List? selectedFileBytes;
     String selectedFileSize = '';
 
-    final types = ['pdf', 'doc', 'image'];
-
-    // Alternative file selection using image_picker for images
-    Future<void> _selectImageFile() async {
-      try {
-        final fileData = await FilePickerHelper.pickFile(
-          type: 'image',
-          withData: true,
-        );
-
-        if (fileData != null) {
-          selectedFileName = fileData['name'] as String;
-          selectedFileBytes = fileData['bytes'] as Uint8List?;
-          selectedFileSize = FilePickerHelper.formatFileSize(
-            fileData['size'] as int,
-          );
-          selectedType = 'image';
-
-          // Auto-populate title if empty
-          if (titleController.text.isEmpty) {
-            String nameWithoutExtension = selectedFileName;
-            if (nameWithoutExtension.contains('.')) {
-              nameWithoutExtension = nameWithoutExtension.substring(
-                0,
-                nameWithoutExtension.lastIndexOf('.'),
-              );
-            }
-            titleController.text = nameWithoutExtension.replaceAll('_', ' ');
-          }
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Image "$selectedFileName" selected successfully!'),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
-      } catch (e) {
-        print('Error selecting image: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error selecting image: $e'),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
-    }
-
-    // Basic file picker test
-    Future<void> _testFilePicker() async {
-      try {
-        print('Testing basic file picker...');
-
-        // Test if FilePicker.platform is available
-        final platform = FilePicker.platform;
-        print('FilePicker platform available: true');
-
-        FilePickerResult? result = await platform.pickFiles(
-          allowMultiple: false,
-        );
-
-        if (result != null && result.files.isNotEmpty) {
-          final file = result.files.first;
-          print('Test successful: ${file.name}');
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Test successful! Selected: ${file.name}'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        } else {
-          print('Test cancelled by user');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Test cancelled or no file selected'),
-              backgroundColor: Colors.blue,
-            ),
-          );
-        }
-      } catch (e) {
-        print('Test failed: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Test failed: $e'),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 4),
-          ),
-        );
-      }
-    }
+    final types = ['pdf', 'document', 'image'];
 
     Future<void> _selectFile() async {
       try {
-        print('Starting file selection process...');
-
-        final fileData = await FilePickerHelper.pickFile(
-          type: selectedType,
-          withData: true,
-        );
+        final fileData = await SimpleFilePicker.pickFile();
 
         if (fileData != null) {
           final fileName = fileData['name'] as String;
           final fileBytes = fileData['bytes'] as Uint8List?;
           final fileSize = fileData['size'] as int;
-          final fileExtension = fileData['extension'] as String?;
 
-          print('Selected file: $fileName, size: $fileSize bytes');
+          if (fileBytes != null) {
+            selectedFileName = fileName;
+            selectedFileBytes = fileBytes;
+            selectedFileSize = SimpleFilePicker.formatFileSize(fileSize);
 
-          // Validate file size (max 10MB)
-          const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
-          if (fileSize > maxSizeInBytes) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'File size too large. Maximum allowed size is 10MB.',
-                ),
-                backgroundColor: Colors.orange,
-                duration: Duration(seconds: 3),
-              ),
-            );
-            return;
-          }
-
-          // Check if file bytes are available
-          if (fileBytes == null) {
-            print('Warning: File bytes are null');
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Could not read file content. Please try a different file.',
-                ),
-                backgroundColor: Colors.orange,
-                duration: Duration(seconds: 3),
-              ),
-            );
-            return;
-          }
-
-          // Validate file type
-          if (!FilePickerHelper.validateFileType(fileName, selectedType)) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Please select a ${selectedType.toUpperCase()} file. Selected file is ${fileExtension?.toUpperCase() ?? 'unknown'}.',
-                ),
-                backgroundColor: Colors.orange,
-                duration: Duration(seconds: 3),
-              ),
-            );
-            return;
-          }
-
-          // Update file information
-          selectedFileName = fileName;
-          selectedFileBytes = fileBytes;
-          selectedFileSize = FilePickerHelper.formatFileSize(fileSize);
-
-          // Update the type based on file extension if needed
-          if (fileExtension != null) {
-            String ext = fileExtension.toLowerCase();
-            if (ext == 'pdf') {
-              selectedType = 'pdf';
-            } else if (['doc', 'docx'].contains(ext)) {
-              selectedType = 'doc';
-            } else if ([
-              'jpg',
-              'jpeg',
-              'png',
-              'gif',
-              'bmp',
-              'webp',
-            ].contains(ext)) {
-              selectedType = 'image';
+            // Auto-populate title if empty
+            if (titleController.text.isEmpty) {
+              String nameWithoutExtension = fileName;
+              if (nameWithoutExtension.contains('.')) {
+                nameWithoutExtension = nameWithoutExtension.substring(
+                  0,
+                  nameWithoutExtension.lastIndexOf('.'),
+                );
+              }
+              titleController.text = nameWithoutExtension.replaceAll('_', ' ');
             }
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('File "$fileName" selected successfully!'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
+            );
           }
-
-          // Auto-populate title if empty
-          if (titleController.text.isEmpty) {
-            String nameWithoutExtension = fileName;
-            if (nameWithoutExtension.contains('.')) {
-              nameWithoutExtension = nameWithoutExtension.substring(
-                0,
-                nameWithoutExtension.lastIndexOf('.'),
-              );
-            }
-            titleController.text = nameWithoutExtension.replaceAll('_', ' ');
-          }
-
-          print('File selection successful: $fileName');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('File "$fileName" selected successfully!'),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-            ),
-          );
-        } else {
-          print('File selection cancelled by user');
         }
-      } catch (e, stackTrace) {
-        print('Error selecting file: $e');
-        print('Stack trace: $stackTrace');
-
-        String errorMessage = 'Error selecting file: ';
-        if (e.toString().contains('LateInitializationError') ||
-            e.toString().contains('_instance')) {
-          errorMessage +=
-              'File picker not initialized. Please restart the app and try again.';
-        } else if (e.toString().contains('permission')) {
-          errorMessage += 'Permission denied. Please check file permissions.';
-        } else if (e.toString().contains('not supported')) {
-          errorMessage += 'File type not supported on this platform.';
-        } else {
-          errorMessage += e.toString();
-        }
-
+      } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(errorMessage),
+            content: Text('Error selecting file: $e'),
             backgroundColor: Colors.red,
-            duration: Duration(seconds: 5),
-            action: SnackBarAction(
-              label: 'Restart App',
-              textColor: Colors.white,
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Please manually restart the app from your device.',
-                    ),
-                    backgroundColor: Colors.blue,
-                  ),
-                );
-              },
-            ),
+            duration: Duration(seconds: 3),
           ),
         );
       }
@@ -1136,8 +959,7 @@ class _InstructorStudyMaterialsTabState
                               child: OutlinedButton.icon(
                                 onPressed: () async {
                                   await _selectFile();
-                                  // Trigger a rebuild of the StatefulBuilder
-                                  setState(() {});
+                                  setState(() {}); // Refresh dialog
                                 },
                                 icon: const Icon(Icons.folder_open),
                                 label: Text(
@@ -1156,105 +978,6 @@ class _InstructorStudyMaterialsTabState
                               ),
                             ),
                             const SizedBox(height: 8),
-                            // Alternative selection methods
-                            if (selectedType == 'image') ...[
-                              SizedBox(
-                                width: double.infinity,
-                                child: OutlinedButton.icon(
-                                  onPressed: () async {
-                                    await _selectImageFile();
-                                    setState(() {});
-                                  },
-                                  icon: const Icon(Icons.photo_library),
-                                  label: Text('Choose from Gallery'),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.orange,
-                                    side: const BorderSide(
-                                      color: Colors.orange,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            // Debug and testing buttons
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextButton.icon(
-                                    onPressed: () async {
-                                      await _testFilePicker();
-                                    },
-                                    icon: const Icon(
-                                      Icons.bug_report,
-                                      size: 16,
-                                    ),
-                                    label: Text(
-                                      'Test Picker',
-                                      style: TextStyle(fontSize: 11),
-                                    ),
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: Colors.blue,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: TextButton.icon(
-                                    onPressed: () async {
-                                      try {
-                                        // Simple file picker test without restrictions
-                                        FilePickerResult? result =
-                                            await FilePicker.platform.pickFiles(
-                                              allowMultiple: false,
-                                              withData: true,
-                                            );
-
-                                        if (result != null &&
-                                            result.files.isNotEmpty) {
-                                          final file = result.files.first;
-                                          selectedFileName = file.name;
-                                          selectedFileBytes = file.bytes;
-                                          selectedFileSize =
-                                              FilePickerHelper.formatFileSize(
-                                                file.size,
-                                              );
-
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Manual: File selected - ${file.name}',
-                                              ),
-                                              backgroundColor: Colors.green,
-                                            ),
-                                          );
-                                          setState(() {});
-                                        }
-                                      } catch (e) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text('Manual Error: $e'),
-                                            backgroundColor: Colors.red,
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    icon: const Icon(Icons.file_copy, size: 16),
-                                    label: Text(
-                                      'Pick Any',
-                                      style: TextStyle(fontSize: 11),
-                                    ),
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: Colors.green,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
                           ],
                         ),
                       ),
@@ -1327,16 +1050,12 @@ class _InstructorStudyMaterialsTabState
                         spacing: 8,
                         children: types.map((type) {
                           return ChoiceChip(
-                            label: Text(type.toUpperCase()),
+                            label: Text(_getTypeDisplayName(type)),
                             selected: selectedType == type,
                             onSelected: (selected) {
                               if (selected) {
                                 setState(() {
                                   selectedType = type;
-                                  // Clear file selection when type changes
-                                  selectedFileName = '';
-                                  selectedFileBytes = null;
-                                  selectedFileSize = '';
                                 });
                               }
                             },
@@ -1365,7 +1084,14 @@ class _InstructorStudyMaterialsTabState
                           titleController.text.isNotEmpty &&
                           selectedFileBytes != null
                       ? () async {
-                          Navigator.of(context).pop();
+                          // Capture references before async operations
+                          final localizations = AppLocalizations.of(context)!;
+                          final navigator = Navigator.of(context);
+                          final scaffoldMessenger = ScaffoldMessenger.of(
+                            context,
+                          );
+
+                          navigator.pop();
 
                           final studyMaterialProvider = context
                               .read<StudyMaterialProvider>();
@@ -1386,12 +1112,10 @@ class _InstructorStudyMaterialsTabState
                                 );
 
                             if (success) {
-                              ScaffoldMessenger.of(context).showSnackBar(
+                              scaffoldMessenger.showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    AppLocalizations.of(
-                                      context,
-                                    )!.materialUploadedSuccessfully(
+                                    localizations.materialUploadedSuccessfully(
                                       titleController.text,
                                     ),
                                   ),
