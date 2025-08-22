@@ -4,7 +4,7 @@ import '../../../../../../l10n/app_localizations.dart';
 // Import instructor-specific tabs
 import 'instructor_course_details.dart';
 import 'instructor_online_session.dart';
-import 'instructor_recorded_classes.dart';
+import 'instructor_record_class.dart';
 import 'instructor_study_materials.dart';
 import 'instructor_group_chat.dart';
 import 'instructor_feedback.dart';
@@ -244,7 +244,7 @@ class _InstructorCoursePortalPageState
               children: [
                 InstructorCourseDetailsTab(course: widget.course),
                 InstructorOnlineSessionTab(course: widget.course),
-                InstructorRecordedClassesTab(course: widget.course),
+                InstructorRecordClassTab(course: widget.course),
                 InstructorStudyMaterialsTab(course: widget.course),
                 InstructorGroupChatTab(course: widget.course),
                 InstructorFeedbackTab(course: widget.course),

@@ -1,12 +1,12 @@
-/// Session Provider - State management for course sessions
+/// Online Session Provider - State management for course sessions
 /// Handles session loading, creation, updates, and deletion
 
 import 'package:flutter/material.dart';
 import '../models/course_session.dart';
-import '../services/session_service.dart';
+import '../data/online_session_data.dart';
 
-class SessionProvider extends ChangeNotifier {
-  final SessionService _sessionService = SessionService();
+class OnlineSessionProvider extends ChangeNotifier {
+  final OnlineSessionRepository _sessionRepository = OnlineSessionRepository();
 
   // Session state
   List<CourseSession> _sessions = [];
@@ -51,9 +51,9 @@ class SessionProvider extends ChangeNotifier {
 
     try {
       // Test database schema first
-      await _sessionService.testDatabaseSchema();
+      await _sessionRepository.testDatabaseSchema();
 
-      _sessions = await _sessionService.getSessionsByCourse(courseId);
+      _sessions = await _sessionRepository.getSessionsByCourse(courseId);
       await _loadSessionStats(courseId);
       notifyListeners();
     } catch (e) {
@@ -66,7 +66,7 @@ class SessionProvider extends ChangeNotifier {
   /// Load session statistics
   Future<void> _loadSessionStats(String courseId) async {
     try {
-      _sessionStats = await _sessionService.getSessionStats(courseId);
+      _sessionStats = await _sessionRepository.getSessionStats(courseId);
     } catch (e) {
       print('Error loading session stats: $e');
       _sessionStats = {'total': 0, 'completed': 0, 'upcoming': 0};
@@ -130,7 +130,7 @@ class SessionProvider extends ChangeNotifier {
         createdAt: DateTime.now(),
       );
 
-      final createdSession = await _sessionService.createSession(newSession);
+      final createdSession = await _sessionRepository.createSession(newSession);
 
       // Add to local list
       _sessions.add(createdSession);
@@ -195,7 +195,7 @@ class SessionProvider extends ChangeNotifier {
         'session_password': password,
       };
 
-      final updatedSession = await _sessionService.updateSession(
+      final updatedSession = await _sessionRepository.updateSession(
         sessionId,
         updates,
       );
@@ -226,22 +226,22 @@ class SessionProvider extends ChangeNotifier {
     _clearError();
 
     try {
-      print('SessionProvider: Attempting to delete session $sessionId');
-      await _sessionService.deleteSession(sessionId);
+      print('OnlineSessionProvider: Attempting to delete session $sessionId');
+      await _sessionRepository.deleteSession(sessionId);
 
       // Remove from local list
       _sessions.removeWhere((s) => s.id == sessionId);
-      print('SessionProvider: Session removed from local list');
+      print('OnlineSessionProvider: Session removed from local list');
 
       // Update stats
       await _loadSessionStats(courseId);
 
       notifyListeners();
-      print('SessionProvider: Delete operation completed successfully');
+      print('OnlineSessionProvider: Delete operation completed successfully');
       return true;
     } catch (e) {
       final errorMessage = 'Failed to delete session: $e';
-      print('SessionProvider error: $errorMessage');
+      print('OnlineSessionProvider error: $errorMessage');
       _setError(errorMessage);
       return false;
     } finally {
@@ -252,7 +252,7 @@ class SessionProvider extends ChangeNotifier {
   /// Get session by ID
   Future<CourseSession?> getSession(String sessionId) async {
     try {
-      _currentSession = await _sessionService.getSessionById(sessionId);
+      _currentSession = await _sessionRepository.getSessionById(sessionId);
       notifyListeners();
       return _currentSession;
     } catch (e) {

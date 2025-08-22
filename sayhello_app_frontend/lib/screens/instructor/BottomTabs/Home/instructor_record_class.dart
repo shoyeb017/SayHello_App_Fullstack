@@ -2,40 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../../l10n/app_localizations.dart';
-import '../../../../../providers/recorded_class_provider.dart';
-import '../../../../../models/recorded_class.dart';
+import '../../../../../providers/record_class_provider.dart';
+import '../../../../../models/record_class.dart';
 import '../../../../../utils/video_thumbnail_generator.dart';
 import 'record_class_video_player.dart';
 
-class InstructorRecordedClassesTab extends StatefulWidget {
+class InstructorRecordClassTab extends StatefulWidget {
   final Map<String, dynamic> course;
-  const InstructorRecordedClassesTab({super.key, required this.course});
+  const InstructorRecordClassTab({super.key, required this.course});
 
   @override
-  State<InstructorRecordedClassesTab> createState() =>
-      _InstructorRecordedClassesTabState();
+  State<InstructorRecordClassTab> createState() =>
+      _InstructorRecordClassTabState();
 }
 
-class _InstructorRecordedClassesTabState
-    extends State<InstructorRecordedClassesTab> {
+class _InstructorRecordClassTabState extends State<InstructorRecordClassTab> {
   @override
   void initState() {
     super.initState();
-    // Load recorded classes when widget initializes
+    // Load record classes when widget initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadRecordedClasses();
+      _loadRecordClasses();
     });
   }
 
-  /// Load recorded classes for this course
-  void _loadRecordedClasses() {
+  /// Load record classes for this course
+  void _loadRecordClasses() {
     if (!mounted) return;
 
-    final recordedClassProvider = context.read<RecordedClassProvider>();
+    final recordClassProvider = context.read<RecordClassProvider>();
     final courseId = widget.course['id']?.toString();
 
     if (courseId != null) {
-      recordedClassProvider.loadRecordedClasses(courseId);
+      recordClassProvider.loadRecordClasses(courseId);
     }
   }
 
@@ -47,9 +46,9 @@ class _InstructorRecordedClassesTabState
     final textColor = isDark ? Colors.white : Colors.black;
     final subTextColor = isDark ? Colors.grey[400] : Colors.grey[600];
 
-    return Consumer<RecordedClassProvider>(
-      builder: (context, recordedClassProvider, child) {
-        final recordedClasses = recordedClassProvider.recordedClasses;
+    return Consumer<RecordClassProvider>(
+      builder: (context, recordClassProvider, child) {
+        final recordClasses = recordClassProvider.recordClasses;
 
         return Column(
           children: [
@@ -85,21 +84,21 @@ class _InstructorRecordedClassesTabState
               ),
             ),
 
-            // Recorded Classes List
+            // Record Classes List
             Expanded(
-              child: recordedClassProvider.isLoading
+              child: recordClassProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : recordedClasses.isEmpty
+                  : recordClasses.isEmpty
                   ? _buildEmptyState(isDark, primaryColor, localizations)
                   : ListView.builder(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 8,
                       ),
-                      itemCount: recordedClasses.length,
+                      itemCount: recordClasses.length,
                       itemBuilder: (context, index) {
-                        return _buildRecordedClassCard(
-                          recordedClasses[index],
+                        return _buildRecordClassCard(
+                          recordClasses[index],
                           isDark,
                           primaryColor,
                           textColor,
@@ -115,8 +114,8 @@ class _InstructorRecordedClassesTabState
     );
   }
 
-  Widget _buildRecordedClassCard(
-    RecordedClass recordedClass,
+  Widget _buildRecordClassCard(
+    RecordClass recordClass,
     bool isDark,
     Color primaryColor,
     Color textColor,
@@ -159,7 +158,7 @@ class _InstructorRecordedClassesTabState
                   // Dynamic Thumbnail Generation
                   FutureBuilder<String?>(
                     future: VideoThumbnailGenerator.getBestThumbnail(
-                      recordedClass.recordedLink,
+                      recordClass.recordedLink,
                     ),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -210,7 +209,7 @@ class _InstructorRecordedClassesTabState
                       ),
                       child: Center(
                         child: GestureDetector(
-                          onTap: () => _playVideo(recordedClass),
+                          onTap: () => _playVideo(recordClass),
                           child: Container(
                             width: 28,
                             height: 28,
@@ -252,7 +251,7 @@ class _InstructorRecordedClassesTabState
                     children: [
                       Expanded(
                         child: Text(
-                          recordedClass.recordedName,
+                          recordClass.recordedName,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
@@ -269,10 +268,8 @@ class _InstructorRecordedClassesTabState
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           InkWell(
-                            onTap: () => _editRecordedClass(
-                              recordedClass,
-                              localizations,
-                            ),
+                            onTap: () =>
+                                _editRecordClass(recordClass, localizations),
                             borderRadius: BorderRadius.circular(16),
                             child: Container(
                               padding: const EdgeInsets.all(4),
@@ -285,10 +282,8 @@ class _InstructorRecordedClassesTabState
                           ),
                           const SizedBox(width: 4),
                           InkWell(
-                            onTap: () => _deleteRecordedClass(
-                              recordedClass,
-                              localizations,
-                            ),
+                            onTap: () =>
+                                _deleteRecordClass(recordClass, localizations),
                             borderRadius: BorderRadius.circular(16),
                             child: Container(
                               padding: const EdgeInsets.all(4),
@@ -305,10 +300,10 @@ class _InstructorRecordedClassesTabState
                   ),
 
                   // Description (if available)
-                  if (recordedClass.recordedDescription.isNotEmpty) ...[
+                  if (recordClass.recordedDescription.isNotEmpty) ...[
                     const SizedBox(height: 2),
                     Text(
-                      recordedClass.recordedDescription,
+                      recordClass.recordedDescription,
                       style: TextStyle(
                         fontSize: 11,
                         color: subTextColor,
@@ -328,7 +323,7 @@ class _InstructorRecordedClassesTabState
                       Icon(Icons.access_time, size: 10, color: subTextColor),
                       const SizedBox(width: 3),
                       Text(
-                        recordedClass.formattedCreatedAt,
+                        recordClass.formattedCreatedAt,
                         style: TextStyle(fontSize: 10, color: subTextColor),
                       ),
 
@@ -341,7 +336,7 @@ class _InstructorRecordedClassesTabState
                           // Copy Link Button
                           InkWell(
                             onTap: () =>
-                                _copyVideoLink(recordedClass, localizations),
+                                _copyVideoLink(recordClass, localizations),
                             borderRadius: BorderRadius.circular(12),
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -380,7 +375,7 @@ class _InstructorRecordedClassesTabState
                           const SizedBox(width: 6),
                           // Play Button
                           InkWell(
-                            onTap: () => _playVideo(recordedClass),
+                            onTap: () => _playVideo(recordClass),
                             borderRadius: BorderRadius.circular(12),
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -727,11 +722,11 @@ class _InstructorRecordedClassesTabState
 
     Navigator.of(context).pop();
 
-    final recordedClassProvider = context.read<RecordedClassProvider>();
+    final recordClassProvider = context.read<RecordClassProvider>();
     final courseId = widget.course['id']?.toString();
 
     if (courseId != null) {
-      final success = await recordedClassProvider.addVideoLink(
+      final success = await recordClassProvider.addVideoLink(
         courseId: courseId,
         recordedName: title,
         recordedDescription: description,
@@ -744,7 +739,7 @@ class _InstructorRecordedClassesTabState
             content: Text(
               success
                   ? 'Video link added successfully!'
-                  : recordedClassProvider.error ?? 'Failed to add video',
+                  : recordClassProvider.error ?? 'Failed to add video',
             ),
             backgroundColor: success ? Colors.green : Colors.red,
           ),
@@ -812,16 +807,16 @@ class _InstructorRecordedClassesTabState
     }
   }
 
-  void _editRecordedClass(
-    RecordedClass recordedClass,
+  void _editRecordClass(
+    RecordClass recordClass,
     AppLocalizations localizations,
   ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final titleController = TextEditingController(
-      text: recordedClass.recordedName,
+      text: recordClass.recordedName,
     );
     final descriptionController = TextEditingController(
-      text: recordedClass.recordedDescription,
+      text: recordClass.recordedDescription,
     );
 
     showDialog(
@@ -891,8 +886,8 @@ class _InstructorRecordedClassesTabState
               ),
             ),
             ElevatedButton(
-              onPressed: () => _updateRecordedClass(
-                recordedClass.id,
+              onPressed: () => _updateRecordClass(
+                recordClass.id,
                 titleController.text,
                 descriptionController.text,
                 localizations,
@@ -909,17 +904,17 @@ class _InstructorRecordedClassesTabState
     );
   }
 
-  void _updateRecordedClass(
-    String recordedClassId,
+  void _updateRecordClass(
+    String recordClassId,
     String title,
     String description,
     AppLocalizations localizations,
   ) async {
     Navigator.of(context).pop();
 
-    final recordedClassProvider = context.read<RecordedClassProvider>();
-    final success = await recordedClassProvider.updateRecordedClass(
-      recordedClassId: recordedClassId,
+    final recordClassProvider = context.read<RecordClassProvider>();
+    final success = await recordClassProvider.updateRecordClass(
+      recordClassId: recordClassId,
       recordedName: title,
       recordedDescription: description,
     );
@@ -930,7 +925,7 @@ class _InstructorRecordedClassesTabState
           content: Text(
             success
                 ? 'Video updated successfully!'
-                : recordedClassProvider.error ?? 'Failed to update video',
+                : recordClassProvider.error ?? 'Failed to update video',
           ),
           backgroundColor: success ? Colors.green : Colors.red,
         ),
@@ -938,8 +933,8 @@ class _InstructorRecordedClassesTabState
     }
   }
 
-  void _deleteRecordedClass(
-    RecordedClass recordedClass,
+  void _deleteRecordClass(
+    RecordClass recordClass,
     AppLocalizations localizations,
   ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -977,7 +972,7 @@ class _InstructorRecordedClassesTabState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      recordedClass.recordedName,
+                      recordClass.recordedName,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: isDark ? Colors.white : Colors.black,
@@ -985,7 +980,7 @@ class _InstructorRecordedClassesTabState
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      recordedClass.formattedCreatedAt,
+                      recordClass.formattedCreatedAt,
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -1017,7 +1012,7 @@ class _InstructorRecordedClassesTabState
             ),
             ElevatedButton(
               onPressed: () =>
-                  _confirmDeleteRecordedClass(recordedClass.id, localizations),
+                  _confirmdeleteRecordClass(recordClass.id, localizations),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
@@ -1030,16 +1025,14 @@ class _InstructorRecordedClassesTabState
     );
   }
 
-  void _confirmDeleteRecordedClass(
-    String recordedClassId,
+  void _confirmdeleteRecordClass(
+    String recordClassId,
     AppLocalizations localizations,
   ) async {
     Navigator.of(context).pop();
 
-    final recordedClassProvider = context.read<RecordedClassProvider>();
-    final success = await recordedClassProvider.deleteRecordedClass(
-      recordedClassId,
-    );
+    final recordClassProvider = context.read<RecordClassProvider>();
+    final success = await recordClassProvider.deleteRecordClass(recordClassId);
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1047,7 +1040,7 @@ class _InstructorRecordedClassesTabState
           content: Text(
             success
                 ? 'Video deleted successfully!'
-                : recordedClassProvider.error ?? 'Failed to delete video',
+                : recordClassProvider.error ?? 'Failed to delete video',
           ),
           backgroundColor: success ? Colors.green : Colors.red,
         ),
@@ -1055,23 +1048,23 @@ class _InstructorRecordedClassesTabState
     }
   }
 
-  void _playVideo(RecordedClass recordedClass) {
+  void _playVideo(RecordClass recordClass) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => InstructorRecordClassVideoPlayer(
-          videoUrl: recordedClass.recordedLink,
-          title: recordedClass.recordedName,
+          videoUrl: recordClass.recordedLink,
+          title: recordClass.recordedName,
         ),
       ),
     );
   }
 
   void _copyVideoLink(
-    RecordedClass recordedClass,
+    RecordClass recordClass,
     AppLocalizations localizations,
   ) async {
     try {
-      await Clipboard.setData(ClipboardData(text: recordedClass.recordedLink));
+      await Clipboard.setData(ClipboardData(text: recordClass.recordedLink));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

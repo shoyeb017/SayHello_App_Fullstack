@@ -8,3 +8,5 @@ export 'chat_data.dart';
 export 'feed_data.dart';
 export 'notification_data.dart';
 export 'course_portal_data.dart';
+export 'group_chat_data.dart';
+export 'online_session_data.dart';

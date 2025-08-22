@@ -12,8 +12,8 @@ import 'providers/course_provider.dart';
 import 'l10n/app_localizations.dart';
 import 'providers/instructor_provider.dart';
 import 'providers/auth_provider.dart';
-import 'providers/session_provider.dart';
-import 'providers/recorded_class_provider.dart';
+import 'providers/online_session_provider.dart';
+import 'providers/record_class_provider.dart';
 import 'providers/study_material_provider.dart';
 import 'providers/group_chat_provider.dart';
 
@@ -58,8 +58,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => LearnerProvider()),
         ChangeNotifierProvider(create: (_) => InstructorProvider()),
         ChangeNotifierProvider(create: (_) => CourseProvider()),
-        ChangeNotifierProvider(create: (_) => SessionProvider()),
-        ChangeNotifierProvider(create: (_) => RecordedClassProvider()),
+        ChangeNotifierProvider(create: (_) => OnlineSessionProvider()),
+        ChangeNotifierProvider(create: (_) => RecordClassProvider()),
         ChangeNotifierProvider(create: (_) => StudyMaterialProvider()),
         ChangeNotifierProvider(create: (_) => GroupChatProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),

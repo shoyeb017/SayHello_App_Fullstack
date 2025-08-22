@@ -1,15 +1,15 @@
-/// StudyMaterial Service - Handles backend operations for study materials
-/// Provides CRUD operations with Supabase storage and database integration
+/// StudyMaterial Repository - Handles backend operations for study materials
+/// Provides CRUD operations with Supabase storage and database integration following data layer pattern
 
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/study_material.dart';
 
-class StudyMaterialService {
-  static final StudyMaterialService _instance =
-      StudyMaterialService._internal();
-  factory StudyMaterialService() => _instance;
-  StudyMaterialService._internal();
+class StudyMaterialRepository {
+  static final StudyMaterialRepository _instance =
+      StudyMaterialRepository._internal();
+  factory StudyMaterialRepository() => _instance;
+  StudyMaterialRepository._internal();
 
   final SupabaseClient _supabase = Supabase.instance.client;
 
@@ -20,7 +20,7 @@ class StudyMaterialService {
   Future<List<StudyMaterial>> getStudyMaterials(String courseId) async {
     try {
       print(
-        'StudyMaterialService: Loading study materials for course: $courseId',
+        'StudyMaterialRepository: Loading study materials for course: $courseId',
       );
 
       final response = await _supabase
@@ -29,21 +29,21 @@ class StudyMaterialService {
           .eq('course_id', courseId)
           .order('created_at', ascending: false);
 
-      print('StudyMaterialService: Response: $response');
+      print('StudyMaterialRepository: Response: $response');
 
       final List<StudyMaterial> studyMaterials = (response as List)
           .map((json) => StudyMaterial.fromJson(json))
           .toList();
 
       print(
-        'StudyMaterialService: Loaded ${studyMaterials.length} study materials',
+        'StudyMaterialRepository: Loaded ${studyMaterials.length} study materials',
       );
       return studyMaterials;
     } on PostgrestException catch (e) {
-      print('StudyMaterialService: Database error: ${e.message}');
+      print('StudyMaterialRepository: Database error: ${e.message}');
       throw Exception('Failed to load study materials: ${e.message}');
     } catch (e) {
-      print('StudyMaterialService: Unexpected error: $e');
+      print('StudyMaterialRepository: Unexpected error: $e');
       throw Exception('Failed to load study materials: $e');
     }
   }
@@ -58,13 +58,13 @@ class StudyMaterialService {
     required Uint8List fileBytes,
   }) async {
     try {
-      print('StudyMaterialService: Starting upload process...');
+      print('StudyMaterialRepository: Starting upload process...');
 
       // Step 1: Upload file to Supabase Storage
       final filePath =
           'course_$courseId/${DateTime.now().millisecondsSinceEpoch}_$fileName';
 
-      print('StudyMaterialService: Uploading file to storage...');
+      print('StudyMaterialRepository: Uploading file to storage...');
       await _supabase.storage
           .from(bucketName)
           .uploadBinary(filePath, fileBytes);
@@ -74,10 +74,10 @@ class StudyMaterialService {
           .from(bucketName)
           .getPublicUrl(filePath);
 
-      print('StudyMaterialService: File uploaded, URL: $publicUrl');
+      print('StudyMaterialRepository: File uploaded, URL: $publicUrl');
 
       // Step 3: Create database record
-      print('StudyMaterialService: Creating database record...');
+      print('StudyMaterialRepository: Creating database record...');
       final response = await _supabase
           .from(tableName)
           .insert({
@@ -90,19 +90,19 @@ class StudyMaterialService {
           .select()
           .single();
 
-      print('StudyMaterialService: Database record created: $response');
+      print('StudyMaterialRepository: Database record created: $response');
 
       final studyMaterial = StudyMaterial.fromJson(response);
-      print('StudyMaterialService: Upload completed successfully');
+      print('StudyMaterialRepository: Upload completed successfully');
       return studyMaterial;
     } on StorageException catch (e) {
-      print('StudyMaterialService: Storage error: ${e.message}');
+      print('StudyMaterialRepository: Storage error: ${e.message}');
       throw Exception('Failed to upload file: ${e.message}');
     } on PostgrestException catch (e) {
-      print('StudyMaterialService: Database error: ${e.message}');
+      print('StudyMaterialRepository: Database error: ${e.message}');
       throw Exception('Failed to save study material: ${e.message}');
     } catch (e) {
-      print('StudyMaterialService: Unexpected error: $e');
+      print('StudyMaterialRepository: Unexpected error: $e');
       throw Exception('Failed to upload study material: $e');
     }
   }
@@ -115,7 +115,7 @@ class StudyMaterialService {
     String? type,
   }) async {
     try {
-      print('StudyMaterialService: Updating study material: $id');
+      print('StudyMaterialRepository: Updating study material: $id');
 
       final updateData = <String, dynamic>{};
       if (title != null) updateData['material_title'] = title;
@@ -129,13 +129,13 @@ class StudyMaterialService {
           .select()
           .single();
 
-      print('StudyMaterialService: Update completed');
+      print('StudyMaterialRepository: Update completed');
       return StudyMaterial.fromJson(response);
     } on PostgrestException catch (e) {
-      print('StudyMaterialService: Database error: ${e.message}');
+      print('StudyMaterialRepository: Database error: ${e.message}');
       throw Exception('Failed to update study material: ${e.message}');
     } catch (e) {
-      print('StudyMaterialService: Unexpected error: $e');
+      print('StudyMaterialRepository: Unexpected error: $e');
       throw Exception('Failed to update study material: $e');
     }
   }
@@ -143,7 +143,7 @@ class StudyMaterialService {
   /// Delete a study material
   Future<void> deleteStudyMaterial(String id) async {
     try {
-      print('StudyMaterialService: Deleting study material: $id');
+      print('StudyMaterialRepository: Deleting study material: $id');
 
       // First get the study material to get the file path
       final response = await _supabase
@@ -154,7 +154,7 @@ class StudyMaterialService {
 
       final studyMaterial = StudyMaterial.fromJson(response);
       print(
-        'StudyMaterialService: Found study material: ${studyMaterial.materialTitle}',
+        'StudyMaterialRepository: Found study material: ${studyMaterial.materialTitle}',
       );
 
       // Extract file path from the URL
@@ -164,14 +164,14 @@ class StudyMaterialService {
         final pathSegments = uri.pathSegments;
         if (pathSegments.length >= 3) {
           final filePath = pathSegments.sublist(2).join('/');
-          print('StudyMaterialService: Deleting file: $filePath');
+          print('StudyMaterialRepository: Deleting file: $filePath');
 
           try {
             await _supabase.storage.from(bucketName).remove([filePath]);
-            print('StudyMaterialService: File deleted from storage');
+            print('StudyMaterialRepository: File deleted from storage');
           } catch (storageError) {
             print(
-              'StudyMaterialService: Storage deletion failed: $storageError',
+              'StudyMaterialRepository: Storage deletion failed: $storageError',
             );
             // Continue with database deletion even if file deletion fails
           }
@@ -181,12 +181,12 @@ class StudyMaterialService {
       // Delete database record
       await _supabase.from(tableName).delete().eq('id', id);
 
-      print('StudyMaterialService: Study material deleted successfully');
+      print('StudyMaterialRepository: Study material deleted successfully');
     } on PostgrestException catch (e) {
-      print('StudyMaterialService: Database error: ${e.message}');
+      print('StudyMaterialRepository: Database error: ${e.message}');
       throw Exception('Failed to delete study material: ${e.message}');
     } catch (e) {
-      print('StudyMaterialService: Unexpected error: $e');
+      print('StudyMaterialRepository: Unexpected error: $e');
       throw Exception('Failed to delete study material: $e');
     }
   }
@@ -194,7 +194,7 @@ class StudyMaterialService {
   /// Get a single study material by ID
   Future<StudyMaterial?> getStudyMaterial(String id) async {
     try {
-      print('StudyMaterialService: Getting study material: $id');
+      print('StudyMaterialRepository: Getting study material: $id');
 
       final response = await _supabase
           .from(tableName)
@@ -203,18 +203,18 @@ class StudyMaterialService {
           .maybeSingle();
 
       if (response == null) {
-        print('StudyMaterialService: Study material not found');
+        print('StudyMaterialRepository: Study material not found');
         return null;
       }
 
       final studyMaterial = StudyMaterial.fromJson(response);
-      print('StudyMaterialService: Study material found');
+      print('StudyMaterialRepository: Study material found');
       return studyMaterial;
     } on PostgrestException catch (e) {
-      print('StudyMaterialService: Database error: ${e.message}');
+      print('StudyMaterialRepository: Database error: ${e.message}');
       throw Exception('Failed to get study material: ${e.message}');
     } catch (e) {
-      print('StudyMaterialService: Unexpected error: $e');
+      print('StudyMaterialRepository: Unexpected error: $e');
       throw Exception('Failed to get study material: $e');
     }
   }

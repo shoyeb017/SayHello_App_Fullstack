@@ -20,6 +20,7 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
 
   // Provider reference for safe disposal
   GroupChatProvider? _groupChatProvider;
+  int _previousMessageCount = 0;
 
   // Get current user data from auth
   String get _currentUserId {
@@ -48,7 +49,37 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
       _groupChatProvider = context.read<GroupChatProvider>();
       _groupChatProvider!.loadMessages(courseId);
       _groupChatProvider!.subscribeToRealTimeUpdates(courseId);
+
+      // Initialize previous message count and auto-scroll to bottom after loading
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _previousMessageCount = _groupChatProvider?.messages.length ?? 0;
+        // Auto-scroll to bottom to show latest messages (instant for initial load)
+        _scrollToBottomInstantly();
+      });
     }
+  }
+
+  void _autoScrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  void _scrollToBottomInstantly() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Add a small delay to ensure ListView is fully built
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (_scrollController.hasClients) {
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        }
+      });
+    });
   }
 
   @override
@@ -68,6 +99,20 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
 
     return Consumer<GroupChatProvider>(
       builder: (context, provider, child) {
+        // Auto-scroll to bottom when new messages arrive
+        final currentMessageCount = provider.messages.length;
+        if (currentMessageCount > _previousMessageCount &&
+            _previousMessageCount > 0) {
+          _autoScrollToBottom();
+        }
+        // Also auto-scroll when messages are first loaded (initial load) - use instant scroll
+        else if (currentMessageCount > 0 &&
+            _previousMessageCount == 0 &&
+            !provider.isLoading) {
+          _scrollToBottomInstantly();
+        }
+        _previousMessageCount = currentMessageCount;
+
         return Column(
           children: [
             // Instructor Chat Header
@@ -460,25 +505,15 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
     final messageText = _controller.text.trim();
     _controller.clear();
 
-    final success = await context.read<GroupChatProvider>().sendMessage(
+    await context.read<GroupChatProvider>().sendMessage(
       courseId: courseId,
       senderId: currentUserId,
       senderType: 'instructor',
       contentText: messageText,
     );
 
-    if (success) {
-      // Auto scroll to bottom
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      });
-    }
+    // Auto-scroll is now handled automatically in the Consumer
+    // when the provider notifies listeners of the new message
   }
 
   @override

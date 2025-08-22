@@ -1,16 +1,16 @@
-/// Recorded Class Provider - State management for recorded classes
-/// Handles recorded class loading, creation, updates, and deletion
+/// Record Class Provider - State management for record classes
+/// Handles record class loading, creation, updates, and deletion
 
 import 'package:flutter/material.dart';
-import '../models/recorded_class.dart';
-import '../services/recorded_class_service.dart';
+import '../models/record_class.dart';
+import '../data/record_class_data.dart';
 
-class RecordedClassProvider extends ChangeNotifier {
-  final RecordedClassService _recordedClassService = RecordedClassService();
+class RecordClassProvider extends ChangeNotifier {
+  final RecordClassRepository _recordClassRepository = RecordClassRepository();
 
-  // Recorded class state
-  List<RecordedClass> _recordedClasses = [];
-  RecordedClass? _currentRecordedClass;
+  // Record class state
+  List<RecordClass> _recordClasses = [];
+  RecordClass? _currentRecordClass;
 
   // Loading states
   bool _isLoading = false;
@@ -25,8 +25,8 @@ class RecordedClassProvider extends ChangeNotifier {
   double _uploadProgress = 0.0;
 
   // Getters
-  List<RecordedClass> get recordedClasses => _recordedClasses;
-  RecordedClass? get currentRecordedClass => _currentRecordedClass;
+  List<RecordClass> get recordClasses => _recordClasses;
+  RecordClass? get currentRecordClass => _currentRecordClass;
   bool get isLoading => _isLoading;
   bool get isUploading => _isUploading;
   bool get isUpdating => _isUpdating;
@@ -36,35 +36,33 @@ class RecordedClassProvider extends ChangeNotifier {
   double get uploadProgress => _uploadProgress;
 
   // =============================
-  // RECORDED CLASS LOADING
+  // RECORD CLASS LOADING
   // =============================
 
-  /// Load all recorded classes for a course
-  Future<void> loadRecordedClasses(String courseId) async {
+  /// Load all record classes for a course
+  Future<void> loadRecordClasses(String courseId) async {
     _setLoading(true);
     _clearError();
 
     try {
-      _recordedClasses = await _recordedClassService.getRecordedClasses(
-        courseId,
-      );
+      _recordClasses = await _recordClassRepository.getRecordClasses(courseId);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
     } catch (e) {
-      _setError('Failed to load recorded classes: $e');
+      _setError('Failed to load record classes: $e');
     } finally {
       _setLoading(false);
     }
   }
 
-  /// Refresh recorded classes data
-  Future<void> refreshRecordedClasses(String courseId) async {
-    await loadRecordedClasses(courseId);
+  /// Refresh record classes data
+  Future<void> refreshRecordClasses(String courseId) async {
+    await loadRecordClasses(courseId);
   }
 
   // =============================
-  // RECORDED CLASS CRUD OPERATIONS
+  // RECORD CLASS CRUD OPERATIONS
   // =============================
 
   /// Add a video link (YouTube, Vimeo, or direct link) without file upload
@@ -79,7 +77,7 @@ class RecordedClassProvider extends ChangeNotifier {
     _setUploadProgress(0.0);
 
     try {
-      final newRecordedClass = await _recordedClassService.addVideoLink(
+      final newRecordClass = await _recordClassRepository.addVideoLink(
         courseId: courseId,
         recordedName: recordedName,
         recordedDescription: recordedDescription,
@@ -87,8 +85,8 @@ class RecordedClassProvider extends ChangeNotifier {
       );
 
       // Add to local list
-      _recordedClasses.add(newRecordedClass);
-      _recordedClasses.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      _recordClasses.add(newRecordClass);
+      _recordClasses.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
       _setUploadProgress(1.0);
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -103,9 +101,9 @@ class RecordedClassProvider extends ChangeNotifier {
     }
   }
 
-  /// Update an existing recorded class
-  Future<bool> updateRecordedClass({
-    required String recordedClassId,
+  /// Update an existing record class
+  Future<bool> updateRecordClass({
+    required String recordClassId,
     required String recordedName,
     required String recordedDescription,
   }) async {
@@ -113,19 +111,16 @@ class RecordedClassProvider extends ChangeNotifier {
     _clearError();
 
     try {
-      final updatedRecordedClass = await _recordedClassService
-          .updateRecordedClass(
-            recordedClassId: recordedClassId,
-            recordedName: recordedName,
-            recordedDescription: recordedDescription,
-          );
+      final updatedRecordClass = await _recordClassRepository.updateRecordClass(
+        recordClassId: recordClassId,
+        recordedName: recordedName,
+        recordedDescription: recordedDescription,
+      );
 
       // Update local list
-      final index = _recordedClasses.indexWhere(
-        (rc) => rc.id == recordedClassId,
-      );
+      final index = _recordClasses.indexWhere((rc) => rc.id == recordClassId);
       if (index != -1) {
-        _recordedClasses[index] = updatedRecordedClass;
+        _recordClasses[index] = updatedRecordClass;
       }
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -133,48 +128,48 @@ class RecordedClassProvider extends ChangeNotifier {
       });
       return true;
     } catch (e) {
-      _setError('Failed to update recorded class: $e');
+      _setError('Failed to update record class: $e');
       return false;
     } finally {
       _setUpdating(false);
     }
   }
 
-  /// Delete a recorded class
-  Future<bool> deleteRecordedClass(String recordedClassId) async {
+  /// Delete a record class
+  Future<bool> deleteRecordClass(String recordClassId) async {
     _setDeleting(true);
     _clearError();
 
     try {
-      await _recordedClassService.deleteRecordedClass(recordedClassId);
+      await _recordClassRepository.deleteRecordClass(recordClassId);
 
       // Remove from local list
-      _recordedClasses.removeWhere((rc) => rc.id == recordedClassId);
+      _recordClasses.removeWhere((rc) => rc.id == recordClassId);
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
       return true;
     } catch (e) {
-      _setError('Failed to delete recorded class: $e');
+      _setError('Failed to delete record class: $e');
       return false;
     } finally {
       _setDeleting(false);
     }
   }
 
-  /// Get recorded class by ID
-  Future<RecordedClass?> getRecordedClass(String recordedClassId) async {
+  /// Get record class by ID
+  Future<RecordClass?> getRecordClass(String recordClassId) async {
     try {
-      _currentRecordedClass = await _recordedClassService.getRecordedClassById(
-        recordedClassId,
+      _currentRecordClass = await _recordClassRepository.getRecordClassById(
+        recordClassId,
       );
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
-      return _currentRecordedClass;
+      return _currentRecordClass;
     } catch (e) {
-      _setError('Failed to load recorded class: $e');
+      _setError('Failed to load record class: $e');
       return null;
     }
   }
@@ -183,25 +178,25 @@ class RecordedClassProvider extends ChangeNotifier {
   // UTILITY METHODS
   // =============================
 
-  /// Clear current recorded class
-  void clearCurrentRecordedClass() {
-    _currentRecordedClass = null;
+  /// Clear current record class
+  void clearCurrentRecordClass() {
+    _currentRecordClass = null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
   }
 
-  /// Clear all recorded classes (useful when switching courses)
-  void clearRecordedClasses() {
-    _recordedClasses.clear();
-    _currentRecordedClass = null;
+  /// Clear all record classes (useful when switching courses)
+  void clearRecordClasses() {
+    _recordClasses.clear();
+    _currentRecordClass = null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
   }
 
-  /// Get recorded classes count
-  int get recordedClassesCount => _recordedClasses.length;
+  /// Get record classes count
+  int get recordClassesCount => _recordClasses.length;
 
   // =============================
   // PRIVATE METHODS

@@ -3,10 +3,11 @@
 
 import 'package:flutter/foundation.dart';
 import '../models/study_material.dart';
-import '../services/study_material_service.dart';
+import '../data/study_material_data.dart';
 
 class StudyMaterialProvider with ChangeNotifier {
-  final StudyMaterialService _studyMaterialService = StudyMaterialService();
+  final StudyMaterialRepository _studyMaterialRepository =
+      StudyMaterialRepository();
 
   List<StudyMaterial> _studyMaterials = [];
   bool _isLoading = false;
@@ -30,7 +31,9 @@ class StudyMaterialProvider with ChangeNotifier {
         'StudyMaterialProvider: Loading study materials for course: $courseId',
       );
 
-      final materials = await _studyMaterialService.getStudyMaterials(courseId);
+      final materials = await _studyMaterialRepository.getStudyMaterials(
+        courseId,
+      );
 
       _studyMaterials = materials;
       print(
@@ -63,7 +66,7 @@ class StudyMaterialProvider with ChangeNotifier {
     try {
       print('StudyMaterialProvider: Uploading study material: $title');
 
-      final studyMaterial = await _studyMaterialService.uploadStudyMaterial(
+      final studyMaterial = await _studyMaterialRepository.uploadStudyMaterial(
         courseId: courseId,
         title: title,
         description: description,
@@ -103,11 +106,12 @@ class StudyMaterialProvider with ChangeNotifier {
     try {
       print('StudyMaterialProvider: Updating study material: $studyMaterialId');
 
-      final updatedMaterial = await _studyMaterialService.updateStudyMaterial(
-        id: studyMaterialId,
-        title: title,
-        description: description,
-      );
+      final updatedMaterial = await _studyMaterialRepository
+          .updateStudyMaterial(
+            id: studyMaterialId,
+            title: title,
+            description: description,
+          );
 
       // Update the material in the list
       final index = _studyMaterials.indexWhere((m) => m.id == studyMaterialId);
@@ -138,7 +142,7 @@ class StudyMaterialProvider with ChangeNotifier {
     try {
       print('StudyMaterialProvider: Deleting study material: $studyMaterialId');
 
-      await _studyMaterialService.deleteStudyMaterial(studyMaterialId);
+      await _studyMaterialRepository.deleteStudyMaterial(studyMaterialId);
 
       // Remove from the list
       _studyMaterials.removeWhere((m) => m.id == studyMaterialId);
@@ -217,7 +221,7 @@ class StudyMaterialProvider with ChangeNotifier {
   Future<bool> testDatabaseConnection() async {
     try {
       // Test by trying to load study materials for a dummy course
-      await _studyMaterialService.getStudyMaterials('test');
+      await _studyMaterialRepository.getStudyMaterials('test');
       print('StudyMaterialProvider: Database connection test successful');
       return true;
     } catch (e) {

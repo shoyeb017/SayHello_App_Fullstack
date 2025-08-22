@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import '../../../../../l10n/app_localizations.dart';
-import '../../../../../providers/session_provider.dart';
+import '../../../../../providers/online_session_provider.dart';
 import '../../../../../models/course_session.dart';
 
 class InstructorOnlineSessionTab extends StatefulWidget {
@@ -33,7 +33,7 @@ class _InstructorOnlineSessionTabState
   void _loadSessions() {
     if (!mounted) return;
 
-    final sessionProvider = context.read<SessionProvider>();
+    final sessionProvider = context.read<OnlineSessionProvider>();
     final courseId = widget.course['id']?.toString();
 
     if (courseId != null) {
@@ -49,7 +49,7 @@ class _InstructorOnlineSessionTabState
     final textColor = isDark ? Colors.white : Colors.black;
     final subTextColor = isDark ? Colors.grey[400] : Colors.grey[600];
 
-    return Consumer<SessionProvider>(
+    return Consumer<OnlineSessionProvider>(
       builder: (context, sessionProvider, child) {
         final sessions = sessionProvider.sessions;
 
@@ -823,7 +823,7 @@ class _InstructorOnlineSessionTabState
             ),
             TextButton(
               onPressed: () async {
-                final sessionProvider = context.read<SessionProvider>();
+                final sessionProvider = context.read<OnlineSessionProvider>();
                 final courseId = widget.course['id']?.toString();
 
                 if (courseId != null) {
@@ -1263,7 +1263,8 @@ class _InstructorOnlineSessionTabState
                         selectedDate != null &&
                         selectedTime != null &&
                         linkController.text.isNotEmpty) {
-                      final sessionProvider = context.read<SessionProvider>();
+                      final sessionProvider = context
+                          .read<OnlineSessionProvider>();
                       final courseId = widget.course['id']?.toString();
 
                       if (courseId != null) {
@@ -1750,7 +1751,8 @@ class _InstructorOnlineSessionTabState
                         selectedDate != null &&
                         selectedTime != null &&
                         linkController.text.isNotEmpty) {
-                      final sessionProvider = context.read<SessionProvider>();
+                      final sessionProvider = context
+                          .read<OnlineSessionProvider>();
                       final courseId = widget.course['id']?.toString();
 
                       if (courseId != null) {

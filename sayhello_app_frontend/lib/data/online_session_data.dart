@@ -1,10 +1,15 @@
-/// Session Service - Handles backend operations for course sessions
+/// Online Session Repository - Handles backend operations for course sessions
 /// Provides CRUD operations for session management
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/course_session.dart';
 
-class SessionService {
+class OnlineSessionRepository {
+  static final OnlineSessionRepository _instance =
+      OnlineSessionRepository._internal();
+  factory OnlineSessionRepository() => _instance;
+  OnlineSessionRepository._internal();
+
   final SupabaseClient _supabase = Supabase.instance.client;
 
   /// Create a new course session

@@ -1,13 +1,13 @@
-/// GroupChat Service - Handles backend operations for group chat
+/// GroupChat Repository - Handles backend operations for group chat
 /// Provides CRUD operations with Supabase database integration
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/group_chat_message.dart';
 
-class GroupChatService {
-  static final GroupChatService _instance = GroupChatService._internal();
-  factory GroupChatService() => _instance;
-  GroupChatService._internal();
+class GroupChatRepository {
+  static final GroupChatRepository _instance = GroupChatRepository._internal();
+  factory GroupChatRepository() => _instance;
+  GroupChatRepository._internal();
 
   final SupabaseClient _supabase = Supabase.instance.client;
 
@@ -16,7 +16,7 @@ class GroupChatService {
   /// Get all messages for a specific course
   Future<List<GroupChatMessage>> getMessages(String courseId) async {
     try {
-      print('GroupChatService: Loading messages for course: $courseId');
+      print('GroupChatRepository: Loading messages for course: $courseId');
 
       final response = await _supabase
           .from(tableName)
@@ -24,19 +24,19 @@ class GroupChatService {
           .eq('course_id', courseId)
           .order('created_at', ascending: true);
 
-      print('GroupChatService: Response: $response');
+      print('GroupChatRepository: Response: $response');
 
       final List<GroupChatMessage> messages = (response as List)
           .map((json) => GroupChatMessage.fromJson(json))
           .toList();
 
-      print('GroupChatService: Loaded ${messages.length} messages');
+      print('GroupChatRepository: Loaded ${messages.length} messages');
       return messages;
     } on PostgrestException catch (e) {
-      print('GroupChatService: Database error: ${e.message}');
+      print('GroupChatRepository: Database error: ${e.message}');
       throw Exception('Failed to load messages: ${e.message}');
     } catch (e) {
-      print('GroupChatService: Unexpected error: $e');
+      print('GroupChatRepository: Unexpected error: $e');
       throw Exception('Failed to load messages: $e');
     }
   }
@@ -50,7 +50,7 @@ class GroupChatService {
     String? parentMessageId,
   }) async {
     try {
-      print('GroupChatService: Sending message...');
+      print('GroupChatRepository: Sending message...');
 
       final response = await _supabase
           .from(tableName)
@@ -64,16 +64,16 @@ class GroupChatService {
           .select()
           .single();
 
-      print('GroupChatService: Message sent: $response');
+      print('GroupChatRepository: Message sent: $response');
 
       final message = GroupChatMessage.fromJson(response);
-      print('GroupChatService: Message created successfully');
+      print('GroupChatRepository: Message created successfully');
       return message;
     } on PostgrestException catch (e) {
-      print('GroupChatService: Database error: ${e.message}');
+      print('GroupChatRepository: Database error: ${e.message}');
       throw Exception('Failed to send message: ${e.message}');
     } catch (e) {
-      print('GroupChatService: Unexpected error: $e');
+      print('GroupChatRepository: Unexpected error: $e');
       throw Exception('Failed to send message: $e');
     }
   }
@@ -84,7 +84,7 @@ class GroupChatService {
     required String contentText,
   }) async {
     try {
-      print('GroupChatService: Updating message: $messageId');
+      print('GroupChatRepository: Updating message: $messageId');
 
       final response = await _supabase
           .from(tableName)
@@ -93,13 +93,13 @@ class GroupChatService {
           .select()
           .single();
 
-      print('GroupChatService: Message updated');
+      print('GroupChatRepository: Message updated');
       return GroupChatMessage.fromJson(response);
     } on PostgrestException catch (e) {
-      print('GroupChatService: Database error: ${e.message}');
+      print('GroupChatRepository: Database error: ${e.message}');
       throw Exception('Failed to update message: ${e.message}');
     } catch (e) {
-      print('GroupChatService: Unexpected error: $e');
+      print('GroupChatRepository: Unexpected error: $e');
       throw Exception('Failed to update message: $e');
     }
   }
@@ -107,16 +107,16 @@ class GroupChatService {
   /// Delete a message
   Future<void> deleteMessage(String messageId) async {
     try {
-      print('GroupChatService: Deleting message: $messageId');
+      print('GroupChatRepository: Deleting message: $messageId');
 
       await _supabase.from(tableName).delete().eq('id', messageId);
 
-      print('GroupChatService: Message deleted successfully');
+      print('GroupChatRepository: Message deleted successfully');
     } on PostgrestException catch (e) {
-      print('GroupChatService: Database error: ${e.message}');
+      print('GroupChatRepository: Database error: ${e.message}');
       throw Exception('Failed to delete message: ${e.message}');
     } catch (e) {
-      print('GroupChatService: Unexpected error: $e');
+      print('GroupChatRepository: Unexpected error: $e');
       throw Exception('Failed to delete message: $e');
     }
   }
@@ -124,7 +124,7 @@ class GroupChatService {
   /// Get a single message by ID
   Future<GroupChatMessage?> getMessage(String messageId) async {
     try {
-      print('GroupChatService: Getting message: $messageId');
+      print('GroupChatRepository: Getting message: $messageId');
 
       final response = await _supabase
           .from(tableName)
@@ -133,18 +133,18 @@ class GroupChatService {
           .maybeSingle();
 
       if (response == null) {
-        print('GroupChatService: Message not found');
+        print('GroupChatRepository: Message not found');
         return null;
       }
 
       final message = GroupChatMessage.fromJson(response);
-      print('GroupChatService: Message found');
+      print('GroupChatRepository: Message found');
       return message;
     } on PostgrestException catch (e) {
-      print('GroupChatService: Database error: ${e.message}');
+      print('GroupChatRepository: Database error: ${e.message}');
       throw Exception('Failed to get message: ${e.message}');
     } catch (e) {
-      print('GroupChatService: Unexpected error: $e');
+      print('GroupChatRepository: Unexpected error: $e');
       throw Exception('Failed to get message: $e');
     }
   }
@@ -157,7 +157,7 @@ class GroupChatService {
   }) async {
     try {
       print(
-        'GroupChatService: Loading messages with pagination for course: $courseId',
+        'GroupChatRepository: Loading messages with pagination for course: $courseId',
       );
 
       final response = await _supabase
@@ -168,7 +168,7 @@ class GroupChatService {
           .range(offset, offset + limit - 1);
 
       print(
-        'GroupChatService: Paginated response: ${response.length} messages',
+        'GroupChatRepository: Paginated response: ${response.length} messages',
       );
 
       final List<GroupChatMessage> messages = (response as List)
@@ -177,10 +177,10 @@ class GroupChatService {
 
       return messages;
     } on PostgrestException catch (e) {
-      print('GroupChatService: Database error: ${e.message}');
+      print('GroupChatRepository: Database error: ${e.message}');
       throw Exception('Failed to load messages: ${e.message}');
     } catch (e) {
-      print('GroupChatService: Unexpected error: $e');
+      print('GroupChatRepository: Unexpected error: $e');
       throw Exception('Failed to load messages: $e');
     }
   }
@@ -191,7 +191,9 @@ class GroupChatService {
     int limit = 100,
   }) async {
     try {
-      print('GroupChatService: Loading recent messages for course: $courseId');
+      print(
+        'GroupChatRepository: Loading recent messages for course: $courseId',
+      );
 
       final response = await _supabase
           .from(tableName)
@@ -201,7 +203,7 @@ class GroupChatService {
           .limit(limit);
 
       print(
-        'GroupChatService: Recent messages response: ${response.length} messages',
+        'GroupChatRepository: Recent messages response: ${response.length} messages',
       );
 
       final List<GroupChatMessage> messages = (response as List)
@@ -211,10 +213,10 @@ class GroupChatService {
       // Reverse to get chronological order (oldest first)
       return messages.reversed.toList();
     } on PostgrestException catch (e) {
-      print('GroupChatService: Database error: ${e.message}');
+      print('GroupChatRepository: Database error: ${e.message}');
       throw Exception('Failed to load recent messages: ${e.message}');
     } catch (e) {
-      print('GroupChatService: Unexpected error: $e');
+      print('GroupChatRepository: Unexpected error: $e');
       throw Exception('Failed to load recent messages: $e');
     }
   }
@@ -225,7 +227,7 @@ class GroupChatService {
     required String query,
   }) async {
     try {
-      print('GroupChatService: Searching messages for: $query');
+      print('GroupChatRepository: Searching messages for: $query');
 
       final response = await _supabase
           .from(tableName)
@@ -238,13 +240,13 @@ class GroupChatService {
           .map((json) => GroupChatMessage.fromJson(json))
           .toList();
 
-      print('GroupChatService: Found ${messages.length} matching messages');
+      print('GroupChatRepository: Found ${messages.length} matching messages');
       return messages;
     } on PostgrestException catch (e) {
-      print('GroupChatService: Database error: ${e.message}');
+      print('GroupChatRepository: Database error: ${e.message}');
       throw Exception('Failed to search messages: ${e.message}');
     } catch (e) {
-      print('GroupChatService: Unexpected error: $e');
+      print('GroupChatRepository: Unexpected error: $e');
       throw Exception('Failed to search messages: $e');
     }
   }
@@ -255,7 +257,7 @@ class GroupChatService {
     required String senderId,
   }) async {
     try {
-      print('GroupChatService: Loading messages from sender: $senderId');
+      print('GroupChatRepository: Loading messages from sender: $senderId');
 
       final response = await _supabase
           .from(tableName)
@@ -268,13 +270,15 @@ class GroupChatService {
           .map((json) => GroupChatMessage.fromJson(json))
           .toList();
 
-      print('GroupChatService: Found ${messages.length} messages from sender');
+      print(
+        'GroupChatRepository: Found ${messages.length} messages from sender',
+      );
       return messages;
     } on PostgrestException catch (e) {
-      print('GroupChatService: Database error: ${e.message}');
+      print('GroupChatRepository: Database error: ${e.message}');
       throw Exception('Failed to load messages by sender: ${e.message}');
     } catch (e) {
-      print('GroupChatService: Unexpected error: $e');
+      print('GroupChatRepository: Unexpected error: $e');
       throw Exception('Failed to load messages by sender: $e');
     }
   }
@@ -282,7 +286,9 @@ class GroupChatService {
   /// Get replies to a specific message
   Future<List<GroupChatMessage>> getReplies(String parentMessageId) async {
     try {
-      print('GroupChatService: Loading replies for message: $parentMessageId');
+      print(
+        'GroupChatRepository: Loading replies for message: $parentMessageId',
+      );
 
       final response = await _supabase
           .from(tableName)
@@ -294,13 +300,13 @@ class GroupChatService {
           .map((json) => GroupChatMessage.fromJson(json))
           .toList();
 
-      print('GroupChatService: Found ${replies.length} replies');
+      print('GroupChatRepository: Found ${replies.length} replies');
       return replies;
     } on PostgrestException catch (e) {
-      print('GroupChatService: Database error: ${e.message}');
+      print('GroupChatRepository: Database error: ${e.message}');
       throw Exception('Failed to load replies: ${e.message}');
     } catch (e) {
-      print('GroupChatService: Unexpected error: $e');
+      print('GroupChatRepository: Unexpected error: $e');
       throw Exception('Failed to load replies: $e');
     }
   }
@@ -313,7 +319,7 @@ class GroupChatService {
     required Function(String) onMessageDeleted,
   }) {
     print(
-      'GroupChatService: Setting up real-time subscription for course: $courseId',
+      'GroupChatRepository: Setting up real-time subscription for course: $courseId',
     );
 
     final channel = _supabase
@@ -329,7 +335,7 @@ class GroupChatService {
           ),
           callback: (payload) {
             print(
-              'GroupChatService: New message received: ${payload.newRecord}',
+              'GroupChatRepository: New message received: ${payload.newRecord}',
             );
             final message = GroupChatMessage.fromJson(payload.newRecord);
             onMessageReceived(message);
@@ -345,7 +351,7 @@ class GroupChatService {
             value: courseId,
           ),
           callback: (payload) {
-            print('GroupChatService: Message updated: ${payload.newRecord}');
+            print('GroupChatRepository: Message updated: ${payload.newRecord}');
             final message = GroupChatMessage.fromJson(payload.newRecord);
             onMessageUpdated(message);
           },
@@ -360,7 +366,7 @@ class GroupChatService {
             value: courseId,
           ),
           callback: (payload) {
-            print('GroupChatService: Message deleted: ${payload.oldRecord}');
+            print('GroupChatRepository: Message deleted: ${payload.oldRecord}');
             final messageId = payload.oldRecord['id'].toString();
             onMessageDeleted(messageId);
           },
@@ -372,7 +378,7 @@ class GroupChatService {
 
   /// Unsubscribe from real-time messages
   Future<void> unsubscribeFromMessages(RealtimeChannel channel) async {
-    print('GroupChatService: Unsubscribing from real-time messages');
+    print('GroupChatRepository: Unsubscribing from real-time messages');
     await _supabase.removeChannel(channel);
   }
 }

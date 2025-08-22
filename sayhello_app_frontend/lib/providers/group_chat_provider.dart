@@ -4,10 +4,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/group_chat_message.dart';
-import '../services/group_chat_service.dart';
+import '../data/group_chat_data.dart';
 
 class GroupChatProvider with ChangeNotifier {
-  final GroupChatService _groupChatService = GroupChatService();
+  final GroupChatRepository _groupChatRepository = GroupChatRepository();
 
   List<GroupChatMessage> _messages = [];
   bool _isLoading = false;
@@ -32,7 +32,7 @@ class GroupChatProvider with ChangeNotifier {
     try {
       print('GroupChatProvider: Loading messages for course: $courseId');
 
-      final messages = await _groupChatService.getRecentMessages(
+      final messages = await _groupChatRepository.getRecentMessages(
         courseId: courseId,
         limit: 100,
       );
@@ -65,7 +65,7 @@ class GroupChatProvider with ChangeNotifier {
     try {
       print('GroupChatProvider: Sending message...');
 
-      final message = await _groupChatService.sendMessage(
+      final message = await _groupChatRepository.sendMessage(
         courseId: courseId,
         senderId: senderId,
         senderType: senderType,
@@ -96,7 +96,7 @@ class GroupChatProvider with ChangeNotifier {
     try {
       print('GroupChatProvider: Updating message: $messageId');
 
-      final updatedMessage = await _groupChatService.updateMessage(
+      final updatedMessage = await _groupChatRepository.updateMessage(
         messageId: messageId,
         contentText: contentText,
       );
@@ -122,7 +122,7 @@ class GroupChatProvider with ChangeNotifier {
     try {
       print('GroupChatProvider: Deleting message: $messageId');
 
-      await _groupChatService.deleteMessage(messageId);
+      await _groupChatRepository.deleteMessage(messageId);
 
       // Remove from local list
       _messages.removeWhere((m) => m.id == messageId);
@@ -145,7 +145,7 @@ class GroupChatProvider with ChangeNotifier {
     try {
       print('GroupChatProvider: Searching messages for: $query');
 
-      final results = await _groupChatService.searchMessages(
+      final results = await _groupChatRepository.searchMessages(
         courseId: courseId,
         query: query,
       );
@@ -165,7 +165,7 @@ class GroupChatProvider with ChangeNotifier {
     required String senderId,
   }) async {
     try {
-      return await _groupChatService.getMessagesBySender(
+      return await _groupChatRepository.getMessagesBySender(
         courseId: courseId,
         senderId: senderId,
       );
@@ -178,7 +178,7 @@ class GroupChatProvider with ChangeNotifier {
   /// Get replies to a message
   Future<List<GroupChatMessage>> getReplies(String parentMessageId) async {
     try {
-      return await _groupChatService.getReplies(parentMessageId);
+      return await _groupChatRepository.getReplies(parentMessageId);
     } catch (e) {
       print('GroupChatProvider: Error getting replies: $e');
       return [];
@@ -195,7 +195,7 @@ class GroupChatProvider with ChangeNotifier {
       'GroupChatProvider: Subscribing to real-time updates for course: $courseId',
     );
 
-    _realtimeChannel = _groupChatService.subscribeToMessages(
+    _realtimeChannel = _groupChatRepository.subscribeToMessages(
       courseId: courseId,
       onMessageReceived: (message) {
         print('GroupChatProvider: Real-time message received: ${message.id}');
@@ -228,7 +228,7 @@ class GroupChatProvider with ChangeNotifier {
   void unsubscribeFromRealTimeUpdates() {
     if (_realtimeChannel != null) {
       print('GroupChatProvider: Unsubscribing from real-time updates');
-      _groupChatService.unsubscribeFromMessages(_realtimeChannel!);
+      _groupChatRepository.unsubscribeFromMessages(_realtimeChannel!);
       _realtimeChannel = null;
     }
   }

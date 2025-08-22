@@ -1,7 +1,7 @@
-/// Model class for RecordedClass data from backend
-/// Handles recorded class information for video links
+/// Model class for RecordClass data from backend
+/// Handles record class information for video links
 
-class RecordedClass {
+class RecordClass {
   final String id;
   final String courseId;
   final String recordedName;
@@ -9,7 +9,7 @@ class RecordedClass {
   final String recordedLink;
   final DateTime createdAt;
 
-  const RecordedClass({
+  const RecordClass({
     required this.id,
     required this.courseId,
     required this.recordedName,
@@ -18,9 +18,9 @@ class RecordedClass {
     required this.createdAt,
   });
 
-  /// Create RecordedClass from JSON (backend response)
-  factory RecordedClass.fromJson(Map<String, dynamic> json) {
-    return RecordedClass(
+  /// Create RecordClass from JSON (backend response)
+  factory RecordClass.fromJson(Map<String, dynamic> json) {
+    return RecordClass(
       id: json['id'] ?? json['_id'] ?? '',
       courseId: json['course_id'] ?? '',
       recordedName: json['recorded_name'] ?? '',
@@ -32,7 +32,7 @@ class RecordedClass {
     );
   }
 
-  /// Convert RecordedClass to JSON (for backend insert/update)
+  /// Convert RecordClass to JSON (for backend insert/update)
   Map<String, dynamic> toJson() {
     return {
       'course_id': courseId,
@@ -44,7 +44,7 @@ class RecordedClass {
   }
 
   /// Create a copy with modified fields
-  RecordedClass copyWith({
+  RecordClass copyWith({
     String? id,
     String? courseId,
     String? recordedName,
@@ -52,7 +52,7 @@ class RecordedClass {
     String? recordedLink,
     DateTime? createdAt,
   }) {
-    return RecordedClass(
+    return RecordClass(
       id: id ?? this.id,
       courseId: courseId ?? this.courseId,
       recordedName: recordedName ?? this.recordedName,
@@ -69,13 +69,13 @@ class RecordedClass {
 
   @override
   String toString() {
-    return 'RecordedClass(id: $id, name: $recordedName, link: $recordedLink)';
+    return 'RecordClass(id: $id, name: $recordedName, link: $recordedLink)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is RecordedClass && other.id == id;
+    return other is RecordClass && other.id == id;
   }
 
   @override
