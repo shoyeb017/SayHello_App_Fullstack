@@ -74,6 +74,8 @@ class LearnerRepository {
   /// Update learner profile
   Future<Learner> updateLearner(String id, Map<String, dynamic> updates) async {
     try {
+      print('LearnerData: Updating learner $id with data: $updates');
+
       final response = await _supabase
           .from('learners')
           .update(updates)
@@ -81,8 +83,14 @@ class LearnerRepository {
           .select()
           .single();
 
-      return Learner.fromJson(response);
+      print('LearnerData: Update response: $response');
+
+      final updatedLearner = Learner.fromJson(response);
+      print('LearnerData: Parsed learner: ${updatedLearner.toJson()}');
+
+      return updatedLearner;
     } catch (e) {
+      print('LearnerData: Update failed with error: $e');
       throw Exception('Failed to update learner: $e');
     }
   }

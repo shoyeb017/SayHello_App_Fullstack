@@ -121,14 +121,25 @@ class LearnerProvider extends ChangeNotifier {
         _setError('No learner loaded');
         return false;
       }
+
+      print(
+        'LearnerProvider: Updating learner ${_currentLearner!.id} with: $updates',
+      );
+
       final updatedLearner = await _repository.updateLearner(
         _currentLearner!.id,
         updates,
       );
+
+      print(
+        'LearnerProvider: Update successful, new data: ${updatedLearner.toJson()}',
+      );
+
       _currentLearner = updatedLearner;
       notifyListeners();
       return true;
     } catch (e) {
+      print('LearnerProvider: Update failed with error: $e');
       _setError('Failed to update learner: $e');
       return false;
     } finally {

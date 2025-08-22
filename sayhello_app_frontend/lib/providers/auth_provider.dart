@@ -122,6 +122,75 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Change Password
+  Future<bool> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    _setLoading(true);
+    _clearError();
+
+    try {
+      if (_currentUser == null) {
+        _setError('No user logged in');
+        return false;
+      }
+
+      // Verify current password
+      String tableName;
+      String currentPasswordFromDB;
+      String userId;
+
+      if (_currentUser is Learner) {
+        tableName = 'learners';
+        userId = (_currentUser as Learner).id;
+
+        // Get current user data to verify password
+        final userData = await _client
+            .from(tableName)
+            .select('password')
+            .eq('id', userId)
+            .single();
+
+        currentPasswordFromDB = userData['password'];
+      } else if (_currentUser is Instructor) {
+        tableName = 'instructors';
+        userId = (_currentUser as Instructor).id;
+
+        // Get current user data to verify password
+        final userData = await _client
+            .from(tableName)
+            .select('password')
+            .eq('id', userId)
+            .single();
+
+        currentPasswordFromDB = userData['password'];
+      } else {
+        _setError('Invalid user type');
+        return false;
+      }
+
+      // Verify current password
+      if (currentPasswordFromDB != currentPassword) {
+        _setError('Current password is incorrect');
+        return false;
+      }
+
+      // Update password in database
+      await _client
+          .from(tableName)
+          .update({'password': newPassword})
+          .eq('id', userId);
+
+      return true;
+    } catch (e) {
+      _setError('Failed to change password: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   // Error handling
   void _setError(String error) {
     _error = error;

@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../../../../providers/settings_provider.dart';
+import '../../../../providers/learner_provider.dart';
+import '../../../../providers/auth_provider.dart';
+import '../../../../models/learner.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../services/supabase_config.dart';
 import '../../Notifications/notifications.dart';
 import '../../../auth/landing_page.dart';
 
@@ -12,52 +19,63 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // Mock user data - all editable fields
-  final String userName = "Alex Johnson";
-  final String userBio =
-      "Language enthusiast 📚 Love traveling and meeting new people from different cultures! 🌍✈️";
-  final String userAvatar = "https://i.pravatar.cc/150?img=1";
-  final String email = "alex.johnson@example.com";
-  final String birthday = "March 15, 1999";
-  final int age = 25;
-  final String gender = "Male";
-  final String country = "USA"; // Added country field
-  final String nativeLanguage = "English";
-  final String learningLanguage = "Japanese";
-  final String languageLevel = "Intermediate";
-  final int joinedDays = 45;
+  LearnerProvider? _learnerProvider;
+  bool _initialized = false;
+  ScaffoldMessengerState? _scaffoldMessenger;
 
-  final List<String> selectedInterests = [
-    "Art",
-    "Music",
-    "Travel",
-    "Photography",
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      _scaffoldMessenger = ScaffoldMessenger.of(context);
+      // Use post-frame callback to avoid calling notifyListeners during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _initializeData();
+      });
+    }
+  }
+
+  Future<void> _initializeData() async {
+    if (!mounted) return;
+
+    _learnerProvider = Provider.of<LearnerProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    if (_learnerProvider?.currentLearner == null &&
+        authProvider.currentUser != null) {
+      await _learnerProvider?.loadLearner(authProvider.currentUser.id);
+    }
+  }
+
+  final List<String> languages = [
+    'English',
+    'Spanish',
+    'Japanese',
+    'Korean',
+    'Bangla',
   ];
-  final List<String> availableInterests = [
-    "Art",
-    "Music",
-    "Reading",
-    "Writing",
-    "Sports",
-    "Gaming",
-    "Travel",
-    "Cooking",
-    "Fashion",
-    "Photography",
-    "Crafting",
-    "Gardening",
-    "Fitness",
-    "Movies",
-    "Technology",
-    "Nature",
-    "Animals",
-    "Science",
-    "Socializing",
+  final List<String> genders = ['male', 'female'];
+  final List<String> countries = [
+    'usa', // United States
+    'spain', // Spain
+    'japan', // Japan
+    'korea', // Korea
+    'bangladesh', // Bangladesh
+  ];
+  final List<String> levels = [
+    'beginner',
+    'elementary',
+    'intermediate',
+    'advanced',
+    'proficient',
   ];
 
   // Helper method to get map image provider based on country
   ImageProvider getMapImage(String country) {
-    switch (country) {
+    final capitalizedCountry = _capitalizeFirst(country);
+    switch (capitalizedCountry) {
+      case 'Usa':
       case 'USA':
         return const AssetImage('lib/image/Map/USA.jpeg');
       case 'Spain':
@@ -73,127 +91,273 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Helper method to calculate joined days
+  int _calculateJoinedDays(DateTime createdAt) {
+    final now = DateTime.now();
+    final difference = now.difference(createdAt);
+    return difference.inDays;
+  }
+
+  // Helper method to calculate age from date of birth
+  int _calculateAge(DateTime dateOfBirth) {
+    final now = DateTime.now();
+    int age = now.year - dateOfBirth.year;
+    if (now.month < dateOfBirth.month ||
+        (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
+      age--;
+    }
+    return age;
+  }
+
+  // Helper method to capitalize first letter
+  String _capitalizeFirst(String input) {
+    if (input.isEmpty) return input;
+    return input[0].toUpperCase() + input.substring(1).toLowerCase();
+  }
+
+  // Helper method to format country name for display
+  String _formatCountryName(String country) {
+    final capitalizedCountry = _capitalizeFirst(country);
+    if (capitalizedCountry.toLowerCase() == 'usa') {
+      return 'USA';
+    }
+    return capitalizedCountry;
+  }
+
+  // Pick and upload image method
+  Future<void> _pickAndUploadImage(BuildContext context) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 75,
+      );
+
+      if (image == null) return;
+
+      if (!mounted) return;
+
+      final file = File(image.path);
+      final fileName = 'learner_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      // Upload to Supabase Storage
+      final response = await SupabaseConfig.client.storage
+          .from('profile-images')
+          .upload(fileName, file);
+
+      if (response.isNotEmpty) {
+        // Get the public URL
+        final imageUrl = SupabaseConfig.client.storage
+            .from('profile-images')
+            .getPublicUrl(fileName);
+
+        // Update learner profile with new image URL
+        final learnerProvider = Provider.of<LearnerProvider>(
+          context,
+          listen: false,
+        );
+        await learnerProvider.updateLearner({'profile_image': imageUrl});
+
+        if (mounted) {
+          _scaffoldMessenger?.showSnackBar(
+            const SnackBar(
+              content: Text('Profile image updated successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        _scaffoldMessenger?.showSnackBar(
+          SnackBar(
+            content: Text('Failed to update image: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = const Color(0xFF7A54FF);
+    return Consumer2<LearnerProvider, AuthProvider>(
+      builder: (context, learnerProvider, authProvider, child) {
+        final learner = learnerProvider.currentLearner;
+        final isLoading = learnerProvider.isLoading;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final primaryColor = const Color(0xFF7A54FF);
 
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(52),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          scrolledUnderElevation: 0,
-          title: Row(
-            children: [
-              // 🔧 SETTINGS ICON - This is the settings button in the app bar
-              // Click this to open the settings bottom sheet with theme and language options
-              IconButton(
-                icon: Icon(
-                  Icons.settings,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-                onPressed: () =>
-                    SettingsProvider.showSettingsBottomSheet(context),
+        if (isLoading) {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
               ),
+            ),
+          );
+        }
 
-              Expanded(
-                child: Text(
-                  AppLocalizations.of(context)!.profile,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                ),
-              ),
-
-              // 🔔 NOTIFICATION ICON - This is the notification button in the app bar
-              Stack(
+        if (learner == null) {
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.notifications_outlined,
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NotificationsPage(),
-                        ),
-                      );
-                    },
+                  Icon(Icons.error_outline, size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Failed to load profile',
+                    style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                   ),
-                  // Red dot for unread notifications
-                  Positioned(
-                    right: 11,
-                    top: 11,
-                    child: Container(
-                      padding: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      constraints: BoxConstraints(minWidth: 12, minHeight: 12),
-                      child: Text(
-                        '3', // Number of unread notifications
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 8,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (authProvider.currentUser != null) {
+                        learnerProvider.loadLearner(
+                          authProvider.currentUser.id,
+                        );
+                      }
+                    },
+                    child: Text('Retry'),
                   ),
                 ],
               ),
+            ),
+          );
+        }
 
-              // 🚪 LOGOUT ICON - This is the logout button in the app bar
-              IconButton(
-                icon: Icon(
-                  Icons.logout,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-                onPressed: () => _showLogoutDialog(context),
+        return Scaffold(
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(52),
+            child: AppBar(
+              automaticallyImplyLeading: false,
+              scrolledUnderElevation: 0,
+              title: Row(
+                children: [
+                  // 🔧 SETTINGS ICON - This is the settings button in the app bar
+                  // Click this to open the settings bottom sheet with theme and language options
+                  IconButton(
+                    icon: Icon(
+                      Icons.settings,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                    onPressed: () =>
+                        SettingsProvider.showSettingsBottomSheet(context),
+                  ),
+
+                  Expanded(
+                    child: Text(
+                      AppLocalizations.of(context)!.profile,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+
+                  // 🔔 NOTIFICATION ICON - This is the notification button in the app bar
+                  Stack(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.notifications_outlined,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NotificationsPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      // Red dot for unread notifications
+                      Positioned(
+                        right: 11,
+                        top: 11,
+                        child: Container(
+                          padding: EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          constraints: BoxConstraints(
+                            minWidth: 12,
+                            minHeight: 12,
+                          ),
+                          child: Text(
+                            '3', // Number of unread notifications
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // 🚪 LOGOUT ICON - This is the logout button in the app bar
+                  IconButton(
+                    icon: Icon(
+                      Icons.logout,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                    onPressed: () => _showLogoutDialog(context),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Profile Banner Section
-            _buildProfileBanner(context, isDark, primaryColor),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Profile Banner Section
+                _buildProfileBanner(context, isDark, primaryColor, learner),
 
-            const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-            // Country and joined info
-            _buildCountrySection(context, isDark, primaryColor),
+                // Country and joined info
+                _buildCountrySection(context, isDark, primaryColor, learner),
 
-            const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-            // About Me Section
-            _buildAboutMeSection(context, isDark, primaryColor),
+                // About Me Section
+                _buildAboutMeSection(context, isDark, primaryColor, learner),
 
-            const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-            // Language Section
-            _buildLanguageSection(context, isDark, primaryColor),
+                // Language Section
+                _buildLanguageSection(context, isDark, primaryColor, learner),
 
-            const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-            // Interests Section
-            _buildInterestsSection(context, isDark, primaryColor),
+                // Interests Section
+                _buildInterestsSection(context, isDark, primaryColor, learner),
 
-            const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-            // Personal Information Section
-            _buildPersonalInfoSection(context, isDark, primaryColor),
+                // Personal Information Section
+                _buildPersonalInfoSection(
+                  context,
+                  isDark,
+                  primaryColor,
+                  learner,
+                ),
 
-            const SizedBox(height: 100), // Bottom padding for scroll
-          ],
-        ),
-      ),
+                const SizedBox(height: 100), // Bottom padding for scroll
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -201,6 +365,7 @@ class _ProfilePageState extends State<ProfilePage> {
     BuildContext context,
     bool isDark,
     Color primaryColor,
+    Learner learner,
   ) {
     return Container(
       height: 220,
@@ -217,14 +382,16 @@ class _ProfilePageState extends State<ProfilePage> {
                 colors: [primaryColor.withOpacity(0.8), primaryColor],
               ),
               image: DecorationImage(
-                image: getMapImage(country),
+                image: getMapImage(learner.country),
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
                   primaryColor.withOpacity(0.6),
                   BlendMode.overlay,
                 ),
                 onError: (exception, stackTrace) {
-                  print('Error loading map image for $country: $exception');
+                  print(
+                    'Error loading map image for ${learner.country}: $exception',
+                  );
                 },
               ),
             ),
@@ -252,7 +419,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           Icon(Icons.public, color: Colors.white, size: 14),
                           SizedBox(width: 4),
                           Text(
-                            country,
+                            _formatCountryName(learner.country),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 12,
@@ -279,13 +446,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.transparent,
-                  backgroundImage: NetworkImage(userAvatar),
+                  backgroundImage: learner.profileImage != null
+                      ? NetworkImage(learner.profileImage!)
+                      : null,
+                  child: learner.profileImage == null
+                      ? Icon(Icons.person, size: 50, color: Colors.grey)
+                      : null,
                 ),
                 Positioned(
                   bottom: 4,
                   right: 4,
                   child: GestureDetector(
-                    onTap: () => _showImageEditOptions(context, primaryColor),
+                    onTap: () => _pickAndUploadImage(context),
                     child: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
@@ -313,7 +485,10 @@ class _ProfilePageState extends State<ProfilePage> {
     BuildContext context,
     bool isDark,
     Color primaryColor,
+    Learner learner,
   ) {
+    final joinedDays = _calculateJoinedDays(learner.createdAt);
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
@@ -346,7 +521,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  country,
+                  _formatCountryName(learner.country),
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
@@ -377,6 +552,7 @@ class _ProfilePageState extends State<ProfilePage> {
     BuildContext context,
     bool isDark,
     Color primaryColor,
+    Learner learner,
   ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -418,7 +594,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    userName,
+                    learner.name,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -431,7 +607,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () => _showEditDialog(
                   context,
                   AppLocalizations.of(context)!.name,
-                  userName,
+                  learner.name,
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.edit,
@@ -469,12 +645,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     border: Border.all(color: Colors.grey[300]!, width: 1),
                   ),
                   child: Text(
-                    userBio.isEmpty
+                    (learner.bio?.isEmpty ?? true)
                         ? AppLocalizations.of(context)!.tellUsAboutYourself
-                        : userBio,
+                        : learner.bio!,
                     style: TextStyle(
                       fontSize: 14,
-                      color: userBio.isEmpty
+                      color: (learner.bio?.isEmpty ?? true)
                           ? Colors.grey[500]
                           : (isDark ? Colors.white : Colors.black),
                       height: 1.4,
@@ -493,6 +669,7 @@ class _ProfilePageState extends State<ProfilePage> {
     BuildContext context,
     bool isDark,
     Color primaryColor,
+    Learner learner,
   ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -525,7 +702,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _buildLanguageItem(
             context,
             AppLocalizations.of(context)!.native,
-            nativeLanguage,
+            _capitalizeFirst(learner.nativeLanguage),
             '🇺🇸',
             isDark,
             primaryColor,
@@ -545,14 +722,27 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 8),
 
+          // Learning language (non-editable)
           _buildLanguageItem(
             context,
             '',
-            '$learningLanguage - $languageLevel',
+            _capitalizeFirst(learner.learningLanguage),
             '🇯🇵',
             isDark,
             primaryColor,
-            onTap: () => _showLearningLanguageDialog(context, primaryColor),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Learning level (editable)
+          _buildLanguageItem(
+            context,
+            AppLocalizations.of(context)!.level,
+            _capitalizeFirst(learner.languageLevel),
+            '📈',
+            isDark,
+            primaryColor,
+            onTap: () => _showLanguageLevelDialog(context, primaryColor),
           ),
         ],
       ),
@@ -628,7 +818,12 @@ class _ProfilePageState extends State<ProfilePage> {
     BuildContext context,
     bool isDark,
     Color primaryColor,
+    Learner learner,
   ) {
+    final interests = learner.interests.isNotEmpty
+        ? learner.interests.join(', ')
+        : 'No interests selected';
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
@@ -660,7 +855,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _buildInterestItem(
             context,
             AppLocalizations.of(context)!.addHobbies,
-            selectedInterests.join(', '),
+            interests,
             Icons.favorite_outline,
             isDark,
             primaryColor,
@@ -740,6 +935,7 @@ class _ProfilePageState extends State<ProfilePage> {
     BuildContext context,
     bool isDark,
     Color primaryColor,
+    Learner learner,
   ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -772,10 +968,24 @@ class _ProfilePageState extends State<ProfilePage> {
           _buildPersonalInfoItem(
             context,
             AppLocalizations.of(context)!.email,
-            email,
+            learner.email,
             Icons.email_outlined,
             isDark,
             primaryColor,
+            onTap: () => _showEmailEditDialog(context, primaryColor),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Password
+          _buildPersonalInfoItem(
+            context,
+            'Password',
+            '••••••••',
+            Icons.lock_outlined,
+            isDark,
+            primaryColor,
+            onTap: () => _showPasswordChangeDialog(context, primaryColor),
           ),
 
           const SizedBox(height: 12),
@@ -784,7 +994,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _buildPersonalInfoItem(
             context,
             AppLocalizations.of(context)!.gender,
-            gender,
+            _capitalizeFirst(learner.gender),
             Icons.person_outline,
             isDark,
             primaryColor,
@@ -792,11 +1002,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
           const SizedBox(height: 12),
 
-          // Age
+          // Age (calculated from dateOfBirth)
           _buildPersonalInfoItem(
             context,
             AppLocalizations.of(context)!.age,
-            age.toString(),
+            _calculateAge(learner.dateOfBirth).toString(),
             Icons.cake_outlined,
             isDark,
             primaryColor,
@@ -808,7 +1018,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _buildPersonalInfoItem(
             context,
             AppLocalizations.of(context)!.birthday,
-            birthday,
+            '${learner.dateOfBirth.day}/${learner.dateOfBirth.month}/${learner.dateOfBirth.year}',
             Icons.calendar_today_outlined,
             isDark,
             primaryColor,
@@ -826,19 +1036,22 @@ class _ProfilePageState extends State<ProfilePage> {
     bool isDark,
     Color primaryColor, {
     bool hasRedDot = false,
+    VoidCallback? onTap,
   }) {
     return GestureDetector(
-      onTap: () {
-        if (title == AppLocalizations.of(context)!.gender) {
-          _showGenderSelectionDialog(context, primaryColor);
-        } else if (title == AppLocalizations.of(context)!.age) {
-          _showAgeSelectionDialog(context, primaryColor);
-        } else if (title == AppLocalizations.of(context)!.birthday) {
-          _showBirthdaySelectionDialog(context, primaryColor);
-        } else {
-          _showEditDialog(context, title, value);
-        }
-      },
+      onTap:
+          onTap ??
+          () {
+            if (title == AppLocalizations.of(context)!.gender) {
+              _showGenderSelectionDialog(context, primaryColor);
+            } else if (title == AppLocalizations.of(context)!.age) {
+              _showAgeSelectionDialog(context, primaryColor);
+            } else if (title == AppLocalizations.of(context)!.birthday) {
+              _showBirthdaySelectionDialog(context, primaryColor);
+            } else {
+              _showEditDialog(context, title, value);
+            }
+          },
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -894,58 +1107,16 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Image edit options
-  void _showImageEditOptions(BuildContext context, Color primaryColor) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.editImage,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            ListTile(
-              leading: Icon(Icons.camera_alt, color: primaryColor),
-              title: Text(AppLocalizations.of(context)!.takePhoto),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)!.cameraFeatureComingSoon,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.photo_library, color: primaryColor),
-              title: Text(AppLocalizations.of(context)!.selectFromGallery),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)!.galleryFeatureComingSoon,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   // Bio edit dialog
   void _showBioEditDialog(BuildContext context, Color primaryColor) {
+    final learnerProvider = Provider.of<LearnerProvider>(
+      context,
+      listen: false,
+    );
+    final currentBio = learnerProvider.currentLearner?.bio ?? '';
+
     final TextEditingController controller = TextEditingController(
-      text: userBio,
+      text: currentBio,
     );
 
     showDialog(
@@ -967,15 +1138,33 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    AppLocalizations.of(context)!.bioUpdatedSuccessfully,
-                  ),
-                ),
-              );
+            onPressed: () async {
+              try {
+                await learnerProvider.updateLearner({
+                  'bio': controller.text.trim(),
+                });
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)!.bioUpdatedSuccessfully,
+                      ),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to update bio: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
             },
             child: Text(
               AppLocalizations.of(context)!.save,
@@ -989,7 +1178,34 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Hobbies selection dialog
   void _showHobbiesSelectionDialog(BuildContext context, Color primaryColor) {
-    List<String> tempSelected = List.from(selectedInterests);
+    final learnerProvider = Provider.of<LearnerProvider>(
+      context,
+      listen: false,
+    );
+    final currentInterests = learnerProvider.currentLearner?.interests ?? [];
+    List<String> tempSelected = List.from(currentInterests);
+
+    final availableInterests = [
+      "Art",
+      "Music",
+      "Reading",
+      "Writing",
+      "Sports",
+      "Gaming",
+      "Travel",
+      "Cooking",
+      "Fashion",
+      "Photography",
+      "Crafting",
+      "Gardening",
+      "Fitness",
+      "Movies",
+      "Technology",
+      "Nature",
+      "Animals",
+      "Science",
+      "Socializing",
+    ];
 
     showDialog(
       context: context,
@@ -1028,15 +1244,35 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)!.hobbiesUpdatedSuccessfully,
-                    ),
-                  ),
-                );
+              onPressed: () async {
+                try {
+                  await learnerProvider.updateLearner({
+                    'interests': tempSelected,
+                  });
+
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.hobbiesUpdatedSuccessfully,
+                        ),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to update interests: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               },
               child: Text(
                 AppLocalizations.of(context)!.save,
@@ -1075,15 +1311,37 @@ class _ProfilePageState extends State<ProfilePage> {
                     color: primaryColor,
                   ),
                   title: Text(g),
-                  onTap: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(context)!.genderUpdated(g),
-                        ),
-                      ),
-                    );
+                  onTap: () async {
+                    try {
+                      final learnerProvider = Provider.of<LearnerProvider>(
+                        context,
+                        listen: false,
+                      );
+                      await learnerProvider.updateLearner({
+                        'gender': g.toLowerCase(),
+                      });
+
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              AppLocalizations.of(context)!.genderUpdated(g),
+                            ),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Failed to update gender: $e'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    }
                   },
                 ),
               )
@@ -1095,7 +1353,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Age selection dialog
   void _showAgeSelectionDialog(BuildContext context, Color primaryColor) {
-    int selectedAge = age;
+    final learnerProvider = Provider.of<LearnerProvider>(
+      context,
+      listen: false,
+    );
+    final currentAge = learnerProvider.currentLearner != null
+        ? _calculateAge(learnerProvider.currentLearner!.dateOfBirth)
+        : 25;
+    int selectedAge = currentAge;
 
     showDialog(
       context: context,
@@ -1128,15 +1393,41 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    AppLocalizations.of(context)!.ageUpdated(selectedAge),
-                  ),
-                ),
-              );
+            onPressed: () async {
+              try {
+                // Calculate new date of birth based on selected age
+                final now = DateTime.now();
+                final newDateOfBirth = DateTime(
+                  now.year - selectedAge,
+                  now.month,
+                  now.day,
+                );
+
+                await learnerProvider.updateLearner({
+                  'date_of_birth': newDateOfBirth.toIso8601String(),
+                });
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)!.ageUpdated(selectedAge),
+                      ),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to update age: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
             },
             child: Text(
               AppLocalizations.of(context)!.save,
@@ -1150,9 +1441,16 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Birthday selection dialog
   void _showBirthdaySelectionDialog(BuildContext context, Color primaryColor) {
+    final learnerProvider = Provider.of<LearnerProvider>(
+      context,
+      listen: false,
+    );
+    final currentBirthday =
+        learnerProvider.currentLearner?.dateOfBirth ?? DateTime(1999, 3, 15);
+
     showDatePicker(
       context: context,
-      initialDate: DateTime(1999, 3, 15),
+      initialDate: currentBirthday,
       firstDate: DateTime(1920),
       lastDate: DateTime.now(),
       builder: (context, child) {
@@ -1165,15 +1463,33 @@ class _ProfilePageState extends State<ProfilePage> {
           child: child!,
         );
       },
-    ).then((selectedDate) {
+    ).then((selectedDate) async {
       if (selectedDate != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.birthdayUpdatedSuccessfully,
-            ),
-          ),
-        );
+        try {
+          await learnerProvider.updateLearner({
+            'date_of_birth': selectedDate.toIso8601String(),
+          });
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context)!.birthdayUpdatedSuccessfully,
+                ),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to update birthday: $e'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
       }
     });
   }
@@ -1211,16 +1527,40 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
-            onPressed: () {
-              // TODO: Save the edited value
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    AppLocalizations.of(context)!.fieldUpdated(title),
-                  ),
-                ),
-              );
+            onPressed: () async {
+              try {
+                final learnerProvider = Provider.of<LearnerProvider>(
+                  context,
+                  listen: false,
+                );
+
+                if (title == AppLocalizations.of(context)!.name) {
+                  await learnerProvider.updateLearner({
+                    'name': controller.text.trim(),
+                  });
+                }
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)!.fieldUpdated(title),
+                      ),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to update $title: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
             },
             child: Text(AppLocalizations.of(context)!.save),
           ),
@@ -1244,11 +1584,35 @@ class _ProfilePageState extends State<ProfilePage> {
                 (c) => ListTile(
                   leading: Icon(Icons.public, color: primaryColor),
                   title: Text(c),
-                  onTap: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Country updated to $c')),
-                    );
+                  onTap: () async {
+                    try {
+                      final learnerProvider = Provider.of<LearnerProvider>(
+                        context,
+                        listen: false,
+                      );
+                      await learnerProvider.updateLearner({
+                        'country': c.toLowerCase(),
+                      });
+
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Country updated to $c'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Failed to update country: $e'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    }
                   },
                 ),
               )
@@ -1258,9 +1622,14 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Learning language and level dialog
-  void _showLearningLanguageDialog(BuildContext context, Color primaryColor) {
-    final languages = ['English', 'Spanish', 'Japanese', 'Korean', 'Bangla'];
+  // Language level selection dialog (separate from language)
+  void _showLanguageLevelDialog(BuildContext context, Color primaryColor) {
+    final learnerProvider = Provider.of<LearnerProvider>(
+      context,
+      listen: false,
+    );
+    final currentLearner = learnerProvider.currentLearner;
+
     final levels = [
       'Beginner',
       'Elementary',
@@ -1269,57 +1638,103 @@ class _ProfilePageState extends State<ProfilePage> {
       'Proficient',
     ];
 
+    // Capitalize the stored value to match dropdown items
+    String selectedLevel = currentLearner?.languageLevel != null
+        ? _capitalizeFirst(currentLearner!.languageLevel)
+        : 'Intermediate';
+
+    // Ensure the selected value exists in the dropdown options
+    if (!levels.contains(selectedLevel)) {
+      selectedLevel = 'Intermediate';
+    }
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.selectLearningLanguageLevel),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(labelText: 'Language'),
-              value: learningLanguage,
-              items: languages
-                  .map(
-                    (lang) => DropdownMenuItem(value: lang, child: Text(lang)),
-                  )
-                  .toList(),
-              onChanged: (value) {},
-            ),
-            SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.level,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text('Select Language Level'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.level,
+                ),
+                value: selectedLevel,
+                items: levels
+                    .map(
+                      (level) =>
+                          DropdownMenuItem(value: level, child: Text(level)),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedLevel = value!;
+                  });
+                },
               ),
-              value: languageLevel,
-              items: levels
-                  .map(
-                    (level) =>
-                        DropdownMenuItem(value: level, child: Text(level)),
-                  )
-                  .toList(),
-              onChanged: (value) {},
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            TextButton(
+              onPressed: () async {
+                try {
+                  print(
+                    'Updating level: $selectedLevel -> ${selectedLevel.toLowerCase()}',
+                  );
+
+                  final updateData = {
+                    'language_level': selectedLevel.toLowerCase(),
+                  };
+                  print('Update data: $updateData');
+
+                  final success = await learnerProvider.updateLearner(
+                    updateData,
+                  );
+                  print('Update success: $success');
+
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Language level updated successfully'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Failed to update language level'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                } catch (e) {
+                  print('Error updating language level: $e');
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to update language level: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              child: Text(
+                AppLocalizations.of(context)!.save,
+                style: TextStyle(color: primaryColor),
+              ),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Language settings updated')),
-              );
-            },
-            child: Text(
-              AppLocalizations.of(context)!.save,
-              style: TextStyle(color: primaryColor),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -1351,6 +1766,285 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Email edit dialog
+  void _showEmailEditDialog(BuildContext context, Color primaryColor) {
+    final learnerProvider = Provider.of<LearnerProvider>(
+      context,
+      listen: false,
+    );
+    final currentEmail = learnerProvider.currentLearner?.email ?? '';
+
+    final TextEditingController controller = TextEditingController(
+      text: currentEmail,
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Edit Email'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: 'Enter your email',
+                border: const OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Note: Changing your email will require verification',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.orange[700],
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          TextButton(
+            onPressed: () async {
+              final newEmail = controller.text.trim();
+              if (newEmail.isEmpty || !newEmail.contains('@')) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Please enter a valid email address'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return;
+              }
+
+              try {
+                await learnerProvider.updateLearner({'email': newEmail});
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Email updated successfully'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to update email: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
+            },
+            child: Text(
+              AppLocalizations.of(context)!.save,
+              style: TextStyle(color: primaryColor),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Password change dialog
+  void _showPasswordChangeDialog(BuildContext context, Color primaryColor) {
+    final TextEditingController currentPasswordController =
+        TextEditingController();
+    final TextEditingController newPasswordController = TextEditingController();
+    final TextEditingController confirmPasswordController =
+        TextEditingController();
+
+    bool showCurrentPassword = false;
+    bool showNewPassword = false;
+    bool showConfirmPassword = false;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text('Change Password'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Current Password
+                TextField(
+                  controller: currentPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Current Password',
+                    border: const OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        showCurrentPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          showCurrentPassword = !showCurrentPassword;
+                        });
+                      },
+                    ),
+                  ),
+                  obscureText: !showCurrentPassword,
+                ),
+                const SizedBox(height: 16),
+
+                // New Password
+                TextField(
+                  controller: newPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'New Password',
+                    border: const OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        showNewPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          showNewPassword = !showNewPassword;
+                        });
+                      },
+                    ),
+                  ),
+                  obscureText: !showNewPassword,
+                ),
+                const SizedBox(height: 16),
+
+                // Confirm Password
+                TextField(
+                  controller: confirmPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Confirm New Password',
+                    border: const OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        showConfirmPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          showConfirmPassword = !showConfirmPassword;
+                        });
+                      },
+                    ),
+                  ),
+                  obscureText: !showConfirmPassword,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            TextButton(
+              onPressed: () async {
+                final currentPassword = currentPasswordController.text.trim();
+                final newPassword = newPasswordController.text.trim();
+                final confirmPassword = confirmPasswordController.text.trim();
+
+                // Validation
+                if (currentPassword.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Please enter your current password'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                if (newPassword.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Please enter a new password'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                if (newPassword != confirmPassword) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('New passwords do not match'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                try {
+                  final authProvider = Provider.of<AuthProvider>(
+                    context,
+                    listen: false,
+                  );
+                  final success = await authProvider.changePassword(
+                    currentPassword,
+                    newPassword,
+                  );
+
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Password changed successfully'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            authProvider.error ?? 'Failed to change password',
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to change password: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              child: Text(
+                'Change Password',
+                style: TextStyle(color: primaryColor),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
