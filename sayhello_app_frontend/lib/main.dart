@@ -16,6 +16,7 @@ import 'providers/online_session_provider.dart';
 import 'providers/record_class_provider.dart';
 import 'providers/study_material_provider.dart';
 import 'providers/group_chat_provider.dart';
+import 'providers/feedback_provider.dart';
 
 import 'screens/auth/landing_page.dart';
 import 'screens/permissions/permission_wrapper.dart';
@@ -62,6 +63,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => RecordClassProvider()),
         ChangeNotifierProvider(create: (_) => StudyMaterialProvider()),
         ChangeNotifierProvider(create: (_) => GroupChatProvider()),
+        ChangeNotifierProvider(create: (_) => FeedbackProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: const MyApp(),

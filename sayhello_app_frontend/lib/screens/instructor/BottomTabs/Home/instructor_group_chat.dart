@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../l10n/app_localizations.dart';
 import '../../../../providers/group_chat_provider.dart';
 import '../../../../providers/auth_provider.dart';
-import '../../../../models/group_chat_message.dart';
+import '../../../../models/group_chat.dart';
 import '../../../../models/instructor.dart';
 
 class InstructorGroupChatTab extends StatefulWidget {

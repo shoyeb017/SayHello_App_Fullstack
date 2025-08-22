@@ -3,7 +3,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/group_chat_message.dart';
+import '../models/group_chat.dart';
 import '../data/group_chat_data.dart';
 
 class GroupChatProvider with ChangeNotifier {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../providers/group_chat_provider.dart';
 import '../../../../../providers/auth_provider.dart';
-import '../../../../../models/group_chat_message.dart';
+import '../../../../../models/group_chat.dart';
 import '../../../../../models/learner.dart';
 
 class GroupChatTab extends StatefulWidget {

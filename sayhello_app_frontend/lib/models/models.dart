@@ -12,3 +12,4 @@ export 'feed.dart';
 export 'notification.dart';
 export 'record_class.dart';
 export 'study_material.dart';
+export 'feedback.dart';

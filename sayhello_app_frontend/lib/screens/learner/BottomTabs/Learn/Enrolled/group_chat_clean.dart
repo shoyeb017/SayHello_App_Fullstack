@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../providers/group_chat_provider.dart';
-import '../../../../../models/group_chat_message.dart';
+import '../../../../../models/group_chat.dart';
 
 class GroupChatTab extends StatefulWidget {
   final Map<String, dynamic> course;

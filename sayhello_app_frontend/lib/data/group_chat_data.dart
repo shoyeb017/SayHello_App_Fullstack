@@ -2,7 +2,7 @@
 /// Provides CRUD operations with Supabase database integration
 
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/group_chat_message.dart';
+import '../models/group_chat.dart';
 
 class GroupChatRepository {
   static final GroupChatRepository _instance = GroupChatRepository._internal();
