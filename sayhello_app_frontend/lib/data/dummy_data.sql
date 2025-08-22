@@ -330,7 +330,7 @@ CREATE TABLE withdrawal_info (
 -- -----------------------------
 INSERT INTO learners (name, email, username, password, date_of_birth, gender, country, bio, profile_image, native_language, learning_language, language_level, interests)
 VALUES
-('Alice Johnson', 'alice.johnson@example.com', 'alice_j', '1234', '1995-03-12', 'female', 'usa', 'I love learning Japanese and exploring new cultures.', 'https://grunwttngjfnwfzlgopi.supabase.co/storage/v1/object/public/profile_pics/default_profile_image.png', 'english', 'japanese', 'beginner', ARRAY['anime','travel','music']),
+('Alice Johnson', 'alice.johnson@example.com', 'ali', '1234', '1995-03-12', 'female', 'usa', 'I love learning Japanese and exploring new cultures.', 'https://grunwttngjfnwfzlgopi.supabase.co/storage/v1/object/public/profile_pics/default_profile_image.png', 'english', 'japanese', 'beginner', ARRAY['anime','travel','music']),
 ('Bob Smith', 'bob.smith@example.com', 'bob_s', '1234', '1992-07-25', 'male', 'usa', 'Learning Japanese to speak fluently with native speakers.', 'https://grunwttngjfnwfzlgopi.supabase.co/storage/v1/object/public/profile_pics/default_profile_image.png', 'english', 'japanese', 'elementary', ARRAY['gaming','reading','cooking']),
 ('Carol Davis', 'carol.davis@example.com', 'carol_d', '1234', '1998-11-02', 'female', 'usa', 'I enjoy practicing Japanese daily.', 'https://grunwttngjfnwfzlgopi.supabase.co/storage/v1/object/public/profile_pics/default_profile_image.png', 'english', 'japanese', 'intermediate', ARRAY['travel','calligraphy','photography']),
 ('David Lee', 'david.lee@example.com', 'david_l', '1234', '1990-06-15', 'male', 'usa', 'Passionate about Japanese culture and language.', 'https://grunwttngjfnwfzlgopi.supabase.co/storage/v1/object/public/profile_pics/default_profile_image.png', 'english', 'japanese', 'advanced', ARRAY['martial arts','reading','music']),
@@ -346,7 +346,7 @@ VALUES
 -- -----------------------------
 INSERT INTO learners (name, email, username, password, date_of_birth, gender, country, bio, profile_image, native_language, learning_language, language_level, interests)
 VALUES
-('Akira Tanaka', 'akira.tanaka@example.com', 'akira_t', '1234', '1995-05-22', 'male', 'japan', 'I love learning English to communicate worldwide.', 'https://grunwttngjfnwfzlgopi.supabase.co/storage/v1/object/public/profile_pics/default_profile_image.png', 'japanese', 'english', 'beginner', ARRAY['music','travel','anime']),
+('Akira Tanaka', 'akira.tanaka@example.com', 'aki', '1234', '1995-05-22', 'male', 'japan', 'I love learning English to communicate worldwide.', 'https://grunwttngjfnwfzlgopi.supabase.co/storage/v1/object/public/profile_pics/default_profile_image.png', 'japanese', 'english', 'beginner', ARRAY['music','travel','anime']),
 ('Emiko Sato', 'emiko.sato@example.com', 'emiko_s', '1234', '1997-11-11', 'female', 'japan', 'Learning English to improve my career prospects.', 'https://grunwttngjfnwfzlgopi.supabase.co/storage/v1/object/public/profile_pics/default_profile_image.png', 'japanese', 'english', 'elementary', ARRAY['reading','cooking','yoga']),
 ('Hiroshi Yamamoto', 'hiroshi.yamamoto@example.com', 'hiroshi_y', '1234', '1990-03-14', 'male', 'japan', 'I practice English to enjoy movies and media.', 'https://grunwttngjfnwfzlgopi.supabase.co/storage/v1/object/public/profile_pics/default_profile_image.png', 'japanese', 'english', 'intermediate', ARRAY['movies','sports','gaming']),
 ('Yuki Nakamura', 'yuki.nakamura@example.com', 'yuki_n', '1234', '1992-07-30', 'female', 'japan', 'Passionate about English literature and language.', 'https://grunwttngjfnwfzlgopi.supabase.co/storage/v1/object/public/profile_pics/default_profile_image.png', 'japanese', 'english', 'advanced', ARRAY['reading','travel','writing']),
@@ -409,25 +409,25 @@ WITH learner_map AS (
 INSERT INTO followers (follower_user_id, followed_user_id)
 VALUES
 -- English native learners following each other
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='bob_s')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='carol_d')),
-((SELECT id FROM learner_map WHERE username='bob_s'), (SELECT id FROM learner_map WHERE username='alice_j')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='bob_s')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='carol_d')),
+((SELECT id FROM learner_map WHERE username='bob_s'), (SELECT id FROM learner_map WHERE username='ali')),
 ((SELECT id FROM learner_map WHERE username='carol_d'), (SELECT id FROM learner_map WHERE username='david_l')),
 ((SELECT id FROM learner_map WHERE username='david_l'), (SELECT id FROM learner_map WHERE username='emma_w')),
 ((SELECT id FROM learner_map WHERE username='frank_t'), (SELECT id FROM learner_map WHERE username='grace_m')),
 ((SELECT id FROM learner_map WHERE username='henry_b'), (SELECT id FROM learner_map WHERE username='isabella_g')),
-((SELECT id FROM learner_map WHERE username='jack_w'), (SELECT id FROM learner_map WHERE username='alice_j')),
+((SELECT id FROM learner_map WHERE username='jack_w'), (SELECT id FROM learner_map WHERE username='ali')),
 
 -- Japanese native learners following each other
-((SELECT id FROM learner_map WHERE username='akira_t'), (SELECT id FROM learner_map WHERE username='emiko_s')),
+((SELECT id FROM learner_map WHERE username='aki'), (SELECT id FROM learner_map WHERE username='emiko_s')),
 ((SELECT id FROM learner_map WHERE username='hiroshi_y'), (SELECT id FROM learner_map WHERE username='yuki_n')),
 ((SELECT id FROM learner_map WHERE username='kenta_s'), (SELECT id FROM learner_map WHERE username='miyuki_k')),
 ((SELECT id FROM learner_map WHERE username='ryo_t'), (SELECT id FROM learner_map WHERE username='sakura_i')),
 ((SELECT id FROM learner_map WHERE username='takumi_w'), (SELECT id FROM learner_map WHERE username='aya_m')),
 
 -- Cross-group follower relationships for demonstration
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='akira_t'), (SELECT id FROM learner_map WHERE username='alice_j')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='aki'), (SELECT id FROM learner_map WHERE username='ali')),
 ((SELECT id FROM learner_map WHERE username='bob_s'), (SELECT id FROM learner_map WHERE username='yuki_n')),
 ((SELECT id FROM learner_map WHERE username='yuki_n'), (SELECT id FROM learner_map WHERE username='bob_s'));
 
@@ -442,7 +442,7 @@ WITH learner_map AS (
 INSERT INTO chats (user1_id, user2_id)
 VALUES
 -- Chat 1 (Demo learners)
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
 -- Chat 2
 ((SELECT id FROM learner_map WHERE username='bob_s'), (SELECT id FROM learner_map WHERE username='emiko_s')),
 -- Chat 3
@@ -473,11 +473,11 @@ WITH learner_map AS (
 )
 INSERT INTO messages (chat_id, sender_id, content_text, type, status)
 VALUES
--- Chat 1 messages between alice_j and akira_t
-((SELECT id FROM chat_map WHERE user1_id=(SELECT id FROM learner_map WHERE username='alice_j')), (SELECT id FROM learner_map WHERE username='alice_j'), 'Hi Akira! How are your Japanese lessons going?', 'text', 'read'),
-((SELECT id FROM chat_map WHERE user1_id=(SELECT id FROM learner_map WHERE username='alice_j')), (SELECT id FROM learner_map WHERE username='akira_t'), 'Hi Alice! They are going well, thank you. How is your English practice?', 'text', 'read'),
-((SELECT id FROM chat_map WHERE user1_id=(SELECT id FROM learner_map WHERE username='alice_j')), (SELECT id FROM learner_map WHERE username='alice_j'), 'Pretty good! I practiced reading a Japanese article today.', 'text', 'unread'),
-((SELECT id FROM chat_map WHERE user1_id=(SELECT id FROM learner_map WHERE username='alice_j')), (SELECT id FROM learner_map WHERE username='akira_t'), 'That’s great! Keep it up!', 'text', 'unread'),
+-- Chat 1 messages between ali and aki
+((SELECT id FROM chat_map WHERE user1_id=(SELECT id FROM learner_map WHERE username='ali')), (SELECT id FROM learner_map WHERE username='ali'), 'Hi Akira! How are your Japanese lessons going?', 'text', 'read'),
+((SELECT id FROM chat_map WHERE user1_id=(SELECT id FROM learner_map WHERE username='ali')), (SELECT id FROM learner_map WHERE username='aki'), 'Hi Alice! They are going well, thank you. How is your English practice?', 'text', 'read'),
+((SELECT id FROM chat_map WHERE user1_id=(SELECT id FROM learner_map WHERE username='ali')), (SELECT id FROM learner_map WHERE username='ali'), 'Pretty good! I practiced reading a Japanese article today.', 'text', 'unread'),
+((SELECT id FROM chat_map WHERE user1_id=(SELECT id FROM learner_map WHERE username='ali')), (SELECT id FROM learner_map WHERE username='aki'), 'That’s great! Keep it up!', 'text', 'unread'),
 
 -- Chat 2 messages between bob_s and emiko_s
 ((SELECT id FROM chat_map WHERE user1_id=(SELECT id FROM learner_map WHERE username='bob_s')), (SELECT id FROM learner_map WHERE username='bob_s'), 'Emiko, did you try the English exercise from last session?', 'text', 'read'),
@@ -494,8 +494,8 @@ WITH learner_map AS (
 INSERT INTO feed (learner_id, content_text)
 VALUES
 -- Demo learners posts
-((SELECT id FROM learner_map WHERE username='alice_j'), 'Practiced writing kanji today! Feeling more confident.'),
-((SELECT id FROM learner_map WHERE username='akira_t'), 'Learned some new English idioms today. Exciting!'),
+((SELECT id FROM learner_map WHERE username='ali'), 'Practiced writing kanji today! Feeling more confident.'),
+((SELECT id FROM learner_map WHERE username='aki'), 'Learned some new English idioms today. Exciting!'),
 -- Other learners posts
 ((SELECT id FROM learner_map WHERE username='bob_s'), 'Trying to improve my Japanese pronunciation.'),
 ((SELECT id FROM learner_map WHERE username='emiko_s'), 'Read a short English story today. Fun!'),
@@ -511,11 +511,11 @@ WITH feed_map AS (
 INSERT INTO feed_images (feed_id, image_url, position)
 VALUES
 -- Alice's feed images
-((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='alice_j')), 'https://images.unsplash.com/photo-1601050690224-6a8d1f7f8a99', 1),
-((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='alice_j')), 'https://images.unsplash.com/photo-1581090700227-6b9c2c0b8d76', 2),
+((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='ali')), 'https://images.unsplash.com/photo-1601050690224-6a8d1f7f8a99', 1),
+((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='ali')), 'https://images.unsplash.com/photo-1581090700227-6b9c2c0b8d76', 2),
 
 -- Akira's feed images
-((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='akira_t')), 'https://images.unsplash.com/photo-1567016548540-08c4fc00df22', 1),
+((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='aki')), 'https://images.unsplash.com/photo-1567016548540-08c4fc00df22', 1),
 
 -- Bob's feed image
 ((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='bob_s')), 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1', 1);
@@ -532,12 +532,12 @@ WITH feed_map AS (
 INSERT INTO feed_likes (feed_id, learner_id)
 VALUES
 -- Likes on Alice's post
-((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='alice_j')), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='alice_j')), (SELECT id FROM learner_map WHERE username='bob_s')),
+((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='ali')), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='ali')), (SELECT id FROM learner_map WHERE username='bob_s')),
 
 -- Likes on Akira's post
-((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='akira_t')), (SELECT id FROM learner_map WHERE username='alice_j')),
-((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='akira_t')), (SELECT id FROM learner_map WHERE username='emiko_s'));
+((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='aki')), (SELECT id FROM learner_map WHERE username='ali')),
+((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='aki')), (SELECT id FROM learner_map WHERE username='emiko_s'));
 
 
 -- -----------------------------
@@ -551,12 +551,12 @@ WITH feed_map AS (
 INSERT INTO feed_comments (feed_id, learner_id, content_text)
 VALUES
 -- Comments on Alice's post
-((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='alice_j')), (SELECT id FROM learner_map WHERE username='akira_t'), 'Wow Alice! Your kanji is improving quickly!'),
-((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='alice_j')), (SELECT id FROM learner_map WHERE username='bob_s'), 'Great work! Keep practicing.'),
+((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='ali')), (SELECT id FROM learner_map WHERE username='aki'), 'Wow Alice! Your kanji is improving quickly!'),
+((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='ali')), (SELECT id FROM learner_map WHERE username='bob_s'), 'Great work! Keep practicing.'),
 
 -- Comments on Akira's post
-((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='akira_t')), (SELECT id FROM learner_map WHERE username='alice_j'), 'Interesting idioms! Can you share some examples?'),
-((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='akira_t')), (SELECT id FROM learner_map WHERE username='emiko_s'), 'I love learning idioms too!');
+((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='aki')), (SELECT id FROM learner_map WHERE username='ali'), 'Interesting idioms! Can you share some examples?'),
+((SELECT id FROM feed_map WHERE learner_id=(SELECT id FROM learners WHERE username='aki')), (SELECT id FROM learner_map WHERE username='emiko_s'), 'I love learning idioms too!');
 
 
 -- -----------------------------
@@ -665,11 +665,11 @@ WITH course_map AS (
 INSERT INTO course_enrollments (course_id, learner_id)
 VALUES
 -- Enroll demo learners in their respective courses
-((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM learner_map WHERE username='alice_j')),
+((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM learner_map WHERE username='ali')),
 ((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM learner_map WHERE username='bob_s')),
 ((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM learner_map WHERE username='carol_d')),
 
-((SELECT id FROM course_map WHERE title='Japanese for Beginners'), (SELECT id FROM learner_map WHERE username='akira_t')),
+((SELECT id FROM course_map WHERE title='Japanese for Beginners'), (SELECT id FROM learner_map WHERE username='aki')),
 ((SELECT id FROM course_map WHERE title='Japanese for Beginners'), (SELECT id FROM learner_map WHERE username='emiko_s')),
 ((SELECT id FROM course_map WHERE title='Japanese for Beginners'), (SELECT id FROM learner_map WHERE username='hiroshi_y'));
 
@@ -687,12 +687,12 @@ WITH course_map AS (
 INSERT INTO group_chat (course_id, sender_id, sender_type, content_text)
 VALUES
 -- English Mastery 101 group chat
-((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM learner_map WHERE username='alice_j'), 'learner', 'Hello everyone! Excited for this course.'),
+((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM learner_map WHERE username='ali'), 'learner', 'Hello everyone! Excited for this course.'),
 ((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM learner_map WHERE username='bob_s'), 'learner', 'Hi Alice! Let’s practice together.'),
 ((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM instructor_map WHERE username='will'), 'instructor', 'Welcome everyone! I will guide you through the lessons.'),
 
 -- Japanese for Beginners group chat
-((SELECT id FROM course_map WHERE title='Japanese for Beginners'), (SELECT id FROM learner_map WHERE username='akira_t'), 'learner', 'Hello Hiroshi-sensei! Looking forward to learning Japanese.'),
+((SELECT id FROM course_map WHERE title='Japanese for Beginners'), (SELECT id FROM learner_map WHERE username='aki'), 'learner', 'Hello Hiroshi-sensei! Looking forward to learning Japanese.'),
 ((SELECT id FROM course_map WHERE title='Japanese for Beginners'), (SELECT id FROM learner_map WHERE username='emiko_s'), 'learner', 'Hi Akira! Let’s study together.'),
 ((SELECT id FROM course_map WHERE title='Japanese for Beginners'), (SELECT id FROM instructor_map WHERE username='hiro'), 'instructor', 'コースへようこそ！日本語の学習を楽しんでいただけると嬉しいです。何か質問があればいつでもお聞きください。');
 
@@ -711,17 +711,17 @@ WITH course_map AS (
 INSERT INTO feedback (course_id, instructor_id, learner_id, feedback_type, feedback_text, rating)
 VALUES
 -- Learner feedback for English course
-((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='alice_j'), 'learner', 'Great teaching! Very clear explanations.', 5),
+((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='ali'), 'learner', 'Great teaching! Very clear explanations.', 5),
 ((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='bob_s'), 'learner', 'Loved the exercises and examples.', 4),
 
 -- Instructor feedback for English course
-((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='alice_j'), 'instructor', 'Alice participates actively and asks good questions.', 5),
+((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='ali'), 'instructor', 'Alice participates actively and asks good questions.', 5),
 
 -- Course feedback
 ((SELECT id FROM course_map WHERE title='English Mastery 101'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='bob_s'), 'course', 'The course content is structured and useful.', 5),
 
 -- Learner feedback for Japanese course
-((SELECT id FROM course_map WHERE title='Japanese for Beginners'), (SELECT id FROM instructor_map WHERE username='hiro'), (SELECT id FROM learner_map WHERE username='akira_t'), 'learner', '先生の説明がとても分かりやすくて、忍耐強く教えてくださいます。', 5),
+((SELECT id FROM course_map WHERE title='Japanese for Beginners'), (SELECT id FROM instructor_map WHERE username='hiro'), (SELECT id FROM learner_map WHERE username='aki'), 'learner', '先生の説明がとても分かりやすくて、忍耐強く教えてくださいます。', 5),
 ((SELECT id FROM course_map WHERE title='Japanese for Beginners'), (SELECT id FROM instructor_map WHERE username='hiro'), (SELECT id FROM learner_map WHERE username='emiko_s'), 'learner', '練習問題がたくさんあって、とても勉強になりました。', 4);
 
 
@@ -736,11 +736,11 @@ WITH course_map AS (
 INSERT INTO notifications (learner_id, course_id, notification_type, content_title, content_text, is_read)
 VALUES
 -- English course notifications
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM course_map WHERE title='English Mastery 101'), 'session alert', 'Session Reminder', 'Don’t forget Session 1 starts tomorrow at 10:00 AM.', FALSE),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM course_map WHERE title='English Mastery 101'), 'session alert', 'Session Reminder', 'Don’t forget Session 1 starts tomorrow at 10:00 AM.', FALSE),
 ((SELECT id FROM learner_map WHERE username='bob_s'), (SELECT id FROM course_map WHERE title='English Mastery 101'), 'feedback', 'New Feedback', 'You received new feedback from your instructor.', TRUE),
 
 -- Japanese course notifications
-((SELECT id FROM learner_map WHERE username='akira_t'), (SELECT id FROM course_map WHERE title='Japanese for Beginners'), 'session alert', 'Session Reminder', 'Session 1 will start on 2nd September at 15:00.', FALSE),
+((SELECT id FROM learner_map WHERE username='aki'), (SELECT id FROM course_map WHERE title='Japanese for Beginners'), 'session alert', 'Session Reminder', 'Session 1 will start on 2nd September at 15:00.', FALSE),
 ((SELECT id FROM learner_map WHERE username='emiko_s'), (SELECT id FROM course_map WHERE title='Japanese for Beginners'), 'feedback', 'New Feedback', 'You received new feedback from your instructor.', TRUE);
 
 
@@ -888,14 +888,14 @@ WITH learner_map AS (
 INSERT INTO followers (follower_user_id, followed_user_id)
 VALUES
 -- New learners following existing ones
-((SELECT id FROM learner_map WHERE username='kenji_w'), (SELECT id FROM learner_map WHERE username='alice_j')),
+((SELECT id FROM learner_map WHERE username='kenji_w'), (SELECT id FROM learner_map WHERE username='ali')),
 ((SELECT id FROM learner_map WHERE username='haruka_o'), (SELECT id FROM learner_map WHERE username='bob_s')),
 ((SELECT id FROM learner_map WHERE username='daiki_i'), (SELECT id FROM learner_map WHERE username='carol_d')),
 ((SELECT id FROM learner_map WHERE username='nanami_h'), (SELECT id FROM learner_map WHERE username='david_l')),
 ((SELECT id FROM learner_map WHERE username='sho_m'), (SELECT id FROM learner_map WHERE username='emma_w')),
 
 -- English learners following Japanese learners
-((SELECT id FROM learner_map WHERE username='ryan_t'), (SELECT id FROM learner_map WHERE username='akira_t')),
+((SELECT id FROM learner_map WHERE username='ryan_t'), (SELECT id FROM learner_map WHERE username='aki')),
 ((SELECT id FROM learner_map WHERE username='madison_d'), (SELECT id FROM learner_map WHERE username='emiko_s')),
 ((SELECT id FROM learner_map WHERE username='tyler_r'), (SELECT id FROM learner_map WHERE username='hiroshi_y')),
 ((SELECT id FROM learner_map WHERE username='paige_w'), (SELECT id FROM learner_map WHERE username='yuki_n')),
@@ -1087,7 +1087,7 @@ INSERT INTO feed_likes (feed_id, learner_id)
 VALUES
 -- Likes on new feed posts
 ((SELECT id FROM feed_map WHERE username='kenji_w'), (SELECT id FROM learner_map WHERE username='ryan_t')),
-((SELECT id FROM feed_map WHERE username='kenji_w'), (SELECT id FROM learner_map WHERE username='alice_j')),
+((SELECT id FROM feed_map WHERE username='kenji_w'), (SELECT id FROM learner_map WHERE username='ali')),
 ((SELECT id FROM feed_map WHERE username='kenji_w'), (SELECT id FROM learner_map WHERE username='madison_d')),
 
 ((SELECT id FROM feed_map WHERE username='haruka_o'), (SELECT id FROM learner_map WHERE username='madison_d')),
@@ -1095,7 +1095,7 @@ VALUES
 ((SELECT id FROM feed_map WHERE username='haruka_o'), (SELECT id FROM learner_map WHERE username='yuka_t')),
 
 ((SELECT id FROM feed_map WHERE username='ryan_t'), (SELECT id FROM learner_map WHERE username='kenji_w')),
-((SELECT id FROM feed_map WHERE username='ryan_t'), (SELECT id FROM learner_map WHERE username='akira_t')),
+((SELECT id FROM feed_map WHERE username='ryan_t'), (SELECT id FROM learner_map WHERE username='aki')),
 ((SELECT id FROM feed_map WHERE username='ryan_t'), (SELECT id FROM learner_map WHERE username='david_l')),
 
 ((SELECT id FROM feed_map WHERE username='tyler_r'), (SELECT id FROM learner_map WHERE username='daiki_i')),
@@ -1134,7 +1134,7 @@ VALUES
 ((SELECT id FROM feed_map WHERE username='haruka_o'), (SELECT id FROM learner_map WHERE username='yuka_t'), 'Reading novels in English helps so much with vocabulary!', NULL),
 
 ((SELECT id FROM feed_map WHERE username='ryan_t'), (SELECT id FROM learner_map WHERE username='kenji_w'), 'Kanji is beautiful! Each character has such deep meaning. 頑張って！', 'Kanji is beautiful! Each character has such deep meaning. Keep it up!'),
-((SELECT id FROM feed_map WHERE username='ryan_t'), (SELECT id FROM learner_map WHERE username='akira_t'), 'Your dedication is inspiring! 漢字を覚えるのは大変ですが、面白いです。', 'Your dedication is inspiring! Learning kanji is difficult but interesting.'),
+((SELECT id FROM feed_map WHERE username='ryan_t'), (SELECT id FROM learner_map WHERE username='aki'), 'Your dedication is inspiring! 漢字を覚えるのは大変ですが、面白いです。', 'Your dedication is inspiring! Learning kanji is difficult but interesting.'),
 
 ((SELECT id FROM feed_map WHERE username='tyler_r'), (SELECT id FROM learner_map WHERE username='daiki_i'), 'Which manga did you read? I''m looking for beginner-friendly ones.', NULL),
 ((SELECT id FROM feed_map WHERE username='tyler_r'), (SELECT id FROM learner_map WHERE username='caleb_j'), 'Reading manga in Japanese is the best way to learn! すごいですね！', 'Reading manga in Japanese is the best way to learn! That''s awesome!'),
@@ -1220,7 +1220,7 @@ VALUES
 ((SELECT id FROM course_map WHERE title='Business English Mastery'), (SELECT id FROM learner_map WHERE username='haruka_o')),
 ((SELECT id FROM course_map WHERE title='Business English Mastery'), (SELECT id FROM learner_map WHERE username='sho_m')),
 
-((SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), (SELECT id FROM learner_map WHERE username='akira_t')),
+((SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), (SELECT id FROM learner_map WHERE username='aki')),
 ((SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), (SELECT id FROM learner_map WHERE username='emiko_s')),
 ((SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), (SELECT id FROM learner_map WHERE username='yuka_t')),
 
@@ -1333,7 +1333,7 @@ VALUES
 
 -- Pronunciation clinic group chat
 ((SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), (SELECT id FROM instructor_map WHERE username='robert_g'), 'instructor', 'Welcome to Pronunciation Clinic! We''ll work on clear American English pronunciation together.'),
-((SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), (SELECT id FROM learner_map WHERE username='akira_t'), 'learner', 'Thank you! I really want to improve my pronunciation.'),
+((SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), (SELECT id FROM learner_map WHERE username='aki'), 'learner', 'Thank you! I really want to improve my pronunciation.'),
 ((SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), (SELECT id FROM learner_map WHERE username='emiko_s'), 'learner', 'This is exactly what I need for my job interviews!'),
 
 -- Traditional culture group chat
@@ -1364,9 +1364,9 @@ VALUES
 ((SELECT id FROM course_map WHERE title='Business English Mastery'), (SELECT id FROM instructor_map WHERE username='michael_b'), (SELECT id FROM learner_map WHERE username='kenji_w'), 'instructor', 'Kenji shows great improvement in business vocabulary and confidence.', 5),
 
 -- Pronunciation clinic feedback
-((SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), (SELECT id FROM instructor_map WHERE username='robert_g'), (SELECT id FROM learner_map WHERE username='akira_t'), 'learner', 'My pronunciation has improved dramatically! Thank you!', 5),
+((SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), (SELECT id FROM instructor_map WHERE username='robert_g'), (SELECT id FROM learner_map WHERE username='aki'), 'learner', 'My pronunciation has improved dramatically! Thank you!', 5),
 ((SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), (SELECT id FROM instructor_map WHERE username='robert_g'), (SELECT id FROM learner_map WHERE username='emiko_s'), 'learner', 'The IPA chart explanation was very clear and helpful.', 4),
-((SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), (SELECT id FROM instructor_map WHERE username='robert_g'), (SELECT id FROM learner_map WHERE username='akira_t'), 'instructor', 'Akira is very dedicated and practices regularly. Great progress!', 5),
+((SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), (SELECT id FROM instructor_map WHERE username='robert_g'), (SELECT id FROM learner_map WHERE username='aki'), 'instructor', 'Akira is very dedicated and practices regularly. Great progress!', 5),
 
 -- Anime course feedback
 ((SELECT id FROM course_map WHERE title='Japanese Through Anime & Pop Culture'), (SELECT id FROM instructor_map WHERE username='yumiko_t'), (SELECT id FROM learner_map WHERE username='ryan_t'), 'learner', 'This makes learning Japanese so much fun! Love the approach.', 5),
@@ -1407,7 +1407,7 @@ VALUES
 ((SELECT id FROM learner_map WHERE username='caleb_j'), (SELECT id FROM course_map WHERE title='Japanese Through Anime & Pop Culture'), 'session alert', 'Session Reminder', 'Cultural References session tomorrow at 16:00.', FALSE),
 
 -- Pronunciation clinic notifications
-((SELECT id FROM learner_map WHERE username='akira_t'), (SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), 'feedback', 'New Feedback', 'Your pronunciation has improved significantly!', TRUE),
+((SELECT id FROM learner_map WHERE username='aki'), (SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), 'feedback', 'New Feedback', 'Your pronunciation has improved significantly!', TRUE),
 ((SELECT id FROM learner_map WHERE username='emiko_s'), (SELECT id FROM course_map WHERE title='English Pronunciation Clinic'), 'session alert', 'Session Reminder', 'Rhythm and Stress session starts tomorrow.', FALSE),
 
 -- Traditional culture notifications
@@ -1529,68 +1529,68 @@ VALUES
 -- ADDITIONAL FOCUSED DUMMY DATA
 -- ========================================
 -- Generated for specific accounts:
--- alice_j (English → Japanese learner)
--- akira_t (Japanese → English learner)  
+-- ali (English → Japanese learner)
+-- aki (Japanese → English learner)  
 -- will (English instructor)
 -- hiro (Japanese instructor)
 -- ========================================
 
 -- -----------------------------
--- BATCH 1: Additional Followers for alice_j and akira_t
+-- BATCH 1: Additional Followers for ali and aki
 -- -----------------------------
 WITH learner_map AS (
     SELECT id, username FROM learners
 )
 INSERT INTO followers (follower_user_id, followed_user_id)
 VALUES
--- alice_j following more learners
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='david_l')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='emma_w')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='grace_m')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='henry_b')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='yuki_k')),
+-- ali following more learners
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='david_l')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='emma_w')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='grace_m')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='henry_b')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='yuki_k')),
 
--- akira_t following more learners
-((SELECT id FROM learner_map WHERE username='akira_t'), (SELECT id FROM learner_map WHERE username='bob_s')),
-((SELECT id FROM learner_map WHERE username='akira_t'), (SELECT id FROM learner_map WHERE username='carol_d')),
-((SELECT id FROM learner_map WHERE username='akira_t'), (SELECT id FROM learner_map WHERE username='frank_t')),
-((SELECT id FROM learner_map WHERE username='akira_t'), (SELECT id FROM learner_map WHERE username='isabella_g')),
-((SELECT id FROM learner_map WHERE username='akira_t'), (SELECT id FROM learner_map WHERE username='jack_w')),
+-- aki following more learners
+((SELECT id FROM learner_map WHERE username='aki'), (SELECT id FROM learner_map WHERE username='bob_s')),
+((SELECT id FROM learner_map WHERE username='aki'), (SELECT id FROM learner_map WHERE username='carol_d')),
+((SELECT id FROM learner_map WHERE username='aki'), (SELECT id FROM learner_map WHERE username='frank_t')),
+((SELECT id FROM learner_map WHERE username='aki'), (SELECT id FROM learner_map WHERE username='isabella_g')),
+((SELECT id FROM learner_map WHERE username='aki'), (SELECT id FROM learner_map WHERE username='jack_w')),
 
--- More learners following alice_j
-((SELECT id FROM learner_map WHERE username='david_l'), (SELECT id FROM learner_map WHERE username='alice_j')),
-((SELECT id FROM learner_map WHERE username='emma_w'), (SELECT id FROM learner_map WHERE username='alice_j')),
-((SELECT id FROM learner_map WHERE username='frank_t'), (SELECT id FROM learner_map WHERE username='alice_j')),
+-- More learners following ali
+((SELECT id FROM learner_map WHERE username='david_l'), (SELECT id FROM learner_map WHERE username='ali')),
+((SELECT id FROM learner_map WHERE username='emma_w'), (SELECT id FROM learner_map WHERE username='ali')),
+((SELECT id FROM learner_map WHERE username='frank_t'), (SELECT id FROM learner_map WHERE username='ali')),
 
--- More learners following akira_t
-((SELECT id FROM learner_map WHERE username='bob_s'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='carol_d'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='grace_m'), (SELECT id FROM learner_map WHERE username='akira_t'));
+-- More learners following aki
+((SELECT id FROM learner_map WHERE username='bob_s'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='carol_d'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='grace_m'), (SELECT id FROM learner_map WHERE username='aki'));
 
 -- -----------------------------
--- BATCH 2: Additional Chats between alice_j and akira_t
+-- BATCH 2: Additional Chats between ali and aki
 -- -----------------------------
 WITH learner_map AS (
     SELECT id, username FROM learners
 )
 INSERT INTO chats (user1_id, user2_id)
 VALUES
--- 10 new chats between alice_j and akira_t
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM learner_map WHERE username='akira_t'));
+-- 10 new chats between ali and aki
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki'));
 
 -- -----------------------------
 -- BATCH 3: Messages for New Chats (Chat Topics: Language Learning)
@@ -1600,8 +1600,8 @@ WITH chat_map AS (
     FROM chats c
     JOIN learners l1 ON c.user1_id = l1.id
     JOIN learners l2 ON c.user2_id = l2.id
-    WHERE (l1.username = 'alice_j' AND l2.username = 'akira_t') 
-       OR (l1.username = 'akira_t' AND l2.username = 'alice_j')
+    WHERE (l1.username = 'ali' AND l2.username = 'aki') 
+       OR (l1.username = 'aki' AND l2.username = 'ali')
     ORDER BY c.id DESC
     LIMIT 15
 )
@@ -1634,44 +1634,44 @@ VALUES
 ((SELECT chat_id FROM chat_map LIMIT 1 OFFSET 3), (SELECT user1_id FROM chat_map LIMIT 1 OFFSET 3), 'I watched "Your Name" (Kimi no Na wa). It''s a beautiful Japanese animated film. Have you seen it?', 'text', 'unread');
 
 -- -----------------------------
--- BATCH 4: Additional Feed Posts for alice_j
+-- BATCH 4: Additional Feed Posts for ali
 -- -----------------------------
 WITH learner_map AS (
     SELECT id, username FROM learners
 )
 INSERT INTO feed (learner_id, content_text)
 VALUES
--- alice_j's feed posts about Japanese learning journey
-((SELECT id FROM learner_map WHERE username='alice_j'), 'Just learned 50 new kanji characters today! 漢字の勉強は難しいですが、楽しいです。(Kanji study is difficult but fun!) #JapaneseLearning #Kanji'),
-((SELECT id FROM learner_map WHERE username='alice_j'), 'Tried making ramen from scratch today while practicing Japanese cooking vocabulary. 美味しかった！(It was delicious!) Who else loves learning through cooking? 🍜'),
-((SELECT id FROM learner_map WHERE username='alice_j'), 'Reading my first Japanese manga without furigana! Progress feels slow but every page is an achievement. Currently reading よつばと！#Manga #JapaneseReading'),
-((SELECT id FROM learner_map WHERE username='alice_j'), 'Had my first conversation entirely in Japanese with Akira today! Made some mistakes but we understood each other. Language exchange is amazing! 🗣️'),
-((SELECT id FROM learner_map WHERE username='alice_j'), 'Discovered J-pop and now I''m learning Japanese through music. Lyrics help with pronunciation and new vocabulary. Current favorite: あいみょん #Jpop #LanguageLearning'),
-((SELECT id FROM learner_map WHERE username='alice_j'), 'Watched Studio Ghibli''s "Spirited Away" in Japanese without subtitles. Understood about 60%! Small victories count. 千と千尋の神隠し is beautiful in any language ✨'),
-((SELECT id FROM learner_map WHERE username='alice_j'), 'Learning about Japanese business etiquette for my future trip to Tokyo. The concept of お疲れ様 (otsukaresama) is so thoughtful. American culture could learn from this!'),
-((SELECT id FROM learner_map WHERE username='alice_j'), 'Practiced writing with a calligraphy brush today. My handwriting looks like a child''s but it''s meditative. Japanese culture values the process, not just results 🎨'),
-((SELECT id FROM learner_map WHERE username='alice_j'), 'Question for my Japanese learning friends: How do you remember the difference between similar-looking kanji? 日 vs 目 still trips me up sometimes! Tips welcome 🤔'),
-((SELECT id FROM learner_map WHERE username='alice_j'), 'Made Japanese curry while watching Japanese cooking shows. Immersion works! Learning food vocabulary while satisfying my appetite. Win-win! 🍛 #JapaneseCooking');
+-- ali's feed posts about Japanese learning journey
+((SELECT id FROM learner_map WHERE username='ali'), 'Just learned 50 new kanji characters today! 漢字の勉強は難しいですが、楽しいです。(Kanji study is difficult but fun!) #JapaneseLearning #Kanji'),
+((SELECT id FROM learner_map WHERE username='ali'), 'Tried making ramen from scratch today while practicing Japanese cooking vocabulary. 美味しかった！(It was delicious!) Who else loves learning through cooking? 🍜'),
+((SELECT id FROM learner_map WHERE username='ali'), 'Reading my first Japanese manga without furigana! Progress feels slow but every page is an achievement. Currently reading よつばと！#Manga #JapaneseReading'),
+((SELECT id FROM learner_map WHERE username='ali'), 'Had my first conversation entirely in Japanese with Akira today! Made some mistakes but we understood each other. Language exchange is amazing! 🗣️'),
+((SELECT id FROM learner_map WHERE username='ali'), 'Discovered J-pop and now I''m learning Japanese through music. Lyrics help with pronunciation and new vocabulary. Current favorite: あいみょん #Jpop #LanguageLearning'),
+((SELECT id FROM learner_map WHERE username='ali'), 'Watched Studio Ghibli''s "Spirited Away" in Japanese without subtitles. Understood about 60%! Small victories count. 千と千尋の神隠し is beautiful in any language ✨'),
+((SELECT id FROM learner_map WHERE username='ali'), 'Learning about Japanese business etiquette for my future trip to Tokyo. The concept of お疲れ様 (otsukaresama) is so thoughtful. American culture could learn from this!'),
+((SELECT id FROM learner_map WHERE username='ali'), 'Practiced writing with a calligraphy brush today. My handwriting looks like a child''s but it''s meditative. Japanese culture values the process, not just results 🎨'),
+((SELECT id FROM learner_map WHERE username='ali'), 'Question for my Japanese learning friends: How do you remember the difference between similar-looking kanji? 日 vs 目 still trips me up sometimes! Tips welcome 🤔'),
+((SELECT id FROM learner_map WHERE username='ali'), 'Made Japanese curry while watching Japanese cooking shows. Immersion works! Learning food vocabulary while satisfying my appetite. Win-win! 🍛 #JapaneseCooking');
 
 -- -----------------------------
--- BATCH 5: Additional Feed Posts for akira_t
+-- BATCH 5: Additional Feed Posts for aki
 -- -----------------------------
 WITH learner_map AS (
     SELECT id, username FROM learners
 )
 INSERT INTO feed (learner_id, content_text)
 VALUES
--- akira_t's feed posts about English learning journey
-((SELECT id FROM learner_map WHERE username='akira_t'), 'English idioms are fascinating but confusing! "It''s raining cats and dogs" doesn''t make literal sense but I love the imagery. What''s your favorite idiom? 🐱🐶'),
-((SELECT id FROM learner_map WHERE username='akira_t'), 'Watched "Friends" for the 10th time and finally understanding all the jokes! Sitcoms are great for learning natural conversation patterns. Could I BE any more excited? 😄'),
-((SELECT id FROM learner_map WHERE username='akira_t'), 'American coffee culture is so different from Japanese tea ceremony. Learning about cultural context helps me understand why Americans say "Let''s grab coffee" for meetings ☕'),
-((SELECT id FROM learner_map WHERE username='akira_t'), 'Reading Harry Potter in English! Currently on Chamber of Secrets. The vocabulary is challenging but the story keeps me motivated. Magic helps with language learning too! ⚡'),
-((SELECT id FROM learner_map WHERE username='akira_t'), 'Practiced English presentations today. Public speaking in your second language is terrifying but rewarding. Small steps toward my dream of studying abroad! 🎓'),
-((SELECT id FROM learner_map WHERE username='akira_t'), 'Learning English through cooking shows helped me understand measurements and cooking verbs. "Whisk," "sauté," "simmer" - culinary English is its own language! 👨‍🍳'),
-((SELECT id FROM learner_map WHERE username='akira_t'), 'Had a video call with Alice practicing English conversation. She helps me with pronunciation while I teach her Japanese. Language exchange partnerships are the best! 🤝'),
-((SELECT id FROM learner_map WHERE username='akira_t'), 'Discovered English podcasts about technology. Perfect for learning professional vocabulary for my IT career. "Debug," "deploy," "scalable" - tech English is everywhere! 💻'),
-((SELECT id FROM learner_map WHERE username='akira_t'), 'American humor is tricky! Sarcasm doesn''t translate well from Japanese culture. Learning when someone is joking vs. serious takes practice. Context is everything! 😅'),
-((SELECT id FROM learner_map WHERE username='akira_t'), 'Writing my first English blog about Japanese culture for language exchange. Explaining concepts like "omotenashi" (hospitality) in English helps me understand both cultures better 🌸');
+-- aki's feed posts about English learning journey
+((SELECT id FROM learner_map WHERE username='aki'), 'English idioms are fascinating but confusing! "It''s raining cats and dogs" doesn''t make literal sense but I love the imagery. What''s your favorite idiom? 🐱🐶'),
+((SELECT id FROM learner_map WHERE username='aki'), 'Watched "Friends" for the 10th time and finally understanding all the jokes! Sitcoms are great for learning natural conversation patterns. Could I BE any more excited? 😄'),
+((SELECT id FROM learner_map WHERE username='aki'), 'American coffee culture is so different from Japanese tea ceremony. Learning about cultural context helps me understand why Americans say "Let''s grab coffee" for meetings ☕'),
+((SELECT id FROM learner_map WHERE username='aki'), 'Reading Harry Potter in English! Currently on Chamber of Secrets. The vocabulary is challenging but the story keeps me motivated. Magic helps with language learning too! ⚡'),
+((SELECT id FROM learner_map WHERE username='aki'), 'Practiced English presentations today. Public speaking in your second language is terrifying but rewarding. Small steps toward my dream of studying abroad! 🎓'),
+((SELECT id FROM learner_map WHERE username='aki'), 'Learning English through cooking shows helped me understand measurements and cooking verbs. "Whisk," "sauté," "simmer" - culinary English is its own language! 👨‍🍳'),
+((SELECT id FROM learner_map WHERE username='aki'), 'Had a video call with Alice practicing English conversation. She helps me with pronunciation while I teach her Japanese. Language exchange partnerships are the best! 🤝'),
+((SELECT id FROM learner_map WHERE username='aki'), 'Discovered English podcasts about technology. Perfect for learning professional vocabulary for my IT career. "Debug," "deploy," "scalable" - tech English is everywhere! 💻'),
+((SELECT id FROM learner_map WHERE username='aki'), 'American humor is tricky! Sarcasm doesn''t translate well from Japanese culture. Learning when someone is joking vs. serious takes practice. Context is everything! 😅'),
+((SELECT id FROM learner_map WHERE username='aki'), 'Writing my first English blog about Japanese culture for language exchange. Explaining concepts like "omotenashi" (hospitality) in English helps me understand both cultures better 🌸');
 
 -- -----------------------------
 -- BATCH 6: Feed Images for New Posts
@@ -1680,55 +1680,55 @@ WITH feed_map AS (
     SELECT f.id as feed_id, l.username
     FROM feed f 
     JOIN learners l ON f.learner_id = l.id 
-    WHERE l.username IN ('alice_j', 'akira_t')
+    WHERE l.username IN ('ali', 'aki')
     ORDER BY f.id DESC 
     LIMIT 20
 )
 INSERT INTO feed_images (feed_id, image_url, position)
 VALUES
--- Images for alice_j's posts
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), 'https://images.unsplash.com/photo-1528164344705-47542687000d', 1),
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b', 2),
+-- Images for ali's posts
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), 'https://images.unsplash.com/photo-1528164344705-47542687000d', 1),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b', 2),
 
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1', 1),
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), 'https://images.unsplash.com/photo-1617093727343-374698b1b08d', 2),
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), 'https://images.unsplash.com/photo-1606491956689-2ea866880c84', 3),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1', 1),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), 'https://images.unsplash.com/photo-1617093727343-374698b1b08d', 2),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), 'https://images.unsplash.com/photo-1606491956689-2ea866880c84', 3),
 
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), 'https://images.unsplash.com/photo-1578662996442-48f60103fc96', 1),
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c', 2),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), 'https://images.unsplash.com/photo-1578662996442-48f60103fc96', 1),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c', 2),
 
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d', 1),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d', 1),
 
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 4), 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f', 1),
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 4), 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b', 2),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 4), 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f', 1),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 4), 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b', 2),
 
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 5), 'https://images.unsplash.com/photo-1522383225653-ed111181a951', 1),
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 5), 'https://images.unsplash.com/photo-1578662996442-48f60103fc96', 2),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 5), 'https://images.unsplash.com/photo-1522383225653-ed111181a951', 1),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 5), 'https://images.unsplash.com/photo-1578662996442-48f60103fc96', 2),
 
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 7), 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c', 1),
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 7), 'https://images.unsplash.com/photo-1578662996442-48f60103fc96', 2),
-((SELECT feed_id FROM feed_map WHERE username='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 7), 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b', 3),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 7), 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c', 1),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 7), 'https://images.unsplash.com/photo-1578662996442-48f60103fc96', 2),
+((SELECT feed_id FROM feed_map WHERE username='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 7), 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b', 3),
 
--- Images for akira_t's posts
-((SELECT feed_id FROM feed_map WHERE username='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d', 1),
-((SELECT feed_id FROM feed_map WHERE username='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), 'https://images.unsplash.com/photo-1516321497487-e288fb19713f', 2),
+-- Images for aki's posts
+((SELECT feed_id FROM feed_map WHERE username='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d', 1),
+((SELECT feed_id FROM feed_map WHERE username='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), 'https://images.unsplash.com/photo-1516321497487-e288fb19713f', 2),
 
-((SELECT feed_id FROM feed_map WHERE username='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), 'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85', 1),
+((SELECT feed_id FROM feed_map WHERE username='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), 'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85', 1),
 
-((SELECT feed_id FROM feed_map WHERE username='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b', 1),
-((SELECT feed_id FROM feed_map WHERE username='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), 'https://images.unsplash.com/photo-1516321497487-e288fb19713f', 2),
+((SELECT feed_id FROM feed_map WHERE username='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b', 1),
+((SELECT feed_id FROM feed_map WHERE username='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), 'https://images.unsplash.com/photo-1516321497487-e288fb19713f', 2),
 
-((SELECT feed_id FROM feed_map WHERE username='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d', 1),
-((SELECT feed_id FROM feed_map WHERE username='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), 'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85', 2),
-((SELECT feed_id FROM feed_map WHERE username='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), 'https://images.unsplash.com/photo-1516321497487-e288fb19713f', 3),
+((SELECT feed_id FROM feed_map WHERE username='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d', 1),
+((SELECT feed_id FROM feed_map WHERE username='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), 'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85', 2),
+((SELECT feed_id FROM feed_map WHERE username='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), 'https://images.unsplash.com/photo-1516321497487-e288fb19713f', 3),
 
-((SELECT feed_id FROM feed_map WHERE username='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 5), 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1', 1),
-((SELECT feed_id FROM feed_map WHERE username='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 5), 'https://images.unsplash.com/photo-1617093727343-374698b1b08d', 2),
+((SELECT feed_id FROM feed_map WHERE username='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 5), 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1', 1),
+((SELECT feed_id FROM feed_map WHERE username='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 5), 'https://images.unsplash.com/photo-1617093727343-374698b1b08d', 2),
 
-((SELECT feed_id FROM feed_map WHERE username='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 7), 'https://images.unsplash.com/photo-1516321497487-e288fb19713f', 1),
+((SELECT feed_id FROM feed_map WHERE username='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 7), 'https://images.unsplash.com/photo-1516321497487-e288fb19713f', 1),
 
-((SELECT feed_id FROM feed_map WHERE username='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 9), 'https://images.unsplash.com/photo-1522383225653-ed111181a951', 1),
-((SELECT feed_id FROM feed_map WHERE username='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 9), 'https://images.unsplash.com/photo-1578662996442-48f60103fc96', 2);
+((SELECT feed_id FROM feed_map WHERE username='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 9), 'https://images.unsplash.com/photo-1522383225653-ed111181a951', 1),
+((SELECT feed_id FROM feed_map WHERE username='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 9), 'https://images.unsplash.com/photo-1578662996442-48f60103fc96', 2);
 
 -- -----------------------------
 -- BATCH 7: Feed Likes for New Posts
@@ -1737,47 +1737,47 @@ WITH feed_map AS (
     SELECT f.id as feed_id, l.username as post_author
     FROM feed f 
     JOIN learners l ON f.learner_id = l.id 
-    WHERE l.username IN ('alice_j', 'akira_t')
+    WHERE l.username IN ('ali', 'aki')
     ORDER BY f.id DESC 
     LIMIT 20
 ),
 learner_map AS (
-    SELECT id, username FROM learners WHERE username IN ('alice_j', 'akira_t', 'bob_s', 'carol_d', 'david_l', 'emma_w', 'frank_t', 'grace_m', 'henry_b')
+    SELECT id, username FROM learners WHERE username IN ('ali', 'aki', 'bob_s', 'carol_d', 'david_l', 'emma_w', 'frank_t', 'grace_m', 'henry_b')
 )
 INSERT INTO feed_likes (feed_id, learner_id)
 VALUES
--- Likes on alice_j's posts
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='bob_s')),
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='david_l')),
+-- Likes on ali's posts
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='bob_s')),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='david_l')),
 
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='carol_d')),
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='emma_w')),
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='frank_t')),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='carol_d')),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='emma_w')),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='frank_t')),
 
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='grace_m')),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='grace_m')),
 
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='akira_t')),
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='henry_b')),
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='bob_s')),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='aki')),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='henry_b')),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='bob_s')),
 
--- Likes on akira_t's posts
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='alice_j')),
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='carol_d')),
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='david_l')),
+-- Likes on aki's posts
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='ali')),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='carol_d')),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='david_l')),
 
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='alice_j')),
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='emma_w')),
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='frank_t')),
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='grace_m')),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='ali')),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='emma_w')),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='frank_t')),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='grace_m')),
 
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='alice_j')),
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='henry_b')),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='ali')),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='henry_b')),
 
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='alice_j')),
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='bob_s'));
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='ali')),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='bob_s'));
 
 -- -----------------------------
 -- BATCH 8: Feed Comments for New Posts
@@ -1786,41 +1786,41 @@ WITH feed_map AS (
     SELECT f.id as feed_id, l.username as post_author
     FROM feed f 
     JOIN learners l ON f.learner_id = l.id 
-    WHERE l.username IN ('alice_j', 'akira_t')
+    WHERE l.username IN ('ali', 'aki')
     ORDER BY f.id DESC 
     LIMIT 20
 ),
 learner_map AS (
-    SELECT id, username FROM learners WHERE username IN ('alice_j', 'akira_t', 'bob_s', 'carol_d', 'david_l', 'emma_w', 'frank_t', 'grace_m', 'henry_b')
+    SELECT id, username FROM learners WHERE username IN ('ali', 'aki', 'bob_s', 'carol_d', 'david_l', 'emma_w', 'frank_t', 'grace_m', 'henry_b')
 )
 INSERT INTO feed_comments (feed_id, learner_id, content_text)
 VALUES
--- Comments on alice_j's posts
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='akira_t'), 'Amazing progress with kanji! Your handwriting style is really improving. Keep practicing stroke order! 頑張って！'),
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='bob_s'), 'I''m also learning kanji and it''s so challenging. Which app are you using for practice?'),
+-- Comments on ali's posts
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='aki'), 'Amazing progress with kanji! Your handwriting style is really improving. Keep practicing stroke order! 頑張って！'),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='bob_s'), 'I''m also learning kanji and it''s so challenging. Which app are you using for practice?'),
 
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='akira_t'), 'Ramen looks delicious! Japanese cooking vocabulary is great for learning. Next try making たこ焼き (takoyaki)!'),
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='carol_d'), 'Learning through cooking is genius! I should try that with Spanish recipes.'),
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='emma_w'), 'Recipe please! I want to practice Japanese cooking terms too.'),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='aki'), 'Ramen looks delicious! Japanese cooking vocabulary is great for learning. Next try making たこ焼き (takoyaki)!'),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='carol_d'), 'Learning through cooking is genius! I should try that with Spanish recipes.'),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='emma_w'), 'Recipe please! I want to practice Japanese cooking terms too.'),
 
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='akira_t'), 'よつばと is perfect for beginners! The Japanese is simple and the story is heartwarming. Great choice!'),
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='david_l'), 'Manga without furigana is a big step! I''m still using furigana versions.'),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='aki'), 'よつばと is perfect for beginners! The Japanese is simple and the story is heartwarming. Great choice!'),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='david_l'), 'Manga without furigana is a big step! I''m still using furigana versions.'),
 
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='akira_t'), 'That conversation was so much fun! Your Japanese is getting really natural. Next time let''s practice keigo (polite form)!'),
-((SELECT feed_id FROM feed_map WHERE post_author='alice_j' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='henry_b'), 'Language exchange partnerships are the best! Anyone want to practice English-Spanish with me?'),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='aki'), 'That conversation was so much fun! Your Japanese is getting really natural. Next time let''s practice keigo (polite form)!'),
+((SELECT feed_id FROM feed_map WHERE post_author='ali' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='henry_b'), 'Language exchange partnerships are the best! Anyone want to practice English-Spanish with me?'),
 
--- Comments on akira_t's posts
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='alice_j'), 'English idioms are weird even for native speakers! "Break a leg" means "good luck" - makes no sense but we use it all the time 😄'),
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='carol_d'), 'My favorite idiom is "piece of cake" meaning something is easy. What''s a funny Japanese idiom?'),
+-- Comments on aki's posts
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='ali'), 'English idioms are weird even for native speakers! "Break a leg" means "good luck" - makes no sense but we use it all the time 😄'),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 0), (SELECT id FROM learner_map WHERE username='carol_d'), 'My favorite idiom is "piece of cake" meaning something is easy. What''s a funny Japanese idiom?'),
 
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='alice_j'), 'Friends is perfect for learning American English! The humor might be dated but the conversational patterns are great.'),
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='emma_w'), 'I learned so much English from Friends too! Ross and Rachel taught me about American dating culture 😅'),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='ali'), 'Friends is perfect for learning American English! The humor might be dated but the conversational patterns are great.'),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 1), (SELECT id FROM learner_map WHERE username='emma_w'), 'I learned so much English from Friends too! Ross and Rachel taught me about American dating culture 😅'),
 
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='alice_j'), 'Coffee culture is huge in America! "Let''s grab coffee" basically means "let''s talk" - doesn''t always involve actual coffee.'),
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='frank_t'), 'Cultural context is so important! What''s the Japanese equivalent of "grabbing coffee"?'),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='ali'), 'Coffee culture is huge in America! "Let''s grab coffee" basically means "let''s talk" - doesn''t always involve actual coffee.'),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 2), (SELECT id FROM learner_map WHERE username='frank_t'), 'Cultural context is so important! What''s the Japanese equivalent of "grabbing coffee"?'),
 
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='alice_j'), 'Harry Potter in English is challenging! The vocabulary gets more advanced in later books. Chamber of Secrets has great dialogue practice.'),
-((SELECT feed_id FROM feed_map WHERE post_author='akira_t' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='bob_s'), 'Reading Harry Potter in my target language is on my bucket list! Which house would you be in?');
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='ali'), 'Harry Potter in English is challenging! The vocabulary gets more advanced in later books. Chamber of Secrets has great dialogue practice.'),
+((SELECT feed_id FROM feed_map WHERE post_author='aki' ORDER BY feed_id DESC LIMIT 1 OFFSET 3), (SELECT id FROM learner_map WHERE username='bob_s'), 'Reading Harry Potter in my target language is on my bucket list! Which house would you be in?');
 
 -- -----------------------------
 -- BATCH 9: Additional Courses for will (English Instructor)
@@ -2014,7 +2014,7 @@ VALUES
 -- Study Materials for hiro's Japanese Culture Through Language (REMOVED - upcoming course has no study materials)
 
 -- -----------------------------
--- BATCH 16: Course Enrollments for alice_j and akira_t
+-- BATCH 16: Course Enrollments for ali and aki
 -- -----------------------------
 WITH course_map AS (
     SELECT id, title FROM courses
@@ -2023,10 +2023,10 @@ WITH course_map AS (
 )
 INSERT INTO course_enrollments (course_id, learner_id, created_at)
 VALUES
--- alice_j enrollments (English → Japanese learner)
-((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM learner_map WHERE username='alice_j'), '2025-08-15 09:30:00'),
-((SELECT id FROM course_map WHERE title='Kanji Master Class'), (SELECT id FROM learner_map WHERE username='alice_j'), '2025-07-10 14:20:00'),
-((SELECT id FROM course_map WHERE title='Japanese Culture Through Language'), (SELECT id FROM learner_map WHERE username='alice_j'), '2025-08-18 11:45:00'),
+-- ali enrollments (English → Japanese learner)
+((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM learner_map WHERE username='ali'), '2025-08-15 09:30:00'),
+((SELECT id FROM course_map WHERE title='Kanji Master Class'), (SELECT id FROM learner_map WHERE username='ali'), '2025-07-10 14:20:00'),
+((SELECT id FROM course_map WHERE title='Japanese Culture Through Language'), (SELECT id FROM learner_map WHERE username='ali'), '2025-08-18 11:45:00'),
 
 -- Japanese learners enrolling in Hiroshi Tanaka's courses - JAPANESE BUSINESS COMMUNICATION
 ((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM learner_map WHERE username='brandon_m'), '2025-08-17 10:15:00'),
@@ -2048,7 +2048,7 @@ VALUES
 ((SELECT id FROM course_map WHERE title='Japanese for Beginners'), (SELECT id FROM learner_map WHERE username='bob_s'), '2025-08-24 11:15:00'),
 
 -- English learners enrolling in William Johnson's courses - ADVANCED BUSINESS ENGLISH
-((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM learner_map WHERE username='akira_t'), '2025-08-20 16:15:00'),
+((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM learner_map WHERE username='aki'), '2025-08-20 16:15:00'),
 ((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM learner_map WHERE username='yuki_n'), '2025-08-21 10:30:00'),
 ((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM learner_map WHERE username='kenta_s'), '2025-08-21 14:45:00'),
 ((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM learner_map WHERE username='takumi_w'), '2025-08-22 09:15:00'),
@@ -2082,32 +2082,32 @@ WITH course_map AS (
 )
 INSERT INTO group_chat (course_id, sender_id, sender_type, content_text)
 VALUES
--- Group chat for Japanese Business Communication (alice_j enrolled)
+-- Group chat for Japanese Business Communication (ali enrolled)
 ((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM instructor_map WHERE username='hiro'), 'instructor', 'ビジネス日本語コースへようこそ！まずは自己紹介をして、ビジネス日本語の目標を教えてください。'),
-((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM learner_map WHERE username='alice_j'), 'learner', 'アリスです。アメリカ出身です。将来東京の日本企業で働きたいと思っています。よろしくお願いします！'),
+((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM learner_map WHERE username='ali'), 'learner', 'アリスです。アメリカ出身です。将来東京の日本企業で働きたいと思っています。よろしくお願いします！'),
 ((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM instructor_map WHERE username='hiro'), 'instructor', '素晴らしい目標ですね、アリスさん！ビジネス日本語では敬語の習得が重要です。セッションで集中的に練習しましょう。'),
-((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM learner_map WHERE username='alice_j'), 'learner', '敬語を勉強していますが、とても複雑です！実際の場面で尊敬語と謙譲語をいつ使うのか分からなくて...'),
+((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM learner_map WHERE username='ali'), 'learner', '敬語を勉強していますが、とても複雑です！実際の場面で尊敬語と謙譲語をいつ使うのか分からなくて...'),
 ((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM instructor_map WHERE username='hiro'), 'instructor', '良い質問ですね！尊敬語は相手の行動を持ち上げ、謙譲語は自分の行動を下げます。ロールプレイで練習しましょう。'),
 
--- Group chat for Kanji Master Class (alice_j enrolled)
+-- Group chat for Kanji Master Class (ali enrolled)
 ((SELECT id FROM course_map WHERE title='Kanji Master Class'), (SELECT id FROM instructor_map WHERE username='hiro'), 'instructor', '漢字マスタークラスへようこそ！現在の漢字レベルと、漢字学習での一番の悩みを教えてください。'),
-((SELECT id FROM course_map WHERE title='Kanji Master Class'), (SELECT id FROM learner_map WHERE username='alice_j'), 'learner', 'こんにちは！300個くらい知っていますが、「日」と「目」のような似た漢字がいつも混同してしまいます。覚えるコツはありますか？'),
+((SELECT id FROM course_map WHERE title='Kanji Master Class'), (SELECT id FROM learner_map WHERE username='ali'), 'learner', 'こんにちは！300個くらい知っていますが、「日」と「目」のような似た漢字がいつも混同してしまいます。覚えるコツはありますか？'),
 ((SELECT id FROM course_map WHERE title='Kanji Master Class'), (SELECT id FROM instructor_map WHERE username='hiro'), 'instructor', '良い例ですね！「日」（太陽）は横に広く、「目」（眼）は縦に長いです。太陽は空に広がり、目は縦長の楕円と覚えてください。'),
-((SELECT id FROM course_map WHERE title='Kanji Master Class'), (SELECT id FROM learner_map WHERE username='alice_j'), 'learner', 'すごく分かりやすいです！視覚的な記憶法は本当に役立ちますね。読み方を覚えるコツもありますか？'),
+((SELECT id FROM course_map WHERE title='Kanji Master Class'), (SELECT id FROM learner_map WHERE username='ali'), 'learner', 'すごく分かりやすいです！視覚的な記憶法は本当に役立ちますね。読み方を覚えるコツもありますか？'),
 ((SELECT id FROM course_map WHERE title='Kanji Master Class'), (SELECT id FROM instructor_map WHERE username='hiro'), 'instructor', 'もちろんです！複合語は音読み、単独の漢字は訓読みが多いです。パターンを一緒に学習しましょう。'),
 
--- Group chat for Advanced Business English (akira_t enrolled)
+-- Group chat for Advanced Business English (aki enrolled)
 ((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM instructor_map WHERE username='will'), 'instructor', 'Welcome to Advanced Business English! Please introduce yourselves and your professional English goals.'),
-((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM learner_map WHERE username='akira_t'), 'learner', 'Hello! I''m Akira from Japan. I work in IT and need to communicate with international clients and present in English.'),
+((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM learner_map WHERE username='aki'), 'learner', 'Hello! I''m Akira from Japan. I work in IT and need to communicate with international clients and present in English.'),
 ((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM instructor_map WHERE username='will'), 'instructor', 'Excellent, Akira! Technical presentations require clear communication. We''ll work on structure and confidence building.'),
-((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM learner_map WHERE username='akira_t'), 'learner', 'I can write emails well but speaking in meetings is challenging. I worry about grammar mistakes when presenting.'),
+((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM learner_map WHERE username='aki'), 'learner', 'I can write emails well but speaking in meetings is challenging. I worry about grammar mistakes when presenting.'),
 ((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM instructor_map WHERE username='will'), 'instructor', 'Common concern! Fluency matters more than perfect grammar in meetings. We''ll practice with real scenarios.'),
 
--- Group chat for English Pronunciation Workshop (akira_t enrolled)
+-- Group chat for English Pronunciation Workshop (aki enrolled)
 ((SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), (SELECT id FROM instructor_map WHERE username='will'), 'instructor', 'Welcome to the Pronunciation Workshop! What English sounds do you find most challenging?'),
-((SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), (SELECT id FROM learner_map WHERE username='akira_t'), 'learner', 'The "th" sound is impossible! Also, I can''t hear the difference between "r" and "l" sometimes.'),
+((SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), (SELECT id FROM learner_map WHERE username='aki'), 'learner', 'The "th" sound is impossible! Also, I can''t hear the difference between "r" and "l" sometimes.'),
 ((SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), (SELECT id FROM instructor_map WHERE username='will'), 'instructor', 'Very common for Japanese speakers! We''ll use IPA symbols and lots of practice. The key is tongue position.'),
-((SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), (SELECT id FROM learner_map WHERE username='akira_t'), 'learner', 'I''ve tried watching my tongue in a mirror but it feels awkward. Any other techniques?'),
+((SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), (SELECT id FROM learner_map WHERE username='aki'), 'learner', 'I''ve tried watching my tongue in a mirror but it feels awkward. Any other techniques?'),
 ((SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), (SELECT id FROM instructor_map WHERE username='will'), 'instructor', 'Mirror work is good! We''ll also use audio drills and I''ll show you physical exercises for mouth positioning.'),
 
 -- Group chat for IELTS Preparation Intensive (haruka_o enrolled) 
@@ -2117,14 +2117,14 @@ VALUES
 ((SELECT id FROM course_map WHERE title='IELTS Preparation Intensive'), (SELECT id FROM learner_map WHERE username='haruka_o'), 'learner', 'I always run out of time in Task 2. Should I spend more time planning or writing?'),
 ((SELECT id FROM course_map WHERE title='IELTS Preparation Intensive'), (SELECT id FROM instructor_map WHERE username='will'), 'instructor', 'Great question! Plan for 5 minutes, write for 35. A clear structure saves time and improves coherence.'),
 
--- Group chat for Japanese Culture Through Language (UPCOMING course - alice_j enrolled)
+-- Group chat for Japanese Culture Through Language (UPCOMING course - ali enrolled)
 ((SELECT id FROM course_map WHERE title='Japanese Culture Through Language'), (SELECT id FROM instructor_map WHERE username='hiro'), 'instructor', '言語を通した日本文化コースへようこそ！コースの開始が近づいています。自己紹介と、どの日本文化に最も興味があるかを教えてください。'),
-((SELECT id FROM course_map WHERE title='Japanese Culture Through Language'), (SELECT id FROM learner_map WHERE username='alice_j'), 'learner', 'こんにちは！アリスです。茶道などの日本の伝統芸術に魅力を感じ、日常言語に含まれる文化的なニュアンスを理解したいと思っています。'),
+((SELECT id FROM course_map WHERE title='Japanese Culture Through Language'), (SELECT id FROM learner_map WHERE username='ali'), 'learner', 'こんにちは！アリスです。茶道などの日本の伝統芸術に魅力を感じ、日常言語に含まれる文化的なニュアンスを理解したいと思っています。'),
 ((SELECT id FROM course_map WHERE title='Japanese Culture Through Language'), (SELECT id FROM instructor_map WHERE username='hiro'), 'instructor', '素晴らしいですね、アリスさん！伝統芸術には深い言語的つながりがあります。茶道の専門用語や季節表現を一緒に探求しましょう。'),
 
--- Group chat for Advanced Japanese Grammar (UPCOMING course - alice_j enrolled)
+-- Group chat for Advanced Japanese Grammar (UPCOMING course - ali enrolled)
 ((SELECT id FROM course_map WHERE title='Advanced Japanese Grammar'), (SELECT id FROM instructor_map WHERE username='hiro'), 'instructor', '上級日本語文法コースへようこそ！11月にコースが始まります。現在の文法の課題と学習目標を教えてください。'),
-((SELECT id FROM course_map WHERE title='Advanced Japanese Grammar'), (SELECT id FROM learner_map WHERE username='alice_j'), 'learner', 'こんにちは！「によって」や「における」などの複雑な助詞に苦労しています。また、条件形も選択肢が多いと混乱してしまいます。'),
+((SELECT id FROM course_map WHERE title='Advanced Japanese Grammar'), (SELECT id FROM learner_map WHERE username='ali'), 'learner', 'こんにちは！「によって」や「における」などの複雑な助詞に苦労しています。また、条件形も選択肢が多いと混乱してしまいます。'),
 ((SELECT id FROM course_map WHERE title='Advanced Japanese Grammar'), (SELECT id FROM instructor_map WHERE username='hiro'), 'instructor', '素晴らしい例ですね、アリスさん！それらは一緒にマスターする高度なニュアンスです。各助詞の特定の文脈を徹底的に練習しましょう。');
 
 -- -----------------------------
@@ -2139,27 +2139,27 @@ WITH course_map AS (
 )
 INSERT INTO feedback (course_id, instructor_id, learner_id, feedback_type, feedback_text, rating)
 VALUES
--- Feedback from alice_j for hiro's courses
-((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM instructor_map WHERE username='hiro'), (SELECT id FROM learner_map WHERE username='alice_j'), 'course', 'Incredible course! Hiroshi-sensei explains keigo so clearly with real business scenarios. I feel confident using honorific language now. The cultural context makes everything click!', 5),
-((SELECT id FROM course_map WHERE title='Kanji Master Class'), (SELECT id FROM instructor_map WHERE username='hiro'), (SELECT id FROM learner_map WHERE username='alice_j'), 'course', 'Best kanji course ever! The mnemonic techniques and radical system approach revolutionized my learning. I can now remember complex kanji effortlessly. Highly recommend!', 5),
+-- Feedback from ali for hiro's courses
+((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM instructor_map WHERE username='hiro'), (SELECT id FROM learner_map WHERE username='ali'), 'course', 'Incredible course! Hiroshi-sensei explains keigo so clearly with real business scenarios. I feel confident using honorific language now. The cultural context makes everything click!', 5),
+((SELECT id FROM course_map WHERE title='Kanji Master Class'), (SELECT id FROM instructor_map WHERE username='hiro'), (SELECT id FROM learner_map WHERE username='ali'), 'course', 'Best kanji course ever! The mnemonic techniques and radical system approach revolutionized my learning. I can now remember complex kanji effortlessly. Highly recommend!', 5),
 -- No feedback for Japanese Culture Through Language (UPCOMING course)
 -- No feedback for Advanced Japanese Grammar (UPCOMING course)
 
--- Feedback from akira_t for will's courses
-((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='akira_t'), 'course', 'William''s teaching style is perfect for business professionals! The presentation practice and real meeting scenarios boosted my confidence tremendously. My colleagues noticed the improvement!', 5),
-((SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='akira_t'), 'course', 'Finally mastered the "th" sound! William''s IPA approach and mouth positioning exercises work. Still working on r/l distinction but huge improvement overall.', 4),
-((SELECT id FROM course_map WHERE title='IELTS Preparation Intensive'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='akira_t'), 'course', 'Comprehensive IELTS prep with proven strategies! William''s writing templates and speaking practice sessions are gold. Scored 7.5 overall - exceeded my target!', 5),
+-- Feedback from aki for will's courses
+((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='aki'), 'course', 'William''s teaching style is perfect for business professionals! The presentation practice and real meeting scenarios boosted my confidence tremendously. My colleagues noticed the improvement!', 5),
+((SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='aki'), 'course', 'Finally mastered the "th" sound! William''s IPA approach and mouth positioning exercises work. Still working on r/l distinction but huge improvement overall.', 4),
+((SELECT id FROM course_map WHERE title='IELTS Preparation Intensive'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='aki'), 'course', 'Comprehensive IELTS prep with proven strategies! William''s writing templates and speaking practice sessions are gold. Scored 7.5 overall - exceeded my target!', 5),
 
 -- Instructor feedback for learners
-((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM instructor_map WHERE username='hiro'), (SELECT id FROM learner_map WHERE username='alice_j'), 'learner', 'Alice shows exceptional dedication to mastering business Japanese. Her keigo usage improved dramatically, and she actively participates in role-play exercises. Ready for business environment!', 5),
-((SELECT id FROM course_map WHERE title='Kanji Master Class'), (SELECT id FROM instructor_map WHERE username='hiro'), (SELECT id FROM learner_map WHERE username='alice_j'), 'learner', 'Alice''s kanji progression is impressive! She consistently practices stroke order and applies mnemonic techniques effectively. Encourage more compound word practice for advanced level.', 4),
+((SELECT id FROM course_map WHERE title='Japanese Business Communication'), (SELECT id FROM instructor_map WHERE username='hiro'), (SELECT id FROM learner_map WHERE username='ali'), 'learner', 'Alice shows exceptional dedication to mastering business Japanese. Her keigo usage improved dramatically, and she actively participates in role-play exercises. Ready for business environment!', 5),
+((SELECT id FROM course_map WHERE title='Kanji Master Class'), (SELECT id FROM instructor_map WHERE username='hiro'), (SELECT id FROM learner_map WHERE username='ali'), 'learner', 'Alice''s kanji progression is impressive! She consistently practices stroke order and applies mnemonic techniques effectively. Encourage more compound word practice for advanced level.', 4),
 -- No instructor feedback for Japanese Culture Through Language (UPCOMING course)
 -- No instructor feedback for Advanced Japanese Grammar (UPCOMING course)
-((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='akira_t'), 'learner', 'Akira transformed from hesitant speaker to confident presenter! His technical vocabulary expanded significantly, and meeting participation improved. Natural leadership qualities emerging.', 5),
-((SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='akira_t'), 'learner', 'Akira''s pronunciation accuracy improved remarkably! Excellent progress with difficult sounds. Continue practicing connected speech patterns for even more natural fluency.', 4);
+((SELECT id FROM course_map WHERE title='Advanced Business English'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='aki'), 'learner', 'Akira transformed from hesitant speaker to confident presenter! His technical vocabulary expanded significantly, and meeting participation improved. Natural leadership qualities emerging.', 5),
+((SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), (SELECT id FROM instructor_map WHERE username='will'), (SELECT id FROM learner_map WHERE username='aki'), 'learner', 'Akira''s pronunciation accuracy improved remarkably! Excellent progress with difficult sounds. Continue practicing connected speech patterns for even more natural fluency.', 4);
 
 -- -----------------------------
--- BATCH 19: Notifications for alice_j and akira_t
+-- BATCH 19: Notifications for ali and aki
 -- -----------------------------
 WITH course_map AS (
     SELECT id, title FROM courses
@@ -2168,25 +2168,25 @@ WITH course_map AS (
 )
 INSERT INTO notifications (learner_id, course_id, notification_type, content_title, content_text, is_read)
 VALUES
--- Notifications for alice_j (Japanese courses)
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM course_map WHERE title='Japanese Business Communication'), 'session alert', 'Upcoming Session: Keigo Fundamentals', 'Your Japanese Business Communication session starts in 2 hours. Review the keigo reference guide before class!', false),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM course_map WHERE title='Japanese Business Communication'), 'feedback', 'New Study Material Added', 'Hiroshi-sensei uploaded "Business Card Exchange Etiquette" guide. Essential for professional networking in Japan!', false),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM course_map WHERE title='Kanji Master Class'), 'session alert', 'Kanji Session Tomorrow', 'Don''t forget: "Kanji Origins and Radicals" session tomorrow at 6:00 PM JST. Bring your practice sheets!', true),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM course_map WHERE title='Kanji Master Class'), 'feedback', 'Instructor Feedback Available', 'Hiroshi-sensei left feedback on your kanji progress. Check your dashboard for detailed comments and improvement tips.', false),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM course_map WHERE title='Japanese Culture Through Language'), 'feedback', 'Cultural Activity Scheduled', 'Virtual tea ceremony demonstration added to next week''s session! Learn traditional vocabulary while experiencing Japanese culture.', false),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM course_map WHERE title='Japanese Culture Through Language'), 'session alert', 'Culture Session Starting Soon', 'Your "Greetings and Social Hierarchy" session begins in 30 minutes. Join the Zoom room early for tech check!', true),
+-- Notifications for ali (Japanese courses)
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM course_map WHERE title='Japanese Business Communication'), 'session alert', 'Upcoming Session: Keigo Fundamentals', 'Your Japanese Business Communication session starts in 2 hours. Review the keigo reference guide before class!', false),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM course_map WHERE title='Japanese Business Communication'), 'feedback', 'New Study Material Added', 'Hiroshi-sensei uploaded "Business Card Exchange Etiquette" guide. Essential for professional networking in Japan!', false),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM course_map WHERE title='Kanji Master Class'), 'session alert', 'Kanji Session Tomorrow', 'Don''t forget: "Kanji Origins and Radicals" session tomorrow at 6:00 PM JST. Bring your practice sheets!', true),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM course_map WHERE title='Kanji Master Class'), 'feedback', 'Instructor Feedback Available', 'Hiroshi-sensei left feedback on your kanji progress. Check your dashboard for detailed comments and improvement tips.', false),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM course_map WHERE title='Japanese Culture Through Language'), 'feedback', 'Cultural Activity Scheduled', 'Virtual tea ceremony demonstration added to next week''s session! Learn traditional vocabulary while experiencing Japanese culture.', false),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM course_map WHERE title='Japanese Culture Through Language'), 'session alert', 'Culture Session Starting Soon', 'Your "Greetings and Social Hierarchy" session begins in 30 minutes. Join the Zoom room early for tech check!', true),
 
--- Notifications for akira_t (English courses)
+-- Notifications for aki (English courses)
 -- REMOVED: Advanced Business English feedback (upcoming course has no feedback)
 -- REMOVED: IELTS Preparation feedback (upcoming course has no feedback)
-((SELECT id FROM learner_map WHERE username='akira_t'), (SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), 'session alert', 'Pronunciation Practice Today', 'Today''s focus: consonant clusters and difficult sounds. Review the IPA chart before our 2:00 PM session!', true),
-((SELECT id FROM learner_map WHERE username='akira_t'), (SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), 'feedback', 'Progress Feedback Posted', 'William reviewed your pronunciation recordings. Great improvement on "th" sounds! Check feedback for next steps.', false),
+((SELECT id FROM learner_map WHERE username='aki'), (SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), 'session alert', 'Pronunciation Practice Today', 'Today''s focus: consonant clusters and difficult sounds. Review the IPA chart before our 2:00 PM session!', true),
+((SELECT id FROM learner_map WHERE username='aki'), (SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), 'feedback', 'Progress Feedback Posted', 'William reviewed your pronunciation recordings. Great improvement on "th" sounds! Check feedback for next steps.', false),
 
 -- Additional course-related notifications
-((SELECT id FROM learner_map WHERE username='alice_j'), NULL, 'feedback', 'Study Streak Achievement!', 'Congratulations! You''ve maintained a 15-day study streak across all your Japanese courses. Keep up the excellent work! 🎉', false),
-((SELECT id FROM learner_map WHERE username='akira_t'), NULL, 'feedback', 'Certificate Ready for Download', 'Your Advanced Business English certificate is ready! Download it from your achievements page to showcase your skills.', false),
-((SELECT id FROM learner_map WHERE username='alice_j'), (SELECT id FROM course_map WHERE title='Kanji Master Class'), 'feedback', 'Bonus Material: Kanji Games', 'Interactive kanji learning games added to course materials! Make studying fun with memory games and quizzes.', true),
-((SELECT id FROM learner_map WHERE username='akira_t'), (SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), 'session alert', 'Final Session This Week', 'Last pronunciation workshop session this Friday. We''ll record your progress for comparison with week 1. Amazing improvement!', false);
+((SELECT id FROM learner_map WHERE username='ali'), NULL, 'feedback', 'Study Streak Achievement!', 'Congratulations! You''ve maintained a 15-day study streak across all your Japanese courses. Keep up the excellent work! 🎉', false),
+((SELECT id FROM learner_map WHERE username='aki'), NULL, 'feedback', 'Certificate Ready for Download', 'Your Advanced Business English certificate is ready! Download it from your achievements page to showcase your skills.', false),
+((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM course_map WHERE title='Kanji Master Class'), 'feedback', 'Bonus Material: Kanji Games', 'Interactive kanji learning games added to course materials! Make studying fun with memory games and quizzes.', true),
+((SELECT id FROM learner_map WHERE username='aki'), (SELECT id FROM course_map WHERE title='English Pronunciation Workshop'), 'session alert', 'Final Session This Week', 'Last pronunciation workshop session this Friday. We''ll record your progress for comparison with week 1. Amazing improvement!', false);
 
 -- -----------------------------
 -- BATCH 20: Final Withdrawals for will and hiro
@@ -2330,10 +2330,10 @@ FROM missing_withdrawal_map;
 -- END OF ADDITIONAL FOCUSED DUMMY DATA
 -- ========================================
 -- Summary of additions:
--- ✅ 16 new follower relationships for alice_j and akira_t
--- ✅ 15 new chats between alice_j and akira_t
+-- ✅ 16 new follower relationships for ali and aki
+-- ✅ 15 new chats between ali and aki
 -- ✅ 60+ new messages with language learning content
--- ✅ 20 new feed posts (10 each for alice_j and akira_t)
+-- ✅ 20 new feed posts (10 each for ali and aki)
 -- ✅ 26 feed images across multiple posts
 -- ✅ 22 feed likes from various learners
 -- ✅ 16 detailed feed comments with language learning discussions
@@ -2341,7 +2341,7 @@ FROM missing_withdrawal_map;
 -- ✅ 30 course sessions (5 per course) with realistic scheduling
 -- ✅ 30 recorded classes matching course topics
 -- ✅ 45 study materials of various types (pdf, doc, image)
--- ✅ 6 course enrollments (alice_j in Japanese courses, akira_t in English courses)
+-- ✅ 6 course enrollments (ali in Japanese courses, aki in English courses)
 -- ✅ 25 group chat messages for course discussions
 -- ✅ 10 feedback entries (course and learner feedback)
 -- ✅ 20 notifications for sessions, updates, and achievements
