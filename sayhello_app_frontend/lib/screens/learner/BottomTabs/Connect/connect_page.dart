@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'others_profile_page.dart';
 import '../../Notifications/notifications.dart';
 import '../../../../providers/settings_provider.dart';
+import '../../../../providers/learner_provider.dart';
+import '../../../../providers/auth_provider.dart';
+import '../../../../models/learner.dart';
 
 class Partner {
   final String name;
@@ -38,26 +42,600 @@ class ConnectPage extends StatefulWidget {
 class _ConnectPageState extends State<ConnectPage> {
   int selectedTopTabIndex = 0;
   final TextEditingController _searchController = TextEditingController();
-  List<String> availableLanguages = []; // This will come from backend
+
+  // Backend state
+  List<Learner> _allLearners = [];
+  List<Learner> _filteredLearners = [];
+  bool _isLoading = false;
+  String? _error;
+
+  // Filter state
+  double _ageStart = 18;
+  double _ageEnd = 90;
+  String? _selectedGender;
+  String? _selectedRegion;
+  String? _selectedProficiency;
 
   @override
   void initState() {
     super.initState();
-    _loadAvailableLanguages();
+    _loadLanguagePartners();
   }
 
-  // Placeholder method for backend integration
-  void _loadAvailableLanguages() {
-    // This will be replaced with actual backend call
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  /// Load language partners from backend based on current user's learning language
+  Future<void> _loadLanguagePartners() async {
     setState(() {
-      availableLanguages = [
-        'Japanese',
-        'English',
-        'Spanish',
-        'Korean',
-        'Bengali',
-      ];
+      _isLoading = true;
+      _error = null;
     });
+
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final learnerProvider = Provider.of<LearnerProvider>(
+        context,
+        listen: false,
+      );
+
+      if (authProvider.currentUser == null) {
+        throw Exception('No user logged in');
+      }
+
+      final currentUser = authProvider.currentUser as Learner;
+
+      // Get learners whose native language matches current user's learning language
+      if (currentUser.learningLanguage.isNotEmpty) {
+        final partners = await learnerProvider.getLearnersByLanguage(
+          currentUser.learningLanguage,
+        );
+
+        // Filter out current user from the list
+        _allLearners = partners
+            .where((learner) => learner.id != currentUser.id)
+            .toList();
+        _applyFilters();
+      } else {
+        _allLearners = [];
+        _filteredLearners = [];
+      }
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// Apply all filters to the learner list
+  void _applyFilters() {
+    List<Learner> filtered = List.from(_allLearners);
+
+    // Apply search filter
+    if (_searchController.text.isNotEmpty) {
+      String searchTerm = _searchController.text.toLowerCase();
+      filtered = filtered.where((learner) {
+        return learner.name.toLowerCase().contains(searchTerm) ||
+            (learner.bio?.toLowerCase().contains(searchTerm) ?? false) ||
+            learner.interests.any(
+              (interest) => interest.toLowerCase().contains(searchTerm),
+            );
+      }).toList();
+    }
+
+    // Apply age filter
+    final currentDate = DateTime.now();
+    filtered = filtered.where((learner) {
+      final age = currentDate.difference(learner.dateOfBirth).inDays ~/ 365;
+      return age >= _ageStart && age <= _ageEnd;
+    }).toList();
+
+    // Apply gender filter
+    if (_selectedGender != null && _selectedGender != 'All') {
+      filtered = filtered
+          .where(
+            (learner) =>
+                learner.gender.toLowerCase() == _selectedGender!.toLowerCase(),
+          )
+          .toList();
+    }
+
+    // Apply region filter
+    if (_selectedRegion != null) {
+      filtered = filtered
+          .where((learner) => learner.country == _selectedRegion)
+          .toList();
+    }
+
+    // Apply proficiency filter
+    if (_selectedProficiency != null) {
+      filtered = filtered
+          .where((learner) => learner.languageLevel == _selectedProficiency)
+          .toList();
+    }
+
+    // Apply top tab filters
+    switch (selectedTopTabIndex) {
+      case 1: // Shared Interests
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        if (authProvider.currentUser != null) {
+          final currentUser = authProvider.currentUser as Learner;
+          filtered = filtered.where((learner) {
+            return learner.interests.any(
+              (interest) => currentUser.interests.contains(interest),
+            );
+          }).toList();
+        }
+        break;
+      case 2: // Nearby (same country)
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        if (authProvider.currentUser != null) {
+          final currentUser = authProvider.currentUser as Learner;
+          filtered = filtered
+              .where((learner) => learner.country == currentUser.country)
+              .toList();
+        }
+        break;
+      case 3: // Gender (opposite gender)
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        if (authProvider.currentUser != null) {
+          final currentUser = authProvider.currentUser as Learner;
+          filtered = filtered
+              .where((learner) => learner.gender != currentUser.gender)
+              .toList();
+        }
+        break;
+      default: // All
+        break;
+    }
+
+    setState(() {
+      _filteredLearners = filtered;
+    });
+  }
+
+  /// Build main content with backend data integration
+  Widget _buildMainContentWithBackend(
+    bool isDark,
+    Color textColor,
+    Color dividerColor,
+  ) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            Text(
+              'Error loading language partners',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _error!,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadLanguagePartners,
+              child: const Text('Try Again'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_filteredLearners.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.people_outline, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            Text(
+              'No language partners found',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Try adjusting your filters or search terms',
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadLanguagePartners,
+              child: const Text('Refresh'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      itemCount: _filteredLearners.length,
+      separatorBuilder: (_, __) => Divider(color: dividerColor, height: 1),
+      itemBuilder: (context, index) {
+        final learner = _filteredLearners[index];
+        return _buildLearnerCard(learner, isDark: isDark);
+      },
+    );
+  }
+
+  /// Build learner card with backend data
+  Widget _buildLearnerCard(Learner learner, {required bool isDark}) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OthersProfilePage(
+              userId: learner.id,
+              name: learner.name,
+              avatar: learner.profileImage ?? '',
+              nativeLanguage: learner.nativeLanguage,
+              learningLanguage: learner.learningLanguage,
+            ),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Stack(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Profile Picture
+                CircleAvatar(
+                  radius: 28,
+                  backgroundImage:
+                      learner.profileImage != null &&
+                          learner.profileImage!.isNotEmpty
+                      ? NetworkImage(learner.profileImage!)
+                      : null,
+                  child:
+                      learner.profileImage == null ||
+                          learner.profileImage!.isEmpty
+                      ? Text(
+                          learner.name.isNotEmpty
+                              ? learner.name[0].toUpperCase()
+                              : '?',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : null,
+                ),
+                const SizedBox(width: 12),
+
+                // Learner Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Name and Age with Gender
+                      Row(
+                        children: [
+                          Flexible(
+                            flex: 1,
+                            child: Text(
+                              learner.name,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: learner.gender.toLowerCase() == 'female'
+                                  ? Color(0xFFFEEDF7)
+                                  : Color(0xFFE3F2FD),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              learner.gender.toLowerCase() == 'male'
+                                  ? Icons.male
+                                  : Icons.female,
+                              color: learner.gender.toLowerCase() == 'male'
+                                  ? Color(0xFF1976D2)
+                                  : Color(0xFFD619A8),
+                              size: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 4),
+
+                      // Languages
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.only(bottom: 2),
+                              decoration: const BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Colors.green,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              child: Text(
+                                learner.nativeLanguage,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 6),
+                            child: Icon(
+                              Icons.sync_alt,
+                              size: 18,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.only(bottom: 2),
+                              decoration: const BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Colors.purple,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              child: Text(
+                                learner.learningLanguage,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 6),
+
+                      // Bio (if available)
+                      if (learner.bio != null && learner.bio!.isNotEmpty)
+                        Text(
+                          learner.bio!,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: isDark
+                                ? Colors.grey.shade300
+                                : Colors.grey.shade500,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+
+                      const SizedBox(height: 6),
+
+                      // Interests
+                      if (learner.interests.isNotEmpty)
+                        Wrap(
+                          spacing: 4,
+                          runSpacing: -6,
+                          children: learner.interests.map((interest) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.green.shade100,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                interest,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            // Wave icon top-right
+            Positioned(
+              top: 28,
+              right: 10,
+              child: Icon(Icons.waving_hand, color: Colors.purple, size: 24),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Show advanced filter dialog
+  void _showAdvancedFilterDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Advanced Filters'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Age Range
+                    const Text(
+                      'Age Range',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    RangeSlider(
+                      values: RangeValues(_ageStart, _ageEnd),
+                      min: 16,
+                      max: 100,
+                      divisions: 84,
+                      labels: RangeLabels(
+                        _ageStart.round().toString(),
+                        _ageEnd.round().toString(),
+                      ),
+                      onChanged: (RangeValues values) {
+                        setState(() {
+                          _ageStart = values.start;
+                          _ageEnd = values.end;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Gender Filter
+                    const Text(
+                      'Gender',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      value: _selectedGender,
+                      hint: const Text('Select Gender'),
+                      items: ['All', 'Male', 'Female', 'Other']
+                          .map(
+                            (gender) => DropdownMenuItem(
+                              value: gender,
+                              child: Text(gender),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedGender = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Country/Region Filter
+                    const Text(
+                      'Country/Region',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: 'Enter country name',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        _selectedRegion = value.isEmpty ? null : value;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Language Proficiency Filter
+                    const Text(
+                      'Language Proficiency',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      value: _selectedProficiency,
+                      hint: const Text('Select Proficiency Level'),
+                      items: ['Beginner', 'Intermediate', 'Advanced', 'Native']
+                          .map(
+                            (level) => DropdownMenuItem(
+                              value: level,
+                              child: Text(level),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedProficiency = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _ageStart = 18;
+                      _ageEnd = 90;
+                      _selectedGender = null;
+                      _selectedRegion = null;
+                      _selectedProficiency = null;
+                    });
+                  },
+                  child: const Text('Clear'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _applyFilters();
+                  },
+                  child: const Text('Apply'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   List<String> get topTabs => [
@@ -269,7 +847,7 @@ class _ConnectPageState extends State<ConnectPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top Filter Tabs
+          // Top Filter Tabs with Backend Integration
           SizedBox(
             height: 50,
             child: ListView.builder(
@@ -298,6 +876,7 @@ class _ConnectPageState extends State<ConnectPage> {
                     onSelected: (_) {
                       setState(() {
                         selectedTopTabIndex = index;
+                        _applyFilters(); // Apply backend filters
                       });
                     },
                   ),
@@ -306,7 +885,7 @@ class _ConnectPageState extends State<ConnectPage> {
             ),
           ),
 
-          // Search Field
+          // Search Field with Backend Integration
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Container(
@@ -316,7 +895,8 @@ class _ConnectPageState extends State<ConnectPage> {
               ),
               child: TextField(
                 controller: _searchController,
-                onChanged: (value) => setState(() {}),
+                onChanged: (value) =>
+                    _applyFilters(), // Apply backend filters on search
                 decoration: InputDecoration(
                   hintText: AppLocalizations.of(context)!.searchPeople,
                   hintStyle: TextStyle(
@@ -326,8 +906,11 @@ class _ConnectPageState extends State<ConnectPage> {
                     Icons.search,
                     color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                   ),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (_searchController.text.isNotEmpty)
+                        IconButton(
                           icon: Icon(
                             Icons.clear,
                             color: isDark
@@ -336,10 +919,22 @@ class _ConnectPageState extends State<ConnectPage> {
                           ),
                           onPressed: () {
                             _searchController.clear();
-                            setState(() {});
+                            _applyFilters();
                           },
-                        )
-                      : null,
+                        ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.tune,
+                          color: isDark
+                              ? Colors.grey.shade400
+                              : Colors.grey.shade600,
+                        ),
+                        onPressed: () {
+                          _showAdvancedFilterDialog(context);
+                        },
+                      ),
+                    ],
+                  ),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -351,34 +946,68 @@ class _ConnectPageState extends State<ConnectPage> {
             ),
           ),
 
-          // Language Tabs (will be populated from backend)
+          // Backend Status and Statistics
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  // Placeholder - will be replaced with backend data
-                  languageTab('Japanese', selected: true, isDark: isDark),
-                  // More language tabs will be added from backend
-                ],
-              ),
+            child: Row(
+              children: [
+                Consumer<AuthProvider>(
+                  builder: (context, authProvider, child) {
+                    if (authProvider.currentUser != null) {
+                      final currentUser = authProvider.currentUser as Learner;
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDark ? Color(0xFF311c85) : Color(0xFFefecff),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          'Learning: ${currentUser.learningLanguage}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF7758f3),
+                            fontSize: 12,
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+                const Spacer(),
+                if (!_isLoading && _error == null)
+                  Text(
+                    '${_filteredLearners.length} partners found',
+                    style: TextStyle(
+                      color: isDark
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade600,
+                      fontSize: 12,
+                    ),
+                  ),
+                IconButton(
+                  icon: Icon(
+                    Icons.refresh,
+                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                    size: 20,
+                  ),
+                  onPressed: _loadLanguagePartners,
+                ),
+              ],
             ),
           ),
 
           const SizedBox(height: 10),
 
-          // Partner List
+          // Main Content with Backend Data
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: filteredPartners.length,
-              separatorBuilder: (_, __) =>
-                  Divider(color: dividerColor, height: 1),
-              itemBuilder: (context, index) {
-                final partner = filteredPartners[index];
-                return partnerCard(partner, isDark: isDark);
-              },
+            child: _buildMainContentWithBackend(
+              isDark,
+              textColor,
+              dividerColor,
             ),
           ),
         ],

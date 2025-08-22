@@ -119,7 +119,9 @@ class LearnerRepository {
     }
   }
 
-  /// Get learners by learning language
+  /// Get learners by native language (for language partner matching)
+  /// This finds learners whose native language matches the given language
+  /// Used to find language partners: if user is learning Japanese, find native Japanese speakers
   Future<List<Learner>> getLearnersByLanguage(
     String language, {
     int limit = 50,
@@ -128,7 +130,7 @@ class LearnerRepository {
       final response = await _supabase
           .from('learners')
           .select()
-          .eq('learning_language', language)
+          .eq('native_language', language)
           .limit(limit);
 
       return response.map((json) => Learner.fromJson(json)).toList();

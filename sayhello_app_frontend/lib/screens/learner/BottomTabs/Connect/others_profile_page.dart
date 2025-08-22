@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../Feed/feed_page.dart';
 import '../../Chat/chat.dart';
+import '../../../../providers/learner_provider.dart';
+import '../../../../providers/auth_provider.dart';
+import '../../../../models/learner.dart';
 
 class OthersProfilePage extends StatefulWidget {
   final String userId;
@@ -29,6 +33,14 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   bool isBioExpanded = false;
   late TabController _tabController;
 
+  // Backend state
+  Learner? _learnerData;
+  bool _isLoading = false;
+  bool _isFollowLoading = false;
+  String? _error;
+  int _followerCount = 0;
+  int _followingCount = 0;
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +48,8 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     _tabController.addListener(() {
       setState(() {});
     });
+    _loadLearnerData();
+    _loadFollowStatus();
   }
 
   @override
@@ -44,17 +58,148 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     super.dispose();
   }
 
-  // Mock user data
-  final String bio =
-      "Hello! I'm learning English and love anime, manga, and traveling. Let's practice languages together! 🌟 よろしくお願いします！I enjoy meeting new people from different cultures and sharing experiences.";
-  final String location = "Japan";
-  final String country = "Japan"; // Added country field
-  final int age = 24;
-  final String gender = "Female";
-  final String username = "yukiko_san";
-  final int joinedDays = 32;
-  final int followingCount = 8;
-  final int followersCount = 16;
+  /// Load learner data from backend
+  Future<void> _loadLearnerData() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final learnerProvider = Provider.of<LearnerProvider>(context, listen: false);
+      
+      // Try to get learner by ID first, if that fails try by email/username
+      Learner? learner = await learnerProvider.getLearnerByEmailSilent(widget.userId);
+      learner ??= await learnerProvider.getLearnerByUsernameSilent(widget.userId);
+      
+      if (learner != null) {
+        _learnerData = learner;
+        
+        // Load follow counts
+        _followerCount = await learnerProvider.getFollowerCount(learner.id);
+        _followingCount = await learnerProvider.getFollowingCount(learner.id);
+        
+        // Load follow status after setting _learnerData
+        await _loadFollowStatus();
+      } else {
+        throw Exception('User not found');
+      }
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  /// Load follow status from backend
+  Future<void> _loadFollowStatus() async {
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final learnerProvider = Provider.of<LearnerProvider>(context, listen: false);
+      
+      if (authProvider.currentUser != null && _learnerData != null) {
+        final currentUser = authProvider.currentUser as Learner;
+        final following = await learnerProvider.isFollowing(currentUser.id, _learnerData!.id);
+        setState(() {
+          isFollowing = following;
+        });
+      }
+    } catch (e) {
+      print('Error loading follow status: $e');
+    }
+  }
+
+  /// Toggle follow status with backend
+  Future<void> _toggleFollow() async {
+    setState(() {
+      _isFollowLoading = true;
+    });
+
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final learnerProvider = Provider.of<LearnerProvider>(context, listen: false);
+      
+      if (authProvider.currentUser != null && _learnerData != null) {
+        final currentUser = authProvider.currentUser as Learner;
+        
+        bool success;
+        if (isFollowing) {
+          success = await learnerProvider.unfollowLearner(currentUser.id, _learnerData!.id);
+        } else {
+          success = await learnerProvider.followLearner(currentUser.id, _learnerData!.id);
+        }
+
+        if (success) {
+          setState(() {
+            isFollowing = !isFollowing;
+            _followerCount += isFollowing ? 1 : -1;
+          });
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating follow status: $e')),
+      );
+    } finally {
+      setState(() {
+        _isFollowLoading = false;
+      });
+    }
+  }
+
+  // Computed properties from backend data
+  String get bio => _learnerData?.bio ?? "No bio available";
+  String get location => _learnerData?.country ?? "Unknown";
+  String get country => _learnerData?.country ?? "Unknown";
+  int get age {
+    if (_learnerData == null) return 0;
+    return DateTime.now().difference(_learnerData!.dateOfBirth).inDays ~/ 365;
+  }
+  String get gender => _learnerData?.gender ?? "Unknown";
+  String get username => _learnerData?.username ?? "unknown";
+  int get joinedDays {
+    if (_learnerData == null) return 0;
+    return DateTime.now().difference(_learnerData!.createdAt).inDays;
+  }
+  int get followingCount => _followingCount;
+  int get followersCount => _followerCount;
+  List<String> get interests => _learnerData?.interests ?? [];
+
+  // Get shared interests with current user
+  List<String> get sharedInterests {
+    if (_learnerData == null) return [];
+    
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (authProvider.currentUser == null) return [];
+    
+    final currentUser = authProvider.currentUser as Learner;
+    return _learnerData!.interests
+        .where((interest) => currentUser.interests.contains(interest))
+        .toList();
+  }
+
+  // Helper method to get language flag
+  String _getLanguageFlag(String language) {
+    switch (language.toLowerCase()) {
+      case 'english':
+        return '🇺🇸';
+      case 'spanish':
+        return '🇪🇸';
+      case 'japanese':
+        return '🇯🇵';
+      case 'korean':
+        return '🇰🇷';
+      case 'bangla':
+      case 'bengali':
+        return '🇧🇩';
+      default:
+        return '🌐';
+    }
+  }
 
   // Helper method to get map image provider based on country
   ImageProvider getMapImage(String country) {
@@ -101,23 +246,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     return '${displayHour}:${minute.toString().padLeft(2, '0')} $period';
   }
 
-  final List<String> sharedInterests = ["漫画", "Anime"];
-  final List<String> interests = [
-    "Travel",
-    "旅行",
-    "Music",
-    "音楽",
-    "Photography",
-    "写真",
-    "Cooking",
-    "料理",
-    "Reading",
-    "読書",
-    "Gaming",
-    "ゲーム",
-  ];
-
-  // Mock feed posts for this user
+  // Mock feed posts for this user (TODO: Replace with backend feed data)
   List<FeedPost> get userPosts => [
     FeedPost(
       feedId: 'user_feed_001',
@@ -164,6 +293,82 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = const Color(0xFF7A54FF);
+
+    // Show loading state
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Profile'),
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    // Show error state
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Profile'),
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline,
+                size: 64,
+                color: Colors.grey,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Error loading profile',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _error!,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _loadLearnerData,
+                child: const Text('Try Again'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Show profile not found state
+    if (_learnerData == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Profile'),
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+        ),
+        body: const Center(
+          child: Text(
+            'Profile not found',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       body: Stack(
@@ -322,18 +527,25 @@ class _OthersProfilePageState extends State<OthersProfilePage>
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             GestureDetector(
-              onTap: () {
-                setState(() {
-                  isFollowing = !isFollowing;
-                });
-              },
+              onTap: _isFollowLoading ? null : _toggleFollow,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isFollowing ? primaryColor : Colors.grey[400],
+                  color: _isFollowLoading 
+                      ? Colors.grey[400]
+                      : (isFollowing ? primaryColor : Colors.grey[400]),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(Icons.thumb_up, color: Colors.white, size: 20),
+                child: _isFollowLoading
+                    ? SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : Icon(Icons.thumb_up, color: Colors.white, size: 20),
               ),
             ),
           ],
@@ -392,15 +604,15 @@ class _OthersProfilePageState extends State<OthersProfilePage>
         Row(
           children: [
             _buildLanguageChip(
-              "🇯🇵",
-              widget.nativeLanguage,
+              _getLanguageFlag(_learnerData!.nativeLanguage),
+              _learnerData!.nativeLanguage,
               Colors.green,
               isDark,
             ),
             SizedBox(width: 8),
             _buildLanguageChip(
-              "🇺🇸",
-              widget.learningLanguage,
+              _getLanguageFlag(_learnerData!.learningLanguage),
+              _learnerData!.learningLanguage,
               primaryColor,
               isDark,
             ),
@@ -691,11 +903,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
             // Follow button (now outlined style)
             Expanded(
               child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    isFollowing = !isFollowing;
-                  });
-                },
+                onPressed: _isFollowLoading ? null : _toggleFollow,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isFollowing
                       ? primaryColor
@@ -706,12 +914,23 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                     borderRadius: BorderRadius.circular(24),
                   ),
                 ),
-                child: Text(
-                  isFollowing
-                      ? AppLocalizations.of(context)!.following
-                      : AppLocalizations.of(context)!.follow,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+                child: _isFollowLoading
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            isFollowing ? Colors.white : primaryColor,
+                          ),
+                        ),
+                      )
+                    : Text(
+                        isFollowing
+                            ? AppLocalizations.of(context)!.following
+                            : AppLocalizations.of(context)!.follow,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
               ),
             ),
 
@@ -721,20 +940,20 @@ class _OthersProfilePageState extends State<OthersProfilePage>
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  // Navigate to chat page
+                  // Navigate to chat page with real user data
                   final chatUser = ChatUser(
-                    id: widget.userId,
-                    name: widget.name,
-                    avatarUrl: widget.avatar,
-                    country: location,
-                    flag: "🇯🇵",
+                    id: _learnerData!.id,
+                    name: _learnerData!.name,
+                    avatarUrl: _learnerData!.profileImage ?? '',
+                    country: _learnerData!.country,
+                    flag: _getLanguageFlag(_learnerData!.nativeLanguage),
                     age: age,
-                    gender: gender,
-                    isOnline: true,
-                    lastSeen: DateTime.now().subtract(Duration(minutes: 5)),
-                    interests: interests,
-                    nativeLanguage: widget.nativeLanguage,
-                    learningLanguage: widget.learningLanguage,
+                    gender: _learnerData!.gender,
+                    isOnline: true, // TODO: Implement real online status
+                    lastSeen: DateTime.now().subtract(Duration(minutes: 5)), // TODO: Implement real last seen
+                    interests: _learnerData!.interests,
+                    nativeLanguage: _learnerData!.nativeLanguage,
+                    learningLanguage: _learnerData!.learningLanguage,
                   );
 
                   Navigator.push(

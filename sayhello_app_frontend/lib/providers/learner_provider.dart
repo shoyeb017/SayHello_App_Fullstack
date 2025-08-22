@@ -93,6 +93,24 @@ class LearnerProvider extends ChangeNotifier {
     }
   }
 
+  /// Load learner by email (silent - no loading state changes)
+  Future<Learner?> getLearnerByEmailSilent(String email) async {
+    try {
+      return await _repository.getLearnerByEmail(email);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Load learner by username (silent - no loading state changes)
+  Future<Learner?> getLearnerByUsernameSilent(String username) async {
+    try {
+      return await _repository.getLearnerByUsername(username);
+    } catch (e) {
+      return null;
+    }
+  }
+
   /// Create new learner profile
   Future<bool> createLearner(Map<String, dynamic> learnerData) async {
     _setLoading(true);
