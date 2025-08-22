@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../../providers/settings_provider.dart';
 import '../../../../../providers/revenue_provider.dart';
 import '../../../../../providers/auth_provider.dart';
-import '../../../../../models/revenue_and_withdraw.dart';
+import '../../../../../models/revenue.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../instructor_main_tab.dart';
 import 'withdrawal_request_page.dart';
@@ -624,9 +624,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  transaction.createdAt != null
-                      ? _formatDate(transaction.createdAt!)
-                      : 'Date not available',
+                  _formatDate(transaction.createdAt),
                   style: TextStyle(
                     fontSize: 10,
                     color: isDark ? Colors.grey[400] : Colors.grey[600],

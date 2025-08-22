@@ -2,7 +2,7 @@
 /// Manages state for instructor revenue and withdrawal data
 
 import 'package:flutter/foundation.dart';
-import '../models/revenue_and_withdraw.dart';
+import '../models/revenue.dart';
 import '../data/revenue_data.dart';
 
 class RevenueProvider with ChangeNotifier {

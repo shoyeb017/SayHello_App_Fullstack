@@ -2,7 +2,7 @@
 /// Handles backend communication for instructor revenue management
 
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/revenue_and_withdraw.dart';
+import '../models/revenue.dart';
 
 class RevenueRepository {
   final SupabaseClient _supabase = Supabase.instance.client;
