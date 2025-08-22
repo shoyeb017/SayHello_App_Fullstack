@@ -299,8 +299,12 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     if (authProvider.currentUser == null) return [];
 
     final currentUser = authProvider.currentUser as Learner;
-    final currentUserInterests = currentUser.interests.map((e) => e.toLowerCase()).toList();
-    final otherUserInterests = _learnerData!.interests.map((e) => e.toLowerCase()).toList();
+    final currentUserInterests = currentUser.interests
+        .map((e) => e.toLowerCase())
+        .toList();
+    final otherUserInterests = _learnerData!.interests
+        .map((e) => e.toLowerCase())
+        .toList();
 
     return otherUserInterests
         .where((interest) => currentUserInterests.contains(interest))

@@ -137,22 +137,19 @@ class Follower {
   final String id;
   final String followerUserId; // learner ID who is following
   final String followedUserId; // learner ID who is being followed
-  final DateTime createdAt;
 
   const Follower({
     required this.id,
     required this.followerUserId,
     required this.followedUserId,
-    required this.createdAt,
   });
 
   /// Create Follower from JSON
   factory Follower.fromJson(Map<String, dynamic> json) {
     return Follower(
-      id: json['id'] as String,
+      id: json['id'] as String? ?? '',
       followerUserId: json['follower_user_id'] as String,
       followedUserId: json['followed_user_id'] as String,
-      createdAt: DateTime.parse(json['created_at'] as String),
     );
   }
 
@@ -162,7 +159,6 @@ class Follower {
       'id': id,
       'follower_user_id': followerUserId,
       'followed_user_id': followedUserId,
-      'created_at': createdAt.toIso8601String(),
     };
   }
 

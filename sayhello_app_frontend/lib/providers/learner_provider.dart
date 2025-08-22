@@ -279,8 +279,12 @@ class LearnerProvider extends ChangeNotifier {
 
     try {
       await _repository.followLearner(followerId, followedId);
-      // Refresh following list
-      await loadFollowing(followerId);
+      // Try to refresh following list, but don't fail if this fails
+      try {
+        await loadFollowing(followerId);
+      } catch (e) {
+        print('Warning: Failed to reload following list after follow: $e');
+      }
       return true;
     } catch (e) {
       _setError('Failed to follow learner: $e');
@@ -294,8 +298,12 @@ class LearnerProvider extends ChangeNotifier {
 
     try {
       await _repository.unfollowLearner(followerId, followedId);
-      // Refresh following list
-      await loadFollowing(followerId);
+      // Try to refresh following list, but don't fail if this fails
+      try {
+        await loadFollowing(followerId);
+      } catch (e) {
+        print('Warning: Failed to reload following list after unfollow: $e');
+      }
       return true;
     } catch (e) {
       _setError('Failed to unfollow learner: $e');
