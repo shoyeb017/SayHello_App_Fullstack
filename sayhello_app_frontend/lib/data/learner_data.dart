@@ -36,7 +36,9 @@ class LearnerRepository {
           .eq('id', id)
           .maybeSingle();
 
-      print('LearnerRepository: Query response: ${response != null ? 'Found' : 'Not found'}');
+      print(
+        'LearnerRepository: Query response: ${response != null ? 'Found' : 'Not found'}',
+      );
       return response != null ? Learner.fromJson(response) : null;
     } catch (e) {
       print('LearnerRepository: Error getting learner by ID: $e');

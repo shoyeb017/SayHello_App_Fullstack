@@ -28,11 +28,33 @@ class FeedRepository {
   Future<Feed?> getFeedPostById(String id) async {
     final response = await _client
         .from('feed')
-        .select()
+        .select('''
+          id,
+          learner_id,
+          content_text,
+          created_at,
+          feed_images (
+            image_url
+          )
+        ''')
         .eq('id', id)
         .maybeSingle();
+
     if (response == null) return null;
-    return Feed.fromJson(response);
+
+    final images =
+        (response['feed_images'] as List?)
+            ?.map((img) => img['image_url'] as String)
+            .toList() ??
+        [];
+
+    return Feed.fromJson({
+      ...response,
+      'image_urls': images,
+      'likes_count': 0, // Will be calculated separately
+      'comments_count': 0, // Will be calculated separately
+      'is_liked': false, // Will be calculated separately
+    });
   }
 
   /// Update feed post
@@ -55,10 +77,34 @@ class FeedRepository {
   Future<List<Feed>> getAllFeedPosts({int limit = 20, int offset = 0}) async {
     final response = await _client
         .from('feed')
-        .select()
+        .select('''
+          id,
+          learner_id,
+          content_text,
+          created_at,
+          feed_images (
+            image_url
+          )
+        ''')
         .order('created_at', ascending: false)
         .range(offset, offset + limit - 1);
-    return (response as List).map((json) => Feed.fromJson(json)).toList();
+
+    // Process the response to include image URLs
+    return (response as List).map((json) {
+      final images =
+          (json['feed_images'] as List?)
+              ?.map((img) => img['image_url'] as String)
+              .toList() ??
+          [];
+
+      return Feed.fromJson({
+        ...json,
+        'image_urls': images,
+        'likes_count': 0, // Will be calculated separately
+        'comments_count': 0, // Will be calculated separately
+        'is_liked': false, // Will be calculated separately
+      });
+    }).toList();
   }
 
   /// Get feed posts by user
@@ -69,11 +115,35 @@ class FeedRepository {
   }) async {
     final response = await _client
         .from('feed')
-        .select()
+        .select('''
+          id,
+          learner_id,
+          content_text,
+          created_at,
+          feed_images (
+            image_url
+          )
+        ''')
         .eq('learner_id', userId)
         .order('created_at', ascending: false)
         .range(offset, offset + limit - 1);
-    return (response as List).map((json) => Feed.fromJson(json)).toList();
+
+    // Process the response to include image URLs
+    return (response as List).map((json) {
+      final images =
+          (json['feed_images'] as List?)
+              ?.map((img) => img['image_url'] as String)
+              .toList() ??
+          [];
+
+      return Feed.fromJson({
+        ...json,
+        'image_urls': images,
+        'likes_count': 0, // Will be calculated separately
+        'comments_count': 0, // Will be calculated separately
+        'is_liked': false, // Will be calculated separately
+      });
+    }).toList();
   }
 
   // =============================

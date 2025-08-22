@@ -821,7 +821,9 @@ class _ProfilePageState extends State<ProfilePage> {
     Learner learner,
   ) {
     final interests = learner.interests.isNotEmpty
-        ? learner.interests.join(', ')
+        ? learner.interests
+              .map((interest) => _capitalizeFirst(interest))
+              .join(', ')
         : 'No interests selected';
 
     return Container(
@@ -1186,25 +1188,25 @@ class _ProfilePageState extends State<ProfilePage> {
     List<String> tempSelected = List.from(currentInterests);
 
     final availableInterests = [
-      "Art",
-      "Music",
-      "Reading",
-      "Writing",
-      "Sports",
-      "Gaming",
-      "Travel",
-      "Cooking",
-      "Fashion",
-      "Photography",
-      "Crafting",
-      "Gardening",
-      "Fitness",
-      "Movies",
-      "Technology",
-      "Nature",
-      "Animals",
-      "Science",
-      "Socializing",
+      "art",
+      "music",
+      "reading",
+      "writing",
+      "sports",
+      "gaming",
+      "travel",
+      "cooking",
+      "fashion",
+      "photography",
+      "crafting",
+      "gardening",
+      "fitness",
+      "movies",
+      "technology",
+      "nature",
+      "animals",
+      "science",
+      "socializing",
     ];
 
     showDialog(
@@ -1222,7 +1224,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 final isSelected = tempSelected.contains(interest);
 
                 return CheckboxListTile(
-                  title: Text(interest),
+                  title: Text(_capitalizeFirst(interest)),
                   value: isSelected,
                   activeColor: primaryColor,
                   onChanged: (bool? value) {

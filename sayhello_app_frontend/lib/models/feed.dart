@@ -3,45 +3,36 @@
 
 class Feed {
   final String id;
-  final String userId;
-  final String content;
+  final String learnerId; // Changed from userId to match SQL schema
+  final String contentText; // Changed from content to match SQL schema
   final DateTime createdAt;
-  final String? imageUrl;
-  final String? videoUrl;
+  final List<String> imageUrls; // Changed to list to match feed_images table
   final int likesCount;
   final int commentsCount;
   final bool isLiked;
-  final String? language;
-  final List<String> tags;
 
   const Feed({
     required this.id,
-    required this.userId,
-    required this.content,
+    required this.learnerId,
+    required this.contentText,
     required this.createdAt,
-    this.imageUrl,
-    this.videoUrl,
+    this.imageUrls = const [],
     required this.likesCount,
     required this.commentsCount,
     required this.isLiked,
-    this.language,
-    required this.tags,
   });
 
   /// Create Feed from JSON (Supabase response)
   factory Feed.fromJson(Map<String, dynamic> json) {
     return Feed(
       id: json['id'] as String,
-      userId: json['user_id'] as String,
-      content: json['content'] as String,
+      learnerId: json['learner_id'] as String,
+      contentText: json['content_text'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
-      imageUrl: json['image_url'] as String?,
-      videoUrl: json['video_url'] as String?,
+      imageUrls: List<String>.from(json['image_urls'] ?? []),
       likesCount: json['likes_count'] as int? ?? 0,
       commentsCount: json['comments_count'] as int? ?? 0,
       isLiked: json['is_liked'] as bool? ?? false,
-      language: json['language'] as String?,
-      tags: List<String>.from(json['tags'] ?? []),
     );
   }
 
@@ -49,56 +40,47 @@ class Feed {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'user_id': userId,
-      'content': content,
+      'learner_id': learnerId,
+      'content_text': contentText,
       'created_at': createdAt.toIso8601String(),
-      'image_url': imageUrl,
-      'video_url': videoUrl,
+      'image_urls': imageUrls,
       'likes_count': likesCount,
       'comments_count': commentsCount,
       'is_liked': isLiked,
-      'language': language,
-      'tags': tags,
     };
   }
 
   /// Create a copy with modified fields
   Feed copyWith({
     String? id,
-    String? userId,
-    String? content,
+    String? learnerId,
+    String? contentText,
     DateTime? createdAt,
-    String? imageUrl,
-    String? videoUrl,
+    List<String>? imageUrls,
     int? likesCount,
     int? commentsCount,
     bool? isLiked,
-    String? language,
-    List<String>? tags,
   }) {
     return Feed(
       id: id ?? this.id,
-      userId: userId ?? this.userId,
-      content: content ?? this.content,
+      learnerId: learnerId ?? this.learnerId,
+      contentText: contentText ?? this.contentText,
       createdAt: createdAt ?? this.createdAt,
-      imageUrl: imageUrl ?? this.imageUrl,
-      videoUrl: videoUrl ?? this.videoUrl,
+      imageUrls: imageUrls ?? List.from(this.imageUrls),
       likesCount: likesCount ?? this.likesCount,
       commentsCount: commentsCount ?? this.commentsCount,
       isLiked: isLiked ?? this.isLiked,
-      language: language ?? this.language,
-      tags: tags ?? List.from(this.tags),
     );
   }
 
   /// Check if feed has media content
-  bool get hasMedia => hasImage || hasVideo;
+  bool get hasMedia => hasImages;
 
-  /// Check if feed has image
-  bool get hasImage => imageUrl != null && imageUrl!.isNotEmpty;
+  /// Check if feed has images
+  bool get hasImages => imageUrls.isNotEmpty;
 
-  /// Check if feed has video
-  bool get hasVideo => videoUrl != null && videoUrl!.isNotEmpty;
+  /// Get first image URL
+  String? get firstImageUrl => imageUrls.isNotEmpty ? imageUrls.first : null;
 
   /// Get formatted time ago
   String get timeAgo {
@@ -149,8 +131,10 @@ class Feed {
 class FeedComment {
   final String id;
   final String feedId;
-  final String userId;
-  final String comment;
+  final String learnerId; // Changed from userId to match SQL schema
+  final String contentText; // Changed from comment to match SQL schema
+  final String? translatedContent; // Added to match SQL schema
+  final String? parentCommentId; // Added to match SQL schema
   final DateTime createdAt;
   final int likesCount;
   final bool isLiked;
@@ -158,8 +142,10 @@ class FeedComment {
   const FeedComment({
     required this.id,
     required this.feedId,
-    required this.userId,
-    required this.comment,
+    required this.learnerId,
+    required this.contentText,
+    this.translatedContent,
+    this.parentCommentId,
     required this.createdAt,
     required this.likesCount,
     required this.isLiked,
@@ -170,8 +156,10 @@ class FeedComment {
     return FeedComment(
       id: json['id'] as String,
       feedId: json['feed_id'] as String,
-      userId: json['user_id'] as String,
-      comment: json['comment'] as String,
+      learnerId: json['learner_id'] as String,
+      contentText: json['content_text'] as String,
+      translatedContent: json['translated_content'] as String?,
+      parentCommentId: json['parent_comment_id'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       likesCount: json['likes_count'] as int? ?? 0,
       isLiked: json['is_liked'] as bool? ?? false,
@@ -183,8 +171,10 @@ class FeedComment {
     return {
       'id': id,
       'feed_id': feedId,
-      'user_id': userId,
-      'comment': comment,
+      'learner_id': learnerId,
+      'content_text': contentText,
+      'translated_content': translatedContent,
+      'parent_comment_id': parentCommentId,
       'created_at': createdAt.toIso8601String(),
       'likes_count': likesCount,
       'is_liked': isLiked,
@@ -195,8 +185,10 @@ class FeedComment {
   FeedComment copyWith({
     String? id,
     String? feedId,
-    String? userId,
-    String? comment,
+    String? learnerId,
+    String? contentText,
+    String? translatedContent,
+    String? parentCommentId,
     DateTime? createdAt,
     int? likesCount,
     bool? isLiked,
@@ -204,8 +196,10 @@ class FeedComment {
     return FeedComment(
       id: id ?? this.id,
       feedId: feedId ?? this.feedId,
-      userId: userId ?? this.userId,
-      comment: comment ?? this.comment,
+      learnerId: learnerId ?? this.learnerId,
+      contentText: contentText ?? this.contentText,
+      translatedContent: translatedContent ?? this.translatedContent,
+      parentCommentId: parentCommentId ?? this.parentCommentId,
       createdAt: createdAt ?? this.createdAt,
       likesCount: likesCount ?? this.likesCount,
       isLiked: isLiked ?? this.isLiked,
@@ -256,13 +250,11 @@ class FeedWithUser {
   final Feed feed;
   final String userName;
   final String? userAvatarUrl;
-  final bool isInstructor;
 
   const FeedWithUser({
     required this.feed,
     required this.userName,
     this.userAvatarUrl,
-    required this.isInstructor,
   });
 
   /// Create FeedWithUser from JSON with user data
@@ -271,13 +263,7 @@ class FeedWithUser {
       feed: Feed.fromJson(json),
       userName: json['user_name'] as String,
       userAvatarUrl: json['user_avatar_url'] as String?,
-      isInstructor: json['is_instructor'] as bool? ?? false,
     );
-  }
-
-  /// Get user display name with instructor badge
-  String get userDisplayName {
-    return isInstructor ? '$userName 👨‍🏫' : userName;
   }
 
   @override

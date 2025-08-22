@@ -291,7 +291,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   int get followersCount => _followerCount;
   List<String> get interests => _learnerData?.interests ?? [];
 
-  // Get shared interests with current user
+  // Get shared interests with current user (case-insensitive comparison)
   List<String> get sharedInterests {
     if (_learnerData == null) return [];
 
@@ -299,8 +299,8 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     if (authProvider.currentUser == null) return [];
 
     final currentUser = authProvider.currentUser as Learner;
-    final currentUserInterests = currentUser.interests;
-    final otherUserInterests = _learnerData!.interests;
+    final currentUserInterests = currentUser.interests.map((e) => e.toLowerCase()).toList();
+    final otherUserInterests = _learnerData!.interests.map((e) => e.toLowerCase()).toList();
 
     return otherUserInterests
         .where((interest) => currentUserInterests.contains(interest))
@@ -346,6 +346,12 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     }
   }
 
+  // Helper method to capitalize first letter
+  String _capitalizeFirst(String input) {
+    if (input.isEmpty) return input;
+    return input[0].toUpperCase() + input.substring(1).toLowerCase();
+  }
+
   // Helper method to get current time for the country
   String getCurrentTimeForCountry(String country) {
     final now = DateTime.now();
@@ -375,144 +381,47 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = const Color(0xFF7A54FF);
-    final screenSize = MediaQuery.of(context).size;
 
     // Show loading state
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: isDark ? Colors.black : Colors.grey[50],
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Custom app bar for loading state
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    Text(
-                      'Profile',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(color: primaryColor),
-                      SizedBox(height: 16),
-                      Text(
-                        'Loading profile...',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+        appBar: AppBar(
+          title: Text('Profile'),
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
         ),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     // Show error state
     if (_error != null) {
       return Scaffold(
-        backgroundColor: isDark ? Colors.black : Colors.grey[50],
-        body: SafeArea(
+        appBar: AppBar(
+          title: Text('Profile'),
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+        ),
+        body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Custom app bar for error state
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    Text(
-                      'Profile',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
+              Icon(Icons.error_outline, size: 64, color: Colors.grey),
+              const SizedBox(height: 16),
+              Text(
+                'Error loading profile',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              Expanded(
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.error_outline,
-                            size: 48,
-                            color: Colors.red,
-                          ),
-                        ),
-                        SizedBox(height: 24),
-                        Text(
-                          'Error loading profile',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.black,
-                          ),
-                        ),
-                        SizedBox(height: 12),
-                        Text(
-                          _error!,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                            height: 1.4,
-                          ),
-                        ),
-                        SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: _loadLearnerData,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                          ),
-                          child: Text(
-                            'Try Again',
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              const SizedBox(height: 8),
+              Text(
+                _error!,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _loadLearnerData,
+                child: const Text('Try Again'),
               ),
             ],
           ),
@@ -523,377 +432,156 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     // Show profile not found state
     if (_learnerData == null) {
       return Scaffold(
-        backgroundColor: isDark ? Colors.black : Colors.grey[50],
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Custom app bar for not found state
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    Text(
-                      'Profile',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.person_off_outlined,
-                          size: 48,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      SizedBox(height: 24),
-                      Text(
-                        'Profile not found',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: 12),
-                      Text(
-                        'This user profile could not be found',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+        appBar: AppBar(
+          title: Text('Profile'),
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+        ),
+        body: const Center(
+          child: Text(
+            'Profile not found',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.grey[50],
       body: Stack(
         children: [
           // Main scrollable content
           CustomScrollView(
+            clipBehavior: Clip.none,
             slivers: [
-              // Cover image section
+              // Cover image and profile content together
               SliverToBoxAdapter(
-                child: Container(
-                  height: 240,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        primaryColor.withOpacity(0.8),
-                        primaryColor,
-                      ],
-                    ),
-                    image: DecorationImage(
-                      image: getMapImage(country),
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(
-                        primaryColor.withOpacity(0.6),
-                        BlendMode.overlay,
+                child: Column(
+                  children: [
+                    // Cover image section
+                    Container(
+                      width: double.infinity,
+                      height: 200, // Reduced height
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [primaryColor.withOpacity(0.8), primaryColor],
+                        ),
+                        image: DecorationImage(
+                          image: getMapImage(country),
+                          fit: BoxFit.cover,
+                          colorFilter: ColorFilter.mode(
+                            primaryColor.withOpacity(0.6),
+                            BlendMode.overlay,
+                          ),
+                          onError: (exception, stackTrace) {
+                            print(
+                              'Error loading map image for $country: $exception',
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ),
-                  child: SafeArea(
-                    child: Stack(
-                      children: [
-                        // Back button
-                        Positioned(
-                          top: 8,
-                          left: 8,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black26,
-                              shape: BoxShape.circle,
-                            ),
+                      child: Stack(
+                        children: [
+                          // Back button positioned over cover image
+                          Positioned(
+                            top: 50,
+                            left: 16,
                             child: IconButton(
-                              icon: Icon(Icons.arrow_back, color: Colors.white),
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                                size: 24,
+                              ),
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),
-                        ),
-                        
-                        // Location and time
-                        Positioned(
-                          top: 16,
-                          right: 16,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.black26,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.public, color: Colors.white, size: 16),
-                                SizedBox(width: 6),
-                                Text(
-                                  "$location ${getCurrentTimeForCountry(country)}",
-                                  style: TextStyle(
+
+                          // Location and time
+                          Positioned(
+                            top: 80, // Adjusted for smaller cover height
+                            right: 16,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.black26,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.public,
                                     color: Colors.white,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
+                                    size: 14,
                                   ),
-                                ),
-                              ],
+                                  SizedBox(width: 4),
+                                  Text(
+                                    "$location ${getCurrentTimeForCountry(country)}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              
-              // Profile content
-              SliverToBoxAdapter(
-                child: Transform.translate(
-                  offset: Offset(0, -60),
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.grey[900] : Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Column(
+
+                    // Profile content with overlapping profile picture
+                    Stack(
+                      clipBehavior: Clip.none,
                       children: [
-                        // Profile picture and basic info
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(20, 20, 20, 24),
+                        // Main content container
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.fromLTRB(16, 50, 16, 100),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Profile picture
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 4,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      blurRadius: 10,
-                                      offset: Offset(0, 5),
-                                    ),
-                                  ],
-                                ),
-                                child: CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage: NetworkImage(widget.avatar),
-                                ),
-                              ),
-                              
-                              SizedBox(height: 16),
-                              
-                              // Follow button (compact)
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  GestureDetector(
-                                    onTap: _isFollowLoading ? null : _toggleFollow,
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                      decoration: BoxDecoration(
-                                        color: isFollowing ? primaryColor : primaryColor.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                          color: primaryColor,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: _isFollowLoading
-                                          ? SizedBox(
-                                              width: 16,
-                                              height: 16,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                valueColor: AlwaysStoppedAnimation<Color>(
-                                                  isFollowing ? Colors.white : primaryColor,
-                                                ),
-                                              ),
-                                            )
-                                          : Icon(
-                                              isFollowing ? Icons.favorite : Icons.favorite_border,
-                                              color: isFollowing ? Colors.white : primaryColor,
-                                              size: 18,
-                                            ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              
-                              SizedBox(height: 12),
-                              
-                              // Name and gender/age
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      widget.name,
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: isDark ? Colors.white : Colors.black,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFFEEDF7),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          gender == "female" ? Icons.female : Icons.male,
-                                          color: Color(0xFFD619A8),
-                                          size: 16,
-                                        ),
-                                        SizedBox(width: 2),
-                                        Text(
-                                          age.toString(),
-                                          style: TextStyle(
-                                            color: Color(0xFFD619A8),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              
-                              SizedBox(height: 6),
-                              
-                              // Username
-                              Text(
-                                '@$username',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              
-                              SizedBox(height: 16),
-                              
-                              // Language chips
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _buildLanguageChip(
-                                    _getLanguageFlag(_learnerData!.nativeLanguage),
-                                    _learnerData!.nativeLanguage,
-                                    Colors.green,
-                                    isDark,
-                                  ),
-                                  SizedBox(width: 12),
-                                  Icon(Icons.arrow_forward, color: Colors.grey, size: 16),
-                                  SizedBox(width: 12),
-                                  _buildLanguageChip(
-                                    _getLanguageFlag(_learnerData!.learningLanguage),
-                                    _learnerData!.learningLanguage,
-                                    primaryColor,
-                                    isDark,
-                                  ),
-                                ],
-                              ),
-                              
+                              // Space for profile picture
+                              SizedBox(height: 40),
+
+                              // Basic info
+                              _buildBasicInfo(isDark, primaryColor),
                               SizedBox(height: 20),
-                              
-                              // Stats row
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                decoration: BoxDecoration(
-                                  color: isDark ? Colors.grey[800] : Colors.grey[50],
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    _buildStatItem(
-                                      "${joinedDays}d",
-                                      AppLocalizations.of(context)!.joined,
-                                      isDark,
-                                    ),
-                                    _buildStatDivider(isDark),
-                                    _buildStatItem(
-                                      followingCount.toString(),
-                                      AppLocalizations.of(context)!.following,
-                                      isDark,
-                                    ),
-                                    _buildStatDivider(isDark),
-                                    _buildStatItem(
-                                      followersCount.toString(),
-                                      AppLocalizations.of(context)!.followers,
-                                      isDark,
-                                    ),
-                                  ],
-                                ),
-                              ),
+
+                              // Bio section
+                              _buildBioSection(isDark),
+                              SizedBox(height: 20),
+
+                              // Tabs
+                              _buildTabSection(isDark, primaryColor),
                             ],
                           ),
                         ),
-                        
-                        // Bio section
-                        if (bio.isNotEmpty && bio != "No bio available")
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                            child: _buildBioSection(isDark),
+
+                        // Profile picture positioned to overlap with cover image
+                        Positioned(
+                          top: -45, // Move it up to overlap with cover image
+                          left: 16,
+                          child: CircleAvatar(
+                            radius: 45,
+                            backgroundColor: isDark
+                                ? Colors.grey[800]
+                                : Colors.white,
+                            child: CircleAvatar(
+                              radius: 42,
+                              backgroundImage: NetworkImage(widget.avatar),
+                            ),
                           ),
-                        
-                        // Tabs section
-                        _buildTabSection(isDark, primaryColor),
+                        ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-              ),
-              
-              // Extra space for bottom buttons
-              SliverToBoxAdapter(
-                child: SizedBox(height: 120),
               ),
             ],
           ),
@@ -1228,7 +916,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                       border: Border.all(color: primaryColor.withOpacity(0.3)),
                     ),
                     child: Text(
-                      interest,
+                      _capitalizeFirst(interest),
                       style: TextStyle(
                         color: primaryColor,
                         fontWeight: FontWeight.w600,
@@ -1265,7 +953,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                interest,
+                _capitalizeFirst(interest),
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black87,
                   fontSize: 13,
@@ -1442,7 +1130,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
 
           // Feed content
           Text(
-            feed.content,
+            feed.contentText,
             style: TextStyle(
               fontSize: 14,
               color: isDark ? Colors.white : Colors.black,
@@ -1450,29 +1138,38 @@ class _OthersProfilePageState extends State<OthersProfilePage>
             ),
           ),
 
-          // Feed image if available
-          if (feed.hasImage) ...[
+          // Feed images if available
+          if (feed.hasImages) ...[
             SizedBox(height: 12),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                feed.imageUrl!,
-                width: double.infinity,
-                height: 200,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 200,
-                    color: Colors.grey[300],
-                    child: Center(
-                      child: Icon(
-                        Icons.image_not_supported,
-                        color: Colors.grey,
+            Column(
+              children: feed.imageUrls
+                  .map(
+                    (imageUrl) => Container(
+                      margin: EdgeInsets.only(bottom: 8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          imageUrl,
+                          width: double.infinity,
+                          height: 200,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: 200,
+                              color: Colors.grey[300],
+                              child: Center(
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
-                  );
-                },
-              ),
+                  )
+                  .toList(),
             ),
           ],
 
@@ -1501,23 +1198,11 @@ class _OthersProfilePageState extends State<OthersProfilePage>
 
               Spacer(),
 
-              // Language tag if available
-              if (feed.language != null)
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF7A54FF).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    feed.language!,
-                    style: TextStyle(
-                      color: const Color(0xFF7A54FF),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+              // Time ago
+              Text(
+                feed.timeAgo,
+                style: TextStyle(color: Colors.grey, fontSize: 10),
+              ),
             ],
           ),
         ],
