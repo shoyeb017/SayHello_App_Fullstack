@@ -16,27 +16,31 @@ class _GroupChatTabState extends State<GroupChatTab> {
   final ScrollController _scrollController = ScrollController();
 
   // For demo purposes - in real app, get from auth service
-  final String _currentUserId = 'learner_001';
+  final String _currentUserId =
+      '123e4567-e89b-12d3-a456-426614174001'; // learner UUID
   final String _currentUserName = 'Student';
+
+  // Provider reference for safe disposal
+  GroupChatProvider? _groupChatProvider;
 
   // Mock enrolled members data - in real app, get from course service
   final List<Map<String, dynamic>> _enrolledMembers = [
     {
-      'id': 'instructor_1',
+      'id': '123e4567-e89b-12d3-a456-426614174000',
       'name': 'Dr. Smith',
       'role': 'instructor',
       'avatar': null,
       'joinDate': '2025-07-15',
     },
     {
-      'id': 'learner_1',
+      'id': '123e4567-e89b-12d3-a456-426614174001',
       'name': 'Sarah Chen',
       'role': 'learner',
       'avatar': null,
       'joinDate': '2025-07-18',
     },
     {
-      'id': 'learner_2',
+      'id': '123e4567-e89b-12d3-a456-426614174002',
       'name': 'Mike Johnson',
       'role': 'learner',
       'avatar': null,
@@ -55,9 +59,9 @@ class _GroupChatTabState extends State<GroupChatTab> {
   void _loadMessages() {
     final courseId = widget.course['id']?.toString();
     if (courseId != null) {
-      final provider = context.read<GroupChatProvider>();
-      provider.loadMessages(courseId);
-      provider.subscribeToRealTimeUpdates(courseId);
+      _groupChatProvider = context.read<GroupChatProvider>();
+      _groupChatProvider!.loadMessages(courseId);
+      _groupChatProvider!.subscribeToRealTimeUpdates(courseId);
     }
   }
 
@@ -530,8 +534,7 @@ class _GroupChatTabState extends State<GroupChatTab> {
 
   @override
   void dispose() {
-    final provider = context.read<GroupChatProvider>();
-    provider.unsubscribeFromRealTimeUpdates();
+    _groupChatProvider?.unsubscribeFromRealTimeUpdates();
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();

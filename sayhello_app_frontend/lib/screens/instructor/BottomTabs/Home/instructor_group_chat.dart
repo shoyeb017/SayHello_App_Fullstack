@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../../l10n/app_localizations.dart';
 import '../../../../providers/group_chat_provider.dart';
+import '../../../../providers/auth_provider.dart';
 import '../../../../models/group_chat_message.dart';
+import '../../../../models/instructor.dart';
 
 class InstructorGroupChatTab extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -16,9 +18,21 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  // For demo purposes - in real app, get from auth service
-  final String _currentUserId = 'instructor_001';
-  final String _currentUserName = 'Instructor';
+  // Provider reference for safe disposal
+  GroupChatProvider? _groupChatProvider;
+
+  // Get current user data from auth
+  String get _currentUserId {
+    final authProvider = context.read<AuthProvider>();
+    final instructor = authProvider.currentUser as Instructor?;
+    return instructor?.id ?? '';
+  }
+
+  String get _currentUserName {
+    final authProvider = context.read<AuthProvider>();
+    final instructor = authProvider.currentUser as Instructor?;
+    return instructor?.name ?? 'Instructor';
+  }
 
   @override
   void initState() {
@@ -31,9 +45,9 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
   void _loadMessages() {
     final courseId = widget.course['id']?.toString();
     if (courseId != null) {
-      final provider = context.read<GroupChatProvider>();
-      provider.loadMessages(courseId);
-      provider.subscribeToRealTimeUpdates(courseId);
+      _groupChatProvider = context.read<GroupChatProvider>();
+      _groupChatProvider!.loadMessages(courseId);
+      _groupChatProvider!.subscribeToRealTimeUpdates(courseId);
     }
   }
 
@@ -434,12 +448,21 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
     final courseId = widget.course['id']?.toString();
     if (courseId == null) return;
 
+    final currentUserId = _currentUserId;
+    if (currentUserId.isEmpty) {
+      // Handle case where user is not properly authenticated
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Authentication error. Please log in again.')),
+      );
+      return;
+    }
+
     final messageText = _controller.text.trim();
     _controller.clear();
 
     final success = await context.read<GroupChatProvider>().sendMessage(
       courseId: courseId,
-      senderId: _currentUserId,
+      senderId: currentUserId,
       senderType: 'instructor',
       contentText: messageText,
     );
@@ -460,8 +483,7 @@ class _InstructorGroupChatTabState extends State<InstructorGroupChatTab> {
 
   @override
   void dispose() {
-    final provider = context.read<GroupChatProvider>();
-    provider.unsubscribeFromRealTimeUpdates();
+    _groupChatProvider?.unsubscribeFromRealTimeUpdates();
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();

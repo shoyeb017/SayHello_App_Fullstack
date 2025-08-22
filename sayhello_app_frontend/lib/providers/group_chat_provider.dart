@@ -275,6 +275,14 @@ class GroupChatProvider with ChangeNotifier {
     return _messages.any((m) => m.senderId == userId);
   }
 
+  /// Get messages in proper linked-list order using parent_message_id
+  /// TODO: Implement this when full threading is needed
+  List<GroupChatMessage> getMessagesInThreadOrder() {
+    // For now, return chronological order
+    // In future, implement proper linked-list traversal using parent_message_id
+    return _messages;
+  }
+
   // Private helper methods
   void _setLoading(bool loading) {
     _isLoading = loading;
