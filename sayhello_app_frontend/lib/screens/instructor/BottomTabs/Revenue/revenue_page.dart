@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../../providers/settings_provider.dart';
+import '../../../../../providers/revenue_provider.dart';
+import '../../../../../providers/auth_provider.dart';
+import '../../../../../models/revenue_and_withdraw.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../instructor_main_tab.dart';
 import 'withdrawal_request_page.dart';
@@ -14,130 +18,38 @@ class InstructorRevenuePage extends StatefulWidget {
 class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
   bool _showAllCourses = false;
   bool _showAllTransactions = false;
+  String? _instructorId;
 
-  // Mock data - will be replaced with backend data
-  final double totalIncome = 12500.00;
-  final double totalPending = 2300.00;
-  final double totalWithdrawn = 8900.00;
-
-  // Course enrollments data
-  final List<Map<String, dynamic>> courseEnrollments = [
-    {
-      'courseTitle': 'English Conversation Masterclass',
-      'coursePrice': 150.00,
-      'enrolledStudents': 45,
-      'totalRevenue': 6750.00,
-      'enrollmentDates': [
-        DateTime.now().subtract(Duration(days: 1)),
-        DateTime.now().subtract(Duration(days: 3)),
-        DateTime.now().subtract(Duration(days: 7)),
-        // ... more dates
-      ],
-    },
-    {
-      'courseTitle': 'Japanese for Beginners',
-      'coursePrice': 120.00,
-      'enrolledStudents': 32,
-      'totalRevenue': 3840.00,
-      'enrollmentDates': [
-        DateTime.now().subtract(Duration(days: 2)),
-        DateTime.now().subtract(Duration(days: 5)),
-        // ... more dates
-      ],
-    },
-    {
-      'courseTitle': 'Advanced Spanish Grammar',
-      'coursePrice': 100.00,
-      'enrolledStudents': 18,
-      'totalRevenue': 1800.00,
-      'enrollmentDates': [
-        DateTime.now().subtract(Duration(days: 4)),
-        DateTime.now().subtract(Duration(days: 8)),
-        // ... more dates
-      ],
-    },
-    {
-      'courseTitle': 'Korean Culture & Language',
-      'coursePrice': 80.00,
-      'enrolledStudents': 15,
-      'totalRevenue': 1200.00,
-      'enrollmentDates': [
-        DateTime.now().subtract(Duration(days: 6)),
-        // ... more dates
-      ],
-    },
-    {
-      'courseTitle': 'French Pronunciation',
-      'coursePrice': 90.00,
-      'enrolledStudents': 22,
-      'totalRevenue': 1980.00,
-      'enrollmentDates': [],
-    },
-  ];
-
-  // Transaction history (withdrawals)
-  final List<Map<String, dynamic>> transactionHistory = [
-    {
-      'id': 'TXN001',
-      'amount': 2500.00,
-      'date': DateTime.now().subtract(Duration(days: 7)),
-      'status': 'Completed',
-      'bankAccount': '**** 4521',
-    },
-    {
-      'id': 'TXN002',
-      'amount': 1800.00,
-      'date': DateTime.now().subtract(Duration(days: 15)),
-      'status': 'Completed',
-      'bankAccount': '**** 4521',
-    },
-    {
-      'id': 'TXN003',
-      'amount': 3200.00,
-      'date': DateTime.now().subtract(Duration(days: 30)),
-      'status': 'Completed',
-      'bankAccount': '**** 4521',
-    },
-    {
-      'id': 'TXN004',
-      'amount': 1400.00,
-      'date': DateTime.now().subtract(Duration(days: 45)),
-      'status': 'Failed',
-      'bankAccount': '**** 4521',
-    },
-  ];
-
-  // Calculate revenue based on time periods
-  double calculateWeeklyRevenue() {
-    double weeklyRevenue = 0;
-    DateTime oneWeekAgo = DateTime.now().subtract(Duration(days: 7));
-
-    for (var course in courseEnrollments) {
-      for (var date in course['enrollmentDates']) {
-        if (date.isAfter(oneWeekAgo)) {
-          weeklyRevenue += course['coursePrice'];
-        }
-      }
-    }
-    return weeklyRevenue;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadInstructorData();
+    });
   }
 
-  double calculateMonthlyRevenue() {
-    double monthlyRevenue = 0;
-    DateTime oneMonthAgo = DateTime.now().subtract(Duration(days: 30));
+  void _loadInstructorData() {
+    final authProvider = context.read<AuthProvider>();
+    _instructorId = authProvider.currentUser?.id;
 
-    for (var course in courseEnrollments) {
-      for (var date in course['enrollmentDates']) {
-        if (date.isAfter(oneMonthAgo)) {
-          monthlyRevenue += course['coursePrice'];
-        }
-      }
+    if (_instructorId != null) {
+      final revenueProvider = context.read<RevenueProvider>();
+      revenueProvider.loadInstructorRevenue(_instructorId!);
+      revenueProvider.loadTransactionHistory(_instructorId!);
     }
-    return monthlyRevenue;
   }
 
-  double calculateYearlyRevenue() {
-    return totalIncome; // For now, assuming total income is this year's revenue
+  // Calculate revenue based on time periods using real data
+  double calculateWeeklyRevenue(RevenueProvider provider) {
+    return provider.statistics?.weeklyRevenue ?? 0.0;
+  }
+
+  double calculateMonthlyRevenue(RevenueProvider provider) {
+    return provider.statistics?.monthlyRevenue ?? 0.0;
+  }
+
+  double calculateYearlyRevenue(RevenueProvider provider) {
+    return provider.statistics?.yearlyRevenue ?? 0.0;
   }
 
   @override
@@ -145,78 +57,126 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     final localizations = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(52),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          scrolledUnderElevation: 0,
-          title: Row(
-            children: [
-              IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const InstructorMainTab(),
-                    ),
-                  );
-                },
+    return Consumer<RevenueProvider>(
+      builder: (context, revenueProvider, child) {
+        // Show loading state
+        if (revenueProvider.isLoading) {
+          return Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            appBar: _buildAppBar(isDark, localizations),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        // Show error state
+        if (revenueProvider.error != null) {
+          return Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            appBar: _buildAppBar(isDark, localizations),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Error: ${revenueProvider.error}'),
+                  ElevatedButton(
+                    onPressed: () => _loadInstructorData(),
+                    child: Text('Retry'),
+                  ),
+                ],
               ),
-              Expanded(
-                child: Text(
-                  localizations.revenueDashboard,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+            ),
+          );
+        }
+
+        return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          appBar: _buildAppBar(isDark, localizations),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Payment Information (moved to top)
+                _buildPaymentInfo(isDark, localizations, revenueProvider),
+                const SizedBox(height: 16),
+
+                // Revenue Summary Cards
+                _buildRevenueSummary(isDark, localizations, revenueProvider),
+                const SizedBox(height: 16),
+
+                // Revenue Chart
+                _buildRevenueChart(isDark, localizations, revenueProvider),
+                const SizedBox(height: 16),
+
+                // Course Income Section
+                _buildCourseIncome(isDark, localizations, revenueProvider),
+                const SizedBox(height: 16),
+
+                // Transaction History Section
+                _buildTransactionHistory(
+                  isDark,
+                  localizations,
+                  revenueProvider,
                 ),
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.settings,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-                onPressed: () =>
-                    SettingsProvider.showSettingsBottomSheet(context),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        );
+      },
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(
+    bool isDark,
+    AppLocalizations localizations,
+  ) {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(52),
+      child: AppBar(
+        automaticallyImplyLeading: false,
+        scrolledUnderElevation: 0,
+        title: Row(
           children: [
-            // Payment Information (moved to top)
-            _buildPaymentInfo(isDark, localizations),
-            const SizedBox(height: 16),
-
-            // Revenue Summary Cards
-            _buildRevenueSummary(isDark, localizations),
-            const SizedBox(height: 16),
-
-            // Revenue Chart
-            _buildRevenueChart(isDark, localizations),
-            const SizedBox(height: 16),
-
-            // Course Income Section
-            _buildCourseIncome(isDark, localizations),
-            const SizedBox(height: 16),
-
-            // Transaction History Section
-            _buildTransactionHistory(isDark, localizations),
+            IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const InstructorMainTab(),
+                  ),
+                );
+              },
+            ),
+            Expanded(
+              child: Text(
+                localizations.revenueDashboard,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+              ),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.settings,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+              onPressed: () =>
+                  SettingsProvider.showSettingsBottomSheet(context),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildRevenueSummary(bool isDark, AppLocalizations localizations) {
+  Widget _buildRevenueSummary(
+    bool isDark,
+    AppLocalizations localizations,
+    RevenueProvider revenueProvider,
+  ) {
     return Column(
       children: [
         Row(
@@ -224,7 +184,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             Expanded(
               child: _buildSummaryCard(
                 localizations.revenueWeekly,
-                '\$${calculateWeeklyRevenue().toStringAsFixed(2)}',
+                '\$${calculateWeeklyRevenue(revenueProvider).toStringAsFixed(2)}',
                 Icons.calendar_view_week,
                 const Color(0xFF7A54FF),
                 isDark,
@@ -234,7 +194,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             Expanded(
               child: _buildSummaryCard(
                 localizations.revenueMonthly,
-                '\$${calculateMonthlyRevenue().toStringAsFixed(2)}',
+                '\$${calculateMonthlyRevenue(revenueProvider).toStringAsFixed(2)}',
                 Icons.calendar_month,
                 Colors.green,
                 isDark,
@@ -248,7 +208,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             Expanded(
               child: _buildSummaryCard(
                 localizations.revenueThisYear,
-                '\$${calculateYearlyRevenue().toStringAsFixed(2)}',
+                '\$${calculateYearlyRevenue(revenueProvider).toStringAsFixed(2)}',
                 Icons.calendar_today,
                 Colors.blue,
                 isDark,
@@ -258,7 +218,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             Expanded(
               child: _buildSummaryCard(
                 localizations.revenueTotalCourses,
-                '${courseEnrollments.length}',
+                '${revenueProvider.courseRevenues.length}',
                 Icons.school,
                 Colors.orange,
                 isDark,
@@ -322,33 +282,19 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     );
   }
 
-  Widget _buildRevenueChart(bool isDark, AppLocalizations localizations) {
-    // Calculate data points for the chart
-    List<double> weeklyData = [];
-    List<String> weekLabels = [];
-
-    for (int i = 6; i >= 0; i--) {
-      DateTime date = DateTime.now().subtract(Duration(days: i));
-      double dayRevenue = 0;
-
-      for (var course in courseEnrollments) {
-        for (var enrollDate in course['enrollmentDates']) {
-          if (enrollDate.day == date.day &&
-              enrollDate.month == date.month &&
-              enrollDate.year == date.year) {
-            dayRevenue += course['coursePrice'];
-          }
-        }
-      }
-
-      weeklyData.add(dayRevenue);
-      weekLabels.add(
-        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][date.weekday - 1],
-      );
-    }
+  Widget _buildRevenueChart(
+    bool isDark,
+    AppLocalizations localizations,
+    RevenueProvider revenueProvider,
+  ) {
+    // Use weekly trend data from provider
+    final weeklyData = revenueProvider.weeklyTrend;
+    List<String> weekLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
     double maxValue = weeklyData.isNotEmpty
-        ? weeklyData.reduce((a, b) => a > b ? a : b)
+        ? weeklyData
+              .map((point) => point.amount)
+              .reduce((a, b) => a > b ? a : b)
         : 100;
     if (maxValue == 0) maxValue = 100;
 
@@ -380,8 +326,8 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: List.generate(7, (index) {
-                double height = weeklyData[index] / maxValue * 80;
+              children: List.generate(weeklyData.length.clamp(0, 7), (index) {
+                double height = weeklyData[index].amount / maxValue * 80;
                 if (height < 5) height = 5; // Minimum height for visibility
 
                 return Column(
@@ -397,7 +343,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      weekLabels[index],
+                      weekLabels[index % 7],
                       style: TextStyle(
                         fontSize: 10,
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -413,7 +359,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${localizations.revenueTotal}: \$${weeklyData.fold(0.0, (a, b) => a + b).toStringAsFixed(2)}',
+                '${localizations.revenueTotal}: \$${weeklyData.fold(0.0, (a, b) => a + b.amount).toStringAsFixed(2)}',
                 style: TextStyle(
                   fontSize: 11,
                   color: const Color(0xFF7A54FF),
@@ -434,7 +380,13 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     );
   }
 
-  Widget _buildCourseIncome(bool isDark, AppLocalizations localizations) {
+  Widget _buildCourseIncome(
+    bool isDark,
+    AppLocalizations localizations,
+    RevenueProvider revenueProvider,
+  ) {
+    final courses = revenueProvider.courseRevenues;
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -474,23 +426,38 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             ],
           ),
           const SizedBox(height: 12),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _showAllCourses ? courseEnrollments.length : 3,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, index) {
-              final course = courseEnrollments[index];
-              return _buildCourseIncomeItem(course, isDark, localizations);
-            },
-          ),
+          courses.isEmpty
+              ? Center(
+                  child: Text(
+                    'No courses found',
+                    style: TextStyle(
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                  ),
+                )
+              : ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _showAllCourses
+                      ? courses.length
+                      : (courses.length > 3 ? 3 : courses.length),
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  itemBuilder: (context, index) {
+                    final course = courses[index];
+                    return _buildCourseIncomeItem(
+                      course,
+                      isDark,
+                      localizations,
+                    );
+                  },
+                ),
         ],
       ),
     );
   }
 
   Widget _buildCourseIncomeItem(
-    Map<String, dynamic> course,
+    CourseRevenue course,
     bool isDark,
     AppLocalizations localizations,
   ) {
@@ -507,7 +474,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  course['courseTitle'],
+                  course.title,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -516,7 +483,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${localizations.revenuePrice}: \$${course['coursePrice'].toStringAsFixed(2)} • ${course['enrolledStudents']} ${localizations.revenueEnrolled}',
+                  '${localizations.revenuePrice}: \$${course.price.toStringAsFixed(2)} • ${course.enrollmentCount} ${localizations.revenueEnrolled}',
                   style: TextStyle(
                     fontSize: 10,
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -526,7 +493,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             ),
           ),
           Text(
-            '\$${course['totalRevenue'].toStringAsFixed(2)}',
+            '\$${course.totalRevenue.toStringAsFixed(2)}',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -538,7 +505,13 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     );
   }
 
-  Widget _buildTransactionHistory(bool isDark, AppLocalizations localizations) {
+  Widget _buildTransactionHistory(
+    bool isDark,
+    AppLocalizations localizations,
+    RevenueProvider revenueProvider,
+  ) {
+    final transactions = revenueProvider.withdrawals;
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -578,27 +551,42 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             ],
           ),
           const SizedBox(height: 12),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _showAllTransactions ? transactionHistory.length : 3,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, index) {
-              final transaction = transactionHistory[index];
-              return _buildTransactionItem(transaction, isDark, localizations);
-            },
-          ),
+          transactions.isEmpty
+              ? Center(
+                  child: Text(
+                    'No transactions found',
+                    style: TextStyle(
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                  ),
+                )
+              : ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _showAllTransactions
+                      ? transactions.length
+                      : (transactions.length > 3 ? 3 : transactions.length),
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  itemBuilder: (context, index) {
+                    final transaction = transactions[index];
+                    return _buildTransactionItem(
+                      transaction,
+                      isDark,
+                      localizations,
+                    );
+                  },
+                ),
         ],
       ),
     );
   }
 
   Widget _buildTransactionItem(
-    Map<String, dynamic> transaction,
+    WithdrawalRequest transaction,
     bool isDark,
     AppLocalizations localizations,
   ) {
-    final isCompleted = transaction['status'] == 'Completed';
+    final isCompleted = transaction.status == WithdrawalStatus.completed;
     final statusColor = isCompleted ? Colors.green : Colors.red;
 
     return Container(
@@ -627,7 +615,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${localizations.revenueWithdrawal} - ${transaction['id']}',
+                  '${localizations.revenueWithdrawal} - ${transaction.id ?? "N/A"}',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -636,7 +624,9 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${transaction['bankAccount']} • ${_formatDate(transaction['date'])}',
+                  transaction.createdAt != null
+                      ? _formatDate(transaction.createdAt!)
+                      : 'Date not available',
                   style: TextStyle(
                     fontSize: 10,
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -649,7 +639,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '\$${transaction['amount'].toStringAsFixed(2)}',
+                '\$${transaction.amount.toStringAsFixed(2)}',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -664,7 +654,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: Text(
-                  transaction['status'],
+                  transaction.status.displayName,
                   style: TextStyle(
                     fontSize: 8,
                     color: statusColor,
@@ -679,7 +669,11 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     );
   }
 
-  Widget _buildPaymentInfo(bool isDark, AppLocalizations localizations) {
+  Widget _buildPaymentInfo(
+    bool isDark,
+    AppLocalizations localizations,
+    RevenueProvider revenueProvider,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -728,7 +722,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '\$${(totalIncome - totalWithdrawn).toStringAsFixed(2)}',
+                        '\$${revenueProvider.availableBalance.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -739,7 +733,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () => _navigateToPaymentRequest(),
+                  onPressed: () => _navigateToPaymentRequest(revenueProvider),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: const Color(0xFF7A54FF),
@@ -768,7 +762,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
               Expanded(
                 child: _buildPaymentInfoItem(
                   localizations.revenueTotalEarned,
-                  '\$${totalIncome.toStringAsFixed(2)}',
+                  '\$${revenueProvider.totalEarned.toStringAsFixed(2)}',
                   Colors.green,
                   isDark,
                 ),
@@ -777,7 +771,7 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
               Expanded(
                 child: _buildPaymentInfoItem(
                   localizations.revenueWithdrawn,
-                  '\$${totalWithdrawn.toStringAsFixed(2)}',
+                  '\$${revenueProvider.totalWithdrawn.toStringAsFixed(2)}',
                   Colors.blue,
                   isDark,
                 ),
@@ -828,12 +822,12 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  void _navigateToPaymentRequest() {
+  void _navigateToPaymentRequest(RevenueProvider revenueProvider) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => WithdrawalRequestPage(
-          availableBalance: totalIncome - totalWithdrawn,
+          availableBalance: revenueProvider.availableBalance,
         ),
       ),
     );
