@@ -1,7 +1,8 @@
 -- ==============================
 -- DROP TABLES (in safe order)
 -- ==============================
-DROP TABLE IF EXISTS withdrawals CASCADE;
+DROP TABLE IF EXISTS withdrawal CASCADE;
+DROP TABLE IF EXISTS withdrawal_info CASCADE;
 DROP TABLE IF EXISTS notifications CASCADE;
 DROP TABLE IF EXISTS feedback CASCADE;
 DROP TABLE IF EXISTS course_enrollments CASCADE;
@@ -292,11 +293,32 @@ CREATE TABLE notifications (
 -- 17. withdrawls
 -- ==============================
 
-CREATE TABLE withdrawals (
+-- Main withdrawal transaction table
+CREATE TABLE withdrawal (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    instructor_id UUID REFERENCES learners(id) ON DELETE CASCADE,
+    instructor_id UUID REFERENCES instructors(id) ON DELETE CASCADE,
     amount NUMERIC(10,2) NOT NULL,
     status VARCHAR(50) DEFAULT 'COMPLETED',
-    created_at TIMESTAMP DEFAULT NOW(),
-    processed_at TIMESTAMP
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Withdrawal payment info table
+CREATE TABLE withdrawal_info (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    withdrawal_id UUID REFERENCES withdrawal(id) ON DELETE CASCADE,
+    payment_method VARCHAR(50) NOT NULL CHECK (payment_method IN ('CARD', 'PAYPAL', 'BANK')),
+    
+    -- Card details (nullable, only if method = CARD)
+    card_number VARCHAR(20),
+    expiry_date VARCHAR(7), -- MM/YYYY
+    cvv VARCHAR(4),
+    card_holder_name VARCHAR(255),
+    
+    -- PayPal (nullable, only if method = PAYPAL)
+    paypal_email VARCHAR(255),
+    
+    -- Bank statement (nullable, only if method = BANK)
+    bank_account_number VARCHAR(50),
+    bank_name VARCHAR(100),
+    swift_code VARCHAR(20)
 );
