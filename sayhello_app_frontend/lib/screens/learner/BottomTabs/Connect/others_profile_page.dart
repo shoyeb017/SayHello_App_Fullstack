@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../Feed/feed_page.dart';
 import '../../Chat/chat.dart';
 import '../../../../providers/learner_provider.dart';
 import '../../../../providers/auth_provider.dart';
 import '../../../../models/learner.dart';
+import '../../../../models/feed.dart';
+import '../../../../data/feed_data.dart';
 
 class OthersProfilePage extends StatefulWidget {
   final String userId;
@@ -41,6 +42,12 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   int _followerCount = 0;
   int _followingCount = 0;
 
+  // Feed state
+  List<Feed> _userFeeds = [];
+  bool _isFeedLoading = false;
+  String? _feedError;
+  final FeedRepository _feedRepository = FeedRepository();
+
   @override
   void initState() {
     super.initState();
@@ -48,8 +55,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     _tabController.addListener(() {
       setState(() {});
     });
-    _loadLearnerData();
-    _loadFollowStatus();
+    _loadLearnerData(); // This will call _loadFollowStatus after data is loaded
   }
 
   @override
@@ -66,23 +72,40 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     });
 
     try {
-      final learnerProvider = Provider.of<LearnerProvider>(context, listen: false);
-      
-      // Try to get learner by ID first, if that fails try by email/username
-      Learner? learner = await learnerProvider.getLearnerByEmailSilent(widget.userId);
-      learner ??= await learnerProvider.getLearnerByUsernameSilent(widget.userId);
-      
+      final learnerProvider = Provider.of<LearnerProvider>(
+        context,
+        listen: false,
+      );
+
+      // Try to get learner by ID first (widget.userId should be the database ID)
+      Learner? learner = await learnerProvider.getLearnerByIdSilent(
+        widget.userId,
+      );
+
+      // If that fails, try by email/username as fallback
+      if (learner == null) {
+        learner = await learnerProvider.getLearnerByEmailSilent(widget.userId);
+      }
+      if (learner == null) {
+        learner = await learnerProvider.getLearnerByUsernameSilent(
+          widget.userId,
+        );
+      }
+
       if (learner != null) {
         _learnerData = learner;
-        
+
         // Load follow counts
         _followerCount = await learnerProvider.getFollowerCount(learner.id);
         _followingCount = await learnerProvider.getFollowingCount(learner.id);
-        
+
         // Load follow status after setting _learnerData
         await _loadFollowStatus();
+
+        // Load user's feed posts
+        await _loadUserFeeds();
       } else {
-        throw Exception('User not found');
+        throw Exception('User not found with ID: ${widget.userId}');
       }
     } catch (e) {
       setState(() {
@@ -99,50 +122,147 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   Future<void> _loadFollowStatus() async {
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final learnerProvider = Provider.of<LearnerProvider>(context, listen: false);
-      
+      final learnerProvider = Provider.of<LearnerProvider>(
+        context,
+        listen: false,
+      );
+
       if (authProvider.currentUser != null && _learnerData != null) {
         final currentUser = authProvider.currentUser as Learner;
-        final following = await learnerProvider.isFollowing(currentUser.id, _learnerData!.id);
+        final following = await learnerProvider.isFollowing(
+          currentUser.id,
+          _learnerData!.id,
+        );
         setState(() {
           isFollowing = following;
         });
       }
     } catch (e) {
-      print('Error loading follow status: $e');
+      // Silent fail for follow status loading
+    }
+  }
+
+  /// Load user's feed posts
+  Future<void> _loadUserFeeds() async {
+    if (_learnerData == null) return;
+
+    setState(() {
+      _isFeedLoading = true;
+      _feedError = null;
+    });
+
+    try {
+      final feeds = await _feedRepository.getFeedPostsByUser(_learnerData!.id);
+      setState(() {
+        _userFeeds = feeds;
+      });
+    } catch (e) {
+      setState(() {
+        _feedError = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isFeedLoading = false;
+      });
     }
   }
 
   /// Toggle follow status with backend
   Future<void> _toggleFollow() async {
+    // Check if user is authenticated
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (authProvider.currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please log in to follow users'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    // Check if trying to follow self
+    if (authProvider.currentUser!.id == _learnerData?.id) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('You cannot follow yourself'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     setState(() {
       _isFollowLoading = true;
     });
 
     try {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final learnerProvider = Provider.of<LearnerProvider>(context, listen: false);
-      
-      if (authProvider.currentUser != null && _learnerData != null) {
+      final learnerProvider = Provider.of<LearnerProvider>(
+        context,
+        listen: false,
+      );
+
+      if (_learnerData != null) {
         final currentUser = authProvider.currentUser as Learner;
-        
-        bool success;
+        print('Debug: Current user ID: ${currentUser.id}');
+        print('Debug: Target user ID: ${_learnerData!.id}');
+        print('Debug: Current following status: $isFollowing');
+
+        bool success = false;
         if (isFollowing) {
-          success = await learnerProvider.unfollowLearner(currentUser.id, _learnerData!.id);
+          print('Debug: Attempting to unfollow...');
+          success = await learnerProvider.unfollowLearner(
+            currentUser.id,
+            _learnerData!.id,
+          );
+          print('Debug: Unfollow result: $success');
+          if (success) {
+            setState(() {
+              isFollowing = false;
+              _followerCount = _followerCount > 0 ? _followerCount - 1 : 0;
+            });
+          }
         } else {
-          success = await learnerProvider.followLearner(currentUser.id, _learnerData!.id);
+          print('Debug: Attempting to follow...');
+          success = await learnerProvider.followLearner(
+            currentUser.id,
+            _learnerData!.id,
+          );
+          print('Debug: Follow result: $success');
+          if (success) {
+            setState(() {
+              isFollowing = true;
+              _followerCount = _followerCount + 1;
+            });
+          }
         }
 
         if (success) {
-          setState(() {
-            isFollowing = !isFollowing;
-            _followerCount += isFollowing ? 1 : -1;
-          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(isFollowing ? 'Now following!' : 'Unfollowed'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 1),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Failed to update follow status. Please try again.',
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       }
     } catch (e) {
+      print('Debug: Error in _toggleFollow: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error updating follow status: $e')),
+        SnackBar(
+          content: Text('Error: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       setState(() {
@@ -159,12 +279,14 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     if (_learnerData == null) return 0;
     return DateTime.now().difference(_learnerData!.dateOfBirth).inDays ~/ 365;
   }
+
   String get gender => _learnerData?.gender ?? "Unknown";
   String get username => _learnerData?.username ?? "unknown";
   int get joinedDays {
     if (_learnerData == null) return 0;
     return DateTime.now().difference(_learnerData!.createdAt).inDays;
   }
+
   int get followingCount => _followingCount;
   int get followersCount => _followerCount;
   List<String> get interests => _learnerData?.interests ?? [];
@@ -172,13 +294,16 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   // Get shared interests with current user
   List<String> get sharedInterests {
     if (_learnerData == null) return [];
-    
+
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (authProvider.currentUser == null) return [];
-    
+
     final currentUser = authProvider.currentUser as Learner;
-    return _learnerData!.interests
-        .where((interest) => currentUser.interests.contains(interest))
+    final currentUserInterests = currentUser.interests;
+    final otherUserInterests = _learnerData!.interests;
+
+    return otherUserInterests
+        .where((interest) => currentUserInterests.contains(interest))
         .toList();
   }
 
@@ -246,64 +371,59 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     return '${displayHour}:${minute.toString().padLeft(2, '0')} $period';
   }
 
-  // Mock feed posts for this user (TODO: Replace with backend feed data)
-  List<FeedPost> get userPosts => [
-    FeedPost(
-      feedId: 'user_feed_001',
-      userId: widget.userId,
-      userName: widget.name,
-      userAvatar: widget.avatar,
-      nativeLanguage: widget.nativeLanguage,
-      learningLanguage: widget.learningLanguage,
-      content:
-          'Beautiful sunset in Tokyo today! 🌅 Learning English through photography captions.',
-      images: ['https://picsum.photos/400/300?random=101'],
-      likeCount: 15,
-      commentCount: 3,
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      isLiked: false,
-      likedByAvatars: [
-        'https://i.pravatar.cc/150?img=20',
-        'https://i.pravatar.cc/150?img=21',
-        'https://i.pravatar.cc/150?img=22',
-      ],
-    ),
-    FeedPost(
-      feedId: 'user_feed_002',
-      userId: widget.userId,
-      userName: widget.name,
-      userAvatar: widget.avatar,
-      nativeLanguage: widget.nativeLanguage,
-      learningLanguage: widget.learningLanguage,
-      content:
-          'Just finished reading a great manga! Anyone have recommendations for English manga? 📚',
-      images: [],
-      likeCount: 8,
-      commentCount: 5,
-      createdAt: DateTime.now().subtract(const Duration(days: 2)),
-      isLiked: true,
-      likedByAvatars: [
-        'https://i.pravatar.cc/150?img=23',
-        'https://i.pravatar.cc/150?img=24',
-      ],
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = const Color(0xFF7A54FF);
+    final screenSize = MediaQuery.of(context).size;
 
     // Show loading state
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(
-          title: Text('Profile'),
-          backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
-        ),
-        body: const Center(
-          child: CircularProgressIndicator(),
+        backgroundColor: isDark ? Colors.black : Colors.grey[50],
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Custom app bar for loading state
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    Text(
+                      'Profile',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(color: primaryColor),
+                      SizedBox(height: 16),
+                      Text(
+                        'Loading profile...',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -311,38 +431,88 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     // Show error state
     if (_error != null) {
       return Scaffold(
-        appBar: AppBar(
-          title: Text('Profile'),
-          backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
-        ),
-        body: Center(
+        backgroundColor: isDark ? Colors.black : Colors.grey[50],
+        body: SafeArea(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Colors.grey,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Error loading profile',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              // Custom app bar for error state
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    Text(
+                      'Profile',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                _error!,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _loadLearnerData,
-                child: const Text('Try Again'),
+              Expanded(
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: Colors.red,
+                          ),
+                        ),
+                        SizedBox(height: 24),
+                        Text(
+                          'Error loading profile',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          _error!,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                            height: 1.4,
+                          ),
+                        ),
+                        SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: _loadLearnerData,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryColor,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                          ),
+                          child: Text(
+                            'Try Again',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
@@ -353,160 +523,377 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     // Show profile not found state
     if (_learnerData == null) {
       return Scaffold(
-        appBar: AppBar(
-          title: Text('Profile'),
-          backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
-        ),
-        body: const Center(
-          child: Text(
-            'Profile not found',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+        backgroundColor: isDark ? Colors.black : Colors.grey[50],
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Custom app bar for not found state
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    Text(
+                      'Profile',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.person_off_outlined,
+                          size: 48,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      SizedBox(height: 24),
+                      Text(
+                        'Profile not found',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 12),
+                      Text(
+                        'This user profile could not be found',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       );
     }
 
     return Scaffold(
+      backgroundColor: isDark ? Colors.black : Colors.grey[50],
       body: Stack(
         children: [
           // Main scrollable content
           CustomScrollView(
-            clipBehavior: Clip.none,
             slivers: [
-              // Cover image and profile content together
+              // Cover image section
               SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    // Cover image section
-                    Container(
-                      width: double.infinity,
-                      height: 200, // Reduced height
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [primaryColor.withOpacity(0.8), primaryColor],
-                        ),
-                        image: DecorationImage(
-                          image: getMapImage(country),
-                          fit: BoxFit.cover,
-                          colorFilter: ColorFilter.mode(
-                            primaryColor.withOpacity(0.6),
-                            BlendMode.overlay,
-                          ),
-                          onError: (exception, stackTrace) {
-                            print(
-                              'Error loading map image for $country: $exception',
-                            );
-                          },
-                        ),
+                child: Container(
+                  height: 240,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        primaryColor.withOpacity(0.8),
+                        primaryColor,
+                      ],
+                    ),
+                    image: DecorationImage(
+                      image: getMapImage(country),
+                      fit: BoxFit.cover,
+                      colorFilter: ColorFilter.mode(
+                        primaryColor.withOpacity(0.6),
+                        BlendMode.overlay,
                       ),
-                      child: Stack(
-                        children: [
-                          // Back button positioned over cover image
-                          Positioned(
-                            top: 50,
-                            left: 16,
+                    ),
+                  ),
+                  child: SafeArea(
+                    child: Stack(
+                      children: [
+                        // Back button
+                        Positioned(
+                          top: 8,
+                          left: 8,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black26,
+                              shape: BoxShape.circle,
+                            ),
                             child: IconButton(
-                              icon: Icon(
-                                Icons.arrow_back,
-                                color: Colors.white,
-                                size: 24,
-                              ),
+                              icon: Icon(Icons.arrow_back, color: Colors.white),
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),
-
-                          // Location and time
-                          Positioned(
-                            top: 80, // Adjusted for smaller cover height
-                            right: 16,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.black26,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.public,
-                                    color: Colors.white,
-                                    size: 14,
-                                  ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    "$location ${getCurrentTimeForCountry(country)}",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Profile content with overlapping profile picture
-                    Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        // Content with minimal padding
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            16,
-                            10,
-                            16,
-                            100,
-                          ), // Further reduced top padding
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Basic info
-                              _buildBasicInfo(isDark, primaryColor),
-                              SizedBox(height: 16),
-
-                              // Bio section
-                              _buildBioSection(isDark),
-                              SizedBox(height: 20),
-
-                              // Tabs
-                              _buildTabSection(isDark, primaryColor),
-                            ],
-                          ),
                         ),
-
-                        // Profile picture positioned to overlap with cover image
+                        
+                        // Location and time
                         Positioned(
-                          top: -45, // Move it up to overlap with cover image
-                          left: 16,
-                          child: CircleAvatar(
-                            radius: 45,
-                            backgroundColor: isDark
-                                ? Colors.grey[800]
-                                : Colors.white,
-                            child: CircleAvatar(
-                              radius: 42,
-                              backgroundImage: NetworkImage(widget.avatar),
+                          top: 16,
+                          right: 16,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.black26,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.public, color: Colors.white, size: 16),
+                                SizedBox(width: 6),
+                                Text(
+                                  "$location ${getCurrentTimeForCountry(country)}",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
+              ),
+              
+              // Profile content
+              SliverToBoxAdapter(
+                child: Transform.translate(
+                  offset: Offset(0, -60),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.grey[900] : Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        // Profile picture and basic info
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20, 20, 20, 24),
+                          child: Column(
+                            children: [
+                              // Profile picture
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 4,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      blurRadius: 10,
+                                      offset: Offset(0, 5),
+                                    ),
+                                  ],
+                                ),
+                                child: CircleAvatar(
+                                  radius: 50,
+                                  backgroundImage: NetworkImage(widget.avatar),
+                                ),
+                              ),
+                              
+                              SizedBox(height: 16),
+                              
+                              // Follow button (compact)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                    onTap: _isFollowLoading ? null : _toggleFollow,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: isFollowing ? primaryColor : primaryColor.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                          color: primaryColor,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: _isFollowLoading
+                                          ? SizedBox(
+                                              width: 16,
+                                              height: 16,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                valueColor: AlwaysStoppedAnimation<Color>(
+                                                  isFollowing ? Colors.white : primaryColor,
+                                                ),
+                                              ),
+                                            )
+                                          : Icon(
+                                              isFollowing ? Icons.favorite : Icons.favorite_border,
+                                              color: isFollowing ? Colors.white : primaryColor,
+                                              size: 18,
+                                            ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              
+                              SizedBox(height: 12),
+                              
+                              // Name and gender/age
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      widget.name,
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: isDark ? Colors.white : Colors.black,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFFEEDF7),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          gender == "female" ? Icons.female : Icons.male,
+                                          color: Color(0xFFD619A8),
+                                          size: 16,
+                                        ),
+                                        SizedBox(width: 2),
+                                        Text(
+                                          age.toString(),
+                                          style: TextStyle(
+                                            color: Color(0xFFD619A8),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              
+                              SizedBox(height: 6),
+                              
+                              // Username
+                              Text(
+                                '@$username',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              
+                              SizedBox(height: 16),
+                              
+                              // Language chips
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _buildLanguageChip(
+                                    _getLanguageFlag(_learnerData!.nativeLanguage),
+                                    _learnerData!.nativeLanguage,
+                                    Colors.green,
+                                    isDark,
+                                  ),
+                                  SizedBox(width: 12),
+                                  Icon(Icons.arrow_forward, color: Colors.grey, size: 16),
+                                  SizedBox(width: 12),
+                                  _buildLanguageChip(
+                                    _getLanguageFlag(_learnerData!.learningLanguage),
+                                    _learnerData!.learningLanguage,
+                                    primaryColor,
+                                    isDark,
+                                  ),
+                                ],
+                              ),
+                              
+                              SizedBox(height: 20),
+                              
+                              // Stats row
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: isDark ? Colors.grey[800] : Colors.grey[50],
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    _buildStatItem(
+                                      "${joinedDays}d",
+                                      AppLocalizations.of(context)!.joined,
+                                      isDark,
+                                    ),
+                                    _buildStatDivider(isDark),
+                                    _buildStatItem(
+                                      followingCount.toString(),
+                                      AppLocalizations.of(context)!.following,
+                                      isDark,
+                                    ),
+                                    _buildStatDivider(isDark),
+                                    _buildStatItem(
+                                      followersCount.toString(),
+                                      AppLocalizations.of(context)!.followers,
+                                      isDark,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        
+                        // Bio section
+                        if (bio.isNotEmpty && bio != "No bio available")
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                            child: _buildBioSection(isDark),
+                          ),
+                        
+                        // Tabs section
+                        _buildTabSection(isDark, primaryColor),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              
+              // Extra space for bottom buttons
+              SliverToBoxAdapter(
+                child: SizedBox(height: 120),
               ),
             ],
           ),
@@ -531,9 +918,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: _isFollowLoading 
-                      ? Colors.grey[400]
-                      : (isFollowing ? primaryColor : Colors.grey[400]),
+                  color: isFollowing ? primaryColor : Colors.grey[300],
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: _isFollowLoading
@@ -542,10 +927,16 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
-                    : Icon(Icons.thumb_up, color: Colors.white, size: 20),
+                    : Icon(
+                        isFollowing ? Icons.favorite : Icons.favorite_border,
+                        color: isFollowing ? Colors.white : Colors.grey[600],
+                        size: 20,
+                      ),
               ),
             ),
           ],
@@ -807,27 +1198,45 @@ class _OthersProfilePageState extends State<OthersProfilePage>
           ),
         ),
         SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: sharedInterests.map((interest) {
-            return Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: primaryColor.withOpacity(0.3)),
-              ),
-              child: Text(
-                interest,
-                style: TextStyle(
-                  color: primaryColor,
-                  fontWeight: FontWeight.w600,
+        sharedInterests.isEmpty
+            ? Container(
+                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.grey[800] : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(12),
                 ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.grey, size: 20),
+                    SizedBox(width: 8),
+                    Text(
+                      'No shared interests found',
+                      style: TextStyle(color: Colors.grey, fontSize: 14),
+                    ),
+                  ],
+                ),
+              )
+            : Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: sharedInterests.map((interest) {
+                  return Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: primaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: primaryColor.withOpacity(0.3)),
+                    ),
+                    child: Text(
+                      interest,
+                      style: TextStyle(
+                        color: primaryColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
-            );
-          }).toList(),
-        ),
       ],
     );
   }
@@ -873,19 +1282,245 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 16),
       child: Column(
-        children: userPosts.map((post) {
-          return Padding(
-            padding: EdgeInsets.only(bottom: 16),
-            child: FeedPostCard(
-              post: post,
-              comments: [], // Empty comments for profile view
-              likes: [], // Empty likes for profile view
-              onLikePressed: () {
-                // Handle like functionality
-              },
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Feed loading state
+          if (_isFeedLoading)
+            Center(
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: CircularProgressIndicator(),
+              ),
+            )
+          // Feed error state
+          else if (_feedError != null)
+            Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.grey[800] : Colors.grey[100],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  SizedBox(height: 12),
+                  Text(
+                    'Error loading posts',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    _feedError!,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                  SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: _loadUserFeeds,
+                    child: Text('Retry'),
+                  ),
+                ],
+              ),
+            )
+          // Feed content
+          else if (_userFeeds.isEmpty)
+            Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.grey[800] : Colors.grey[100],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Icon(Icons.article_outlined, size: 48, color: Colors.grey),
+                  SizedBox(height: 12),
+                  Text(
+                    'No Posts Yet',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    '${widget.name} hasn\'t shared any posts yet.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                ],
+              ),
+            )
+          // Display feed posts
+          else
+            Column(
+              children: [
+                // Pull to refresh indicator/button
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${_userFeeds.length} post${_userFeeds.length == 1 ? '' : 's'}',
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                      GestureDetector(
+                        onTap: _loadUserFeeds,
+                        child: Icon(
+                          Icons.refresh,
+                          color: const Color(0xFF7A54FF),
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 8),
+
+                // Feed posts
+                ...(_userFeeds
+                    .map((feed) => _buildFeedPost(feed, isDark))
+                    .toList()),
+              ],
             ),
-          );
-        }).toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeedPost(Feed feed, bool isDark) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[800] : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.grey[700]! : Colors.grey[200]!,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Feed header with user info and time
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundImage: NetworkImage(widget.avatar),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                    Text(
+                      feed.timeAgo,
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 12),
+
+          // Feed content
+          Text(
+            feed.content,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? Colors.white : Colors.black,
+              height: 1.4,
+            ),
+          ),
+
+          // Feed image if available
+          if (feed.hasImage) ...[
+            SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                feed.imageUrl!,
+                width: double.infinity,
+                height: 200,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 200,
+                    color: Colors.grey[300],
+                    child: Center(
+                      child: Icon(
+                        Icons.image_not_supported,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+
+          SizedBox(height: 12),
+
+          // Feed stats and actions
+          Row(
+            children: [
+              // Like count
+              Icon(Icons.favorite, size: 16, color: Colors.grey),
+              SizedBox(width: 4),
+              Text(
+                feed.likesCount.toString(),
+                style: TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+
+              SizedBox(width: 16),
+
+              // Comment count
+              Icon(Icons.comment, size: 16, color: Colors.grey),
+              SizedBox(width: 4),
+              Text(
+                feed.commentsCount.toString(),
+                style: TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+
+              Spacer(),
+
+              // Language tag if available
+              if (feed.language != null)
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF7A54FF).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    feed.language!,
+                    style: TextStyle(
+                      color: const Color(0xFF7A54FF),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -900,7 +1535,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
         decoration: BoxDecoration(color: Colors.transparent),
         child: Row(
           children: [
-            // Follow button (now outlined style)
+            // Follow button
             Expanded(
               child: ElevatedButton(
                 onPressed: _isFollowLoading ? null : _toggleFollow,
@@ -929,7 +1564,10 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                         isFollowing
                             ? AppLocalizations.of(context)!.following
                             : AppLocalizations.of(context)!.follow,
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
               ),
             ),
@@ -950,7 +1588,9 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                     age: age,
                     gender: _learnerData!.gender,
                     isOnline: true, // TODO: Implement real online status
-                    lastSeen: DateTime.now().subtract(Duration(minutes: 5)), // TODO: Implement real last seen
+                    lastSeen: DateTime.now().subtract(
+                      Duration(minutes: 5),
+                    ), // TODO: Implement real last seen
                     interests: _learnerData!.interests,
                     nativeLanguage: _learnerData!.nativeLanguage,
                     learningLanguage: _learnerData!.learningLanguage,

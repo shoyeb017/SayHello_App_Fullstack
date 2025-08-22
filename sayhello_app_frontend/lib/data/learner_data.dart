@@ -29,14 +29,17 @@ class LearnerRepository {
   /// Get learner by ID
   Future<Learner?> getLearnerById(String id) async {
     try {
+      print('LearnerRepository: Getting learner by ID: $id');
       final response = await _supabase
           .from('learners')
           .select()
           .eq('id', id)
           .maybeSingle();
 
+      print('LearnerRepository: Query response: ${response != null ? 'Found' : 'Not found'}');
       return response != null ? Learner.fromJson(response) : null;
     } catch (e) {
+      print('LearnerRepository: Error getting learner by ID: $e');
       throw Exception('Failed to get learner: $e');
     }
   }

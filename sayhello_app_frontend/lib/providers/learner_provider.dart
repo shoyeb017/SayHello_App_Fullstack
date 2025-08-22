@@ -111,6 +111,15 @@ class LearnerProvider extends ChangeNotifier {
     }
   }
 
+  /// Load learner by ID (silent - no loading state changes)
+  Future<Learner?> getLearnerByIdSilent(String id) async {
+    try {
+      return await _repository.getLearnerById(id);
+    } catch (e) {
+      return null;
+    }
+  }
+
   /// Create new learner profile
   Future<bool> createLearner(Map<String, dynamic> learnerData) async {
     _setLoading(true);
