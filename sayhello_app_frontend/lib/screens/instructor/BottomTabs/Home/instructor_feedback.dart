@@ -20,38 +20,6 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
   bool _isSubmittingFeedback = false;
   String? _selectedStudentId;
 
-  // Sample students list for giving feedback
-  final List<Map<String, dynamic>> _students = [
-    {
-      'id': 'student_1',
-      'name': 'Alice Johnson',
-      'avatar': 'A',
-      'progress': 85,
-      'status': 'Active',
-    },
-    {
-      'id': 'student_2',
-      'name': 'Bob Wilson',
-      'avatar': 'B',
-      'progress': 72,
-      'status': 'Active',
-    },
-    {
-      'id': 'student_3',
-      'name': 'Carol Smith',
-      'avatar': 'C',
-      'progress': 95,
-      'status': 'Completed',
-    },
-    {
-      'id': 'student_4',
-      'name': 'Emma Watson',
-      'avatar': 'E',
-      'progress': 78,
-      'status': 'Active',
-    },
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -63,7 +31,9 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
       );
 
       if (authProvider.currentUser != null) {
+        // Load instructor feedback and course students
         feedbackProvider.loadInstructorFeedback(authProvider.currentUser!.id);
+        feedbackProvider.loadCourseFeedback(widget.course['id']);
       }
     });
   }
@@ -556,59 +526,74 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
                           underline: Container(),
                           dropdownColor: cardColor,
                           style: TextStyle(color: textColor, fontSize: 12),
-                          items: _students.map((student) {
-                            return DropdownMenuItem<String>(
-                              value: student['id'],
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 12,
-                                    backgroundColor: primaryColor.withOpacity(
-                                      0.2,
-                                    ),
-                                    child: Text(
-                                      student['avatar'],
-                                      style: TextStyle(
-                                        color: primaryColor,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      student['name'],
-                                      style: TextStyle(fontSize: 12),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                      vertical: 1,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: _getStatusColor(
-                                        student['status'],
-                                      ).withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(3),
-                                    ),
-                                    child: Text(
-                                      student['status'],
-                                      style: TextStyle(
-                                        fontSize: 8,
-                                        color: _getStatusColor(
-                                          student['status'],
-                                        ),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          items: () {
+                            print(
+                              'FeedbackUI: courseStudents length: ${feedbackProvider.courseStudents.length}',
                             );
-                          }).toList(),
+                            print(
+                              'FeedbackUI: courseStudents data: ${feedbackProvider.courseStudents}',
+                            );
+                            return feedbackProvider.courseStudents.map((
+                              student,
+                            ) {
+                              print('FeedbackUI: Processing student: $student');
+                              return DropdownMenuItem<String>(
+                                value: student['id'],
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 12,
+                                      backgroundColor: primaryColor.withOpacity(
+                                        0.2,
+                                      ),
+                                      child: Text(
+                                        student['name']
+                                                ?.toString()
+                                                .substring(0, 1)
+                                                .toUpperCase() ??
+                                            'S',
+                                        style: TextStyle(
+                                          color: primaryColor,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        student['name'] ?? 'Unknown Student',
+                                        style: TextStyle(fontSize: 12),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 4,
+                                        vertical: 1,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: _getStatusColor(
+                                          student['status'] ?? 'Active',
+                                        ).withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
+                                      child: Text(
+                                        student['status'] ?? 'Active',
+                                        style: TextStyle(
+                                          fontSize: 8,
+                                          color: _getStatusColor(
+                                            student['status'] ?? 'Active',
+                                          ),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList();
+                          }(),
                           onChanged: (value) {
                             setState(() {
                               _selectedStudentId = value;
@@ -866,7 +851,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
 
       if (success) {
         // Find selected student name for success message
-        final selectedStudent = _students.firstWhere(
+        final selectedStudent = feedbackProvider.courseStudents.firstWhere(
           (s) => s['id'] == _selectedStudentId,
           orElse: () => {'name': 'Student'},
         );

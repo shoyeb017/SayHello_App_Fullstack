@@ -28,7 +28,13 @@ class FeedbackProvider extends ChangeNotifier {
   List<feedback_model.Feedback> get courseFeedback => _courseFeedback;
   List<feedback_model.Feedback> get instructorFeedback => _instructorFeedback;
   List<feedback_model.Feedback> get studentFeedback => _studentFeedback;
-  List<Map<String, dynamic>> get courseStudents => _courseStudents;
+  List<Map<String, dynamic>> get courseStudents {
+    print(
+      'FeedbackProvider: courseStudents getter called, returning ${_courseStudents.length} items',
+    );
+    return _courseStudents;
+  }
+
   Map<String, dynamic> get feedbackStatistics => _feedbackStatistics;
   bool get isLoading => _isLoading;
   bool get isSubmitting => _isSubmitting;
@@ -75,7 +81,13 @@ class FeedbackProvider extends ChangeNotifier {
       _feedbackStatistics = results[3] as Map<String, dynamic>;
       _courseStudents = results[4] as List<Map<String, dynamic>>;
 
+      print(
+        'FeedbackProvider: Course students set to: ${_courseStudents.length} items',
+      );
+      print('FeedbackProvider: Course students data: $_courseStudents');
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        print('FeedbackProvider: Calling notifyListeners()');
         notifyListeners();
       });
     } catch (e) {

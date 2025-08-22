@@ -24,7 +24,7 @@ class FeedbackRepository {
             *,
             learners:learner_id(name, username),
             instructors:instructor_id(name, username),
-            courses:course_id(course_name)
+            courses:course_id(title)
           ''')
           .eq('course_id', courseId)
           .eq('feedback_type', 'course')
@@ -46,7 +46,7 @@ class FeedbackRepository {
               .substring(0, 1)
               .toUpperCase(),
           'instructor_name': instructorData?['name'],
-          'course_name': courseData?['course_name'],
+          'course_name': courseData?['title'],
         });
       }).toList();
 
@@ -76,7 +76,7 @@ class FeedbackRepository {
             *,
             learners:learner_id(name, username),
             instructors:instructor_id(name, username),
-            courses:course_id(course_name)
+            courses:course_id(title)
           ''')
           .eq('instructor_id', instructorId)
           .eq('feedback_type', 'instructor')
@@ -97,7 +97,7 @@ class FeedbackRepository {
               .substring(0, 1)
               .toUpperCase(),
           'instructor_name': instructorData?['name'],
-          'course_name': courseData?['course_name'],
+          'course_name': courseData?['title'],
         });
       }).toList();
 
@@ -127,7 +127,7 @@ class FeedbackRepository {
             *,
             learners:learner_id(name, username),
             instructors:instructor_id(name, username),
-            courses:course_id(course_name)
+            courses:course_id(title)
           ''')
           .eq('course_id', courseId)
           .eq('feedback_type', 'student')
@@ -148,7 +148,7 @@ class FeedbackRepository {
               .substring(0, 1)
               .toUpperCase(),
           'instructor_name': instructorData?['name'],
-          'course_name': courseData?['course_name'],
+          'course_name': courseData?['title'],
         });
       }).toList();
 
@@ -198,7 +198,7 @@ class FeedbackRepository {
             *,
             learners:learner_id(name, username),
             instructors:instructor_id(name, username),
-            courses:course_id(course_name)
+            courses:course_id(title)
           ''')
           .single();
 
@@ -216,7 +216,7 @@ class FeedbackRepository {
             .substring(0, 1)
             .toUpperCase(),
         'instructor_name': instructorData?['name'],
-        'course_name': courseData?['course_name'],
+        'course_name': courseData?['title'],
       });
 
       print(
@@ -250,12 +250,12 @@ class FeedbackRepository {
       final response = await _supabase
           .from(tableName)
           .update(updateData)
-          .eq('id', feedbackId)
+          .eq('_id', feedbackId)
           .select('''
             *,
             learners:learner_id(name, username),
             instructors:instructor_id(name, username),
-            courses:course_id(course_name)
+            courses:course_id(title)
           ''')
           .single();
 
@@ -273,7 +273,7 @@ class FeedbackRepository {
             .substring(0, 1)
             .toUpperCase(),
         'instructor_name': instructorData?['name'],
-        'course_name': courseData?['course_name'],
+        'course_name': courseData?['title'],
       });
 
       return feedback;
@@ -291,7 +291,7 @@ class FeedbackRepository {
     try {
       print('FeedbackRepository: Deleting feedback: $feedbackId');
 
-      await _supabase.from(tableName).delete().eq('id', feedbackId);
+      await _supabase.from(tableName).delete().eq('_id', feedbackId);
 
       print('FeedbackRepository: Feedback deleted successfully');
     } on PostgrestException catch (e) {
@@ -359,12 +359,11 @@ class FeedbackRepository {
       print('FeedbackRepository: Getting course students for: $courseId');
 
       final response = await _supabase
-          .from('enrollments')
+          .from('course_enrollments')
           .select('''
             learner_id,
-            progress,
-            status,
-            learners:learner_id(id, name, username)
+            created_at,
+            learners:learner_id(id, name, username, email)
           ''')
           .eq('course_id', courseId);
 
@@ -376,11 +375,12 @@ class FeedbackRepository {
           'id': learnerData?['id'] ?? '',
           'name': learnerData?['name'] ?? 'Unknown',
           'username': learnerData?['username'] ?? '',
+          'email': learnerData?['email'] ?? '',
           'avatar':
               learnerData?['name']?.toString().substring(0, 1).toUpperCase() ??
               '?',
-          'progress': enrollment['progress'] ?? 0,
-          'status': enrollment['status'] ?? 'Active',
+          'enrollmentDate': enrollment['created_at'] ?? '',
+          'status': 'Active', // Default status since not in schema
         };
       }).toList();
 
