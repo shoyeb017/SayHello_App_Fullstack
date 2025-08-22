@@ -90,30 +90,63 @@ class CourseRepository {
     throw UnimplementedError('Add Supabase dependency first');
   }
 
-  /// Get courses by instructor
+  /// Get courses by instructor with enrollment counts
   Future<List<Course>> getCoursesByInstructor(
     String instructorId, {
     int limit = 50,
   }) async {
     try {
       print('Fetching courses for instructor: $instructorId');
-      final response = await _supabase
+
+      // First, get all courses for the instructor
+      final coursesResponse = await _supabase
           .from('courses')
           .select()
           .eq('instructor_id', instructorId)
           .order('created_at', ascending: false)
           .limit(limit);
 
-      print('Retrieved courses from Supabase: $response');
+      print('Retrieved courses from Supabase: $coursesResponse');
 
-      if (response.isEmpty) {
+      if (coursesResponse.isEmpty) {
         print('No courses found for instructor');
         return [];
       }
 
-      final courses = response.map((json) => Course.fromJson(json)).toList();
+      // Get enrollment counts for all courses in a single query
+      final courseIds = coursesResponse.map((course) => course['id']).toList();
 
-      print('Parsed ${courses.length} courses');
+      final enrollmentResponse = await _supabase
+          .from('course_enrollments')
+          .select('course_id')
+          .inFilter('course_id', courseIds);
+
+      print(
+        'Retrieved enrollments: ${enrollmentResponse.length} total enrollments',
+      );
+
+      // Count enrollments per course
+      final enrollmentCounts = <String, int>{};
+      for (final enrollment in enrollmentResponse) {
+        final courseId = enrollment['course_id'] as String;
+        enrollmentCounts[courseId] = (enrollmentCounts[courseId] ?? 0) + 1;
+      }
+
+      print('Enrollment counts: $enrollmentCounts');
+
+      // Create Course objects with enrollment counts
+      final courses = coursesResponse.map((courseJson) {
+        final courseId = courseJson['id'] as String;
+        final enrolledStudents = enrollmentCounts[courseId] ?? 0;
+
+        // Add enrolled_students to the JSON data
+        final enrichedJson = Map<String, dynamic>.from(courseJson);
+        enrichedJson['enrolled_students'] = enrolledStudents;
+
+        return Course.fromJson(enrichedJson);
+      }).toList();
+
+      print('Parsed ${courses.length} courses with enrollment counts');
       return courses;
     } catch (e, stackTrace) {
       print('Error fetching instructor courses: $e');

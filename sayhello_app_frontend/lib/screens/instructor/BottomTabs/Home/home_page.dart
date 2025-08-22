@@ -132,7 +132,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
     int expiredCourses = 0;
 
     for (var course in _allCourses) {
-      totalStudents += 0; // TODO: Add enrolledStudents to Course model
+      totalStudents += course.enrolledStudents; // Use actual enrollment count
       final status = _getCourseStatus(course);
       if (status == 'active') activeCourses++;
       if (status == 'upcoming') upcomingCourses++;
@@ -933,7 +933,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                       ),
                       const SizedBox(height: 3), // Reduced spacing
                       Text(
-                        '0 ${localizations.students}', // TODO: Add enrolledStudents to Course model
+                        '${course.enrolledStudents} ${localizations.students}', // Use actual enrollment count
                         style: TextStyle(
                           fontSize: 11,
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -1055,7 +1055,7 @@ class _InstructorHomePageState extends State<InstructorHomePage> {
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
-                              '0 ${localizations.students}', // TODO: Add enrolledStudents to Course model
+                              '${course.enrolledStudents} ${localizations.students}', // Use actual enrollment count
                               style: TextStyle(
                                 fontSize: 11,
                                 color: isDark

@@ -15,6 +15,7 @@ class Course {
   final DateTime endDate;
   final String status; // 'upcoming', 'active', 'expired'
   final DateTime createdAt;
+  final int enrolledStudents; // Count of enrolled students
 
   const Course({
     required this.id,
@@ -30,6 +31,7 @@ class Course {
     required this.endDate,
     required this.status,
     required this.createdAt,
+    this.enrolledStudents = 0, // Default to 0 if not provided
   });
 
   /// Create Course from JSON (Supabase response)
@@ -48,6 +50,7 @@ class Course {
       endDate: DateTime.parse(json['end_date'] as String),
       status: json['status'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
+      enrolledStudents: json['enrolled_students'] as int? ?? 0,
     );
   }
 
@@ -67,6 +70,7 @@ class Course {
       'end_date': endDate.toIso8601String(),
       'status': status,
       'created_at': createdAt.toIso8601String(),
+      'enrolled_students': enrolledStudents,
     };
   }
 
@@ -85,6 +89,7 @@ class Course {
     DateTime? endDate,
     String? status,
     DateTime? createdAt,
+    int? enrolledStudents,
   }) {
     return Course(
       id: id ?? this.id,
@@ -100,6 +105,7 @@ class Course {
       endDate: endDate ?? this.endDate,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
+      enrolledStudents: enrolledStudents ?? this.enrolledStudents,
     );
   }
 
