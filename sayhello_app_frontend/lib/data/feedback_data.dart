@@ -130,7 +130,7 @@ class FeedbackRepository {
             courses:course_id(title)
           ''')
           .eq('course_id', courseId)
-          .eq('feedback_type', 'student')
+          .eq('feedback_type', 'learner')
           .order('created_at', ascending: false);
 
       print('FeedbackRepository: Student feedback response: $response');

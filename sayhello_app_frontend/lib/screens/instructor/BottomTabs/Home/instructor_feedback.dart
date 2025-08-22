@@ -526,18 +526,8 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
                           underline: Container(),
                           dropdownColor: cardColor,
                           style: TextStyle(color: textColor, fontSize: 12),
-                          items: () {
-                            print(
-                              'FeedbackUI: courseStudents length: ${feedbackProvider.courseStudents.length}',
-                            );
-                            print(
-                              'FeedbackUI: courseStudents data: ${feedbackProvider.courseStudents}',
-                            );
-                            return feedbackProvider.courseStudents.map((
-                              student,
-                            ) {
-                              print('FeedbackUI: Processing student: $student');
-                              return DropdownMenuItem<String>(
+                          items: feedbackProvider.courseStudents.map((student) {
+                            return DropdownMenuItem<String>(
                                 value: student['id'],
                                 child: Row(
                                   children: [
@@ -592,8 +582,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
                                   ],
                                 ),
                               );
-                            }).toList();
-                          }(),
+                            }).toList(),
                           onChanged: (value) {
                             setState(() {
                               _selectedStudentId = value;

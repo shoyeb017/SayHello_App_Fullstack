@@ -1,4 +1,44 @@
 -- ==============================
+-- DROP TABLES (in safe order)
+-- ==============================
+DROP TABLE IF EXISTS withdrawals CASCADE;
+DROP TABLE IF EXISTS notifications CASCADE;
+DROP TABLE IF EXISTS feedback CASCADE;
+DROP TABLE IF EXISTS course_enrollments CASCADE;
+DROP TABLE IF EXISTS group_chat CASCADE;
+DROP TABLE IF EXISTS study_materials CASCADE;
+DROP TABLE IF EXISTS recorded_classes CASCADE;
+DROP TABLE IF EXISTS course_sessions CASCADE;
+DROP TABLE IF EXISTS courses CASCADE;
+DROP TABLE IF EXISTS feed_comments CASCADE;
+DROP TABLE IF EXISTS feed_likes CASCADE;
+DROP TABLE IF EXISTS feed_images CASCADE;
+DROP TABLE IF EXISTS feed CASCADE;
+DROP TABLE IF EXISTS messages CASCADE;
+DROP TABLE IF EXISTS chats CASCADE;
+DROP TABLE IF EXISTS followers CASCADE;
+DROP TABLE IF EXISTS instructors CASCADE;
+DROP TABLE IF EXISTS learners CASCADE;
+
+-- ==============================
+-- DROP ENUMS
+-- ==============================
+DROP TYPE IF EXISTS notification_type_enum CASCADE;
+DROP TYPE IF EXISTS feedback_type_enum CASCADE;
+DROP TYPE IF EXISTS group_chat_sender_enum CASCADE;
+DROP TYPE IF EXISTS material_type_enum CASCADE;
+DROP TYPE IF EXISTS session_platform_enum CASCADE;
+DROP TYPE IF EXISTS course_status_enum CASCADE;
+DROP TYPE IF EXISTS course_level_enum CASCADE;
+DROP TYPE IF EXISTS message_status_enum CASCADE;
+DROP TYPE IF EXISTS message_type_enum CASCADE;
+DROP TYPE IF EXISTS language_level_enum CASCADE;
+DROP TYPE IF EXISTS language_enum CASCADE;
+DROP TYPE IF EXISTS country_enum CASCADE;
+DROP TYPE IF EXISTS gender_enum CASCADE;
+
+
+-- ==============================
 -- ENUMS (all lowercase)
 -- ==============================
 CREATE TYPE gender_enum AS ENUM ('male', 'female');
@@ -98,7 +138,18 @@ CREATE TABLE feed (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
     content_text TEXT,
-    content_image_url TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ==============================
+-- 6.1. feed images
+-- ==============================
+
+CREATE TABLE feed_images (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    feed_id UUID REFERENCES feed(id) ON DELETE CASCADE,
+    image_url TEXT NOT NULL,
+    position INT, -- optional, to order multiple images
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -236,4 +287,17 @@ CREATE TABLE notifications (
     content_text TEXT,
     is_read BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- ==============================
+-- 17. withdrawls
+-- ==============================
+
+CREATE TABLE withdrawals (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    instructor_id UUID REFERENCES learners(id) ON DELETE CASCADE,
+    amount NUMERIC(10,2) NOT NULL,
+    status VARCHAR(50) DEFAULT 'COMPLETED',
+    created_at TIMESTAMP DEFAULT NOW(),
+    processed_at TIMESTAMP
 );

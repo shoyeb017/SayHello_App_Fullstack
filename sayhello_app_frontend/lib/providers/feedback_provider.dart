@@ -224,7 +224,7 @@ class FeedbackProvider extends ChangeNotifier {
         courseId: courseId,
         instructorId: instructorId,
         learnerId: learnerId,
-        feedbackType: feedback_model.FeedbackType.student,
+        feedbackType: feedback_model.FeedbackType.learner,
         feedbackText: feedbackText,
         feedbackAbout: feedbackAbout,
         rating: rating,
@@ -297,7 +297,7 @@ class FeedbackProvider extends ChangeNotifier {
         case feedback_model.FeedbackType.instructor:
           _instructorFeedback.removeWhere((f) => f.id == feedbackId);
           break;
-        case feedback_model.FeedbackType.student:
+        case feedback_model.FeedbackType.learner:
           _studentFeedback.removeWhere((f) => f.id == feedbackId);
           break;
         case feedback_model.FeedbackType.general:

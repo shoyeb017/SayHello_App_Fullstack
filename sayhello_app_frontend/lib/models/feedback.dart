@@ -133,7 +133,7 @@ class Feedback {
         return 'Course Review';
       case FeedbackType.instructor:
         return 'Instructor Review';
-      case FeedbackType.student:
+      case FeedbackType.learner:
         return 'Student Feedback';
       case FeedbackType.general:
         return 'General Feedback';
@@ -150,8 +150,8 @@ class Feedback {
         return FeedbackType.course;
       case 'instructor':
         return FeedbackType.instructor;
-      case 'student':
-        return FeedbackType.student;
+      case 'learner':
+        return FeedbackType.learner;
       case 'general':
         return FeedbackType.general;
       default:
@@ -178,7 +178,7 @@ class Feedback {
 enum FeedbackType {
   course('course'),
   instructor('instructor'),
-  student('student'),
+  learner('learner'),
   general('general');
 
   const FeedbackType(this.value);
