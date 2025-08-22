@@ -1,4 +1,4 @@
-/// Feedback Repository - Handles backend operations for feedback management
+/// Feedback Repository - Handles backend operations for feedback
 /// Provides CRUD operations for course, instructor, and student feedback following data layer pattern
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -63,11 +63,11 @@ class FeedbackRepository {
     }
   }
 
-  /// Get all instructor feedback for a specific instructor
-  Future<List<Feedback>> getInstructorFeedback(String instructorId) async {
+  /// Get all feedback from students about instructor for a specific course
+  Future<List<Feedback>> getInstructorFeedback(String courseId) async {
     try {
       print(
-        'FeedbackRepository: Loading instructor feedback for: $instructorId',
+        'FeedbackRepository: Loading instructor feedback for course: $courseId',
       );
 
       final response = await _supabase
@@ -78,7 +78,7 @@ class FeedbackRepository {
             instructors:instructor_id(name, username),
             courses:course_id(title)
           ''')
-          .eq('instructor_id', instructorId)
+          .eq('course_id', courseId)
           .eq('feedback_type', 'instructor')
           .order('created_at', ascending: false);
 

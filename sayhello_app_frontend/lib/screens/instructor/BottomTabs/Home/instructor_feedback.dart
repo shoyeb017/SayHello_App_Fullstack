@@ -30,8 +30,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
       );
 
       if (authProvider.currentUser != null) {
-        // Load instructor feedback and course students
-        feedbackProvider.loadInstructorFeedback(authProvider.currentUser!.id);
+        // Load all feedback for this course (course reviews, instructor reviews, student lists)
         feedbackProvider.loadCourseFeedback(widget.course['id']);
       }
     });
@@ -331,15 +330,6 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
               ),
 
               const SizedBox(height: 10),
-
-              // Debug logs
-              Text('DEBUG: Course feedbacks count: ${courseFeedbacks.length}'),
-              Text(
-                'DEBUG: Instructor feedbacks count: ${instructorFeedbacksOnly.length}',
-              ),
-              Text(
-                'DEBUG: Course students count: ${feedbackProvider.courseStudents.length}',
-              ),
 
               // Show instructor feedbacks
               if (instructorFeedbacksOnly.isEmpty)
