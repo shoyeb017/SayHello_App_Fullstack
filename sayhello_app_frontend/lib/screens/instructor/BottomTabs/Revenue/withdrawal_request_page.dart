@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../../../../../l10n/app_localizations.dart';
+import '../../../../../models/revenue.dart';
+import '../../../../../providers/revenue_provider.dart';
+import '../../../../../providers/auth_provider.dart';
 
 class WithdrawalRequestPage extends StatefulWidget {
   final double availableBalance;
@@ -14,18 +18,35 @@ class WithdrawalRequestPage extends StatefulWidget {
 class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
+
+  // Payment method selection
+  PaymentMethod _selectedPaymentMethod = PaymentMethod.bank;
+
+  // Card details controllers
+  final _cardNumberController = TextEditingController();
+  final _expiryDateController = TextEditingController();
+  final _cvvController = TextEditingController();
+  final _cardHolderController = TextEditingController();
+
+  // PayPal controllers
+  final _paypalEmailController = TextEditingController();
+
+  // Bank details controllers
+  final _bankAccountNumberController = TextEditingController();
   final _bankNameController = TextEditingController();
-  final _accountNumberController = TextEditingController();
-  final _routingNumberController = TextEditingController();
-  final _accountHolderController = TextEditingController();
+  final _swiftCodeController = TextEditingController();
 
   @override
   void dispose() {
     _amountController.dispose();
+    _cardNumberController.dispose();
+    _expiryDateController.dispose();
+    _cvvController.dispose();
+    _cardHolderController.dispose();
+    _paypalEmailController.dispose();
+    _bankAccountNumberController.dispose();
     _bankNameController.dispose();
-    _accountNumberController.dispose();
-    _routingNumberController.dispose();
-    _accountHolderController.dispose();
+    _swiftCodeController.dispose();
     super.dispose();
   }
 
@@ -66,8 +87,12 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
               _buildWithdrawalAmount(isDark, localizations),
               const SizedBox(height: 16),
 
-              // Bank Information
-              _buildBankInformation(isDark, localizations),
+              // Payment Method Selection
+              _buildPaymentMethodSelection(isDark, localizations),
+              const SizedBox(height: 16),
+
+              // Payment Information
+              _buildPaymentInformation(isDark, localizations),
               const SizedBox(height: 20),
 
               // Submit Button
@@ -237,7 +262,10 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
     );
   }
 
-  Widget _buildBankInformation(bool isDark, AppLocalizations localizations) {
+  Widget _buildPaymentMethodSelection(
+    bool isDark,
+    AppLocalizations localizations,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -248,7 +276,7 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            localizations.bankInformation,
+            'Payment Method',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -256,77 +284,292 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
             ),
           ),
           const SizedBox(height: 12),
-
-          // Account Holder Name
-          _buildTextField(
-            controller: _accountHolderController,
-            label: localizations.accountHolderName,
-            hint: localizations.enterFullNameAsOnBankAccount,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return localizations.pleaseEnterAccountHolderName;
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 10),
-
-          // Bank Name
-          _buildTextField(
-            controller: _bankNameController,
-            label: localizations.bankName,
-            hint: localizations.enterYourBankName,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return localizations.pleaseEnterBankName;
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 10),
-
-          // Account Number
-          _buildTextField(
-            controller: _accountNumberController,
-            label: localizations.accountNumber,
-            hint: localizations.enterYourAccountNumber,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return localizations.pleaseEnterAccountNumber;
-              }
-              if (value.length < 8) {
-                return localizations.accountNumberMustBeAtLeast8Digits;
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 10),
-
-          // Routing Number
-          _buildTextField(
-            controller: _routingNumberController,
-            label: localizations.routingNumber,
-            hint: localizations.enter9DigitRoutingNumber,
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(9),
-            ],
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return localizations.pleaseEnterRoutingNumber;
-              }
-              if (value.length != 9) {
-                return localizations.routingNumberMustBe9Digits;
-              }
-              return null;
-            },
+          Column(
+            children: PaymentMethod.values.map((method) {
+              return RadioListTile<PaymentMethod>(
+                title: Row(
+                  children: [
+                    Icon(
+                      _getPaymentMethodIcon(method),
+                      size: 20,
+                      color: const Color(0xFF7A54FF),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      method.displayName,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                value: method,
+                groupValue: _selectedPaymentMethod,
+                onChanged: (PaymentMethod? value) {
+                  setState(() {
+                    _selectedPaymentMethod = value!;
+                    // Clear form fields when changing payment method
+                    _clearPaymentFields();
+                  });
+                },
+                activeColor: const Color(0xFF7A54FF),
+                contentPadding: EdgeInsets.zero,
+              );
+            }).toList(),
           ),
         ],
       ),
     );
+  }
+
+  IconData _getPaymentMethodIcon(PaymentMethod method) {
+    switch (method) {
+      case PaymentMethod.card:
+        return Icons.credit_card;
+      case PaymentMethod.paypal:
+        return Icons.account_balance_wallet;
+      case PaymentMethod.bank:
+        return Icons.account_balance;
+    }
+  }
+
+  void _clearPaymentFields() {
+    _cardNumberController.clear();
+    _expiryDateController.clear();
+    _cvvController.clear();
+    _cardHolderController.clear();
+    _paypalEmailController.clear();
+    _bankAccountNumberController.clear();
+    _bankNameController.clear();
+    _swiftCodeController.clear();
+  }
+
+  Widget _buildPaymentInformation(bool isDark, AppLocalizations localizations) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[850] : Colors.grey[200],
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Payment Information',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
+          const SizedBox(height: 12),
+          _buildPaymentMethodForm(localizations),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentMethodForm(AppLocalizations localizations) {
+    switch (_selectedPaymentMethod) {
+      case PaymentMethod.card:
+        return _buildCardForm(localizations);
+      case PaymentMethod.paypal:
+        return _buildPayPalForm(localizations);
+      case PaymentMethod.bank:
+        return _buildBankForm(localizations);
+    }
+  }
+
+  Widget _buildCardForm(AppLocalizations localizations) {
+    return Column(
+      children: [
+        _buildTextField(
+          controller: _cardHolderController,
+          label: 'Cardholder Name',
+          hint: 'Enter name as on card',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter cardholder name';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 10),
+        _buildTextField(
+          controller: _cardNumberController,
+          label: 'Card Number',
+          hint: 'Enter 16-digit card number',
+          keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(16),
+            _CardNumberFormatter(),
+          ],
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter card number';
+            }
+            final digits = value.replaceAll(' ', '');
+            if (digits.length != 16) {
+              return 'Card number must be 16 digits';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: _buildTextField(
+                controller: _expiryDateController,
+                label: 'Expiry Date',
+                hint: 'MM/YYYY',
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(6),
+                  _ExpiryDateFormatter(),
+                ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Enter expiry date';
+                  }
+                  if (value.length != 7) {
+                    return 'Invalid format';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildTextField(
+                controller: _cvvController,
+                label: 'CVV',
+                hint: 'Enter 3-digit CVV',
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(3),
+                ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Enter CVV';
+                  }
+                  if (value.length != 3) {
+                    return 'CVV must be 3 digits';
+                  }
+                  return null;
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPayPalForm(AppLocalizations localizations) {
+    return _buildTextField(
+      controller: _paypalEmailController,
+      label: 'PayPal Email',
+      hint: 'Enter your PayPal email address',
+      keyboardType: TextInputType.emailAddress,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter PayPal email';
+        }
+        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+          return 'Please enter a valid email address';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildBankForm(AppLocalizations localizations) {
+    return Column(
+      children: [
+        _buildTextField(
+          controller: _bankNameController,
+          label: 'Bank Name',
+          hint: 'Enter your bank name',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter bank name';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 10),
+        _buildTextField(
+          controller: _bankAccountNumberController,
+          label: 'Account Number',
+          hint: 'Enter your account number',
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter account number';
+            }
+            if (value.length < 8) {
+              return 'Account number must be at least 8 digits';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 10),
+        _buildTextField(
+          controller: _swiftCodeController,
+          label: 'SWIFT Code',
+          hint: 'Enter SWIFT/BIC code',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter SWIFT code';
+            }
+            if (value.length < 8 || value.length > 11) {
+              return 'SWIFT code must be 8-11 characters';
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  // Input formatters for card number and expiry date
+  TextInputFormatter _CardNumberFormatter() {
+    return TextInputFormatter.withFunction((oldValue, newValue) {
+      final digits = newValue.text.replaceAll(' ', '');
+      if (digits.length <= 16) {
+        final formatted = digits
+            .replaceAllMapped(RegExp(r'.{4}'), (match) => '${match.group(0)} ')
+            .trim();
+        return TextEditingValue(
+          text: formatted,
+          selection: TextSelection.collapsed(offset: formatted.length),
+        );
+      }
+      return oldValue;
+    });
+  }
+
+  TextInputFormatter _ExpiryDateFormatter() {
+    return TextInputFormatter.withFunction((oldValue, newValue) {
+      final digits = newValue.text.replaceAll('/', '');
+      if (digits.length <= 6) {
+        String formatted = digits;
+        if (digits.length >= 2) {
+          formatted = '${digits.substring(0, 2)}/${digits.substring(2)}';
+        }
+        return TextEditingValue(
+          text: formatted,
+          selection: TextSelection.collapsed(offset: formatted.length),
+        );
+      }
+      return oldValue;
+    });
   }
 
   Widget _buildTextField({
@@ -461,18 +704,7 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
               child: Text(localizations.cancel),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context); // Close dialog
-                Navigator.pop(context); // Go back to revenue page
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      localizations.withdrawalRequestSubmittedSuccessfully,
-                    ),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              },
+              onPressed: () => _processWithdrawal(localizations),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF7A54FF),
               ),
@@ -487,28 +719,130 @@ class _WithdrawalRequestPageState extends State<WithdrawalRequestPage> {
     }
   }
 
+  void _processWithdrawal(AppLocalizations localizations) async {
+    Navigator.pop(context); // Close dialog
+
+    // Get current user ID
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final userId = authProvider.currentUser?.id;
+
+    if (userId == null) {
+      _showErrorSnackBar('User not authenticated');
+      return;
+    }
+
+    // Show loading
+    _showLoadingDialog();
+
+    try {
+      final revenueProvider = Provider.of<RevenueProvider>(
+        context,
+        listen: false,
+      );
+      final amount = double.parse(_amountController.text);
+
+      // Get payment method data
+      final paymentData = _getPaymentMethodData();
+
+      final success = await revenueProvider.submitWithdrawalRequest(
+        instructorId: userId,
+        amount: amount,
+        paymentMethod: _selectedPaymentMethod,
+        cardNumber: paymentData['cardNumber'],
+        expiryDate: paymentData['expiryDate'],
+        cvv: paymentData['cvv'],
+        cardHolderName: paymentData['cardHolderName'],
+        paypalEmail: paymentData['paypalEmail'],
+        bankAccountNumber: paymentData['bankAccountNumber'],
+        bankName: paymentData['bankName'],
+        swiftCode: paymentData['swiftCode'],
+      );
+
+      Navigator.pop(context); // Close loading dialog
+
+      if (success) {
+        Navigator.pop(context); // Go back to revenue page
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(localizations.withdrawalRequestSubmittedSuccessfully),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        _showErrorSnackBar(
+          revenueProvider.error ?? 'Failed to submit withdrawal request',
+        );
+      }
+    } catch (e) {
+      Navigator.pop(context); // Close loading dialog
+      _showErrorSnackBar('Error: $e');
+    }
+  }
+
+  Map<String, dynamic> _getPaymentMethodData() {
+    switch (_selectedPaymentMethod) {
+      case PaymentMethod.card:
+        return {
+          'cardNumber': _cardNumberController.text.replaceAll(' ', ''),
+          'expiryDate': _expiryDateController.text,
+          'cvv': _cvvController.text,
+          'cardHolderName': _cardHolderController.text,
+        };
+      case PaymentMethod.paypal:
+        return {'paypalEmail': _paypalEmailController.text};
+      case PaymentMethod.bank:
+        return {
+          'bankAccountNumber': _bankAccountNumberController.text,
+          'bankName': _bankNameController.text,
+          'swiftCode': _swiftCodeController.text,
+        };
+    }
+  }
+
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('Processing withdrawal...'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+  }
+
   String _buildWithdrawalConfirmationMessage(AppLocalizations localizations) {
     final amount = '\$${_amountController.text}';
-    final lastFour = _accountNumberController.text.length > 4
-        ? _accountNumberController.text.substring(
-            _accountNumberController.text.length - 4,
-          )
-        : "****";
+    String accountInfo = '';
 
-    // Build message based on language structure
-    final locale = Localizations.localeOf(context).languageCode;
-
-    switch (locale) {
-      case 'ja':
-        return '$amount を${localizations.withdrawToAccountEndingIn}$lastFour${localizations.withdrawConfirmationQuestion}';
-      case 'ko':
-        return '$lastFour${localizations.withdrawToAccountEndingIn} $amount${localizations.withdrawConfirmationQuestion}';
-      case 'bn':
-        return '$amount $lastFour${localizations.withdrawToAccountEndingIn} ${localizations.withdrawConfirmationQuestion}';
-      case 'es':
-        return '${localizations.withdrawToAccountEndingIn} $amount ${localizations.withdrawConfirmationQuestion} $lastFour?';
-      default: // English
-        return '${localizations.withdrawToAccountEndingIn} $amount ${localizations.withdrawConfirmationQuestion} $lastFour?';
+    switch (_selectedPaymentMethod) {
+      case PaymentMethod.card:
+        final cardNumber = _cardNumberController.text.replaceAll(' ', '');
+        accountInfo = cardNumber.length >= 4
+            ? '**** ${cardNumber.substring(cardNumber.length - 4)}'
+            : '****';
+        break;
+      case PaymentMethod.paypal:
+        accountInfo = _paypalEmailController.text;
+        break;
+      case PaymentMethod.bank:
+        final accountNumber = _bankAccountNumberController.text;
+        accountInfo = accountNumber.length >= 4
+            ? '****${accountNumber.substring(accountNumber.length - 4)}'
+            : '****';
+        break;
     }
+
+    return 'Withdraw $amount to ${_selectedPaymentMethod.displayName} ending in $accountInfo?';
   }
 }

@@ -589,82 +589,157 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
     final isCompleted = transaction.status == WithdrawalStatus.completed;
     final statusColor = isCompleted ? Colors.green : Colors.red;
 
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[800] : Colors.grey[100],
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Icon(
-              isCompleted ? Icons.check_circle : Icons.error,
-              color: statusColor,
-              size: 16,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      onTap: () => _showTransactionDetails(transaction, localizations),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.grey[800] : Colors.grey[100],
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: Colors.transparent, width: 1),
+        ),
+        child: Column(
+          children: [
+            Row(
               children: [
-                Text(
-                  '${localizations.revenueWithdrawal} - ${transaction.id ?? "N/A"}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: isDark ? Colors.white : Colors.black,
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Icon(
+                    _getPaymentMethodIcon(
+                      transaction.withdrawalInfo?.paymentMethod,
+                    ),
+                    color: statusColor,
+                    size: 16,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  _formatDate(transaction.createdAt),
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${localizations.revenueWithdrawal} - ${transaction.id ?? "N/A"}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        _formatDate(transaction.createdAt),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        ),
+                      ),
+                    ],
                   ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '\$${transaction.amount.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 1,
+                      ),
+                      decoration: BoxDecoration(
+                        color: statusColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                      child: Text(
+                        transaction.status.displayName,
+                        style: TextStyle(
+                          fontSize: 8,
+                          color: statusColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.chevron_right,
+                  size: 16,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                '\$${transaction.amount.toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              const SizedBox(height: 2),
+
+            // Payment method details
+            if (transaction.withdrawalInfo != null) ...[
+              const SizedBox(height: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(3),
+                  color: isDark ? Colors.grey[750] : Colors.grey[50],
+                  borderRadius: BorderRadius.circular(4),
                 ),
-                child: Text(
-                  transaction.status.displayName,
-                  style: TextStyle(
-                    fontSize: 8,
-                    color: statusColor,
-                    fontWeight: FontWeight.w500,
-                  ),
+                child: Row(
+                  children: [
+                    Icon(
+                      _getPaymentMethodIcon(
+                        transaction.withdrawalInfo!.paymentMethod,
+                      ),
+                      size: 14,
+                      color: const Color(0xFF7A54FF),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      transaction.withdrawalInfo!.paymentMethod.displayName,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF7A54FF),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        transaction.withdrawalInfo!.maskedAccountInfo,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: isDark ? Colors.grey[300] : Colors.grey[700],
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  IconData _getPaymentMethodIcon(PaymentMethod? method) {
+    if (method == null) return Icons.account_balance_wallet;
+
+    switch (method) {
+      case PaymentMethod.card:
+        return Icons.credit_card;
+      case PaymentMethod.paypal:
+        return Icons.account_balance_wallet;
+      case PaymentMethod.bank:
+        return Icons.account_balance;
+    }
   }
 
   Widget _buildPaymentInfo(
@@ -829,5 +904,299 @@ class _InstructorRevenuePageState extends State<InstructorRevenuePage> {
         ),
       ),
     );
+  }
+
+  void _showTransactionDetails(
+    WithdrawalRequest transaction,
+    AppLocalizations localizations,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.4,
+        maxChildSize: 0.9,
+        builder: (context, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Drag handle
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.grey[600] : Colors.grey[400],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Text(
+                      'Withdrawal Details',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(
+                        Icons.close,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Scrollable content
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Transaction ID
+                      _buildDetailRow(
+                        'Transaction ID',
+                        transaction.id ?? 'N/A',
+                        isDark,
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Amount
+                      _buildDetailRow(
+                        'Amount',
+                        '\$${transaction.amount.toStringAsFixed(2)}',
+                        isDark,
+                        valueColor: const Color(0xFF7A54FF),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Status
+                      _buildDetailRow(
+                        'Status',
+                        transaction.status.displayName,
+                        isDark,
+                        valueColor: Colors.green,
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Date
+                      _buildDetailRow(
+                        'Date',
+                        _formatDetailDate(transaction.createdAt),
+                        isDark,
+                      ),
+
+                      // Payment Method Details
+                      if (transaction.withdrawalInfo != null) ...[
+                        const SizedBox(height: 20),
+                        Divider(
+                          color: isDark ? Colors.grey[700] : Colors.grey[300],
+                        ),
+                        const SizedBox(height: 16),
+
+                        Text(
+                          'Payment Method',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        // Payment method type
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.grey[800] : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                _getPaymentMethodIcon(
+                                  transaction.withdrawalInfo!.paymentMethod,
+                                ),
+                                color: const Color(0xFF7A54FF),
+                                size: 20,
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                transaction
+                                    .withdrawalInfo!
+                                    .paymentMethod
+                                    .displayName,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF7A54FF),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Payment method specific details
+                        _buildPaymentMethodDetails(
+                          transaction.withdrawalInfo!,
+                          isDark,
+                        ),
+                      ],
+
+                      // Add some bottom padding for the last item
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(
+    String label,
+    String value,
+    bool isDark, {
+    Color? valueColor,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: isDark ? Colors.grey[400] : Colors.grey[600],
+          ),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          width: double.infinity,
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: valueColor ?? (isDark ? Colors.white : Colors.black),
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPaymentMethodDetails(WithdrawalInfo info, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[800] : Colors.grey[100],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Account Information',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          ...(() {
+            switch (info.paymentMethod) {
+              case PaymentMethod.card:
+                return [
+                  _buildDetailRow(
+                    'Card Number',
+                    info.maskedAccountInfo,
+                    isDark,
+                  ),
+                  if (info.cardHolderName != null) ...[
+                    const SizedBox(height: 8),
+                    _buildDetailRow('Cardholder', info.cardHolderName!, isDark),
+                  ],
+                ];
+              case PaymentMethod.paypal:
+                return [
+                  _buildDetailRow(
+                    'PayPal Email',
+                    info.paypalEmail ?? 'PayPal Account',
+                    isDark,
+                  ),
+                ];
+              case PaymentMethod.bank:
+                return [
+                  if (info.bankName != null) ...[
+                    _buildDetailRow('Bank Name', info.bankName!, isDark),
+                    const SizedBox(height: 8),
+                  ],
+                  _buildDetailRow(
+                    'Account Number',
+                    info.maskedAccountInfo,
+                    isDark,
+                  ),
+                  if (info.swiftCode != null) ...[
+                    const SizedBox(height: 8),
+                    _buildDetailRow('SWIFT Code', info.swiftCode!, isDark),
+                  ],
+                ];
+            }
+          })(),
+        ],
+      ),
+    );
+  }
+
+  String _formatDetailDate(DateTime date) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    final hour = date.hour > 12 ? date.hour - 12 : date.hour;
+    final period = date.hour >= 12 ? 'PM' : 'AM';
+
+    return '${months[date.month - 1]} ${date.day}, ${date.year} at ${hour}:${date.minute.toString().padLeft(2, '0')} $period';
   }
 }

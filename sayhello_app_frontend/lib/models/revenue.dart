@@ -153,8 +153,7 @@ class WithdrawalRequest {
   final double amount;
   final WithdrawalStatus status;
   final DateTime createdAt;
-  final DateTime? processedAt;
-  final String? notes;
+  final WithdrawalInfo? withdrawalInfo;
 
   WithdrawalRequest({
     this.id,
@@ -162,21 +161,30 @@ class WithdrawalRequest {
     required this.amount,
     required this.status,
     required this.createdAt,
-    this.processedAt,
-    this.notes,
+    this.withdrawalInfo,
   });
 
   factory WithdrawalRequest.fromJson(Map<String, dynamic> json) {
+    WithdrawalInfo? withdrawalInfo;
+
+    if (json['withdrawal_info'] != null) {
+      final withdrawalInfoData = json['withdrawal_info'];
+      if (withdrawalInfoData is List && withdrawalInfoData.isNotEmpty) {
+        // If it's a list (from Supabase join), take the first item
+        withdrawalInfo = WithdrawalInfo.fromJson(withdrawalInfoData.first);
+      } else if (withdrawalInfoData is Map<String, dynamic>) {
+        // If it's already a map
+        withdrawalInfo = WithdrawalInfo.fromJson(withdrawalInfoData);
+      }
+    }
+
     return WithdrawalRequest(
       id: json['id'],
       instructorId: json['instructor_id'] ?? '',
       amount: (json['amount'] ?? 0).toDouble(),
-      status: WithdrawalStatus.fromString(json['status'] ?? 'pending'),
+      status: WithdrawalStatus.fromString(json['status'] ?? 'completed'),
       createdAt: DateTime.parse(json['created_at']),
-      processedAt: json['processed_at'] != null
-          ? DateTime.parse(json['processed_at'])
-          : null,
-      notes: json['notes'],
+      withdrawalInfo: withdrawalInfo,
     );
   }
 
@@ -187,46 +195,144 @@ class WithdrawalRequest {
       'amount': amount,
       'status': status.value,
       'created_at': createdAt.toIso8601String(),
-      'processed_at': processedAt?.toIso8601String(),
-      'notes': notes,
+      'withdrawal_info': withdrawalInfo?.toJson(),
     };
   }
 }
 
 enum WithdrawalStatus {
-  pending('PENDING'),
-  processing('PROCESSING'),
-  completed('COMPLETED'),
-  rejected('REJECTED');
+  completed('COMPLETED');
 
   const WithdrawalStatus(this.value);
   final String value;
 
   String get displayName {
     switch (this) {
-      case WithdrawalStatus.pending:
-        return 'Pending';
-      case WithdrawalStatus.processing:
-        return 'Processing';
       case WithdrawalStatus.completed:
         return 'Completed';
-      case WithdrawalStatus.rejected:
-        return 'Rejected';
     }
   }
 
   static WithdrawalStatus fromString(String value) {
     switch (value.toUpperCase()) {
-      case 'PENDING':
-        return WithdrawalStatus.pending;
-      case 'PROCESSING':
-        return WithdrawalStatus.processing;
       case 'COMPLETED':
         return WithdrawalStatus.completed;
-      case 'REJECTED':
-        return WithdrawalStatus.rejected;
       default:
-        return WithdrawalStatus.pending;
+        return WithdrawalStatus.completed;
+    }
+  }
+}
+
+enum PaymentMethod {
+  card('CARD'),
+  paypal('PAYPAL'),
+  bank('BANK');
+
+  const PaymentMethod(this.value);
+  final String value;
+
+  String get displayName {
+    switch (this) {
+      case PaymentMethod.card:
+        return 'Credit/Debit Card';
+      case PaymentMethod.paypal:
+        return 'PayPal';
+      case PaymentMethod.bank:
+        return 'Bank Transfer';
+    }
+  }
+
+  static PaymentMethod fromString(String value) {
+    switch (value.toUpperCase()) {
+      case 'CARD':
+        return PaymentMethod.card;
+      case 'PAYPAL':
+        return PaymentMethod.paypal;
+      case 'BANK':
+        return PaymentMethod.bank;
+      default:
+        return PaymentMethod.bank;
+    }
+  }
+}
+
+class WithdrawalInfo {
+  final String? id;
+  final String withdrawalId;
+  final PaymentMethod paymentMethod;
+
+  // Card details
+  final String? cardNumber;
+  final String? expiryDate;
+  final String? cvv;
+  final String? cardHolderName;
+
+  // PayPal details
+  final String? paypalEmail;
+
+  // Bank details
+  final String? bankAccountNumber;
+  final String? bankName;
+  final String? swiftCode;
+
+  WithdrawalInfo({
+    this.id,
+    required this.withdrawalId,
+    required this.paymentMethod,
+    this.cardNumber,
+    this.expiryDate,
+    this.cvv,
+    this.cardHolderName,
+    this.paypalEmail,
+    this.bankAccountNumber,
+    this.bankName,
+    this.swiftCode,
+  });
+
+  factory WithdrawalInfo.fromJson(Map<String, dynamic> json) {
+    return WithdrawalInfo(
+      id: json['id'],
+      withdrawalId: json['withdrawal_id'] ?? '',
+      paymentMethod: PaymentMethod.fromString(json['payment_method'] ?? 'bank'),
+      cardNumber: json['card_number'],
+      expiryDate: json['expiry_date'],
+      cvv: json['cvv'],
+      cardHolderName: json['card_holder_name'],
+      paypalEmail: json['paypal_email'],
+      bankAccountNumber: json['bank_account_number'],
+      bankName: json['bank_name'],
+      swiftCode: json['swift_code'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'withdrawal_id': withdrawalId,
+      'payment_method': paymentMethod.value,
+      'card_number': cardNumber,
+      'expiry_date': expiryDate,
+      'cvv': cvv,
+      'card_holder_name': cardHolderName,
+      'paypal_email': paypalEmail,
+      'bank_account_number': bankAccountNumber,
+      'bank_name': bankName,
+      'swift_code': swiftCode,
+    };
+  }
+
+  String get maskedAccountInfo {
+    switch (paymentMethod) {
+      case PaymentMethod.card:
+        return cardNumber != null && cardNumber!.length >= 4
+            ? '**** **** **** ${cardNumber!.substring(cardNumber!.length - 4)}'
+            : '**** **** **** ****';
+      case PaymentMethod.paypal:
+        return paypalEmail ?? 'PayPal Account';
+      case PaymentMethod.bank:
+        return bankAccountNumber != null && bankAccountNumber!.length >= 4
+            ? '****${bankAccountNumber!.substring(bankAccountNumber!.length - 4)}'
+            : '****';
     }
   }
 }

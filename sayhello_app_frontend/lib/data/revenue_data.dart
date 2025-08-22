@@ -76,7 +76,7 @@ class RevenueRepository {
   Future<double> _getTotalWithdrawn(String instructorId) async {
     try {
       final response = await _supabase
-          .from('withdrawals')
+          .from('withdrawal')
           .select('amount')
           .eq('instructor_id', instructorId)
           .eq('status', 'COMPLETED');
@@ -269,14 +269,17 @@ class RevenueRepository {
       final offset = (page - 1) * limit;
 
       final response = await _supabase
-          .from('withdrawals')
-          .select('*')
+          .from('withdrawal')
+          .select('''
+            *,
+            withdrawal_info(*)
+          ''')
           .eq('instructor_id', instructorId)
           .order('created_at', ascending: false)
           .range(offset, offset + limit - 1);
 
       final countResponse = await _supabase
-          .from('withdrawals')
+          .from('withdrawal')
           .select('*')
           .eq('instructor_id', instructorId);
 
@@ -300,11 +303,22 @@ class RevenueRepository {
     }
   }
 
-  /// Submit withdrawal request
+  /// Submit withdrawal request with payment info
   Future<WithdrawalRequest> submitWithdrawalRequest({
     required String instructorId,
     required double amount,
-    String? notes,
+    required PaymentMethod paymentMethod,
+    // Card details
+    String? cardNumber,
+    String? expiryDate,
+    String? cvv,
+    String? cardHolderName,
+    // PayPal details
+    String? paypalEmail,
+    // Bank details
+    String? bankAccountNumber,
+    String? bankName,
+    String? swiftCode,
   }) async {
     try {
       print(
@@ -319,24 +333,48 @@ class RevenueRepository {
         );
       }
 
+      // Start transaction
       final withdrawalData = {
         'instructor_id': instructorId,
         'amount': amount,
-        'status': WithdrawalStatus.completed.value, // Auto-approve for now
-        'processed_at': DateTime.now().toIso8601String(),
-        'notes': notes,
+        'status': 'COMPLETED',
+        'created_at': DateTime.now().toIso8601String(),
       };
 
-      final response = await _supabase
-          .from('withdrawals')
+      final withdrawalResponse = await _supabase
+          .from('withdrawal')
           .insert(withdrawalData)
           .select()
           .single();
 
-      final withdrawal = WithdrawalRequest.fromJson(response);
-      print('RevenueRepository: Withdrawal request submitted successfully');
+      // Insert withdrawal info
+      final withdrawalInfoData = {
+        'withdrawal_id': withdrawalResponse['id'],
+        'payment_method': paymentMethod.value,
+        'card_number': cardNumber,
+        'expiry_date': expiryDate,
+        'cvv': cvv,
+        'card_holder_name': cardHolderName,
+        'paypal_email': paypalEmail,
+        'bank_account_number': bankAccountNumber,
+        'bank_name': bankName,
+        'swift_code': swiftCode,
+      };
 
-      return withdrawal;
+      final withdrawalInfoResponse = await _supabase
+          .from('withdrawal_info')
+          .insert(withdrawalInfoData)
+          .select()
+          .single();
+
+      // Create complete withdrawal object
+      final completeWithdrawal = WithdrawalRequest.fromJson({
+        ...withdrawalResponse,
+        'withdrawal_info': withdrawalInfoResponse,
+      });
+
+      print('RevenueRepository: Withdrawal request submitted successfully');
+      return completeWithdrawal;
     } catch (e) {
       print('RevenueRepository: Error submitting withdrawal request: $e');
       rethrow;
@@ -347,8 +385,11 @@ class RevenueRepository {
   Future<WithdrawalRequest?> getWithdrawal(String withdrawalId) async {
     try {
       final response = await _supabase
-          .from('withdrawals')
-          .select('*')
+          .from('withdrawal')
+          .select('''
+            *,
+            withdrawal_info(*)
+          ''')
           .eq('id', withdrawalId)
           .single();
 
@@ -356,37 +397,6 @@ class RevenueRepository {
     } catch (e) {
       print('RevenueRepository: Error loading withdrawal: $e');
       return null;
-    }
-  }
-
-  /// Update withdrawal status (admin function)
-  Future<WithdrawalRequest> updateWithdrawalStatus({
-    required String withdrawalId,
-    required WithdrawalStatus status,
-    String? notes,
-  }) async {
-    try {
-      final updateData = <String, dynamic>{'status': status.value};
-
-      if (notes != null) {
-        updateData['notes'] = notes;
-      }
-
-      if (status == WithdrawalStatus.completed) {
-        updateData['processed_at'] = DateTime.now().toIso8601String();
-      }
-
-      final response = await _supabase
-          .from('withdrawals')
-          .update(updateData)
-          .eq('id', withdrawalId)
-          .select()
-          .single();
-
-      return WithdrawalRequest.fromJson(response);
-    } catch (e) {
-      print('RevenueRepository: Error updating withdrawal status: $e');
-      rethrow;
     }
   }
 }

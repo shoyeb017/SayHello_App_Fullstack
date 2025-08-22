@@ -94,11 +94,22 @@ class RevenueProvider with ChangeNotifier {
     }
   }
 
-  /// Submit withdrawal request
+  /// Submit withdrawal request with payment info
   Future<bool> submitWithdrawalRequest({
     required String instructorId,
     required double amount,
-    String? notes,
+    required PaymentMethod paymentMethod,
+    // Card details
+    String? cardNumber,
+    String? expiryDate,
+    String? cvv,
+    String? cardHolderName,
+    // PayPal details
+    String? paypalEmail,
+    // Bank details
+    String? bankAccountNumber,
+    String? bankName,
+    String? swiftCode,
   }) async {
     if (_isSubmittingWithdrawal) return false;
 
@@ -123,7 +134,15 @@ class RevenueProvider with ChangeNotifier {
       final withdrawal = await _repository.submitWithdrawalRequest(
         instructorId: instructorId,
         amount: amount,
-        notes: notes,
+        paymentMethod: paymentMethod,
+        cardNumber: cardNumber,
+        expiryDate: expiryDate,
+        cvv: cvv,
+        cardHolderName: cardHolderName,
+        paypalEmail: paypalEmail,
+        bankAccountNumber: bankAccountNumber,
+        bankName: bankName,
+        swiftCode: swiftCode,
       );
 
       print(
@@ -174,14 +193,7 @@ class RevenueProvider with ChangeNotifier {
     return withdrawals.take(5).toList();
   }
 
-  /// Get pending withdrawals
-  List<WithdrawalRequest> getPendingWithdrawals() {
-    return withdrawals
-        .where((w) => w.status == WithdrawalStatus.pending)
-        .toList();
-  }
-
-  /// Get completed withdrawals
+  /// Get all withdrawals (completed)
   List<WithdrawalRequest> getCompletedWithdrawals() {
     return withdrawals
         .where((w) => w.status == WithdrawalStatus.completed)
