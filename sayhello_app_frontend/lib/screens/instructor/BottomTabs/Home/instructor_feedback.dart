@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../../../../../l10n/app_localizations.dart';
 import '../../../../../../providers/feedback_provider.dart';
 import '../../../../../../providers/auth_provider.dart';
-import '../../../../../../models/feedback.dart' as feedback_model;
 
 class InstructorFeedbackTab extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -54,15 +53,8 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
 
     return Consumer<FeedbackProvider>(
       builder: (context, feedbackProvider, child) {
-        final instructorFeedbacks = feedbackProvider.instructorFeedback;
-        final courseFeedbacks = instructorFeedbacks
-            .where((f) => f.feedbackType == feedback_model.FeedbackType.course)
-            .toList();
-        final instructorFeedbacksOnly = instructorFeedbacks
-            .where(
-              (f) => f.feedbackType == feedback_model.FeedbackType.instructor,
-            )
-            .toList();
+        final courseFeedbacks = feedbackProvider.courseFeedback;
+        final instructorFeedbacksOnly = feedbackProvider.instructorFeedback;
 
         // Calculate average ratings
         final avgCourseRating = courseFeedbacks.isNotEmpty
@@ -178,7 +170,7 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
                   Expanded(
                     child: _buildStatCard(
                       localizations.totalReviews,
-                      '${instructorFeedbacks.length}',
+                      '${courseFeedbacks.length + instructorFeedbacksOnly.length}',
                       Icons.comment,
                       primaryColor,
                       isDark,
@@ -339,6 +331,15 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
               ),
 
               const SizedBox(height: 10),
+
+              // Debug logs
+              Text('DEBUG: Course feedbacks count: ${courseFeedbacks.length}'),
+              Text(
+                'DEBUG: Instructor feedbacks count: ${instructorFeedbacksOnly.length}',
+              ),
+              Text(
+                'DEBUG: Course students count: ${feedbackProvider.courseStudents.length}',
+              ),
 
               // Show instructor feedbacks
               if (instructorFeedbacksOnly.isEmpty)
@@ -528,61 +529,61 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
                           style: TextStyle(color: textColor, fontSize: 12),
                           items: feedbackProvider.courseStudents.map((student) {
                             return DropdownMenuItem<String>(
-                                value: student['id'],
-                                child: Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 12,
-                                      backgroundColor: primaryColor.withOpacity(
-                                        0.2,
-                                      ),
-                                      child: Text(
-                                        student['name']
-                                                ?.toString()
-                                                .substring(0, 1)
-                                                .toUpperCase() ??
-                                            'S',
-                                        style: TextStyle(
-                                          color: primaryColor,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                              value: student['id'],
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 12,
+                                    backgroundColor: primaryColor.withOpacity(
+                                      0.2,
+                                    ),
+                                    child: Text(
+                                      student['name']
+                                              ?.toString()
+                                              .substring(0, 1)
+                                              .toUpperCase() ??
+                                          'S',
+                                      style: TextStyle(
+                                        color: primaryColor,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        student['name'] ?? 'Unknown Student',
-                                        style: TextStyle(fontSize: 12),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      student['name'] ?? 'Unknown Student',
+                                      style: TextStyle(fontSize: 12),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 4,
-                                        vertical: 1,
-                                      ),
-                                      decoration: BoxDecoration(
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                      vertical: 1,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: _getStatusColor(
+                                        student['status'] ?? 'Active',
+                                      ).withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(3),
+                                    ),
+                                    child: Text(
+                                      student['status'] ?? 'Active',
+                                      style: TextStyle(
+                                        fontSize: 8,
                                         color: _getStatusColor(
                                           student['status'] ?? 'Active',
-                                        ).withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(3),
-                                      ),
-                                      child: Text(
-                                        student['status'] ?? 'Active',
-                                        style: TextStyle(
-                                          fontSize: 8,
-                                          color: _getStatusColor(
-                                            student['status'] ?? 'Active',
-                                          ),
-                                          fontWeight: FontWeight.bold,
                                         ),
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
                           onChanged: (value) {
                             setState(() {
                               _selectedStudentId = value;
@@ -834,7 +835,6 @@ class _InstructorFeedbackTabState extends State<InstructorFeedbackTab> {
         instructorId: authProvider.currentUser?.id ?? '',
         learnerId: _selectedStudentId!,
         feedbackText: _studentFeedbackController.text.trim(),
-        feedbackAbout: 'student_performance',
         rating: _studentRating.round(),
       );
 

@@ -8,7 +8,6 @@ class Feedback {
   final String learnerId;
   final FeedbackType feedbackType;
   final String feedbackText;
-  final String feedbackAbout;
   final int rating;
   final DateTime createdAt;
 
@@ -25,7 +24,6 @@ class Feedback {
     required this.learnerId,
     required this.feedbackType,
     required this.feedbackText,
-    required this.feedbackAbout,
     required this.rating,
     required this.createdAt,
     this.learnerName,
@@ -43,7 +41,6 @@ class Feedback {
       learnerId: json['learner_id'] ?? '',
       feedbackType: _parseFeedbackType(json['feedback_type']),
       feedbackText: json['feedback_text'] ?? '',
-      feedbackAbout: json['feedback_about'] ?? '',
       rating: json['rating'] ?? 1,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
@@ -63,7 +60,6 @@ class Feedback {
       'learner_id': learnerId,
       'feedback_type': feedbackType.value,
       'feedback_text': feedbackText,
-      'feedback_about': feedbackAbout,
       'rating': rating,
     };
   }
@@ -76,7 +72,6 @@ class Feedback {
     String? learnerId,
     FeedbackType? feedbackType,
     String? feedbackText,
-    String? feedbackAbout,
     int? rating,
     DateTime? createdAt,
     String? learnerName,
@@ -91,7 +86,6 @@ class Feedback {
       learnerId: learnerId ?? this.learnerId,
       feedbackType: feedbackType ?? this.feedbackType,
       feedbackText: feedbackText ?? this.feedbackText,
-      feedbackAbout: feedbackAbout ?? this.feedbackAbout,
       rating: rating ?? this.rating,
       createdAt: createdAt ?? this.createdAt,
       learnerName: learnerName ?? this.learnerName,

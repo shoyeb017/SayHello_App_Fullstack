@@ -172,7 +172,6 @@ class FeedbackRepository {
     required String learnerId,
     required FeedbackType feedbackType,
     required String feedbackText,
-    required String feedbackAbout,
     required int rating,
   }) async {
     try {
@@ -186,7 +185,6 @@ class FeedbackRepository {
         'learner_id': learnerId,
         'feedback_type': feedbackType.value,
         'feedback_text': feedbackText,
-        'feedback_about': feedbackAbout,
         'rating': rating,
         'created_at': DateTime.now().toIso8601String(),
       };
@@ -236,7 +234,6 @@ class FeedbackRepository {
   Future<Feedback> updateFeedback({
     required String feedbackId,
     String? feedbackText,
-    String? feedbackAbout,
     int? rating,
   }) async {
     try {
@@ -244,7 +241,6 @@ class FeedbackRepository {
 
       final updateData = <String, dynamic>{};
       if (feedbackText != null) updateData['feedback_text'] = feedbackText;
-      if (feedbackAbout != null) updateData['feedback_about'] = feedbackAbout;
       if (rating != null) updateData['rating'] = rating;
 
       final response = await _supabase

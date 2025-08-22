@@ -131,7 +131,6 @@ class FeedbackProvider extends ChangeNotifier {
     required String instructorId,
     required String learnerId,
     required String feedbackText,
-    required String feedbackAbout,
     required int rating,
   }) async {
     _setSubmitting(true);
@@ -144,7 +143,6 @@ class FeedbackProvider extends ChangeNotifier {
         learnerId: learnerId,
         feedbackType: feedback_model.FeedbackType.course,
         feedbackText: feedbackText,
-        feedbackAbout: feedbackAbout,
         rating: rating,
       );
 
@@ -172,7 +170,6 @@ class FeedbackProvider extends ChangeNotifier {
     required String instructorId,
     required String learnerId,
     required String feedbackText,
-    required String feedbackAbout,
     required int rating,
   }) async {
     _setSubmitting(true);
@@ -185,7 +182,6 @@ class FeedbackProvider extends ChangeNotifier {
         learnerId: learnerId,
         feedbackType: feedback_model.FeedbackType.instructor,
         feedbackText: feedbackText,
-        feedbackAbout: feedbackAbout,
         rating: rating,
       );
 
@@ -213,7 +209,6 @@ class FeedbackProvider extends ChangeNotifier {
     required String instructorId,
     required String learnerId,
     required String feedbackText,
-    required String feedbackAbout,
     required int rating,
   }) async {
     _setSubmitting(true);
@@ -226,7 +221,6 @@ class FeedbackProvider extends ChangeNotifier {
         learnerId: learnerId,
         feedbackType: feedback_model.FeedbackType.learner,
         feedbackText: feedbackText,
-        feedbackAbout: feedbackAbout,
         rating: rating,
       );
 
@@ -249,7 +243,6 @@ class FeedbackProvider extends ChangeNotifier {
   Future<bool> updateFeedback({
     required String feedbackId,
     String? feedbackText,
-    String? feedbackAbout,
     int? rating,
   }) async {
     _setUpdating(true);
@@ -259,7 +252,6 @@ class FeedbackProvider extends ChangeNotifier {
       final updatedFeedback = await _feedbackRepository.updateFeedback(
         feedbackId: feedbackId,
         feedbackText: feedbackText,
-        feedbackAbout: feedbackAbout,
         rating: rating,
       );
 

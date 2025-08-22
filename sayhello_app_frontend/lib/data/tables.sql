@@ -270,7 +270,6 @@ CREATE TABLE feedback (
     learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
     feedback_type feedback_type_enum,
     feedback_text TEXT,
-    feedback_about TEXT,
     rating INT CHECK (rating >= 1 AND rating <= 5),
     created_at TIMESTAMP DEFAULT NOW()
 );
