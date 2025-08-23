@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../providers/theme_provider.dart';
+import '../../../../providers/chat_provider.dart';
+import '../../../../providers/auth_provider.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../models/models.dart';
+import '../../../../data/learner_data.dart';
 import 'translator_in_home.dart';
 import '../../Chat/chat.dart'; // Import our new chat interface
 import '../../Notifications/notifications.dart';
@@ -29,29 +33,13 @@ class LanguageTalksApp extends StatelessWidget {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Dummy data models
+// Dummy data models (for categories)
 class Category {
   final IconData icon;
   final String label;
   final Color background;
 
   const Category(this.icon, this.label, this.background);
-}
-
-class ChatItem {
-  final String avatarUrl;
-  final String name;
-  final String lastMessage;
-  final String dateLabel;
-  final bool myTurn;
-
-  const ChatItem({
-    required this.avatarUrl,
-    required this.name,
-    required this.lastMessage,
-    required this.dateLabel,
-    required this.myTurn,
-  });
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -64,8 +52,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
+  final LearnerRepository _learnerRepository = LearnerRepository();
   bool _isSearching = false;
   String _searchQuery = '';
+  Map<String, Learner> _userCache = {}; // Cache for loaded users
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUserChats();
+    });
+  }
 
   @override
   void dispose() {
@@ -73,74 +71,15 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  // Dummy categories (top pill buttons)
-  // static const _categories = <Category>[
-  //   Category(Icons.menu_book_outlined, 'All Courses', Color(0xFF1E88E5)),
-  //   Category(Icons.play_circle_fill, 'Play', Color(0xFF00C853)),
-  //   Category(Icons.translate, 'Translate', Color(0xFF42A5F5)),
-  //   Category(Icons.face_4_rounded, 'Japanese Ai', Color(0xFFFF4081)),
-  //   Category(Icons.expand_more, 'More', Colors.grey),
-  // ];
-
-  // Dummy chat list – replace with real API data later.
-  static final _chats = <ChatItem>[
-    const ChatItem(
-      avatarUrl: 'https://picsum.photos/seed/a/60',
-      name: 'ちょこ',
-      lastMessage: 'ちょこ waved at you!',
-      dateLabel: '28/06',
-      myTurn: true,
-    ),
-    const ChatItem(
-      avatarUrl: 'https://picsum.photos/seed/b/60',
-      name: 'Airi',
-      lastMessage: 'Hello, how are you?',
-      dateLabel: '28/06',
-      myTurn: true,
-    ),
-    const ChatItem(
-      avatarUrl: 'https://picsum.photos/seed/c/60',
-      name: 'ょこょこ',
-      lastMessage: 'Hi, I am new here!',
-      dateLabel: '24/06',
-      myTurn: false,
-    ),
-    const ChatItem(
-      avatarUrl: 'https://picsum.photos/seed/d/60',
-      name: ' Hinata',
-      lastMessage: 'You waved at hinata!',
-      dateLabel: '19/06',
-      myTurn: false,
-    ),
-    const ChatItem(
-      avatarUrl: 'https://picsum.photos/seed/e/60',
-      name: 'Sasuke',
-      lastMessage: 'Heelloo',
-      dateLabel: '16/06',
-      myTurn: true,
-    ),
-    const ChatItem(
-      avatarUrl: 'https://picsum.photos/seed/f/60',
-      name: 'ちょこ',
-      lastMessage: 'ちょこ waved at you!',
-      dateLabel: '28/06',
-      myTurn: true,
-    ),
-    const ChatItem(
-      avatarUrl: 'https://picsum.photos/seed/g/60',
-      name: 'Kim',
-      lastMessage: 'Hello, how are you?',
-      dateLabel: '28/06',
-      myTurn: false,
-    ),
-    const ChatItem(
-      avatarUrl: 'https://picsum.photos/seed/h/60',
-      name: 'ょこょこ',
-      lastMessage: 'Hi, I am new here!',
-      dateLabel: '24/06',
-      myTurn: false,
-    ),
-  ];
+  Future<void> _loadUserChats() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    
+    if (authProvider.currentUser != null && authProvider.currentUser is Learner) {
+      final currentUser = authProvider.currentUser as Learner;
+      await chatProvider.loadUserChats(currentUser.id);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -430,42 +369,130 @@ class _HomePageState extends State<HomePage> {
 
           // Chat list
           Expanded(
-            child: Builder(
-              builder: (context) {
-                // Filter chats based on search query
-                final filteredChats = _searchQuery.isEmpty
-                    ? _chats
-                    : _chats
-                          .where(
-                            (chat) => chat.name.toLowerCase().contains(
-                              _searchQuery.toLowerCase(),
-                            ),
-                          )
-                          .toList();
+            child: Consumer2<ChatProvider, AuthProvider>(
+              builder: (context, chatProvider, authProvider, child) {
+                if (chatProvider.isLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  itemCount: filteredChats.length,
-                  itemBuilder: (context, index) {
-                    final chat = filteredChats[index];
-                    return Column(
+                if (chatProvider.hasError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _ChatTile(chat: chat),
-                        // Partial width divider with indent and endIndent
-                        if (index != filteredChats.length - 1)
-                          Divider(
-                            indent: 90, // same as avatar + padding approx
-                            endIndent: 20, // to stop short of right edge
-                            height: 1,
-                            thickness: 0.7,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? Colors.grey.shade700
-                                : Colors.grey.shade400,
+                        Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Failed to load chats',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 16,
                           ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextButton(
+                          onPressed: _loadUserChats,
+                          child: const Text('Retry'),
+                        ),
                       ],
-                    );
-                  },
+                    ),
+                  );
+                }
+
+                // Filter chats based on search query
+                final allChats = chatProvider.userChats;
+                final currentUserId = authProvider.currentUser?.id ?? '';
+                
+                List<ChatWithLatestMessage> filteredChats;
+                if (_searchQuery.isEmpty) {
+                  filteredChats = allChats;
+                } else {
+                  filteredChats = allChats.where((chatWithMessage) {
+                    final otherUserId = chatWithMessage.chat.user1Id == currentUserId
+                        ? chatWithMessage.chat.user2Id
+                        : chatWithMessage.chat.user1Id;
+                    
+                    final cachedUser = _userCache[otherUserId];
+                    if (cachedUser != null) {
+                      return cachedUser.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                             cachedUser.username.toLowerCase().contains(_searchQuery.toLowerCase());
+                    }
+                    return false; // Don't show chats for users we haven't loaded yet
+                  }).toList();
+                }
+
+                if (filteredChats.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.chat_outlined,
+                          size: 64,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          _searchQuery.isEmpty 
+                            ? 'No chats yet'
+                            : 'No chats found',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 16,
+                          ),
+                        ),
+                        if (_searchQuery.isEmpty) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            'Start a conversation with someone!',
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                }
+
+                return RefreshIndicator(
+                  onRefresh: _loadUserChats,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: filteredChats.length,
+                    itemBuilder: (context, index) {
+                      final chatWithMessage = filteredChats[index];
+                      return Column(
+                        children: [
+                          _BackendChatTile(
+                            chatWithMessage: chatWithMessage,
+                            currentUserId: authProvider.currentUser?.id ?? '',
+                            learnerRepository: _learnerRepository,
+                            userCache: _userCache,
+                          ),
+                          // Partial width divider with indent and endIndent
+                          if (index != filteredChats.length - 1)
+                            Divider(
+                              indent: 90, // same as avatar + padding approx
+                              endIndent: 20, // to stop short of right edge
+                              height: 1,
+                              thickness: 0.7,
+                              color:
+                                  Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.grey.shade700
+                                  : Colors.grey.shade400,
+                            ),
+                        ],
+                      );
+                    },
+                  ),
                 );
               },
             ),
@@ -516,32 +543,173 @@ class _HomePageState extends State<HomePage> {
 // }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Single chat row
-class _ChatTile extends StatelessWidget {
-  final ChatItem chat;
-  const _ChatTile({required this.chat});
+// Backend Chat Tile - uses real chat data from ChatProvider
+class _BackendChatTile extends StatefulWidget {
+  final ChatWithLatestMessage chatWithMessage;
+  final String currentUserId;
+  final LearnerRepository learnerRepository;
+  final Map<String, Learner> userCache;
+
+  const _BackendChatTile({
+    required this.chatWithMessage,
+    required this.currentUserId,
+    required this.learnerRepository,
+    required this.userCache,
+  });
+
+  @override
+  State<_BackendChatTile> createState() => _BackendChatTileState();
+}
+
+class _BackendChatTileState extends State<_BackendChatTile> {
+  Learner? _otherUser;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOtherUser();
+  }
+
+  void _loadOtherUser() async {
+    try {
+      // Get the other user's ID (not the current user)
+      final otherUserId = widget.chatWithMessage.chat.user1Id == widget.currentUserId
+          ? widget.chatWithMessage.chat.user2Id
+          : widget.chatWithMessage.chat.user1Id;
+
+      // Check cache first
+      if (widget.userCache.containsKey(otherUserId)) {
+        setState(() {
+          _otherUser = widget.userCache[otherUserId];
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final learner = await widget.learnerRepository.getLearnerById(otherUserId);
+      
+      if (mounted) {
+        setState(() {
+          _otherUser = learner;
+          _isLoading = false;
+        });
+        
+        // Cache the user for future use
+        if (learner != null) {
+          widget.userCache[otherUserId] = learner;
+        }
+      }
+    } catch (e) {
+      print('Error loading other user: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  String _formatDate(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inDays == 0) {
+      // Today - show time
+      return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    } else if (difference.inDays == 1) {
+      // Yesterday
+      return 'Yesterday';
+    } else if (difference.inDays < 7) {
+      // This week - show day name
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      return days[dateTime.weekday - 1];
+    } else {
+      // Older - show date
+      return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    if (_isLoading) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 1.5, horizontal: 16),
+        child: Row(
+          children: [
+            const CircleAvatar(
+              radius: 32,
+              backgroundColor: Colors.grey,
+              child: Icon(Icons.person, color: Colors.white),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 16,
+                    width: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    height: 14,
+                    width: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final hasUnread = widget.chatWithMessage.hasUnread;
+    final latestMessage = widget.chatWithMessage.latestMessage;
+    final otherUserName = _otherUser?.name ?? 'Unknown User';
+    final otherUserAvatar = _otherUser?.profileImage;
+
+    String lastMessageText = 'No messages yet';
+    String dateLabel = '';
+
+    if (latestMessage != null) {
+      lastMessageText = latestMessage.type == 'image' 
+          ? '📎 Image' 
+          : (latestMessage.contentText ?? 'Message');
+      dateLabel = _formatDate(latestMessage.createdAt);
+    }
+
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 1.5,
-      ), // smaller vertical gap
+      padding: const EdgeInsets.symmetric(vertical: 1.5),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         leading: Stack(
           children: [
             CircleAvatar(
-              radius: 32, // slightly bigger avatar
-              backgroundImage: NetworkImage(chat.avatarUrl),
+              radius: 32,
+              backgroundImage: otherUserAvatar != null 
+                  ? NetworkImage(otherUserAvatar)
+                  : null,
+              backgroundColor: Colors.grey[300],
+              child: otherUserAvatar == null 
+                  ? const Icon(Icons.person, color: Colors.white, size: 32)
+                  : null,
             ),
             Positioned(
               bottom: 0,
               left: 0,
               child: Container(
-                width: 14, // a bit bigger to match avatar
+                width: 14,
                 height: 14,
                 decoration: BoxDecoration(
                   color: Colors.purple,
@@ -553,21 +721,25 @@ class _ChatTile extends StatelessWidget {
           ],
         ),
         title: Text(
-          chat.name,
+          otherUserName,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
-          chat.lastMessage,
+          lastMessageText,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: hasUnread ? theme.primaryColor : null,
+            fontWeight: hasUnread ? FontWeight.w500 : null,
+          ),
         ),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(chat.dateLabel, style: theme.textTheme.bodySmall),
+            Text(dateLabel, style: theme.textTheme.bodySmall),
             const SizedBox(height: 4),
-            if (chat.myTurn)
+            if (hasUnread)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
@@ -577,7 +749,7 @@ class _ChatTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  AppLocalizations.of(context)!.newMessage,
+                  widget.chatWithMessage.unreadCount.toString(),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: const Color(0xFF765ae3),
                     fontWeight: FontWeight.w600,
@@ -587,30 +759,59 @@ class _ChatTile extends StatelessWidget {
           ],
         ),
         onTap: () {
-          // Create a ChatUser from the ChatItem data to navigate to individual chat
-          final chatUser = ChatUser(
-            id: 'user_${chat.name}',
-            name: chat.name,
-            avatarUrl: chat.avatarUrl,
-            country: 'Unknown', // Could be enhanced with real data
-            flag: '🌍', // Default flag
-            age: 25, // Default age
-            gender: 'F', // Default gender
-            isOnline: true, // Default online status
-            lastSeen: DateTime.now(),
-            interests: ['Language Exchange', 'Chat'], // Default interests
-            nativeLanguage: 'Unknown',
-            learningLanguage: 'English',
-          );
+          if (_otherUser != null) {
+            // Create a ChatUser from the Learner data to navigate to individual chat
+            final chatUser = ChatUser(
+              id: _otherUser!.id,
+              name: _otherUser!.name,
+              avatarUrl: _otherUser!.profileImage ?? '',
+              country: _otherUser!.country,
+              flag: _getCountryFlag(_otherUser!.country),
+              age: _calculateAge(_otherUser!.dateOfBirth),
+              gender: _otherUser!.gender == 'male' ? 'M' : 'F',
+              isOnline: true, // Could be enhanced with real online status
+              lastSeen: DateTime.now(), // Could be enhanced with real last seen
+              interests: _otherUser!.interests,
+              nativeLanguage: _otherUser!.nativeLanguage,
+              learningLanguage: _otherUser!.learningLanguage,
+            );
 
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChatDetailPage(user: chatUser),
-            ),
-          );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatDetailPage(user: chatUser),
+              ),
+            );
+          }
         },
       ),
     );
+  }
+
+  String _getCountryFlag(String country) {
+    switch (country.toLowerCase()) {
+      case 'usa':
+        return '🇺🇸';
+      case 'spain':
+        return '🇪🇸';
+      case 'japan':
+        return '🇯🇵';
+      case 'korea':
+        return '🇰🇷';
+      case 'bangladesh':
+        return '🇧🇩';
+      default:
+        return '🌍';
+    }
+  }
+
+  int _calculateAge(DateTime dateOfBirth) {
+    final now = DateTime.now();
+    int age = now.year - dateOfBirth.year;
+    if (now.month < dateOfBirth.month || 
+        (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
+      age--;
+    }
+    return age;
   }
 }
