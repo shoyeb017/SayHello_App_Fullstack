@@ -109,12 +109,23 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
       });
-      // Real-time updates are handled by ChatProvider
+
+      // Subscribe to real-time updates if we have a current chat
+      if (chatProvider.currentChat != null) {
+        print(
+          'ChatDetailPage: Setting up real-time subscription for chat: ${chatProvider.currentChat!.id}',
+        );
+        chatProvider.subscribeToRealTimeUpdates(chatProvider.currentChat!.id);
+      }
     });
   }
 
   @override
   void dispose() {
+    // Unsubscribe from real-time updates
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    chatProvider.unsubscribeFromRealTimeUpdates();
+
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -329,15 +340,25 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           final sortedMessages = List<ChatMessage>.from(messages)
             ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
-          // Auto-scroll when new messages arrive via real-time
-          if (sortedMessages.length > _currentMessageCount) {
-            _currentMessageCount = sortedMessages.length;
+          // Auto-scroll when new messages arrive via real-time (same pattern as instructor group chat)
+          final currentMessageCount = sortedMessages.length;
+          if (currentMessageCount > _currentMessageCount &&
+              _currentMessageCount > 0) {
+            // New messages arrived, scroll smoothly
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && sortedMessages.isNotEmpty) {
+                _scrollToBottomSmooth();
+              }
+            });
+          } else if (currentMessageCount > 0 && _currentMessageCount == 0) {
+            // Initial load, scroll instantly
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted && sortedMessages.isNotEmpty) {
                 _scrollToBottom();
               }
             });
           }
+          _currentMessageCount = currentMessageCount;
 
           return Column(
             children: [

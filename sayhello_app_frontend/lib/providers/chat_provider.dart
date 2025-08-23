@@ -8,7 +8,6 @@ import '../data/data.dart';
 
 class ChatProvider extends ChangeNotifier {
   final ChatRepository _repository = ChatRepository();
-  final SupabaseClient _supabase = Supabase.instance.client;
 
   // Chat state
   List<ChatWithLatestMessage> _userChats = [];
@@ -117,8 +116,6 @@ class ChatProvider extends ChangeNotifier {
 
       if (chat != null) {
         await _loadChatMessages(chatId);
-        // Subscribe to real-time updates for this chat
-        _subscribeToMessages(chatId);
       }
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -424,80 +421,59 @@ class ChatProvider extends ChangeNotifier {
   // REAL-TIME SUBSCRIPTIONS
   // =============================
 
+  /// Public method to subscribe to real-time updates (called from UI)
+  void subscribeToRealTimeUpdates(String chatId) {
+    print(
+      'ChatProvider: Public method - subscribing to real-time updates for chat: $chatId',
+    );
+    _subscribeToMessages(chatId);
+  }
+
+  /// Public method to unsubscribe from real-time updates
+  void unsubscribeFromRealTimeUpdates() {
+    print('ChatProvider: Unsubscribing from real-time updates');
+    _messagesSubscription?.unsubscribe();
+    _chatsSubscription?.unsubscribe();
+    _messagesSubscription = null;
+    _chatsSubscription = null;
+  }
+
   /// Subscribe to real-time message updates for current chat
   void _subscribeToMessages(String chatId) {
     // Unsubscribe from previous subscription if any
     _messagesSubscription?.unsubscribe();
 
-    _messagesSubscription = _supabase
-        .channel('messages:$chatId')
-        .onPostgresChanges(
-          event: PostgresChangeEvent.insert,
-          schema: 'public',
-          table: 'messages',
-          filter: PostgresChangeFilter(
-            type: PostgresChangeFilterType.eq,
-            column: 'chat_id',
-            value: chatId,
-          ),
-          callback: (payload) {
-            _handleNewMessage(payload.newRecord);
-          },
-        )
-        .onPostgresChanges(
-          event: PostgresChangeEvent.update,
-          schema: 'public',
-          table: 'messages',
-          filter: PostgresChangeFilter(
-            type: PostgresChangeFilterType.eq,
-            column: 'chat_id',
-            value: chatId,
-          ),
-          callback: (payload) {
-            _handleUpdatedMessage(payload.newRecord);
-          },
-        )
-        .subscribe();
-  }
+    print('ChatProvider: Subscribing to real-time messages for chat: $chatId');
 
-  /// Handle new message received via real-time
-  void _handleNewMessage(Map<String, dynamic> messageData) {
-    try {
-      final newMessage = ChatMessage.fromJson(messageData);
+    _messagesSubscription = _repository.subscribeToMessages(
+      chatId: chatId,
+      onMessageReceived: (message) {
+        print('ChatProvider: New message received: ${message.contentText}');
 
-      // Add to messages if not already present
-      if (!_messages.any((msg) => msg.id == newMessage.id)) {
-        _messages.add(newMessage);
-        _messages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        // Add to messages if not already present
+        if (!_messages.any((msg) => msg.id == message.id)) {
+          _messages.add(message);
+          _messages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
-        print('New message received via real-time: ${newMessage.contentText}');
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            notifyListeners();
+          });
+        }
+      },
+      onMessageUpdated: (message) {
+        print('ChatProvider: Message updated: ${message.id}');
 
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          notifyListeners();
-        });
-      }
-    } catch (e) {
-      print('Error handling new message: $e');
-    }
-  }
+        // Find and update existing message
+        final index = _messages.indexWhere((msg) => msg.id == message.id);
+        if (index != -1) {
+          _messages[index] = message;
 
-  /// Handle updated message received via real-time
-  void _handleUpdatedMessage(Map<String, dynamic> messageData) {
-    try {
-      final updatedMessage = ChatMessage.fromJson(messageData);
-
-      // Find and update existing message
-      final index = _messages.indexWhere((msg) => msg.id == updatedMessage.id);
-      if (index != -1) {
-        _messages[index] = updatedMessage;
-
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          notifyListeners();
-        });
-      }
-    } catch (e) {
-      print('Error handling updated message: $e');
-    }
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            notifyListeners();
+          });
+        }
+      },
+    );
   }
 
   /// Subscribe to real-time chat updates for user
@@ -505,45 +481,14 @@ class ChatProvider extends ChangeNotifier {
     // Unsubscribe from previous subscription if any
     _chatsSubscription?.unsubscribe();
 
-    _chatsSubscription = _supabase
-        .channel('chats:$userId')
-        .onPostgresChanges(
-          event: PostgresChangeEvent.insert,
-          schema: 'public',
-          table: 'chats',
-          filter: PostgresChangeFilter(
-            type: PostgresChangeFilterType.eq,
-            column: 'user1_id',
-            value: userId,
-          ),
-          callback: (payload) {
-            _handleNewChat(payload.newRecord);
-          },
-        )
-        .onPostgresChanges(
-          event: PostgresChangeEvent.insert,
-          schema: 'public',
-          table: 'chats',
-          filter: PostgresChangeFilter(
-            type: PostgresChangeFilterType.eq,
-            column: 'user2_id',
-            value: userId,
-          ),
-          callback: (payload) {
-            _handleNewChat(payload.newRecord);
-          },
-        )
-        .subscribe();
-  }
+    print('ChatProvider: Subscribing to real-time chats for user: $userId');
 
-  /// Handle new chat received via real-time
-  void _handleNewChat(Map<String, dynamic> chatData) {
-    try {
-      // Reload user chats to get the new chat with proper formatting
-      // This is simpler than trying to construct ChatWithLatestMessage manually
-      print('New chat detected, reloading user chats...');
-    } catch (e) {
-      print('Error handling new chat: $e');
-    }
+    _chatsSubscription = _repository.subscribeToUserChats(
+      userId: userId,
+      onChatAdded: (chat) {
+        print('ChatProvider: New chat added: ${chat.id}');
+        // Could reload user chats here if needed
+      },
+    );
   }
 }

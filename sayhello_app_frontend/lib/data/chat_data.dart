@@ -247,37 +247,118 @@ class ChatRepository {
   }
 
   // =============================
-  // REAL-TIME SUBSCRIPTIONS (Commented out due to API compatibility)
+  // =============================
+  // REAL-TIME SUBSCRIPTIONS
   // =============================
 
-  /*
-  /// Subscribe to new messages in a chat
-  Stream<ChatMessage> subscribeToMessages(String chatId) {
-    return _client
-        .from('messages')
-        .stream(primaryKey: ['id'])
-        .eq('chat_id', chatId)
-        .map((data) => ChatMessage.fromJson(data.first));
-  }
+  /// Subscribe to new messages in a chat with callback-based approach
+  RealtimeChannel? subscribeToMessages({
+    required String chatId,
+    required Function(ChatMessage) onMessageReceived,
+    Function(ChatMessage)? onMessageUpdated,
+    Function(String)? onMessageDeleted,
+  }) {
+    print(
+      'ChatRepository: Setting up real-time subscription for chat: $chatId',
+    );
 
-  /// Subscribe to chat updates
-  Stream<Chat> subscribeToChat(String chatId) {
-    return _client
-        .from('chats')
-        .stream(primaryKey: ['id'])
-        .eq('id', chatId)
-        .map((data) => Chat.fromJson(data.first));
+    final channel = _client
+        .channel('messages:$chatId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: 'messages',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'chat_id',
+            value: chatId,
+          ),
+          callback: (payload) {
+            try {
+              print('ChatRepository: New message received via real-time');
+              final message = ChatMessage.fromJson(payload.newRecord);
+              onMessageReceived(message);
+            } catch (e) {
+              print('ChatRepository: Error parsing new message: $e');
+            }
+          },
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'messages',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'chat_id',
+            value: chatId,
+          ),
+          callback: (payload) {
+            try {
+              print('ChatRepository: Message updated via real-time');
+              final message = ChatMessage.fromJson(payload.newRecord);
+              onMessageUpdated?.call(message);
+            } catch (e) {
+              print('ChatRepository: Error parsing updated message: $e');
+            }
+          },
+        )
+        .subscribe();
+
+    return channel;
   }
 
   /// Subscribe to user's chats
-  Stream<List<Chat>> subscribeToUserChats(String userId) {
-    return _client
-        .from('chats')
-        .stream(primaryKey: ['id'])
-        .or('user1_id.eq.$userId,user2_id.eq.$userId')
-        .map((data) => (data as List)
-            .map((json) => Chat.fromJson(json))
-            .toList());
+  RealtimeChannel? subscribeToUserChats({
+    required String userId,
+    required Function(Chat) onChatAdded,
+    Function(Chat)? onChatUpdated,
+  }) {
+    print(
+      'ChatRepository: Setting up real-time subscription for user chats: $userId',
+    );
+
+    final channel = _client
+        .channel('chats:$userId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: 'chats',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user1_id',
+            value: userId,
+          ),
+          callback: (payload) {
+            try {
+              print('ChatRepository: New chat (user1) received via real-time');
+              final chat = Chat.fromJson(payload.newRecord);
+              onChatAdded(chat);
+            } catch (e) {
+              print('ChatRepository: Error parsing new chat: $e');
+            }
+          },
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: 'chats',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user2_id',
+            value: userId,
+          ),
+          callback: (payload) {
+            try {
+              print('ChatRepository: New chat (user2) received via real-time');
+              final chat = Chat.fromJson(payload.newRecord);
+              onChatAdded(chat);
+            } catch (e) {
+              print('ChatRepository: Error parsing new chat: $e');
+            }
+          },
+        )
+        .subscribe();
+
+    return channel;
   }
-  */
 }
