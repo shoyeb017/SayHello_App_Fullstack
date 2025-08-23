@@ -74,8 +74,9 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadUserChats() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    
-    if (authProvider.currentUser != null && authProvider.currentUser is Learner) {
+
+    if (authProvider.currentUser != null &&
+        authProvider.currentUser is Learner) {
       final currentUser = authProvider.currentUser as Learner;
       await chatProvider.loadUserChats(currentUser.id);
     }
@@ -372,9 +373,7 @@ class _HomePageState extends State<HomePage> {
             child: Consumer2<ChatProvider, AuthProvider>(
               builder: (context, chatProvider, authProvider, child) {
                 if (chatProvider.isLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 if (chatProvider.hasError) {
@@ -408,20 +407,25 @@ class _HomePageState extends State<HomePage> {
                 // Filter chats based on search query
                 final allChats = chatProvider.userChats;
                 final currentUserId = authProvider.currentUser?.id ?? '';
-                
+
                 List<ChatWithLatestMessage> filteredChats;
                 if (_searchQuery.isEmpty) {
                   filteredChats = allChats;
                 } else {
                   filteredChats = allChats.where((chatWithMessage) {
-                    final otherUserId = chatWithMessage.chat.user1Id == currentUserId
+                    final otherUserId =
+                        chatWithMessage.chat.user1Id == currentUserId
                         ? chatWithMessage.chat.user2Id
                         : chatWithMessage.chat.user1Id;
-                    
+
                     final cachedUser = _userCache[otherUserId];
                     if (cachedUser != null) {
-                      return cachedUser.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                             cachedUser.username.toLowerCase().contains(_searchQuery.toLowerCase());
+                      return cachedUser.name.toLowerCase().contains(
+                            _searchQuery.toLowerCase(),
+                          ) ||
+                          cachedUser.username.toLowerCase().contains(
+                            _searchQuery.toLowerCase(),
+                          );
                     }
                     return false; // Don't show chats for users we haven't loaded yet
                   }).toList();
@@ -439,9 +443,9 @@ class _HomePageState extends State<HomePage> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          _searchQuery.isEmpty 
-                            ? 'No chats yet'
-                            : 'No chats found',
+                          _searchQuery.isEmpty
+                              ? 'No chats yet'
+                              : 'No chats found',
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 16,
@@ -485,7 +489,8 @@ class _HomePageState extends State<HomePage> {
                               height: 1,
                               thickness: 0.7,
                               color:
-                                  Theme.of(context).brightness == Brightness.dark
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
                                   ? Colors.grey.shade700
                                   : Colors.grey.shade400,
                             ),
@@ -574,7 +579,8 @@ class _BackendChatTileState extends State<_BackendChatTile> {
   void _loadOtherUser() async {
     try {
       // Get the other user's ID (not the current user)
-      final otherUserId = widget.chatWithMessage.chat.user1Id == widget.currentUserId
+      final otherUserId =
+          widget.chatWithMessage.chat.user1Id == widget.currentUserId
           ? widget.chatWithMessage.chat.user2Id
           : widget.chatWithMessage.chat.user1Id;
 
@@ -587,14 +593,16 @@ class _BackendChatTileState extends State<_BackendChatTile> {
         return;
       }
 
-      final learner = await widget.learnerRepository.getLearnerById(otherUserId);
-      
+      final learner = await widget.learnerRepository.getLearnerById(
+        otherUserId,
+      );
+
       if (mounted) {
         setState(() {
           _otherUser = learner;
           _isLoading = false;
         });
-        
+
         // Cache the user for future use
         if (learner != null) {
           widget.userCache[otherUserId] = learner;
@@ -683,8 +691,8 @@ class _BackendChatTileState extends State<_BackendChatTile> {
     String dateLabel = '';
 
     if (latestMessage != null) {
-      lastMessageText = latestMessage.type == 'image' 
-          ? '📎 Image' 
+      lastMessageText = latestMessage.type == 'image'
+          ? '📎 Image'
           : (latestMessage.contentText ?? 'Message');
       dateLabel = _formatDate(latestMessage.createdAt);
     }
@@ -697,11 +705,11 @@ class _BackendChatTileState extends State<_BackendChatTile> {
           children: [
             CircleAvatar(
               radius: 32,
-              backgroundImage: otherUserAvatar != null 
+              backgroundImage: otherUserAvatar != null
                   ? NetworkImage(otherUserAvatar)
                   : null,
               backgroundColor: Colors.grey[300],
-              child: otherUserAvatar == null 
+              child: otherUserAvatar == null
                   ? const Icon(Icons.person, color: Colors.white, size: 32)
                   : null,
             ),
@@ -808,7 +816,7 @@ class _BackendChatTileState extends State<_BackendChatTile> {
   int _calculateAge(DateTime dateOfBirth) {
     final now = DateTime.now();
     int age = now.year - dateOfBirth.year;
-    if (now.month < dateOfBirth.month || 
+    if (now.month < dateOfBirth.month ||
         (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
       age--;
     }

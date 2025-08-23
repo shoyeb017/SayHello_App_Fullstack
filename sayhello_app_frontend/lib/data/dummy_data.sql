@@ -1,42 +1,65 @@
--- ==============================
--- DROP TABLES (in safe order)
--- ==============================
-DROP TABLE IF EXISTS withdrawal CASCADE;
-DROP TABLE IF EXISTS withdrawal_info CASCADE;
-DROP TABLE IF EXISTS notifications CASCADE;
-DROP TABLE IF EXISTS feedback CASCADE;
-DROP TABLE IF EXISTS course_enrollments CASCADE;
-DROP TABLE IF EXISTS group_chat CASCADE;
-DROP TABLE IF EXISTS study_materials CASCADE;
-DROP TABLE IF EXISTS recorded_classes CASCADE;
-DROP TABLE IF EXISTS course_sessions CASCADE;
-DROP TABLE IF EXISTS courses CASCADE;
-DROP TABLE IF EXISTS feed_comments CASCADE;
-DROP TABLE IF EXISTS feed_likes CASCADE;
-DROP TABLE IF EXISTS feed_images CASCADE;
-DROP TABLE IF EXISTS feed CASCADE;
-DROP TABLE IF EXISTS messages CASCADE;
-DROP TABLE IF EXISTS chats CASCADE;
-DROP TABLE IF EXISTS followers CASCADE;
-DROP TABLE IF EXISTS instructors CASCADE;
-DROP TABLE IF EXISTS learners CASCADE;
+-- -- ==============================
+-- -- DROP TABLES (in safe order)
+-- -- ==============================
+-- DROP TABLE IF EXISTS withdrawal CASCADE;
+-- DROP TABLE IF EXISTS withdrawal_info CASCADE;
+-- DROP TABLE IF EXISTS notifications CASCADE;
+-- DROP TABLE IF EXISTS feedback CASCADE;
+-- DROP TABLE IF EXISTS course_enrollments CASCADE;
+-- DROP TABLE IF EXISTS group_chat CASCADE;
+-- DROP TABLE IF EXISTS study_materials CASCADE;
+-- DROP TABLE IF EXISTS recorded_classes CASCADE;
+-- DROP TABLE IF EXISTS course_sessions CASCADE;
+-- DROP TABLE IF EXISTS courses CASCADE;
+-- DROP TABLE IF EXISTS feed_comments CASCADE;
+-- DROP TABLE IF EXISTS feed_likes CASCADE;
+-- DROP TABLE IF EXISTS feed_images CASCADE;
+-- DROP TABLE IF EXISTS feed CASCADE;
+-- DROP TABLE IF EXISTS messages CASCADE;
+-- DROP TABLE IF EXISTS chats CASCADE;
+-- DROP TABLE IF EXISTS followers CASCADE;
+-- DROP TABLE IF EXISTS instructors CASCADE;
+-- DROP TABLE IF EXISTS learners CASCADE;
 
--- ==============================
--- DROP ENUMS
--- ==============================
-DROP TYPE IF EXISTS notification_type_enum CASCADE;
-DROP TYPE IF EXISTS feedback_type_enum CASCADE;
-DROP TYPE IF EXISTS group_chat_sender_enum CASCADE;
-DROP TYPE IF EXISTS material_type_enum CASCADE;
-DROP TYPE IF EXISTS session_platform_enum CASCADE;
-DROP TYPE IF EXISTS course_status_enum CASCADE;
-DROP TYPE IF EXISTS course_level_enum CASCADE;
-DROP TYPE IF EXISTS message_status_enum CASCADE;
-DROP TYPE IF EXISTS message_type_enum CASCADE;
-DROP TYPE IF EXISTS language_level_enum CASCADE;
-DROP TYPE IF EXISTS language_enum CASCADE;
-DROP TYPE IF EXISTS country_enum CASCADE;
-DROP TYPE IF EXISTS gender_enum CASCADE;
+-- -- ==============================
+-- -- DROP ENUMS
+-- -- ==============================
+-- DROP TYPE IF EXISTS notification_type_enum CASCADE;
+-- DROP TYPE IF EXISTS feedback_type_enum CASCADE;
+-- DROP TYPE IF EXISTS group_chat_sender_enum CASCADE;
+-- DROP TYPE IF EXISTS material_type_enum CASCADE;
+-- DROP TYPE IF EXISTS session_platform_enum CASCADE;
+-- DROP TYPE IF EXISTS course_status_enum CASCADE;
+-- DROP TYPE IF EXISTS course_level_enum CASCADE;
+-- DROP TYPE IF EXISTS message_status_enum CASCADE;
+-- DROP TYPE IF EXISTS message_type_enum CASCADE;
+-- DROP TYPE IF EXISTS language_level_enum CASCADE;
+-- DROP TYPE IF EXISTS language_enum CASCADE;
+-- DROP TYPE IF EXISTS country_enum CASCADE;
+-- DROP TYPE IF EXISTS gender_enum CASCADE;
+
+-- Clear all tables but keep structure
+TRUNCATE TABLE 
+    withdrawal,
+    withdrawal_info,
+    notifications,
+    feedback,
+    course_enrollments,
+    group_chat,
+    study_materials,
+    recorded_classes,
+    course_sessions,
+    courses,
+    feed_comments,
+    feed_likes,
+    feed_images,
+    feed,
+    messages,
+    chats,
+    followers,
+    instructors,
+    learners
+RESTART IDENTITY CASCADE;
 
 
 -- ==============================

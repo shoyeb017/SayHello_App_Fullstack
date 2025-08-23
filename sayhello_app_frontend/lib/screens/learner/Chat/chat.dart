@@ -1,8 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../providers/chat_provider.dart';
+import '../../../providers/auth_provider.dart';
+import '../../../models/models.dart';
 import '../BottomTabs/Connect/others_profile_page.dart';
 
-// Models for chat data
+// Models for chat data (keeping original for backward compatibility)
 class ChatUser {
   final String id;
   final String name;
@@ -31,26 +36,51 @@ class ChatUser {
     required this.nativeLanguage,
     required this.learningLanguage,
   });
-}
 
-class ChatMessage {
-  final String id;
-  final String senderId;
-  final String text;
-  final DateTime timestamp;
-  final bool isRead;
-  final MessageType type;
-  final List<String> reactions;
+  // Factory method to create ChatUser from Learner model
+  factory ChatUser.fromLearner(Learner learner) {
+    return ChatUser(
+      id: learner.id,
+      name: learner.name,
+      avatarUrl: learner.profileImage ?? '',
+      country: learner.country,
+      flag: _getCountryFlag(learner.country),
+      age: _calculateAge(learner.dateOfBirth),
+      gender: learner.gender == 'male' ? 'M' : 'F',
+      isOnline: true, // Could be enhanced with real online status
+      lastSeen: DateTime.now(), // Could be enhanced with real last seen
+      interests: learner.interests,
+      nativeLanguage: learner.nativeLanguage,
+      learningLanguage: learner.learningLanguage,
+    );
+  }
 
-  ChatMessage({
-    required this.id,
-    required this.senderId,
-    required this.text,
-    required this.timestamp,
-    this.isRead = false,
-    this.type = MessageType.text,
-    this.reactions = const [],
-  });
+  static String _getCountryFlag(String country) {
+    switch (country.toLowerCase()) {
+      case 'usa':
+        return '🇺🇸';
+      case 'spain':
+        return '🇪🇸';
+      case 'japan':
+        return '🇯🇵';
+      case 'korea':
+        return '🇰🇷';
+      case 'bangladesh':
+        return '🇧🇩';
+      default:
+        return '🌍';
+    }
+  }
+
+  static int _calculateAge(DateTime dateOfBirth) {
+    final now = DateTime.now();
+    int age = now.year - dateOfBirth.year;
+    if (now.month < dateOfBirth.month ||
+        (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
+      age--;
+    }
+    return age;
+  }
 }
 
 enum MessageType { text, sticker, voice, image }
@@ -75,45 +105,11 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   Map<String, String> _messageTranslations = {};
   Map<String, String> _messageCorrections = {};
 
-  // Sample messages
-  final List<ChatMessage> _messages = [
-    ChatMessage(
-      id: 'msg_001',
-      senderId: 'user_001',
-      text: 'Hello! How are you today?',
-      timestamp: DateTime.now().subtract(const Duration(hours: 2)),
-      isRead: true,
-    ),
-    ChatMessage(
-      id: 'msg_002',
-      senderId: 'current_user',
-      text: 'I am good! Thanks for asking.',
-      timestamp: DateTime.now().subtract(const Duration(hours: 1, minutes: 30)),
-      isRead: true,
-    ),
-    ChatMessage(
-      id: 'msg_003',
-      senderId: 'user_001',
-      text: 'I like to study English very much.',
-      timestamp: DateTime.now().subtract(const Duration(hours: 1)),
-      isRead: true,
-    ),
-    ChatMessage(
-      id: 'msg_004',
-      senderId: 'current_user',
-      text: 'That\'s great! Keep practicing! 😊',
-      timestamp: DateTime.now().subtract(const Duration(minutes: 30)),
-      isRead: true,
-    ),
-    ChatMessage(
-      id: 'msg_005',
-      senderId: 'user_001',
-      text: '👋',
-      timestamp: DateTime.now().subtract(const Duration(minutes: 15)),
-      type: MessageType.sticker,
-      isRead: false,
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _initializeChat();
+  }
 
   @override
   void dispose() {
@@ -122,13 +118,52 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // Auto scroll to bottom when chat opens
+  void _initializeChat() async {
+    await _loadOrCreateChat();
+    _scrollToBottom();
+    _startMessagePolling();
+  }
+
+  void _startMessagePolling() {
+    // Start polling for new messages every 3 seconds
+    Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      if (chatProvider.currentChat != null &&
+          authProvider.currentUser != null) {
+        chatProvider.loadUserChats((authProvider.currentUser as Learner).id);
+      }
+    });
+  }
+
+  Future<void> _loadOrCreateChat() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+
+    if (authProvider.currentUser != null &&
+        authProvider.currentUser is Learner) {
+      final currentUser = authProvider.currentUser as Learner;
+      await chatProvider.loadOrCreateChat(currentUser.id, widget.user.id);
+
+      // Mark messages as read when entering chat
+      await chatProvider.markChatMessagesAsRead(currentUser.id);
+    }
+  }
+
+  void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
       }
     });
   }
@@ -156,7 +191,13 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
               children: [
                 CircleAvatar(
                   radius: 20,
-                  backgroundImage: NetworkImage(widget.user.avatarUrl),
+                  backgroundImage: widget.user.avatarUrl.isNotEmpty
+                      ? NetworkImage(widget.user.avatarUrl)
+                      : null,
+                  backgroundColor: Colors.grey[300],
+                  child: widget.user.avatarUrl.isEmpty
+                      ? const Icon(Icons.person, color: Colors.white)
+                      : null,
                 ),
                 if (widget.user.isOnline)
                   Positioned(
@@ -207,41 +248,84 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           ],
         ),
         actions: [
-          // Removed video call and settings (3-dot menu) icons
+          // Actions can be added here if needed
         ],
       ),
-      body: Column(
-        children: [
-          // Messages List with Profile Header
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(16),
-              itemCount: _messages.length + 1, // +1 for profile header
-              itemBuilder: (context, index) {
-                // Show profile header as first item
-                if (index == 0) {
-                  return _buildProfileHeader(context, isDark, primaryPurple);
-                }
+      body: Consumer2<ChatProvider, AuthProvider>(
+        builder: (context, chatProvider, authProvider, child) {
+          if (chatProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-                // Show messages (adjust index by -1)
-                final message = _messages[index - 1];
-                final isCurrentUser = message.senderId == 'current_user';
+          if (chatProvider.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Failed to load chat',
+                    style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () => _loadOrCreateChat(),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
 
-                return _buildMessageItem(
-                  context,
-                  message,
-                  isCurrentUser,
-                  isDark,
-                  primaryPurple,
-                );
-              },
-            ),
-          ),
+          final messages = chatProvider.messages;
+          final currentUserId = authProvider.currentUser?.id ?? '';
 
-          // Message Input
-          _buildMessageInput(context, isDark, primaryPurple),
-        ],
+          return Column(
+            children: [
+              // Messages List with Profile Header
+              Expanded(
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(16),
+                  itemCount: messages.length + 1, // +1 for profile header
+                  itemBuilder: (context, index) {
+                    // Show profile header as first item
+                    if (index == 0) {
+                      return _buildProfileHeader(
+                        context,
+                        isDark,
+                        primaryPurple,
+                      );
+                    }
+
+                    // Show messages (adjust index by -1)
+                    final message = messages[index - 1];
+                    final isCurrentUser = message.senderId == currentUserId;
+
+                    return _buildMessageItem(
+                      context,
+                      message,
+                      isCurrentUser,
+                      isDark,
+                      primaryPurple,
+                      currentUserId,
+                    );
+                  },
+                ),
+              ),
+
+              // Message Input
+              _buildMessageInput(
+                context,
+                isDark,
+                primaryPurple,
+                chatProvider,
+                currentUserId,
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -433,6 +517,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     bool isCurrentUser,
     bool isDark,
     Color primaryPurple,
+    String currentUserId,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16, top: 16),
@@ -445,7 +530,13 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           if (!isCurrentUser) ...[
             CircleAvatar(
               radius: 16,
-              backgroundImage: NetworkImage(widget.user.avatarUrl),
+              backgroundImage: widget.user.avatarUrl.isNotEmpty
+                  ? NetworkImage(widget.user.avatarUrl)
+                  : null,
+              backgroundColor: Colors.grey[300],
+              child: widget.user.avatarUrl.isEmpty
+                  ? const Icon(Icons.person, color: Colors.white, size: 16)
+                  : null,
             ),
             const SizedBox(width: 8),
           ],
@@ -486,10 +577,10 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Main message text
-                          if (message.type == MessageType.sticker)
+                          if (message.type == 'image')
                             Text(
-                              message.text,
-                              style: const TextStyle(fontSize: 48),
+                              '📎 Image',
+                              style: const TextStyle(fontSize: 16),
                             )
                           else if (_correctedMessages.contains(message.id))
                             // Show corrected message with strikethrough
@@ -500,7 +591,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        message.text,
+                                        message.contentText ?? '',
                                         style: TextStyle(
                                           fontSize: 16,
                                           color: Colors.red,
@@ -545,7 +636,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                             )
                           else
                             Text(
-                              message.text,
+                              message.contentText ?? '',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: isCurrentUser
@@ -597,7 +688,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     ),
 
                     // Action icons positioned on the border of message bubble
-                    if (!isCurrentUser && message.type == MessageType.text)
+                    if (!isCurrentUser && message.type == 'text')
                       Positioned(
                         bottom: -8,
                         right: 12,
@@ -679,7 +770,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
-                    _formatMessageTimestamp(message.timestamp),
+                    _formatMessageTimestamp(message.createdAt),
                     style: TextStyle(
                       fontSize: 11,
                       color: isDark
@@ -688,7 +779,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     ),
                   ),
                 ),
-                if (isCurrentUser && message.isRead)
+                if (isCurrentUser && message.status == 'read')
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
                     child: Text(
@@ -721,6 +812,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     BuildContext context,
     bool isDark,
     Color primaryPurple,
+    ChatProvider chatProvider,
+    String currentUserId,
   ) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -759,7 +852,18 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     ),
                   ),
                   maxLines: null,
-                  onSubmitted: (_) => _sendMessage(),
+                  onSubmitted: (_) {
+                    final chatProvider = Provider.of<ChatProvider>(
+                      context,
+                      listen: false,
+                    );
+                    final authProvider = Provider.of<AuthProvider>(
+                      context,
+                      listen: false,
+                    );
+                    final currentUserId = authProvider.currentUser?.id ?? '';
+                    _sendMessage(chatProvider, currentUserId);
+                  },
                 ),
               ),
             ),
@@ -769,12 +873,33 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             // Send button
             Container(
               decoration: BoxDecoration(
-                color: primaryPurple,
+                color: chatProvider.isSending ? Colors.grey : primaryPurple,
                 shape: BoxShape.circle,
               ),
               child: IconButton(
-                icon: const Icon(Icons.send, color: Colors.white),
-                onPressed: _sendMessage,
+                icon: chatProvider.isSending
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                      )
+                    : const Icon(Icons.send, color: Colors.white),
+                onPressed: chatProvider.isSending
+                    ? null
+                    : () {
+                        final authProvider = Provider.of<AuthProvider>(
+                          context,
+                          listen: false,
+                        );
+                        final currentUserId =
+                            authProvider.currentUser?.id ?? '';
+                        _sendMessage(chatProvider, currentUserId);
+                      },
               ),
             ),
           ],
@@ -784,11 +909,12 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   }
 
   void _autoTranslateMessage(ChatMessage message, Color primaryPurple) {
-    print('_autoTranslateMessage called for: ${message.text}'); // Debug
+    final messageText = message.contentText ?? '';
+    print('_autoTranslateMessage called for: $messageText'); // Debug
 
     // Simulate API translation with dummy data
     String translation;
-    switch (message.text.toLowerCase()) {
+    switch (messageText.toLowerCase()) {
       case 'hello! how are you today?':
         translation = 'こんにちは！今日はどうですか？';
         break;
@@ -796,7 +922,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
         translation = '私は英語を勉強するのがとても好きです。';
         break;
       default:
-        translation = 'This is a dummy translation of: ${message.text}';
+        translation = 'This is a dummy translation of: $messageText';
     }
 
     setState(() {
@@ -840,7 +966,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            Text(message.text),
+            Text(message.contentText ?? ''),
             const SizedBox(height: 16),
             Text(
               AppLocalizations.of(context)!.chatDialogCorrection,
@@ -892,32 +1018,31 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     );
   }
 
-  void _sendMessage() {
+  void _sendMessage(ChatProvider chatProvider, String currentUserId) async {
     if (_messageController.text.trim().isEmpty) return;
 
-    final newMessage = ChatMessage(
-      id: 'msg_${DateTime.now().millisecondsSinceEpoch}',
-      senderId: 'current_user',
-      text: _messageController.text.trim(),
-      timestamp: DateTime.now(),
-      isRead: false,
+    final messageText = _messageController.text.trim();
+    _messageController.clear();
+
+    final success = await chatProvider.sendMessage(
+      messageText,
+      senderId: currentUserId,
     );
 
-    setState(() {
-      _messages.add(newMessage);
-      _messageController.clear();
-    });
-
-    // Auto scroll to bottom
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
+    if (success) {
+      // Auto scroll to bottom after sending
+      _scrollToBottom();
+    } else {
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to send message: ${chatProvider.error}'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
-    });
+    }
   }
 
   String _formatLastSeen(DateTime time) {
