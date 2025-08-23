@@ -1158,7 +1158,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   Widget _buildFeedPost(Feed feed, bool isDark) {
     final textColor = isDark ? Colors.white : Colors.black;
     final iconColor = isDark ? Colors.grey[400] : Colors.grey[600];
-    
+
     return Container(
       margin: EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
@@ -1268,11 +1268,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
           // Feed content
           Text(
             feed.contentText,
-            style: TextStyle(
-              color: textColor,
-              fontSize: 14,
-              height: 1.4,
-            ),
+            style: TextStyle(color: textColor, fontSize: 14, height: 1.4),
             maxLines: 5,
             overflow: TextOverflow.ellipsis,
           ),
@@ -1349,9 +1345,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
         children: imageUrls.map((url) {
           return Expanded(
             child: Container(
-              margin: EdgeInsets.only(
-                right: url == imageUrls.last ? 0 : 4,
-              ),
+              margin: EdgeInsets.only(right: url == imageUrls.last ? 0 : 4),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
