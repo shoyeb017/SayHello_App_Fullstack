@@ -464,14 +464,14 @@ class ChatProvider extends ChangeNotifier {
   void _handleNewMessage(Map<String, dynamic> messageData) {
     try {
       final newMessage = ChatMessage.fromJson(messageData);
-      
+
       // Add to messages if not already present
       if (!_messages.any((msg) => msg.id == newMessage.id)) {
         _messages.add(newMessage);
         _messages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-        
+
         print('New message received via real-time: ${newMessage.contentText}');
-        
+
         WidgetsBinding.instance.addPostFrameCallback((_) {
           notifyListeners();
         });
@@ -485,12 +485,12 @@ class ChatProvider extends ChangeNotifier {
   void _handleUpdatedMessage(Map<String, dynamic> messageData) {
     try {
       final updatedMessage = ChatMessage.fromJson(messageData);
-      
+
       // Find and update existing message
       final index = _messages.indexWhere((msg) => msg.id == updatedMessage.id);
       if (index != -1) {
         _messages[index] = updatedMessage;
-        
+
         WidgetsBinding.instance.addPostFrameCallback((_) {
           notifyListeners();
         });

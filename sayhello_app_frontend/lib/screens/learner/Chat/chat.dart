@@ -105,7 +105,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       // Initialize message count and ensure we scroll to bottom after messages are loaded
       final chatProvider = Provider.of<ChatProvider>(context, listen: false);
       _currentMessageCount = chatProvider.messages.length;
-      
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
       });
@@ -172,7 +172,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
   void _scrollToBottom() {
     if (!mounted) return;
-    
+
     if (_scrollController.hasClients) {
       // Use jumpTo for immediate scrolling without animation to reduce UI overhead
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
@@ -181,7 +181,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
   void _scrollToBottomSmooth() {
     if (!mounted) return;
-    
+
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
