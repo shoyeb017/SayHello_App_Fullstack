@@ -55,7 +55,9 @@ class ChatProvider extends ChangeNotifier {
         _unreadCounts[chatWithMessage.chat.id] = chatWithMessage.unreadCount;
       }
 
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     } catch (e) {
       _setError('Failed to load user chats: $e');
     } finally {
@@ -85,7 +87,9 @@ class ChatProvider extends ChangeNotifier {
       // Load messages for this chat
       await _loadChatMessages(existingChat.id);
 
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     } catch (e) {
       _setError('Failed to load or create chat: $e');
     } finally {
@@ -106,7 +110,9 @@ class ChatProvider extends ChangeNotifier {
         await _loadChatMessages(chatId);
       }
 
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     } catch (e) {
       _setError('Failed to load chat: $e');
     } finally {
@@ -117,7 +123,9 @@ class ChatProvider extends ChangeNotifier {
   /// Load messages for current chat
   Future<void> _loadChatMessages(String chatId, {int limit = 100}) async {
     _isMessagesLoading = true;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       _messages = await _repository.getChatMessages(chatId, limit: limit);
@@ -125,7 +133,9 @@ class ChatProvider extends ChangeNotifier {
       _setError('Failed to load messages: $e');
     } finally {
       _isMessagesLoading = false;
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
@@ -134,7 +144,9 @@ class ChatProvider extends ChangeNotifier {
     if (_currentChat == null || _isMessagesLoading) return;
 
     _isMessagesLoading = true;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       final olderMessages = await _repository.getChatMessages(
@@ -145,12 +157,16 @@ class ChatProvider extends ChangeNotifier {
 
       // Add older messages to the beginning of the list
       _messages.insertAll(0, olderMessages);
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     } catch (e) {
       _setError('Failed to load more messages: $e');
     } finally {
       _isMessagesLoading = false;
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
@@ -170,7 +186,9 @@ class ChatProvider extends ChangeNotifier {
 
     _isSending = true;
     _clearError();
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
       final chatMessage = ChatMessage(
@@ -188,7 +206,9 @@ class ChatProvider extends ChangeNotifier {
 
       // Add message to local list
       _messages.add(sentMessage);
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
 
       return true;
     } catch (e) {
@@ -196,7 +216,9 @@ class ChatProvider extends ChangeNotifier {
       return false;
     } finally {
       _isSending = false;
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
@@ -209,7 +231,9 @@ class ChatProvider extends ChangeNotifier {
       final messageIndex = _messages.indexWhere((msg) => msg.id == messageId);
       if (messageIndex != -1) {
         _messages[messageIndex] = _messages[messageIndex].markAsRead();
-        notifyListeners();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          notifyListeners();
+        });
       }
     } catch (e) {
       _setError('Failed to mark message as read: $e');
@@ -234,7 +258,9 @@ class ChatProvider extends ChangeNotifier {
       // Update unread count
       _unreadCounts[_currentChat!.id] = 0;
 
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     } catch (e) {
       _setError('Failed to mark chat messages as read: $e');
     }
@@ -249,7 +275,9 @@ class ChatProvider extends ChangeNotifier {
 
       // Remove from local list
       _messages.removeWhere((msg) => msg.id == messageId);
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
 
       return true;
     } catch (e) {
@@ -276,7 +304,9 @@ class ChatProvider extends ChangeNotifier {
         _messages = [];
       }
 
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
       return true;
     } catch (e) {
       _setError('Failed to delete chat: $e');
@@ -313,14 +343,18 @@ class ChatProvider extends ChangeNotifier {
   void clearCurrentChat() {
     _currentChat = null;
     _messages = [];
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   /// Add message to current chat (for real-time updates)
   void addMessage(ChatMessage message) {
     if (_currentChat?.id == message.chatId) {
       _messages.add(message);
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 
@@ -361,7 +395,9 @@ class ChatProvider extends ChangeNotifier {
     _isMessagesLoading = false;
     _isSending = false;
     _error = null;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   @override

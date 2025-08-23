@@ -110,9 +110,12 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   }
 
   void _initializeChat() async {
-    await _loadOrCreateChat();
-    _scrollToBottom();
-    _startMessagePolling();
+    // Use addPostFrameCallback to ensure initialization happens after build
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _loadOrCreateChat();
+      _scrollToBottom();
+      _startMessagePolling();
+    });
   }
 
   void _startMessagePolling() {
@@ -124,7 +127,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       }
 
       final chatProvider = Provider.of<ChatProvider>(context, listen: false);
-      
+
       // Reload current chat messages if we have an active chat
       if (chatProvider.currentChat != null) {
         _reloadCurrentChatMessages();
@@ -140,18 +143,52 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   }
 
   Future<void> _loadOrCreateChat() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final chatProvider = Provider.of<ChatProvider>(context, listen: false);
 
-    if (authProvider.currentUser != null &&
-        authProvider.currentUser is Learner) {
-      final currentUser = authProvider.currentUser as Learner;
-      
-      // Load or create chat between current user and chat partner
-      await chatProvider.loadOrCreateChat(currentUser.id, widget.user.id);
+      print('ChatDetailPage: Starting chat initialization');
+      print('ChatDetailPage: Current user: ${authProvider.currentUser?.id}');
+      print('ChatDetailPage: Chat partner: ${widget.user.id}');
 
-      // Mark messages as read when entering chat
-      await chatProvider.markChatMessagesAsRead(currentUser.id);
+      if (authProvider.currentUser != null &&
+          authProvider.currentUser is Learner) {
+        final currentUser = authProvider.currentUser as Learner;
+
+        print(
+          'ChatDetailPage: Loading or creating chat between ${currentUser.id} and ${widget.user.id}',
+        );
+
+        // Load or create chat between current user and chat partner
+        await chatProvider.loadOrCreateChat(currentUser.id, widget.user.id);
+
+        print(
+          'ChatDetailPage: Chat loaded successfully, current chat: ${chatProvider.currentChat?.id}',
+        );
+
+        // Mark messages as read when entering chat
+        await chatProvider.markChatMessagesAsRead(currentUser.id);
+
+        print('ChatDetailPage: Messages marked as read');
+      } else {
+        print(
+          'ChatDetailPage: Error - No current user or user is not a Learner',
+        );
+        throw Exception('No authenticated user found');
+      }
+    } catch (e) {
+      print('ChatDetailPage: Error in _loadOrCreateChat: $e');
+
+      // Show error to user
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load chat: $e'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 5),
+          ),
+        );
+      }
     }
   }
 
@@ -280,8 +317,17 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     style: TextStyle(color: Colors.grey[600], fontSize: 16),
                   ),
                   const SizedBox(height: 8),
-                  TextButton(
-                    onPressed: () => _loadOrCreateChat(),
+                  Text(
+                    chatProvider.error ?? 'Unknown error',
+                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () async {
+                      print('ChatDetailPage: Retry button pressed');
+                      await _loadOrCreateChat();
+                    },
                     child: const Text('Retry'),
                   ),
                 ],
@@ -442,8 +488,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                               name: widget.user.name,
                               avatar: widget.user.avatarUrl,
                               nativeLanguage: widget.user.nativeLanguage,
-                              learningLanguage:
-                                  widget.user.learningLanguage,
+                              learningLanguage: widget.user.learningLanguage,
                             ),
                           ),
                         );
@@ -471,6 +516,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
               context,
             )!.chatLearningLanguage(widget.user.learningLanguage),
             style: const TextStyle(fontSize: 14),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
 
           const SizedBox(height: 8),
@@ -478,16 +525,18 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           // Native language with flag
           Row(
             children: [
-              Text(
-                widget.user.flag,
-                style: const TextStyle(fontSize: 20),
-              ),
+              Text(widget.user.flag, style: const TextStyle(fontSize: 20)),
               const SizedBox(width: 8),
-              Text(
-                AppLocalizations.of(
-                  context,
-                )!.chatLanguageEnthusiast(widget.user.country, widget.user.flag),
-                style: const TextStyle(fontSize: 14),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.chatLanguageEnthusiast(
+                    widget.user.country,
+                    widget.user.flag,
+                  ),
+                  style: const TextStyle(fontSize: 14),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),
@@ -498,10 +547,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           if (widget.user.interests.isNotEmpty) ...[
             Text(
               AppLocalizations.of(context)!.interests,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
             Wrap(
@@ -516,16 +562,11 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   decoration: BoxDecoration(
                     color: primaryPurple.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: primaryPurple.withOpacity(0.3),
-                    ),
+                    border: Border.all(color: primaryPurple.withOpacity(0.3)),
                   ),
                   child: Text(
                     interest,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: primaryPurple,
-                    ),
+                    style: TextStyle(fontSize: 12, color: primaryPurple),
                   ),
                 );
               }).toList(),
@@ -582,7 +623,9 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   ),
                   decoration: BoxDecoration(
                     color: isCurrentUser
-                        ? const Color(0xFFF0EAFF) // Light purple for current user
+                        ? const Color(
+                            0xFFF0EAFF,
+                          ) // Light purple for current user
                         : (isDark ? Colors.grey.shade800 : Colors.white),
                     borderRadius: BorderRadius.circular(20),
                     border: !isCurrentUser
@@ -600,7 +643,11 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                       if (message.type == 'image')
                         Row(
                           children: [
-                            Icon(Icons.image, size: 16, color: Colors.grey[600]),
+                            Icon(
+                              Icons.image,
+                              size: 16,
+                              color: Colors.grey[600],
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               'Image',
@@ -617,8 +664,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                           message.contentText ?? '',
                           style: TextStyle(
                             fontSize: 16,
-                            color: isCurrentUser 
-                                ? Colors.black87 
+                            color: isCurrentUser
+                                ? Colors.black87
                                 : (isDark ? Colors.white : Colors.black87),
                           ),
                         ),
@@ -638,12 +685,12 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                           if (isCurrentUser) ...[
                             const SizedBox(width: 4),
                             Icon(
-                              message.status == 'read' 
-                                  ? Icons.done_all 
+                              message.status == 'read'
+                                  ? Icons.done_all
                                   : Icons.done,
                               size: 14,
-                              color: message.status == 'read' 
-                                  ? Colors.blue 
+                              color: message.status == 'read'
+                                  ? Colors.blue
                                   : Colors.grey[600],
                             ),
                           ],
@@ -724,12 +771,14 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : const Icon(Icons.send, color: Colors.white),
-                onPressed: chatProvider.isSending 
-                    ? null 
+                onPressed: chatProvider.isSending
+                    ? null
                     : () => _sendMessage(chatProvider, currentUserId),
               ),
             ),
@@ -739,7 +788,10 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     );
   }
 
-  Future<void> _sendMessage(ChatProvider chatProvider, String currentUserId) async {
+  Future<void> _sendMessage(
+    ChatProvider chatProvider,
+    String currentUserId,
+  ) async {
     final messageText = _messageController.text.trim();
     if (messageText.isEmpty) return;
 
@@ -758,7 +810,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     } else {
       // If failed, put the text back
       _messageController.text = messageText;
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

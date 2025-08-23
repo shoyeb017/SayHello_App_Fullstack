@@ -14,19 +14,30 @@ class ChatRepository {
 
   /// Create a new chat between two users
   Future<Chat> createChat(String user1Id, String user2Id) async {
-    final chatData = {
-      'user1_id': user1Id,
-      'user2_id': user2Id,
-      'created_at': DateTime.now().toIso8601String(),
-    };
+    try {
+      print('ChatRepository: Creating new chat between $user1Id and $user2Id');
 
-    final response = await _client
-        .from('chats')
-        .insert(chatData)
-        .select()
-        .single();
+      final chatData = {
+        'user1_id': user1Id,
+        'user2_id': user2Id,
+        'created_at': DateTime.now().toIso8601String(),
+      };
 
-    return Chat.fromJson(response);
+      print('ChatRepository: Inserting chat data: $chatData');
+
+      final response = await _client
+          .from('chats')
+          .insert(chatData)
+          .select()
+          .single();
+
+      print('ChatRepository: Chat created successfully: $response');
+
+      return Chat.fromJson(response);
+    } catch (e) {
+      print('ChatRepository: Error creating chat: $e');
+      throw Exception('Failed to create chat: $e');
+    }
   }
 
   /// Get chat by ID
@@ -43,17 +54,34 @@ class ChatRepository {
 
   /// Get or create chat between two users
   Future<Chat?> getChatBetweenUsers(String user1Id, String user2Id) async {
-    // Try both combinations since user1_id and user2_id can be in any order
-    final response = await _client
-        .from('chats')
-        .select()
-        .or(
-          'and(user1_id.eq.$user1Id,user2_id.eq.$user2Id),and(user1_id.eq.$user2Id,user2_id.eq.$user1Id)',
-        )
-        .maybeSingle();
+    try {
+      print('ChatRepository: Looking for chat between $user1Id and $user2Id');
 
-    if (response == null) return null;
-    return Chat.fromJson(response);
+      // Try both combinations since user1_id and user2_id can be in any order
+      // Order by created_at desc and limit to 1 to get the most recent chat
+      final response = await _client
+          .from('chats')
+          .select()
+          .or(
+            'and(user1_id.eq.$user1Id,user2_id.eq.$user2Id),and(user1_id.eq.$user2Id,user2_id.eq.$user1Id)',
+          )
+          .order('created_at', ascending: false)
+          .limit(1);
+
+      print('ChatRepository: getChatBetweenUsers response: $response');
+
+      if (response.isEmpty) {
+        print('ChatRepository: No existing chat found');
+        return null;
+      }
+
+      final chat = Chat.fromJson(response.first);
+      print('ChatRepository: Found existing chat: ${chat.id}');
+      return chat;
+    } catch (e) {
+      print('ChatRepository: Error in getChatBetweenUsers: $e');
+      throw e;
+    }
   }
 
   /// Get all chats for a user with latest message and unread count
