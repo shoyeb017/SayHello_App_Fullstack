@@ -15,9 +15,9 @@ class ChatRepository {
   /// Create a new chat between two users
   Future<Chat> createChat(String user1Id, String user2Id) async {
     final chatData = {
-      'participant_ids': [user1Id, user2Id],
+      'user1_id': user1Id,
+      'user2_id': user2Id,
       'created_at': DateTime.now().toIso8601String(),
-      'updated_at': DateTime.now().toIso8601String(),
     };
 
     final response = await _client
@@ -43,11 +43,13 @@ class ChatRepository {
 
   /// Get or create chat between two users
   Future<Chat?> getChatBetweenUsers(String user1Id, String user2Id) async {
+    // Try both combinations since user1_id and user2_id can be in any order
     final response = await _client
         .from('chats')
         .select()
-        .contains('participant_ids', [user1Id])
-        .contains('participant_ids', [user2Id])
+        .or(
+          'and(user1_id.eq.$user1Id,user2_id.eq.$user2Id),and(user1_id.eq.$user2Id,user2_id.eq.$user1Id)',
+        )
         .maybeSingle();
 
     if (response == null) return null;
@@ -56,12 +58,12 @@ class ChatRepository {
 
   /// Get all chats for a user with latest message and unread count
   Future<List<ChatWithLatestMessage>> getUserChats(String userId) async {
-    // Get chats where user is participant
+    // Get chats where user is participant (either user1_id or user2_id)
     final chatsResponse = await _client
         .from('chats')
         .select()
-        .contains('participant_ids', [userId])
-        .order('updated_at', ascending: false);
+        .or('user1_id.eq.$userId,user2_id.eq.$userId')
+        .order('created_at', ascending: false);
 
     List<ChatWithLatestMessage> chatsWithMessages = [];
 
@@ -70,7 +72,7 @@ class ChatRepository {
 
       // Get latest message
       final latestMessageResponse = await _client
-          .from('chat_messages')
+          .from('messages')
           .select()
           .eq('chat_id', chat.id)
           .order('created_at', ascending: false)
@@ -82,19 +84,19 @@ class ChatRepository {
         latestMessage = ChatMessage.fromJson(latestMessageResponse);
       }
 
-      // Get unread count
-      final unreadCount = await _client
-          .from('chat_messages')
+      // Get unread count (messages not sent by user and status = 'unread')
+      final unreadResponse = await _client
+          .from('messages')
           .select()
           .eq('chat_id', chat.id)
-          .eq('is_read', false)
+          .eq('status', 'unread')
           .neq('sender_id', userId);
 
       chatsWithMessages.add(
         ChatWithLatestMessage(
           chat: chat,
           latestMessage: latestMessage,
-          unreadCount: (unreadCount as List).length,
+          unreadCount: (unreadResponse as List).length,
         ),
       );
     }
@@ -105,7 +107,7 @@ class ChatRepository {
   /// Delete chat and all its messages
   Future<void> deleteChat(String chatId) async {
     // Delete messages first (due to foreign key constraints)
-    await _client.from('chat_messages').delete().eq('chat_id', chatId);
+    await _client.from('messages').delete().eq('chat_id', chatId);
 
     // Delete chat
     await _client.from('chats').delete().eq('id', chatId);
@@ -121,16 +123,10 @@ class ChatRepository {
     messageData.remove('id'); // Remove ID for creation
 
     final response = await _client
-        .from('chat_messages')
+        .from('messages')
         .insert(messageData)
         .select()
         .single();
-
-    // Update chat's updated_at timestamp
-    await _client
-        .from('chats')
-        .update({'updated_at': DateTime.now().toIso8601String()})
-        .eq('id', message.chatId);
 
     return ChatMessage.fromJson(response);
   }
@@ -142,7 +138,7 @@ class ChatRepository {
     int offset = 0,
   }) async {
     final response = await _client
-        .from('chat_messages')
+        .from('messages')
         .select()
         .eq('chat_id', chatId)
         .order('created_at', ascending: true)
@@ -156,32 +152,32 @@ class ChatRepository {
   /// Mark message as read
   Future<void> markMessageAsRead(String messageId) async {
     await _client
-        .from('chat_messages')
-        .update({'is_read': true})
+        .from('messages')
+        .update({'status': 'read'})
         .eq('id', messageId);
   }
 
   /// Mark all messages in a chat as read for a user
   Future<void> markChatMessagesAsRead(String chatId, String userId) async {
     await _client
-        .from('chat_messages')
-        .update({'is_read': true})
+        .from('messages')
+        .update({'status': 'read'})
         .eq('chat_id', chatId)
         .neq('sender_id', userId);
   }
 
   /// Delete message
   Future<void> deleteMessage(String messageId) async {
-    await _client.from('chat_messages').delete().eq('id', messageId);
+    await _client.from('messages').delete().eq('id', messageId);
   }
 
   /// Get unread message count for user across all chats
   Future<int> getUnreadMessageCount(String userId) async {
     // Get user's chats
-    final userChatsResponse = await _client.from('chats').select('id').contains(
-      'participant_ids',
-      [userId],
-    );
+    final userChatsResponse = await _client
+        .from('chats')
+        .select('id')
+        .or('user1_id.eq.$userId,user2_id.eq.$userId');
 
     final chatIds = (userChatsResponse as List)
         .map((chat) => chat['id'] as String)
@@ -191,13 +187,35 @@ class ChatRepository {
 
     // Count unread messages in user's chats (not sent by user)
     final unreadResponse = await _client
-        .from('chat_messages')
+        .from('messages')
         .select()
         .inFilter('chat_id', chatIds)
-        .eq('is_read', false)
+        .eq('status', 'unread')
         .neq('sender_id', userId);
 
     return (unreadResponse as List).length;
+  }
+
+  /// Update message correction
+  Future<void> updateMessageCorrection(
+    String messageId,
+    String correction,
+  ) async {
+    await _client
+        .from('messages')
+        .update({'correction': correction})
+        .eq('id', messageId);
+  }
+
+  /// Update message translation
+  Future<void> updateMessageTranslation(
+    String messageId,
+    String translation,
+  ) async {
+    await _client
+        .from('messages')
+        .update({'translated_content': translation})
+        .eq('id', messageId);
   }
 
   // =============================
@@ -208,7 +226,7 @@ class ChatRepository {
   /// Subscribe to new messages in a chat
   Stream<ChatMessage> subscribeToMessages(String chatId) {
     return _client
-        .from('chat_messages')
+        .from('messages')
         .stream(primaryKey: ['id'])
         .eq('chat_id', chatId)
         .map((data) => ChatMessage.fromJson(data.first));
@@ -228,7 +246,7 @@ class ChatRepository {
     return _client
         .from('chats')
         .stream(primaryKey: ['id'])
-        .contains('participant_ids', [userId])
+        .or('user1_id.eq.$userId,user2_id.eq.$userId')
         .map((data) => (data as List)
             .map((json) => Chat.fromJson(json))
             .toList());

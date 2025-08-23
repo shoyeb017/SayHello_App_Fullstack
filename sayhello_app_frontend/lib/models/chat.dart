@@ -3,30 +3,24 @@
 
 class Chat {
   final String id;
-  final String name;
+  final String user1Id;
+  final String user2Id;
   final DateTime createdAt;
-  final String? description;
-  final String? imageUrl;
-  final List<String> participantIds;
 
   const Chat({
     required this.id,
-    required this.name,
+    required this.user1Id,
+    required this.user2Id,
     required this.createdAt,
-    this.description,
-    this.imageUrl,
-    required this.participantIds,
   });
 
   /// Create Chat from JSON (Supabase response)
   factory Chat.fromJson(Map<String, dynamic> json) {
     return Chat(
       id: json['id'] as String,
-      name: json['name'] as String,
+      user1Id: json['user1_id'] as String,
+      user2Id: json['user2_id'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
-      description: json['description'] as String?,
-      imageUrl: json['image_url'] as String?,
-      participantIds: List<String>.from(json['participant_ids'] ?? []),
     );
   }
 
@@ -34,42 +28,44 @@ class Chat {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
+      'user1_id': user1Id,
+      'user2_id': user2Id,
       'created_at': createdAt.toIso8601String(),
-      'description': description,
-      'image_url': imageUrl,
-      'participant_ids': participantIds,
     };
   }
 
   /// Create a copy with modified fields
   Chat copyWith({
     String? id,
-    String? name,
+    String? user1Id,
+    String? user2Id,
     DateTime? createdAt,
-    String? description,
-    String? imageUrl,
-    List<String>? participantIds,
   }) {
     return Chat(
       id: id ?? this.id,
-      name: name ?? this.name,
+      user1Id: user1Id ?? this.user1Id,
+      user2Id: user2Id ?? this.user2Id,
       createdAt: createdAt ?? this.createdAt,
-      description: description ?? this.description,
-      imageUrl: imageUrl ?? this.imageUrl,
-      participantIds: participantIds ?? List.from(this.participantIds),
     );
   }
 
+  /// Get participant IDs as list (for compatibility)
+  List<String> get participantIds => [user1Id, user2Id];
+
   /// Get participant count
-  int get participantCount => participantIds.length;
+  int get participantCount => 2;
 
   /// Check if user is participant
-  bool isParticipant(String userId) => participantIds.contains(userId);
+  bool isParticipant(String userId) => userId == user1Id || userId == user2Id;
+
+  /// Get other participant ID
+  String getOtherParticipant(String currentUserId) {
+    return currentUserId == user1Id ? user2Id : user1Id;
+  }
 
   @override
   String toString() {
-    return 'Chat(id: $id, name: $name, participants: ${participantIds.length})';
+    return 'Chat(id: $id, user1: $user1Id, user2: $user2Id)';
   }
 
   @override
@@ -86,21 +82,25 @@ class ChatMessage {
   final String id;
   final String chatId;
   final String senderId;
-  final String message;
+  final String? contentText;
+  final String type; // message_type_enum: 'text', 'image'
+  final String status; // message_status_enum: 'read', 'unread'
+  final String? correction;
+  final String? translatedContent;
+  final String? parentMsgId;
   final DateTime createdAt;
-  final String? messageType; // text, image, file, etc.
-  final String? fileUrl;
-  final bool isRead;
 
   const ChatMessage({
     required this.id,
     required this.chatId,
     required this.senderId,
-    required this.message,
+    this.contentText,
+    required this.type,
+    required this.status,
+    this.correction,
+    this.translatedContent,
+    this.parentMsgId,
     required this.createdAt,
-    this.messageType,
-    this.fileUrl,
-    required this.isRead,
   });
 
   /// Create ChatMessage from JSON (Supabase response)
@@ -109,11 +109,13 @@ class ChatMessage {
       id: json['id'] as String,
       chatId: json['chat_id'] as String,
       senderId: json['sender_id'] as String,
-      message: json['message'] as String,
+      contentText: json['content_text'] as String?,
+      type: json['type'] as String,
+      status: json['status'] as String,
+      correction: json['correction'] as String?,
+      translatedContent: json['translated_content'] as String?,
+      parentMsgId: json['parent_msg_id'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
-      messageType: json['message_type'] as String?,
-      fileUrl: json['file_url'] as String?,
-      isRead: json['is_read'] as bool? ?? false,
     );
   }
 
@@ -123,11 +125,13 @@ class ChatMessage {
       'id': id,
       'chat_id': chatId,
       'sender_id': senderId,
-      'message': message,
+      'content_text': contentText,
+      'type': type,
+      'status': status,
+      'correction': correction,
+      'translated_content': translatedContent,
+      'parent_msg_id': parentMsgId,
       'created_at': createdAt.toIso8601String(),
-      'message_type': messageType,
-      'file_url': fileUrl,
-      'is_read': isRead,
     };
   }
 
@@ -136,29 +140,39 @@ class ChatMessage {
     String? id,
     String? chatId,
     String? senderId,
-    String? message,
+    String? contentText,
+    String? type,
+    String? status,
+    String? correction,
+    String? translatedContent,
+    String? parentMsgId,
     DateTime? createdAt,
-    String? messageType,
-    String? fileUrl,
-    bool? isRead,
   }) {
     return ChatMessage(
       id: id ?? this.id,
       chatId: chatId ?? this.chatId,
       senderId: senderId ?? this.senderId,
-      message: message ?? this.message,
+      contentText: contentText ?? this.contentText,
+      type: type ?? this.type,
+      status: status ?? this.status,
+      correction: correction ?? this.correction,
+      translatedContent: translatedContent ?? this.translatedContent,
+      parentMsgId: parentMsgId ?? this.parentMsgId,
       createdAt: createdAt ?? this.createdAt,
-      messageType: messageType ?? this.messageType,
-      fileUrl: fileUrl ?? this.fileUrl,
-      isRead: isRead ?? this.isRead,
     );
   }
 
+  /// Compatibility getters for old API
+  String get message => contentText ?? '';
+  String? get messageType => type;
+  String? get fileUrl => type == 'image' ? contentText : null;
+  bool get isRead => status == 'read';
+
   /// Check if message is a file/media
-  bool get isMediaMessage => fileUrl != null && fileUrl!.isNotEmpty;
+  bool get isMediaMessage => type == 'image';
 
   /// Check if message is text only
-  bool get isTextMessage => messageType == null || messageType == 'text';
+  bool get isTextMessage => type == 'text';
 
   /// Get formatted time (HH:MM)
   String get formattedTime {
@@ -166,11 +180,21 @@ class ChatMessage {
   }
 
   /// Mark message as read
-  ChatMessage markAsRead() => copyWith(isRead: true);
+  ChatMessage markAsRead() => copyWith(status: 'read');
+
+  /// Check if message is a reply
+  bool get isReply => parentMsgId != null;
+
+  /// Check if message has correction
+  bool get hasCorrection => correction != null && correction!.isNotEmpty;
+
+  /// Check if message has translation
+  bool get hasTranslation =>
+      translatedContent != null && translatedContent!.isNotEmpty;
 
   @override
   String toString() {
-    return 'ChatMessage(id: $id, sender: $senderId, read: $isRead)';
+    return 'ChatMessage(id: $id, sender: $senderId, type: $type, status: $status)';
   }
 
   @override
@@ -212,12 +236,12 @@ class ChatWithLatestMessage {
   /// Get display text for latest message
   String get latestMessageDisplay {
     if (latestMessage == null) return 'No messages yet';
-    if (latestMessage!.isMediaMessage) return '📎 File';
+    if (latestMessage!.isMediaMessage) return '📎 Image';
     return latestMessage!.message;
   }
 
   @override
   String toString() {
-    return 'ChatWithLatestMessage(chat: ${chat.name}, unread: $unreadCount)';
+    return 'ChatWithLatestMessage(chat: ${chat.id}, unread: $unreadCount)';
   }
 }

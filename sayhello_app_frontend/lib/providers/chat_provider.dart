@@ -160,11 +160,13 @@ class ChatProvider extends ChangeNotifier {
 
   /// Send a message
   Future<bool> sendMessage(
-    String message, {
-    String? fileUrl,
-    String? messageType,
+    String messageText, {
+    String? imageUrl,
+    String messageType = 'text',
+    String? parentMsgId,
+    String senderId = '',
   }) async {
-    if (_currentChat == null || message.trim().isEmpty) return false;
+    if (_currentChat == null || messageText.trim().isEmpty) return false;
 
     _isSending = true;
     _clearError();
@@ -174,12 +176,12 @@ class ChatProvider extends ChangeNotifier {
       final chatMessage = ChatMessage(
         id: '', // Will be generated
         chatId: _currentChat!.id,
-        senderId: '', // Should be set from current user
-        message: message.trim(),
+        senderId: senderId, // Should be set from current user
+        contentText: messageType == 'text' ? messageText.trim() : imageUrl,
+        type: messageType,
+        status: 'unread',
+        parentMsgId: parentMsgId,
         createdAt: DateTime.now(),
-        messageType: messageType ?? 'text',
-        fileUrl: fileUrl,
-        isRead: false,
       );
 
       final sentMessage = await _repository.sendMessage(chatMessage);
@@ -223,7 +225,8 @@ class ChatProvider extends ChangeNotifier {
 
       // Update local messages
       for (int i = 0; i < _messages.length; i++) {
-        if (_messages[i].senderId != userId && !_messages[i].isRead) {
+        if (_messages[i].senderId != userId &&
+            _messages[i].status == 'unread') {
           _messages[i] = _messages[i].markAsRead();
         }
       }
@@ -289,10 +292,11 @@ class ChatProvider extends ChangeNotifier {
 
   /// Get chat with another user
   ChatWithLatestMessage? getChatWithUser(String userId) {
-    return _userChats.firstWhere(
-      (chat) => chat.chat.participantIds.contains(userId),
-      orElse: () => _userChats.first, // This will throw if empty
-    );
+    try {
+      return _userChats.firstWhere((chat) => chat.chat.isParticipant(userId));
+    } catch (e) {
+      return null; // Return null if not found
+    }
   }
 
   /// Get unread message count for user
