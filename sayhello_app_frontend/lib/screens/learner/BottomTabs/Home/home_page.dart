@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 import '../../../../providers/theme_provider.dart';
 import '../../../../providers/chat_provider.dart';
 import '../../../../providers/auth_provider.dart';
@@ -57,12 +58,30 @@ class _HomePageState extends State<HomePage> {
   String _searchQuery = '';
   Map<String, Learner> _userCache = {}; // Cache for loaded users
   ChatProvider? _chatProvider; // Store reference for real-time subscription
+  Timer? _searchDebouncer; // Debouncer for search
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserChats();
+    });
+
+    // Add listener to search controller for real-time search
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    // Cancel previous timer
+    _searchDebouncer?.cancel();
+
+    // Create new timer for debounced search
+    _searchDebouncer = Timer(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        setState(() {
+          _searchQuery = _searchController.text;
+        });
+      }
     });
   }
 
@@ -86,6 +105,11 @@ class _HomePageState extends State<HomePage> {
     // Unsubscribe from real-time chat list updates using stored reference
     _chatProvider?.unsubscribeFromUserChatList();
 
+    // Clean up search debouncer
+    _searchDebouncer?.cancel();
+
+    // Remove listener and dispose controllers
+    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
   }
@@ -98,6 +122,37 @@ class _HomePageState extends State<HomePage> {
         authProvider.currentUser is Learner) {
       final currentUser = authProvider.currentUser as Learner;
       await chatProvider.loadUserChats(currentUser.id);
+
+      // Preload user data for better search performance
+      _preloadChatUsers(chatProvider.userChats, currentUser.id);
+    }
+  }
+
+  /// Preload user data for all chat partners to improve search performance
+  void _preloadChatUsers(
+    List<ChatWithLatestMessage> chats,
+    String currentUserId,
+  ) {
+    for (final chatWithMessage in chats) {
+      final otherUserId = chatWithMessage.chat.user1Id == currentUserId
+          ? chatWithMessage.chat.user2Id
+          : chatWithMessage.chat.user1Id;
+
+      // Skip if already cached
+      if (!_userCache.containsKey(otherUserId)) {
+        _learnerRepository
+            .getLearnerById(otherUserId)
+            .then((learner) {
+              if (learner != null && mounted) {
+                setState(() {
+                  _userCache[otherUserId] = learner;
+                });
+              }
+            })
+            .catchError((error) {
+              print('Error preloading user $otherUserId: $error');
+            });
+      }
     }
   }
 
@@ -317,8 +372,6 @@ class _HomePageState extends State<HomePage> {
                         child: TextField(
                           controller: _searchController,
                           autofocus: true,
-                          onChanged: (value) =>
-                              setState(() => _searchQuery = value),
                           style: const TextStyle(fontSize: 14),
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
@@ -431,23 +484,49 @@ class _HomePageState extends State<HomePage> {
                 if (_searchQuery.isEmpty) {
                   filteredChats = allChats;
                 } else {
-                  filteredChats = allChats.where((chatWithMessage) {
+                  // Create a list to store filtered chats
+                  filteredChats = [];
+
+                  for (final chatWithMessage in allChats) {
                     final otherUserId =
                         chatWithMessage.chat.user1Id == currentUserId
                         ? chatWithMessage.chat.user2Id
                         : chatWithMessage.chat.user1Id;
 
+                    // Check if user is already cached
                     final cachedUser = _userCache[otherUserId];
                     if (cachedUser != null) {
-                      return cachedUser.name.toLowerCase().contains(
-                            _searchQuery.toLowerCase(),
-                          ) ||
+                      // Search in cached user data
+                      final searchTerm = _searchQuery.toLowerCase();
+                      if (cachedUser.name.toLowerCase().contains(searchTerm) ||
                           cachedUser.username.toLowerCase().contains(
-                            _searchQuery.toLowerCase(),
-                          );
+                            searchTerm,
+                          ) ||
+                          (cachedUser.bio?.toLowerCase().contains(searchTerm) ??
+                              false)) {
+                        filteredChats.add(chatWithMessage);
+                      }
+                    } else {
+                      // If user is not cached, load them asynchronously and add to filtered list
+                      filteredChats.add(chatWithMessage);
+
+                      // Load user data in background for future searches
+                      _learnerRepository
+                          .getLearnerById(otherUserId)
+                          .then((learner) {
+                            if (learner != null && mounted) {
+                              setState(() {
+                                _userCache[otherUserId] = learner;
+                              });
+                            }
+                          })
+                          .catchError((error) {
+                            print(
+                              'Error loading user $otherUserId for search: $error',
+                            );
+                          });
                     }
-                    return false; // Don't show chats for users we haven't loaded yet
-                  }).toList();
+                  }
                 }
 
                 if (filteredChats.isEmpty) {
@@ -622,7 +701,7 @@ class _BackendChatTileState extends State<_BackendChatTile> {
           _isLoading = false;
         });
 
-        // Cache the user for future use
+        // Cache the user for future use and search functionality
         if (learner != null) {
           widget.userCache[otherUserId] = learner;
         }
