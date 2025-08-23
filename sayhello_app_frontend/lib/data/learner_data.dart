@@ -151,8 +151,10 @@ class LearnerRepository {
   /// Follow another learner
   Future<Follower> followLearner(String followerId, String followedId) async {
     try {
-      print('LearnerRepository: Attempting to follow - follower: $followerId, followed: $followedId');
-      
+      print(
+        'LearnerRepository: Attempting to follow - follower: $followerId, followed: $followedId',
+      );
+
       // Create insert data without created_at (not in database schema)
       final insertData = {
         'follower_user_id': followerId,
@@ -178,14 +180,16 @@ class LearnerRepository {
   /// Unfollow a learner
   Future<void> unfollowLearner(String followerId, String followedId) async {
     try {
-      print('LearnerRepository: Attempting to unfollow - follower: $followerId, followed: $followedId');
-      
+      print(
+        'LearnerRepository: Attempting to unfollow - follower: $followerId, followed: $followedId',
+      );
+
       await _supabase
           .from('followers')
           .delete()
           .eq('follower_user_id', followerId)
           .eq('followed_user_id', followedId);
-          
+
       print('LearnerRepository: Unfollow operation completed');
     } catch (e) {
       print('LearnerRepository: Unfollow failed with error: $e');
@@ -232,8 +236,10 @@ class LearnerRepository {
   /// Check if user is following another user
   Future<bool> isFollowing(String followerId, String followedId) async {
     try {
-      print('LearnerRepository: Checking follow status - follower: $followerId, followed: $followedId');
-      
+      print(
+        'LearnerRepository: Checking follow status - follower: $followerId, followed: $followedId',
+      );
+
       final response = await _supabase
           .from('followers')
           .select('id')

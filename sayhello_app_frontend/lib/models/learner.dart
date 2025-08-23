@@ -27,7 +27,7 @@ class Learner {
     required this.name,
     required this.email,
     required this.username,
-    required this.password, 
+    required this.password,
     required this.dateOfBirth,
     required this.gender,
     required this.country,

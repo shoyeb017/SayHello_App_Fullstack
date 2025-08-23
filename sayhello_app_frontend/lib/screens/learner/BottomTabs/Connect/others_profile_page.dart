@@ -507,12 +507,13 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                             right: 16,
                             child: Container(
                               padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
+                                horizontal: 6,
+                                vertical: 3,
                               ),
+                              constraints: BoxConstraints(maxWidth: 150),
                               decoration: BoxDecoration(
                                 color: Colors.black26,
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -520,15 +521,19 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                                   Icon(
                                     Icons.public,
                                     color: Colors.white,
-                                    size: 14,
+                                    size: 12,
                                   ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    "$location ${getCurrentTimeForCountry(country)}",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
+                                  SizedBox(width: 3),
+                                  Flexible(
+                                    child: Text(
+                                      "$location ${getCurrentTimeForCountry(country)}",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
                                   ),
                                 ],
@@ -546,20 +551,20 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                         // Main content container
                         Container(
                           width: double.infinity,
-                          padding: EdgeInsets.fromLTRB(16, 50, 16, 100),
+                          padding: EdgeInsets.fromLTRB(16, 40, 16, 80),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               // Space for profile picture
-                              SizedBox(height: 40),
+                              SizedBox(height: 35),
 
                               // Basic info
                               _buildBasicInfo(isDark, primaryColor),
-                              SizedBox(height: 20),
+                              SizedBox(height: 16),
 
                               // Bio section
                               _buildBioSection(isDark),
-                              SizedBox(height: 20),
+                              SizedBox(height: 16),
 
                               // Tabs
                               _buildTabSection(isDark, primaryColor),
@@ -569,15 +574,15 @@ class _OthersProfilePageState extends State<OthersProfilePage>
 
                         // Profile picture positioned to overlap with cover image
                         Positioned(
-                          top: -45, // Move it up to overlap with cover image
+                          top: -40, // Move it up to overlap with cover image
                           left: 16,
                           child: CircleAvatar(
-                            radius: 45,
+                            radius: 40,
                             backgroundColor: isDark
                                 ? Colors.grey[800]
                                 : Colors.white,
                             child: CircleAvatar(
-                              radius: 42,
+                              radius: 37,
                               backgroundImage: NetworkImage(widget.avatar),
                             ),
                           ),
@@ -601,10 +606,101 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Follow button positioned above name
+        // Name with gender/age and follow button row
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Left side - User info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Name with gender/age in one line
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          widget.name,
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFEEDF7),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              gender == "Female" ? Icons.female : Icons.male,
+                              color: Color(0xFFD619A8),
+                              size: 16,
+                            ),
+                            SizedBox(width: 2),
+                            Text(
+                              age.toString(),
+                              style: TextStyle(
+                                color: Color(0xFFD619A8),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 4),
+
+                  // Username in another line
+                  Text(
+                    username,
+                    style: TextStyle(color: Colors.grey, fontSize: 13),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+
+                  SizedBox(height: 8),
+
+                  // Language chips in another line
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _buildLanguageChip(
+                          _getLanguageFlag(_learnerData!.nativeLanguage),
+                          _learnerData!.nativeLanguage,
+                          Colors.green,
+                          isDark,
+                        ),
+                        SizedBox(width: 8),
+                        _buildLanguageChip(
+                          _getLanguageFlag(_learnerData!.learningLanguage),
+                          _learnerData!.learningLanguage,
+                          primaryColor,
+                          isDark,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Right side - Follow button
             GestureDetector(
               onTap: _isFollowLoading ? null : _toggleFollow,
               child: Container(
@@ -633,76 +729,8 @@ class _OthersProfilePageState extends State<OthersProfilePage>
             ),
           ],
         ),
-        SizedBox(height: 8),
-
-        // Name with gender/age beside it
-        Row(
-          children: [
-            Text(
-              widget.name,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black,
-              ),
-            ),
-            SizedBox(width: 12),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: Color(0xFFFEEDF7),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    gender == "Female" ? Icons.female : Icons.male,
-                    color: Color(0xFFD619A8),
-                    size: 18,
-                  ),
-                  SizedBox(width: 2),
-                  Text(
-                    age.toString(),
-                    style: TextStyle(
-                      color: Color(0xFFD619A8),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-
-        SizedBox(height: 4),
-
-        // Username
-        Text(username, style: TextStyle(color: Colors.grey, fontSize: 14)),
 
         SizedBox(height: 12),
-
-        // Language chips
-        Row(
-          children: [
-            _buildLanguageChip(
-              _getLanguageFlag(_learnerData!.nativeLanguage),
-              _learnerData!.nativeLanguage,
-              Colors.green,
-              isDark,
-            ),
-            SizedBox(width: 8),
-            _buildLanguageChip(
-              _getLanguageFlag(_learnerData!.learningLanguage),
-              _learnerData!.learningLanguage,
-              primaryColor,
-              isDark,
-            ),
-          ],
-        ),
-
-        SizedBox(height: 16),
 
         // Stats row
         Row(
@@ -737,23 +765,27 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     bool isDark,
   ) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(flag, style: TextStyle(fontSize: 14)),
-          SizedBox(width: 4),
-          Text(
-            language,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
+          Text(flag, style: TextStyle(fontSize: 12)),
+          SizedBox(width: 3),
+          Flexible(
+            child: Text(
+              language,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w600,
+                fontSize: 11,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
           ),
         ],
@@ -794,17 +826,22 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          bio,
-          style: TextStyle(
-            fontSize: 14,
-            color: isDark ? Colors.grey[300] : Colors.grey[700],
-            height: 1.4,
+        Container(
+          constraints: BoxConstraints(
+            maxHeight: isBioExpanded ? double.infinity : 60,
           ),
-          maxLines: maxLines,
-          overflow: isBioExpanded ? null : TextOverflow.ellipsis,
+          child: Text(
+            bio,
+            style: TextStyle(
+              fontSize: 13,
+              color: isDark ? Colors.grey[300] : Colors.grey[700],
+              height: 1.3,
+            ),
+            maxLines: maxLines,
+            overflow: isBioExpanded ? null : TextOverflow.ellipsis,
+          ),
         ),
-        if (bio.length > 100)
+        if (bio.length > 80)
           GestureDetector(
             onTap: () {
               setState(() {
@@ -820,6 +857,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                 style: TextStyle(
                   color: Color(0xFF7A54FF),
                   fontWeight: FontWeight.w600,
+                  fontSize: 12,
                 ),
               ),
             ),
@@ -862,13 +900,13 @@ class _OthersProfilePageState extends State<OthersProfilePage>
 
   Widget _buildProfileTab(bool isDark, Color primaryColor) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 16),
+      padding: EdgeInsets.symmetric(vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Shared Interests
           _buildSharedInterestsSection(isDark, primaryColor),
-          SizedBox(height: 20),
+          SizedBox(height: 16),
 
           // Interests & Hobbies
           _buildInterestsSection(isDark),
@@ -878,101 +916,125 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   }
 
   Widget _buildSharedInterestsSection(bool isDark, Color primaryColor) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppLocalizations.of(context)!.sharedInterests,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black,
+    return Container(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppLocalizations.of(context)!.sharedInterests,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black,
+            ),
           ),
-        ),
-        SizedBox(height: 12),
-        sharedInterests.isEmpty
-            ? Container(
-                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.grey[800] : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.info_outline, color: Colors.grey, size: 20),
-                    SizedBox(width: 8),
-                    Text(
-                      'No shared interests found',
-                      style: TextStyle(color: Colors.grey, fontSize: 14),
-                    ),
-                  ],
-                ),
-              )
-            : Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: sharedInterests.map((interest) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: primaryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: primaryColor.withOpacity(0.3)),
-                    ),
-                    child: Text(
-                      _capitalizeFirst(interest),
-                      style: TextStyle(
-                        color: primaryColor,
-                        fontWeight: FontWeight.w600,
+          SizedBox(height: 8),
+          sharedInterests.isEmpty
+              ? Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.grey[800] : Colors.grey[100],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.grey, size: 18),
+                      SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          'No shared interests found',
+                          style: TextStyle(color: Colors.grey, fontSize: 13),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              ),
-      ],
+                    ],
+                  ),
+                )
+              : Container(
+                  width: double.infinity,
+                  child: Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: sharedInterests.map((interest) {
+                      return Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: primaryColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: primaryColor.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Text(
+                          _capitalizeFirst(interest),
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+        ],
+      ),
     );
   }
 
   Widget _buildInterestsSection(bool isDark) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppLocalizations.of(context)!.interestsAndHobbies,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black,
+    return Container(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppLocalizations.of(context)!.interestsAndHobbies,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black,
+            ),
           ),
-        ),
-        SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: interests.map((interest) {
-            return Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.grey[700] : Colors.grey[200],
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                _capitalizeFirst(interest),
-                style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black87,
-                  fontSize: 13,
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
+          SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: interests.map((interest) {
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.grey[700] : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    _capitalizeFirst(interest),
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black87,
+                      fontSize: 12,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildFeedTab(bool isDark) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 16),
+      padding: EdgeInsets.symmetric(vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -980,37 +1042,39 @@ class _OthersProfilePageState extends State<OthersProfilePage>
           if (_isFeedLoading)
             Center(
               child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(16),
                 child: CircularProgressIndicator(),
               ),
             )
           // Feed error state
           else if (_feedError != null)
             Container(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: isDark ? Colors.grey[800] : Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
                 children: [
-                  Icon(Icons.error_outline, size: 48, color: Colors.red),
-                  SizedBox(height: 12),
+                  Icon(Icons.error_outline, size: 40, color: Colors.red),
+                  SizedBox(height: 8),
                   Text(
                     'Error loading posts',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 6),
                   Text(
                     _feedError!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                    style: TextStyle(color: Colors.grey, fontSize: 11),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
                   ),
-                  SizedBox(height: 12),
+                  SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: _loadUserFeeds,
                     child: Text('Retry'),
@@ -1021,28 +1085,30 @@ class _OthersProfilePageState extends State<OthersProfilePage>
           // Feed content
           else if (_userFeeds.isEmpty)
             Container(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: isDark ? Colors.grey[800] : Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
                 children: [
-                  Icon(Icons.article_outlined, size: 48, color: Colors.grey),
-                  SizedBox(height: 12),
+                  Icon(Icons.article_outlined, size: 40, color: Colors.grey),
+                  SizedBox(height: 8),
                   Text(
                     'No Posts Yet',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 6),
                   Text(
                     '${widget.name} hasn\'t shared any posts yet.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                    style: TextStyle(color: Colors.grey, fontSize: 13),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
                   ),
                 ],
               ),
@@ -1054,26 +1120,29 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                 // Pull to refresh indicator/button
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 8),
+                  padding: EdgeInsets.symmetric(vertical: 6),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '${_userFeeds.length} post${_userFeeds.length == 1 ? '' : 's'}',
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      Expanded(
+                        child: Text(
+                          '${_userFeeds.length} post${_userFeeds.length == 1 ? '' : 's'}',
+                          style: TextStyle(color: Colors.grey, fontSize: 11),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       GestureDetector(
                         onTap: _loadUserFeeds,
                         child: Icon(
                           Icons.refresh,
                           color: const Color(0xFF7A54FF),
-                          size: 20,
+                          size: 18,
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 6),
 
                 // Feed posts
                 ...(_userFeeds
@@ -1087,20 +1156,25 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   }
 
   Widget _buildFeedPost(Feed feed, bool isDark) {
+    final textColor = isDark ? Colors.white : Colors.black;
+    final iconColor = isDark ? Colors.grey[400] : Colors.grey[600];
+    
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
-      padding: EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey[800] : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? Colors.grey[700]! : Colors.grey[200]!,
+        color: Theme.of(context).scaffoldBackgroundColor,
+        border: Border(
+          bottom: BorderSide(
+            color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
+            width: 1,
+          ),
         ),
       ),
+      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Feed header with user info and time
+          // User Info Row (matches feed page design)
           Row(
             children: [
               CircleAvatar(
@@ -1112,106 +1186,252 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.name,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          widget.name,
+                          style: TextStyle(
+                            color: textColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Spacer(),
+                        Text(
+                          feed.timeAgo,
+                          style: TextStyle(color: iconColor, fontSize: 12),
+                        ),
+                      ],
                     ),
-                    Text(
-                      feed.timeAgo,
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Container(
+                            padding: EdgeInsets.only(bottom: 2),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.green,
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              _learnerData!.nativeLanguage,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 6),
+                          child: Icon(
+                            Icons.sync_alt,
+                            size: 18,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Flexible(
+                          child: Container(
+                            padding: EdgeInsets.only(bottom: 2),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.purple,
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              _learnerData!.learningLanguage,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ],
           ),
-
           SizedBox(height: 12),
 
           // Feed content
           Text(
             feed.contentText,
             style: TextStyle(
+              color: textColor,
               fontSize: 14,
-              color: isDark ? Colors.white : Colors.black,
               height: 1.4,
             ),
+            maxLines: 5,
+            overflow: TextOverflow.ellipsis,
           ),
 
           // Feed images if available
           if (feed.hasImages) ...[
             SizedBox(height: 12),
-            Column(
-              children: feed.imageUrls
-                  .map(
-                    (imageUrl) => Container(
-                      margin: EdgeInsets.only(bottom: 8),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          imageUrl,
-                          width: double.infinity,
-                          height: 200,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              height: 200,
-                              color: Colors.grey[300],
-                              child: Center(
-                                child: Icon(
-                                  Icons.image_not_supported,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
+            _buildImageGrid(feed.imageUrls, isDark),
           ],
 
           SizedBox(height: 12),
 
-          // Feed stats and actions
+          // Feed stats and actions (matches feed page style)
           Row(
             children: [
-              // Like count
-              Icon(Icons.favorite, size: 16, color: Colors.grey),
-              SizedBox(width: 4),
+              // Like button
+              Icon(Icons.favorite_border, size: 20, color: iconColor),
+              SizedBox(width: 6),
               Text(
                 feed.likesCount.toString(),
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+                style: TextStyle(color: iconColor, fontSize: 12),
               ),
 
-              SizedBox(width: 16),
+              SizedBox(width: 20),
 
-              // Comment count
-              Icon(Icons.comment, size: 16, color: Colors.grey),
-              SizedBox(width: 4),
+              // Comment button
+              Icon(Icons.chat_bubble_outline, size: 20, color: iconColor),
+              SizedBox(width: 6),
               Text(
                 feed.commentsCount.toString(),
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+                style: TextStyle(color: iconColor, fontSize: 12),
               ),
 
               Spacer(),
 
-              // Time ago
-              Text(
-                feed.timeAgo,
-                style: TextStyle(color: Colors.grey, fontSize: 10),
-              ),
+              // Share button
+              Icon(Icons.share_outlined, size: 20, color: iconColor),
             ],
           ),
         ],
       ),
     );
+  }
+
+  // Helper method to build image grid like feed page
+  Widget _buildImageGrid(List<String> imageUrls, bool isDark) {
+    if (imageUrls.isEmpty) return SizedBox.shrink();
+
+    if (imageUrls.length == 1) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.network(
+          imageUrls[0],
+          width: double.infinity,
+          height: 200,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              height: 200,
+              color: Colors.grey[300],
+              child: Center(
+                child: Icon(
+                  Icons.image_not_supported,
+                  color: Colors.grey,
+                  size: 32,
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    } else if (imageUrls.length == 2) {
+      return Row(
+        children: imageUrls.map((url) {
+          return Expanded(
+            child: Container(
+              margin: EdgeInsets.only(
+                right: url == imageUrls.last ? 0 : 4,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  url,
+                  height: 150,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 150,
+                      color: Colors.grey[300],
+                      child: Center(
+                        child: Icon(
+                          Icons.image_not_supported,
+                          color: Colors.grey,
+                          size: 24,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      );
+    } else {
+      // For 3+ images, show grid layout
+      return GridView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 4,
+          mainAxisSpacing: 4,
+          childAspectRatio: 1,
+        ),
+        itemCount: imageUrls.length > 4 ? 4 : imageUrls.length,
+        itemBuilder: (context, index) {
+          final isLastItem = index == 3 && imageUrls.length > 4;
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.network(
+                  imageUrls[index],
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey[300],
+                      child: Center(
+                        child: Icon(
+                          Icons.image_not_supported,
+                          color: Colors.grey,
+                          size: 24,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                if (isLastItem)
+                  Container(
+                    color: Colors.black54,
+                    child: Center(
+                      child: Text(
+                        '+${imageUrls.length - 3}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+      );
+    }
   }
 
   Widget _buildBottomButtons(bool isDark, Color primaryColor) {
@@ -1220,8 +1440,17 @@ class _OthersProfilePageState extends State<OthersProfilePage>
       left: 0,
       right: 0,
       child: Container(
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Colors.transparent),
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.black87 : Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: Offset(0, -2),
+            ),
+          ],
+        ),
         child: Row(
           children: [
             // Follow button
@@ -1233,15 +1462,15 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                       ? primaryColor
                       : Color(0xFFEFECFF),
                   foregroundColor: isFollowing ? Colors.white : primaryColor,
-                  padding: EdgeInsets.symmetric(vertical: 12),
+                  padding: EdgeInsets.symmetric(vertical: 10),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 child: _isFollowLoading
                     ? SizedBox(
-                        width: 16,
-                        height: 16,
+                        width: 14,
+                        height: 14,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
@@ -1254,14 +1483,16 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                             ? AppLocalizations.of(context)!.following
                             : AppLocalizations.of(context)!.follow,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
               ),
             ),
 
-            SizedBox(width: 12),
+            SizedBox(width: 10),
 
             // Chat button (now solid style)
             Expanded(
@@ -1295,14 +1526,16 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryColor,
                   foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 12),
+                  padding: EdgeInsets.symmetric(vertical: 10),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.chat,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
               ),
             ),
