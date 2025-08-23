@@ -24,9 +24,6 @@ class ChatProvider extends ChangeNotifier {
   bool _isMessagesLoading = false;
   bool _isSending = false;
 
-  // Context tracking
-  bool _isViewingHomePage = false; // Track if user is on home page
-
   // Error state
   String? _error;
 
@@ -220,10 +217,6 @@ class ChatProvider extends ChangeNotifier {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
-
-      // Also trigger a refresh of user chats to update the chat list with latest message
-      // This ensures the home page chat list shows the new message immediately
-      _refreshUserChatsIfNeeded(senderId);
 
       return true;
     } catch (e) {
@@ -433,15 +426,12 @@ class ChatProvider extends ChangeNotifier {
     print(
       'ChatProvider: Public method - subscribing to real-time updates for chat: $chatId',
     );
-    _isViewingHomePage =
-        false; // Mark that user is viewing individual chat, not home page
     _subscribeToMessages(chatId);
   }
 
   /// Public method to unsubscribe from real-time updates
   void unsubscribeFromRealTimeUpdates() {
     print('ChatProvider: Unsubscribing from real-time updates');
-    // Don't set _isViewingHomePage here as user might be going back to home
     _messagesSubscription?.unsubscribe();
     _chatsSubscription?.unsubscribe();
     _messagesSubscription = null;
@@ -507,22 +497,14 @@ class ChatProvider extends ChangeNotifier {
     print(
       'ChatProvider: Public method - subscribing to chat list updates for user: $userId',
     );
-    _isViewingHomePage = true; // Mark that user is viewing home page
     _subscribeToChatsForList(userId);
   }
 
   /// Public method to unsubscribe from chat list real-time updates
   void unsubscribeFromUserChatList() {
     print('ChatProvider: Unsubscribing from chat list updates');
-    _isViewingHomePage = false; // Mark that user is no longer viewing home page
     _chatsSubscription?.unsubscribe();
     _chatsSubscription = null;
-  }
-
-  /// Mark that user has returned to home page (call this when navigating back to home)
-  void markReturnedToHomePage() {
-    print('ChatProvider: User returned to home page');
-    _isViewingHomePage = true;
   }
 
   /// Subscribe to real-time message updates that affect chat list
@@ -555,26 +537,5 @@ class ChatProvider extends ChangeNotifier {
         });
       },
     );
-  }
-
-  /// Refresh user chats if they are loaded (to update chat list with latest messages)
-  void _refreshUserChatsIfNeeded(String userId) {
-    // Only refresh if we have user chats loaded AND user is currently viewing the home page
-    if (_userChats.isNotEmpty && _isViewingHomePage) {
-      print(
-        'ChatProvider: Refreshing user chats after sending message (user is on home page)',
-      );
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        try {
-          await loadUserChats(userId);
-        } catch (e) {
-          print('ChatProvider: Error refreshing user chats: $e');
-        }
-      });
-    } else {
-      print(
-        'ChatProvider: Not refreshing user chats - user is not on home page or no chats loaded',
-      );
-    }
   }
 }

@@ -50,7 +50,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   final LearnerRepository _learnerRepository = LearnerRepository();
   bool _isSearching = false;
@@ -61,9 +61,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    // Add this widget as an app lifecycle observer
-    WidgetsBinding.instance.addObserver(this);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserChats();
     });
@@ -86,25 +83,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    // Remove app lifecycle observer
-    WidgetsBinding.instance.removeObserver(this);
-
     // Unsubscribe from real-time chat list updates using stored reference
     _chatProvider?.unsubscribeFromUserChatList();
 
     _searchController.dispose();
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-
-    // When app comes back to foreground (resumed), refresh chat list
-    if (state == AppLifecycleState.resumed) {
-      print('HomePage: App resumed, refreshing chat list');
-      _loadUserChats();
-    }
   }
 
   Future<void> _loadUserChats() async {
@@ -116,12 +99,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       final currentUser = authProvider.currentUser as Learner;
       await chatProvider.loadUserChats(currentUser.id);
     }
-  }
-
-  /// Refresh chats when page becomes visible (called from parent widget)
-  void refreshChatsOnVisible() {
-    print('HomePage: Refreshing chats on visibility');
-    _loadUserChats();
   }
 
   @override
@@ -522,8 +499,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             currentUserId: authProvider.currentUser?.id ?? '',
                             learnerRepository: _learnerRepository,
                             userCache: _userCache,
-                            onChatReturn:
-                                _loadUserChats, // Pass refresh callback
                           ),
                           // Partial width divider with indent and endIndent
                           if (index != filteredChats.length - 1)
@@ -598,14 +573,12 @@ class _BackendChatTile extends StatefulWidget {
   final String currentUserId;
   final LearnerRepository learnerRepository;
   final Map<String, Learner> userCache;
-  final VoidCallback? onChatReturn; // Callback when returning from chat
 
   const _BackendChatTile({
     required this.chatWithMessage,
     required this.currentUserId,
     required this.learnerRepository,
     required this.userCache,
-    this.onChatReturn,
   });
 
   @override
@@ -835,19 +808,7 @@ class _BackendChatTileState extends State<_BackendChatTile> {
               MaterialPageRoute(
                 builder: (context) => ChatDetailPage(user: chatUser),
               ),
-            ).then((_) {
-              // Refresh chat list when returning from chat detail page
-              print('HomePage: Returned from chat, refreshing chat list');
-
-              // Mark that user has returned to home page
-              final chatProvider = Provider.of<ChatProvider>(
-                context,
-                listen: false,
-              );
-              chatProvider.markReturnedToHomePage();
-
-              widget.onChatReturn?.call();
-            });
+            );
           }
         },
       ),
