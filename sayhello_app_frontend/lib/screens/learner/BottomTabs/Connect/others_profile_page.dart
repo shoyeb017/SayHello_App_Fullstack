@@ -647,7 +647,9 @@ class _OthersProfilePageState extends State<OthersProfilePage>
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
-                                    gender == "Female" ? Icons.female : Icons.male,
+                                    gender == "Female"
+                                        ? Icons.female
+                                        : Icons.male,
                                     color: Color(0xFFD619A8),
                                     size: 16,
                                   ),
