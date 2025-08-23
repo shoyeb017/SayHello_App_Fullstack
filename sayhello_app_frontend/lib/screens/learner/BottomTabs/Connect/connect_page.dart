@@ -6,7 +6,9 @@ import '../../Notifications/notifications.dart';
 import '../../../../providers/settings_provider.dart';
 import '../../../../providers/learner_provider.dart';
 import '../../../../providers/auth_provider.dart';
+import '../../../../providers/chat_provider.dart';
 import '../../../../models/learner.dart';
+import '../../Chat/chat.dart';
 
 class Partner {
   final String name;
@@ -81,6 +83,7 @@ class _ConnectPageState extends State<ConnectPage> {
         context,
         listen: false,
       );
+      final chatProvider = Provider.of<ChatProvider>(context, listen: false);
 
       if (authProvider.currentUser == null) {
         throw Exception('No user logged in');
@@ -88,15 +91,33 @@ class _ConnectPageState extends State<ConnectPage> {
 
       final currentUser = authProvider.currentUser as Learner;
 
+      // Load current user's chats to filter out existing chat partners
+      await chatProvider.loadUserChats(currentUser.id);
+      final existingChatUserIds = <String>{};
+
+      // Collect all user IDs that current user already has chats with
+      for (final chatWithMessage in chatProvider.userChats) {
+        final chat = chatWithMessage.chat;
+        if (chat.user1Id == currentUser.id) {
+          existingChatUserIds.add(chat.user2Id);
+        } else if (chat.user2Id == currentUser.id) {
+          existingChatUserIds.add(chat.user1Id);
+        }
+      }
+
       // Get learners whose native language matches current user's learning language
       if (currentUser.learningLanguage.isNotEmpty) {
         final partners = await learnerProvider.getLearnersByLanguage(
           currentUser.learningLanguage,
         );
 
-        // Filter out current user from the list
+        // Filter out current user and users with existing chats
         _allLearners = partners
-            .where((learner) => learner.id != currentUser.id)
+            .where(
+              (learner) =>
+                  learner.id != currentUser.id &&
+                  !existingChatUserIds.contains(learner.id),
+            )
             .toList();
         _applyFilters();
       } else {
@@ -490,12 +511,90 @@ class _ConnectPageState extends State<ConnectPage> {
             Positioned(
               top: 28,
               right: 10,
-              child: Icon(Icons.waving_hand, color: Colors.purple, size: 24),
+              child: GestureDetector(
+                onTap: () => _navigateToChat(learner),
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.purple.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.waving_hand,
+                    color: Colors.purple,
+                    size: 24,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  /// Navigate to chat page with the selected learner
+  Future<void> _navigateToChat(Learner learner) async {
+    try {
+      // Create ChatUser from Learner for navigation
+      final chatUser = ChatUser(
+        id: learner.id,
+        name: learner.name,
+        avatarUrl: learner.profileImage ?? '',
+        country: learner.country,
+        flag: _getCountryFlag(learner.country),
+        age: _calculateAge(learner.dateOfBirth),
+        gender: learner.gender == 'male' ? 'M' : 'F',
+        isOnline: true, // Could be enhanced with real online status
+        lastSeen: DateTime.now(), // Could be enhanced with real last seen
+        interests: learner.interests,
+        nativeLanguage: learner.nativeLanguage,
+        learningLanguage: learner.learningLanguage,
+      );
+
+      // Navigate to chat page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ChatDetailPage(user: chatUser)),
+      );
+    } catch (e) {
+      print('Error navigating to chat: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to start chat. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// Helper method to get country flag
+  String _getCountryFlag(String country) {
+    switch (country.toLowerCase()) {
+      case 'usa':
+        return '🇺🇸';
+      case 'spain':
+        return '🇪🇸';
+      case 'japan':
+        return '🇯🇵';
+      case 'korea':
+        return '🇰🇷';
+      case 'bangladesh':
+        return '🇧🇩';
+      default:
+        return '🌍';
+    }
+  }
+
+  /// Helper method to calculate age
+  int _calculateAge(DateTime dateOfBirth) {
+    final now = DateTime.now();
+    int age = now.year - dateOfBirth.year;
+    if (now.month < dateOfBirth.month ||
+        (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
+      age--;
+    }
+    return age;
   }
 
   /// Show advanced filter dialog
@@ -1229,7 +1328,31 @@ class _ConnectPageState extends State<ConnectPage> {
             Positioned(
               top: 28,
               right: 10,
-              child: Icon(Icons.waving_hand, color: Colors.purple, size: 24),
+              child: GestureDetector(
+                onTap: () {
+                  // For dummy partners, you could show a message or navigate to a demo chat
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'This is a demo partner. Try the real partners above!',
+                      ),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.purple.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.waving_hand,
+                    color: Colors.purple,
+                    size: 24,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
