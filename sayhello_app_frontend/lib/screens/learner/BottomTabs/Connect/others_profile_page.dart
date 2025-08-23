@@ -615,46 +615,52 @@ class _OthersProfilePageState extends State<OthersProfilePage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Name with gender/age in one line
+                  // Name with gender/age in one line with better flow control
                   Row(
                     children: [
-                      Expanded(
-                        child: Text(
-                          widget.name,
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.black,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFFEEDF7),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                      Flexible(
                         child: Row(
-                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              gender == "Female" ? Icons.female : Icons.male,
-                              color: Color(0xFFD619A8),
-                              size: 16,
+                            Flexible(
+                              child: Text(
+                                widget.name,
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? Colors.white : Colors.black,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
                             ),
-                            SizedBox(width: 2),
-                            Text(
-                              age.toString(),
-                              style: TextStyle(
-                                color: Color(0xFFD619A8),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10,
+                            SizedBox(width: 6),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFEEDF7),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    gender == "Female" ? Icons.female : Icons.male,
+                                    color: Color(0xFFD619A8),
+                                    size: 16,
+                                  ),
+                                  SizedBox(width: 2),
+                                  Text(
+                                    age.toString(),
+                                    style: TextStyle(
+                                      color: Color(0xFFD619A8),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -1275,7 +1281,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
 
           // Feed images if available
           if (feed.hasImages) ...[
-            SizedBox(height: 12),
+            SizedBox(height: 8),
             _buildImageGrid(feed.imageUrls, isDark),
           ],
 
@@ -1436,7 +1442,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
       child: Container(
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.black87 : Colors.white,
+          color: Colors.transparent,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
