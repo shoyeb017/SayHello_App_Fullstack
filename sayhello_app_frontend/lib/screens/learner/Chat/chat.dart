@@ -96,6 +96,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   int _currentMessageCount = 0;
+  ChatProvider? _chatProvider;
 
   @override
   void initState() {
@@ -121,10 +122,16 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Safely store reference to ChatProvider for use in dispose()
+    _chatProvider = Provider.of<ChatProvider>(context, listen: false);
+  }
+
+  @override
   void dispose() {
-    // Unsubscribe from real-time updates
-    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    chatProvider.unsubscribeFromRealTimeUpdates();
+    // Unsubscribe from real-time updates using stored reference
+    _chatProvider?.unsubscribeFromRealTimeUpdates();
 
     _messageController.dispose();
     _scrollController.dispose();
