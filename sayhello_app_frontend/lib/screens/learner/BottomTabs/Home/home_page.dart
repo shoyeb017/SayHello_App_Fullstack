@@ -7,7 +7,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../models/models.dart';
 import '../../../../data/learner_data.dart';
 import 'translator_in_home.dart';
-import '../../Chat/chat.dart'; // Import our new chat interface
+import '../../Chat/chat.dart'; // Import the fixed chat interface
 import '../../Notifications/notifications.dart';
 import 'package:sayhello_app_frontend/providers/settings_provider.dart';
 

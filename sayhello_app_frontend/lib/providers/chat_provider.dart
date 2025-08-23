@@ -325,17 +325,30 @@ class ChatProvider extends ChangeNotifier {
   }
 
   void _setLoading(bool loading) {
-    _isLoading = loading;
-    notifyListeners();
+    if (_isLoading != loading) {
+      _isLoading = loading;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
   }
 
   void _setError(String error) {
-    _error = error;
-    notifyListeners();
+    if (_error != error) {
+      _error = error;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
   }
 
   void _clearError() {
-    _error = null;
+    if (_error != null) {
+      _error = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
   }
 
   /// Clear all data

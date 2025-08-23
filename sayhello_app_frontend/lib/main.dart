@@ -18,6 +18,7 @@ import 'providers/study_material_provider.dart';
 import 'providers/group_chat_provider.dart';
 import 'providers/feedback_provider.dart';
 import 'providers/revenue_provider.dart';
+import 'providers/chat_provider.dart';
 
 import 'screens/auth/landing_page.dart';
 import 'screens/permissions/permission_wrapper.dart';
@@ -67,6 +68,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => FeedbackProvider()),
         ChangeNotifierProvider(create: (_) => RevenueProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
       child: const MyApp(),
     ),
