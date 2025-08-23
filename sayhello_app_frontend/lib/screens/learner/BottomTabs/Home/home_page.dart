@@ -50,25 +50,61 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final TextEditingController _searchController = TextEditingController();
   final LearnerRepository _learnerRepository = LearnerRepository();
   bool _isSearching = false;
   String _searchQuery = '';
   Map<String, Learner> _userCache = {}; // Cache for loaded users
+  ChatProvider? _chatProvider; // Store reference for real-time subscription
 
   @override
   void initState() {
     super.initState();
+    // Add this widget as an app lifecycle observer
+    WidgetsBinding.instance.addObserver(this);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserChats();
     });
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Safely store reference to ChatProvider for use in dispose()
+    _chatProvider = Provider.of<ChatProvider>(context, listen: false);
+
+    // Set up real-time subscription for chat list
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (authProvider.currentUser != null &&
+        authProvider.currentUser is Learner) {
+      final currentUser = authProvider.currentUser as Learner;
+      _chatProvider?.subscribeToUserChatList(currentUser.id);
+    }
+  }
+
+  @override
   void dispose() {
+    // Remove app lifecycle observer
+    WidgetsBinding.instance.removeObserver(this);
+
+    // Unsubscribe from real-time chat list updates using stored reference
+    _chatProvider?.unsubscribeFromUserChatList();
+
     _searchController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    // When app comes back to foreground (resumed), refresh chat list
+    if (state == AppLifecycleState.resumed) {
+      print('HomePage: App resumed, refreshing chat list');
+      _loadUserChats();
+    }
   }
 
   Future<void> _loadUserChats() async {
@@ -80,6 +116,12 @@ class _HomePageState extends State<HomePage> {
       final currentUser = authProvider.currentUser as Learner;
       await chatProvider.loadUserChats(currentUser.id);
     }
+  }
+
+  /// Refresh chats when page becomes visible (called from parent widget)
+  void refreshChatsOnVisible() {
+    print('HomePage: Refreshing chats on visibility');
+    _loadUserChats();
   }
 
   @override
@@ -480,6 +522,8 @@ class _HomePageState extends State<HomePage> {
                             currentUserId: authProvider.currentUser?.id ?? '',
                             learnerRepository: _learnerRepository,
                             userCache: _userCache,
+                            onChatReturn:
+                                _loadUserChats, // Pass refresh callback
                           ),
                           // Partial width divider with indent and endIndent
                           if (index != filteredChats.length - 1)
@@ -554,12 +598,14 @@ class _BackendChatTile extends StatefulWidget {
   final String currentUserId;
   final LearnerRepository learnerRepository;
   final Map<String, Learner> userCache;
+  final VoidCallback? onChatReturn; // Callback when returning from chat
 
   const _BackendChatTile({
     required this.chatWithMessage,
     required this.currentUserId,
     required this.learnerRepository,
     required this.userCache,
+    this.onChatReturn,
   });
 
   @override
@@ -789,7 +835,19 @@ class _BackendChatTileState extends State<_BackendChatTile> {
               MaterialPageRoute(
                 builder: (context) => ChatDetailPage(user: chatUser),
               ),
-            );
+            ).then((_) {
+              // Refresh chat list when returning from chat detail page
+              print('HomePage: Returned from chat, refreshing chat list');
+
+              // Mark that user has returned to home page
+              final chatProvider = Provider.of<ChatProvider>(
+                context,
+                listen: false,
+              );
+              chatProvider.markReturnedToHomePage();
+
+              widget.onChatReturn?.call();
+            });
           }
         },
       ),

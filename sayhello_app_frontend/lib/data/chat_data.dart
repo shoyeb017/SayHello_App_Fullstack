@@ -361,4 +361,59 @@ class ChatRepository {
 
     return channel;
   }
+
+  /// Subscribe to message updates that affect chat list (for real-time chat list updates)
+  RealtimeChannel? subscribeToMessagesForChatList({
+    required String userId,
+    required Function(ChatMessage) onNewMessage,
+    Function(ChatMessage)? onMessageUpdated,
+  }) {
+    print(
+      'ChatRepository: Setting up real-time subscription for messages affecting chat list for user: $userId',
+    );
+
+    final channel = _client
+        .channel('messages_for_chat_list:$userId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: 'messages',
+          callback: (payload) {
+            try {
+              print(
+                'ChatRepository: New message received via real-time for chat list',
+              );
+              final message = ChatMessage.fromJson(payload.newRecord);
+              onNewMessage(message);
+            } catch (e) {
+              print(
+                'ChatRepository: Error parsing new message for chat list: $e',
+              );
+            }
+          },
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'messages',
+          callback: (payload) {
+            try {
+              if (onMessageUpdated != null) {
+                print(
+                  'ChatRepository: Message updated via real-time for chat list',
+                );
+                final message = ChatMessage.fromJson(payload.newRecord);
+                onMessageUpdated(message);
+              }
+            } catch (e) {
+              print(
+                'ChatRepository: Error parsing updated message for chat list: $e',
+              );
+            }
+          },
+        )
+        .subscribe();
+
+    return channel;
+  }
 }

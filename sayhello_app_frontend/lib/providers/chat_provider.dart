@@ -24,6 +24,9 @@ class ChatProvider extends ChangeNotifier {
   bool _isMessagesLoading = false;
   bool _isSending = false;
 
+  // Context tracking
+  bool _isViewingHomePage = false; // Track if user is on home page
+
   // Error state
   String? _error;
 
@@ -217,6 +220,10 @@ class ChatProvider extends ChangeNotifier {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
+
+      // Also trigger a refresh of user chats to update the chat list with latest message
+      // This ensures the home page chat list shows the new message immediately
+      _refreshUserChatsIfNeeded(senderId);
 
       return true;
     } catch (e) {
@@ -426,12 +433,15 @@ class ChatProvider extends ChangeNotifier {
     print(
       'ChatProvider: Public method - subscribing to real-time updates for chat: $chatId',
     );
+    _isViewingHomePage =
+        false; // Mark that user is viewing individual chat, not home page
     _subscribeToMessages(chatId);
   }
 
   /// Public method to unsubscribe from real-time updates
   void unsubscribeFromRealTimeUpdates() {
     print('ChatProvider: Unsubscribing from real-time updates');
+    // Don't set _isViewingHomePage here as user might be going back to home
     _messagesSubscription?.unsubscribe();
     _chatsSubscription?.unsubscribe();
     _messagesSubscription = null;
@@ -490,5 +500,81 @@ class ChatProvider extends ChangeNotifier {
         // Could reload user chats here if needed
       },
     );
+  }
+
+  /// Public method to subscribe to chat list real-time updates (for home page)
+  void subscribeToUserChatList(String userId) {
+    print(
+      'ChatProvider: Public method - subscribing to chat list updates for user: $userId',
+    );
+    _isViewingHomePage = true; // Mark that user is viewing home page
+    _subscribeToChatsForList(userId);
+  }
+
+  /// Public method to unsubscribe from chat list real-time updates
+  void unsubscribeFromUserChatList() {
+    print('ChatProvider: Unsubscribing from chat list updates');
+    _isViewingHomePage = false; // Mark that user is no longer viewing home page
+    _chatsSubscription?.unsubscribe();
+    _chatsSubscription = null;
+  }
+
+  /// Mark that user has returned to home page (call this when navigating back to home)
+  void markReturnedToHomePage() {
+    print('ChatProvider: User returned to home page');
+    _isViewingHomePage = true;
+  }
+
+  /// Subscribe to real-time message updates that affect chat list
+  void _subscribeToChatsForList(String userId) {
+    // Unsubscribe from previous subscription if any
+    _chatsSubscription?.unsubscribe();
+
+    print(
+      'ChatProvider: Subscribing to real-time messages for chat list, user: $userId',
+    );
+
+    _chatsSubscription = _repository.subscribeToMessagesForChatList(
+      userId: userId,
+      onNewMessage: (message) {
+        print(
+          'ChatProvider: New message received for chat list: ${message.contentText}',
+        );
+
+        // Reload user chats to get updated latest message and unread counts
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          await loadUserChats(userId);
+        });
+      },
+      onMessageUpdated: (message) {
+        print('ChatProvider: Message updated for chat list: ${message.id}');
+
+        // Reload user chats to get updated message status
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          await loadUserChats(userId);
+        });
+      },
+    );
+  }
+
+  /// Refresh user chats if they are loaded (to update chat list with latest messages)
+  void _refreshUserChatsIfNeeded(String userId) {
+    // Only refresh if we have user chats loaded AND user is currently viewing the home page
+    if (_userChats.isNotEmpty && _isViewingHomePage) {
+      print(
+        'ChatProvider: Refreshing user chats after sending message (user is on home page)',
+      );
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        try {
+          await loadUserChats(userId);
+        } catch (e) {
+          print('ChatProvider: Error refreshing user chats: $e');
+        }
+      });
+    } else {
+      print(
+        'ChatProvider: Not refreshing user chats - user is not on home page or no chats loaded',
+      );
+    }
   }
 }
