@@ -62,289 +62,289 @@ TRUNCATE TABLE
 RESTART IDENTITY CASCADE;
 
 
--- ==============================
--- ENUMS (all lowercase)
--- ==============================
-CREATE TYPE gender_enum AS ENUM ('male', 'female');
-CREATE TYPE country_enum AS ENUM ('usa', 'spain', 'japan', 'korea', 'bangladesh');
-CREATE TYPE language_enum AS ENUM ('english', 'spanish', 'japanese', 'korean', 'bangla');
-CREATE TYPE language_level_enum AS ENUM ('beginner', 'elementary', 'intermediate', 'advanced', 'proficient');
-CREATE TYPE message_type_enum AS ENUM ('text', 'image');
-CREATE TYPE message_status_enum AS ENUM ('read', 'unread');
-CREATE TYPE course_level_enum AS ENUM ('beginner', 'intermediate', 'advanced');
-CREATE TYPE course_status_enum AS ENUM ('upcoming', 'active', 'expired');
-CREATE TYPE session_platform_enum AS ENUM ('meet', 'zoom');
-CREATE TYPE material_type_enum AS ENUM ('pdf', 'document', 'image');
-CREATE TYPE group_chat_sender_enum AS ENUM ('learner', 'instructor');
-CREATE TYPE feedback_type_enum AS ENUM ('learner', 'instructor', 'course');
-CREATE TYPE notification_type_enum AS ENUM ('session alert', 'feedback');
+-- -- ==============================
+-- -- ENUMS (all lowercase)
+-- -- ==============================
+-- CREATE TYPE gender_enum AS ENUM ('male', 'female');
+-- CREATE TYPE country_enum AS ENUM ('usa', 'spain', 'japan', 'korea', 'bangladesh');
+-- CREATE TYPE language_enum AS ENUM ('english', 'spanish', 'japanese', 'korean', 'bangla');
+-- CREATE TYPE language_level_enum AS ENUM ('beginner', 'elementary', 'intermediate', 'advanced', 'proficient');
+-- CREATE TYPE message_type_enum AS ENUM ('text', 'image');
+-- CREATE TYPE message_status_enum AS ENUM ('read', 'unread');
+-- CREATE TYPE course_level_enum AS ENUM ('beginner', 'intermediate', 'advanced');
+-- CREATE TYPE course_status_enum AS ENUM ('upcoming', 'active', 'expired');
+-- CREATE TYPE session_platform_enum AS ENUM ('meet', 'zoom');
+-- CREATE TYPE material_type_enum AS ENUM ('pdf', 'document', 'image');
+-- CREATE TYPE group_chat_sender_enum AS ENUM ('learner', 'instructor');
+-- CREATE TYPE feedback_type_enum AS ENUM ('learner', 'instructor', 'course');
+-- CREATE TYPE notification_type_enum AS ENUM ('session alert', 'feedback');
 
--- ==============================
--- 1. learners
--- ==============================
-CREATE TABLE learners (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    profile_image TEXT,
-    name TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    date_of_birth DATE,
-    gender gender_enum,
-    country country_enum,
-    bio TEXT,
-    native_language language_enum,
-    learning_language language_enum,
-    language_level language_level_enum,
-    interests TEXT[], -- Array of strings
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 1. learners
+-- -- ==============================
+-- CREATE TABLE learners (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     profile_image TEXT,
+--     name TEXT NOT NULL,
+--     email TEXT UNIQUE NOT NULL,
+--     username TEXT UNIQUE NOT NULL,
+--     password TEXT NOT NULL,
+--     date_of_birth DATE,
+--     gender gender_enum,
+--     country country_enum,
+--     bio TEXT,
+--     native_language language_enum,
+--     learning_language language_enum,
+--     language_level language_level_enum,
+--     interests TEXT[], -- Array of strings
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 2. instructors
--- ==============================
-CREATE TABLE instructors (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    profile_image TEXT,
-    name TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    date_of_birth DATE,
-    gender gender_enum,
-    country country_enum,
-    bio TEXT,
-    native_language language_enum,
-    teaching_language language_enum,
-    years_of_experience INT,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 2. instructors
+-- -- ==============================
+-- CREATE TABLE instructors (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     profile_image TEXT,
+--     name TEXT NOT NULL,
+--     email TEXT UNIQUE NOT NULL,
+--     username TEXT UNIQUE NOT NULL,
+--     password TEXT NOT NULL,
+--     date_of_birth DATE,
+--     gender gender_enum,
+--     country country_enum,
+--     bio TEXT,
+--     native_language language_enum,
+--     teaching_language language_enum,
+--     years_of_experience INT,
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 3. followers (learner only)
--- ==============================
-CREATE TABLE followers (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    follower_user_id UUID REFERENCES learners(id) ON DELETE CASCADE,
-    followed_user_id UUID REFERENCES learners(id) ON DELETE CASCADE
-);
+-- -- ==============================
+-- -- 3. followers (learner only)
+-- -- ==============================
+-- CREATE TABLE followers (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     follower_user_id UUID REFERENCES learners(id) ON DELETE CASCADE,
+--     followed_user_id UUID REFERENCES learners(id) ON DELETE CASCADE
+-- );
 
--- ==============================
--- 4. chats (learner only)
--- ==============================
-CREATE TABLE chats (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user1_id UUID REFERENCES learners(id) ON DELETE CASCADE,
-    user2_id UUID REFERENCES learners(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 4. chats (learner only)
+-- -- ==============================
+-- CREATE TABLE chats (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     user1_id UUID REFERENCES learners(id) ON DELETE CASCADE,
+--     user2_id UUID REFERENCES learners(id) ON DELETE CASCADE,
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 5. messages
--- ==============================
-CREATE TABLE messages (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    chat_id UUID REFERENCES chats(id) ON DELETE CASCADE,
-    sender_id UUID REFERENCES learners(id) ON DELETE CASCADE,
-    content_text TEXT,
-    type message_type_enum,
-    status message_status_enum,
-    correction TEXT,
-    translated_content TEXT,
-    parent_msg_id UUID REFERENCES messages(id) ON DELETE SET NULL,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 5. messages
+-- -- ==============================
+-- CREATE TABLE messages (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     chat_id UUID REFERENCES chats(id) ON DELETE CASCADE,
+--     sender_id UUID REFERENCES learners(id) ON DELETE CASCADE,
+--     content_text TEXT,
+--     type message_type_enum,
+--     status message_status_enum,
+--     correction TEXT,
+--     translated_content TEXT,
+--     parent_msg_id UUID REFERENCES messages(id) ON DELETE SET NULL,
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 6. feed
--- ==============================
-CREATE TABLE feed (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
-    content_text TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 6. feed
+-- -- ==============================
+-- CREATE TABLE feed (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
+--     content_text TEXT,
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 6.1. feed images
--- ==============================
+-- -- ==============================
+-- -- 6.1. feed images
+-- -- ==============================
 
-CREATE TABLE feed_images (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    feed_id UUID REFERENCES feed(id) ON DELETE CASCADE,
-    image_url TEXT NOT NULL,
-    position INT, -- optional, to order multiple images
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- CREATE TABLE feed_images (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     feed_id UUID REFERENCES feed(id) ON DELETE CASCADE,
+--     image_url TEXT NOT NULL,
+--     position INT, -- optional, to order multiple images
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 7. feed_likes
--- ==============================
-CREATE TABLE feed_likes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    feed_id UUID REFERENCES feed(id) ON DELETE CASCADE,
-    learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 7. feed_likes
+-- -- ==============================
+-- CREATE TABLE feed_likes (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     feed_id UUID REFERENCES feed(id) ON DELETE CASCADE,
+--     learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 8. feed_comments
--- ==============================
-CREATE TABLE feed_comments (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    feed_id UUID REFERENCES feed(id) ON DELETE CASCADE,
-    learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
-    content_text TEXT,
-    translated_content TEXT,
-    parent_comment_id UUID REFERENCES feed_comments(id) ON DELETE SET NULL,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 8. feed_comments
+-- -- ==============================
+-- CREATE TABLE feed_comments (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     feed_id UUID REFERENCES feed(id) ON DELETE CASCADE,
+--     learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
+--     content_text TEXT,
+--     translated_content TEXT,
+--     parent_comment_id UUID REFERENCES feed_comments(id) ON DELETE SET NULL,
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 9. courses
--- ==============================
-CREATE TABLE courses (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    instructor_id UUID REFERENCES instructors(id) ON DELETE CASCADE,
-    title TEXT NOT NULL,
-    description TEXT,
-    language language_enum,
-    level course_level_enum,
-    total_sessions INT,
-    price NUMERIC(10,2),
-    thumbnail_url TEXT,
-    start_date DATE,
-    end_date DATE,
-    status course_status_enum,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 9. courses
+-- -- ==============================
+-- CREATE TABLE courses (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     instructor_id UUID REFERENCES instructors(id) ON DELETE CASCADE,
+--     title TEXT NOT NULL,
+--     description TEXT,
+--     language language_enum,
+--     level course_level_enum,
+--     total_sessions INT,
+--     price NUMERIC(10,2),
+--     thumbnail_url TEXT,
+--     start_date DATE,
+--     end_date DATE,
+--     status course_status_enum,
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 10. course_sessions
--- ==============================
-CREATE TABLE course_sessions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
-    session_name TEXT,
-    session_description TEXT,
-    session_date DATE,
-    session_time TEXT,
-    session_duration TEXT,
-    session_link TEXT,
-    session_password TEXT,
-    session_platform session_platform_enum,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 10. course_sessions
+-- -- ==============================
+-- CREATE TABLE course_sessions (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
+--     session_name TEXT,
+--     session_description TEXT,
+--     session_date DATE,
+--     session_time TEXT,
+--     session_duration TEXT,
+--     session_link TEXT,
+--     session_password TEXT,
+--     session_platform session_platform_enum,
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 11. recorded_classes
--- ==============================
-CREATE TABLE recorded_classes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
-    recorded_name TEXT,
-    recorded_description TEXT,
-    recorded_link TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 11. recorded_classes
+-- -- ==============================
+-- CREATE TABLE recorded_classes (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
+--     recorded_name TEXT,
+--     recorded_description TEXT,
+--     recorded_link TEXT,
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 12. study_materials
--- ==============================
-CREATE TABLE study_materials (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
-    material_title TEXT,
-    material_description TEXT,
-    material_link TEXT,
-    material_type material_type_enum,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 12. study_materials
+-- -- ==============================
+-- CREATE TABLE study_materials (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
+--     material_title TEXT,
+--     material_description TEXT,
+--     material_link TEXT,
+--     material_type material_type_enum,
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 13. group_chat
--- ==============================
-CREATE TABLE group_chat (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
-    sender_id UUID, -- can be learner or instructor
-    sender_type group_chat_sender_enum,
-    content_text TEXT,
-    parent_message_id UUID REFERENCES group_chat(id) ON DELETE SET NULL,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 13. group_chat
+-- -- ==============================
+-- CREATE TABLE group_chat (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
+--     sender_id UUID, -- can be learner or instructor
+--     sender_type group_chat_sender_enum,
+--     content_text TEXT,
+--     parent_message_id UUID REFERENCES group_chat(id) ON DELETE SET NULL,
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 14. course_enrollments
--- ==============================
-CREATE TABLE course_enrollments (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
-    learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 14. course_enrollments
+-- -- ==============================
+-- CREATE TABLE course_enrollments (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
+--     learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 15. feedback
--- ==============================
-CREATE TABLE feedback (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
-    instructor_id UUID REFERENCES instructors(id) ON DELETE CASCADE,
-    learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
-    feedback_type feedback_type_enum,
-    feedback_text TEXT,
-    rating INT CHECK (rating >= 1 AND rating <= 5),
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 15. feedback
+-- -- ==============================
+-- CREATE TABLE feedback (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
+--     instructor_id UUID REFERENCES instructors(id) ON DELETE CASCADE,
+--     learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
+--     feedback_type feedback_type_enum,
+--     feedback_text TEXT,
+--     rating INT CHECK (rating >= 1 AND rating <= 5),
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 16. notifications
--- ==============================
-CREATE TABLE notifications (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
-    course_id UUID REFERENCES courses(id) ON DELETE SET NULL,
-    notification_type notification_type_enum,
-    content_title TEXT,
-    content_text TEXT,
-    is_read BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- ==============================
+-- -- 16. notifications
+-- -- ==============================
+-- CREATE TABLE notifications (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     learner_id UUID REFERENCES learners(id) ON DELETE CASCADE,
+--     course_id UUID REFERENCES courses(id) ON DELETE SET NULL,
+--     notification_type notification_type_enum,
+--     content_title TEXT,
+--     content_text TEXT,
+--     is_read BOOLEAN DEFAULT FALSE,
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- ==============================
--- 17. withdrawls
--- ==============================
+-- -- ==============================
+-- -- 17. withdrawls
+-- -- ==============================
 
--- Main withdrawal transaction table
-CREATE TABLE withdrawal (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    instructor_id UUID REFERENCES instructors(id) ON DELETE CASCADE,
-    amount NUMERIC(10,2) NOT NULL,
-    status VARCHAR(50) DEFAULT 'COMPLETED',
-    created_at TIMESTAMP DEFAULT NOW()
-);
+-- -- Main withdrawal transaction table
+-- CREATE TABLE withdrawal (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     instructor_id UUID REFERENCES instructors(id) ON DELETE CASCADE,
+--     amount NUMERIC(10,2) NOT NULL,
+--     status VARCHAR(50) DEFAULT 'COMPLETED',
+--     created_at TIMESTAMP DEFAULT NOW()
+-- );
 
--- Withdrawal payment info table
-CREATE TABLE withdrawal_info (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    withdrawal_id UUID REFERENCES withdrawal(id) ON DELETE CASCADE,
-    payment_method VARCHAR(50) NOT NULL CHECK (payment_method IN ('CARD', 'PAYPAL', 'BANK')),
+-- -- Withdrawal payment info table
+-- CREATE TABLE withdrawal_info (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     withdrawal_id UUID REFERENCES withdrawal(id) ON DELETE CASCADE,
+--     payment_method VARCHAR(50) NOT NULL CHECK (payment_method IN ('CARD', 'PAYPAL', 'BANK')),
     
-    -- Card details (nullable, only if method = CARD)
-    card_number VARCHAR(20),
-    expiry_date VARCHAR(7), -- MM/YYYY
-    cvv VARCHAR(4),
-    card_holder_name VARCHAR(255),
+--     -- Card details (nullable, only if method = CARD)
+--     card_number VARCHAR(20),
+--     expiry_date VARCHAR(7), -- MM/YYYY
+--     cvv VARCHAR(4),
+--     card_holder_name VARCHAR(255),
     
-    -- PayPal (nullable, only if method = PAYPAL)
-    paypal_email VARCHAR(255),
+--     -- PayPal (nullable, only if method = PAYPAL)
+--     paypal_email VARCHAR(255),
     
-    -- Bank statement (nullable, only if method = BANK)
-    bank_account_number VARCHAR(50),
-    bank_name VARCHAR(100),
-    swift_code VARCHAR(20)
-);
+--     -- Bank statement (nullable, only if method = BANK)
+--     bank_account_number VARCHAR(50),
+--     bank_name VARCHAR(100),
+--     swift_code VARCHAR(20)
+-- );
 
 
 
@@ -464,7 +464,7 @@ WITH learner_map AS (
 )
 INSERT INTO chats (user1_id, user2_id)
 VALUES
--- Chat 1 (Demo learners)
+-- Chat 1 (Demo learners) - Only one chat between ali and aki
 ((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
 -- Chat 2
 ((SELECT id FROM learner_map WHERE username='bob_s'), (SELECT id FROM learner_map WHERE username='emiko_s')),
@@ -1589,31 +1589,6 @@ VALUES
 ((SELECT id FROM learner_map WHERE username='bob_s'), (SELECT id FROM learner_map WHERE username='aki')),
 ((SELECT id FROM learner_map WHERE username='carol_d'), (SELECT id FROM learner_map WHERE username='aki')),
 ((SELECT id FROM learner_map WHERE username='grace_m'), (SELECT id FROM learner_map WHERE username='aki'));
-
--- -----------------------------
--- BATCH 2: Additional Chats between ali and aki
--- -----------------------------
-WITH learner_map AS (
-    SELECT id, username FROM learners
-)
-INSERT INTO chats (user1_id, user2_id)
-VALUES
--- 10 new chats between ali and aki
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki')),
-((SELECT id FROM learner_map WHERE username='ali'), (SELECT id FROM learner_map WHERE username='aki'));
 
 -- -----------------------------
 -- BATCH 3: Messages for New Chats (Chat Topics: Language Learning)
