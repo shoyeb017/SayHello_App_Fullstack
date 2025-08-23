@@ -95,11 +95,22 @@ class ChatDetailPage extends StatefulWidget {
 class _ChatDetailPageState extends State<ChatDetailPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  int _currentMessageCount = 0;
 
   @override
   void initState() {
     super.initState();
-    _initializeChat();
+    // Initialize chat immediately and set up real-time listening
+    _loadOrCreateChat().then((_) {
+      // Initialize message count and ensure we scroll to bottom after messages are loaded
+      final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+      _currentMessageCount = chatProvider.messages.length;
+      
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
+      // Real-time updates are handled by ChatProvider
+    });
   }
 
   @override
@@ -107,39 +118,6 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void _initializeChat() async {
-    // Use addPostFrameCallback to ensure initialization happens after build
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _loadOrCreateChat();
-      _scrollToBottom();
-      _startMessagePolling();
-    });
-  }
-
-  void _startMessagePolling() {
-    // Start polling for new messages every 5 seconds
-    Timer.periodic(const Duration(seconds: 5), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-
-      final chatProvider = Provider.of<ChatProvider>(context, listen: false);
-
-      // Reload current chat messages if we have an active chat
-      if (chatProvider.currentChat != null) {
-        _reloadCurrentChatMessages();
-      }
-    });
-  }
-
-  Future<void> _reloadCurrentChatMessages() async {
-    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    if (chatProvider.currentChat != null) {
-      await chatProvider.setCurrentChat(chatProvider.currentChat!.id);
-    }
   }
 
   Future<void> _loadOrCreateChat() async {
@@ -193,15 +171,24 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   }
 
   void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
+    if (!mounted) return;
+    
+    if (_scrollController.hasClients) {
+      // Use jumpTo for immediate scrolling without animation to reduce UI overhead
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
+  }
+
+  void _scrollToBottomSmooth() {
+    if (!mounted) return;
+    
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   String _formatLastSeen(DateTime lastSeen) {
@@ -341,6 +328,16 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           // Sort messages by creation time (chronological order)
           final sortedMessages = List<ChatMessage>.from(messages)
             ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
+          // Auto-scroll when new messages arrive via real-time
+          if (sortedMessages.length > _currentMessageCount) {
+            _currentMessageCount = sortedMessages.length;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && sortedMessages.isNotEmpty) {
+                _scrollToBottom();
+              }
+            });
+          }
 
           return Column(
             children: [
@@ -805,8 +802,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     );
 
     if (success) {
-      // Scroll to bottom to show the new message
-      _scrollToBottom();
+      // Scroll to bottom to show the new message with smooth animation
+      _scrollToBottomSmooth();
     } else {
       // If failed, put the text back
       _messageController.text = messageText;
