@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../l10n/app_localizations.dart';
-import 'feed_page.dart'; // Import for data models
+import '../../../../models/models.dart';
+import '../../../../providers/feed_provider.dart';
+import '../../../../providers/auth_provider.dart';
 
 class FeedDetailPage extends StatefulWidget {
-  final FeedPost post;
+  final FeedWithUser feedWithUser;
   final List<FeedComment> comments;
   final List<FeedLike> likes;
 
   const FeedDetailPage({
     super.key,
-    required this.post,
+    required this.feedWithUser,
     required this.comments,
     required this.likes,
   });
@@ -47,124 +50,202 @@ class _FeedDetailPageState extends State<FeedDetailPage> {
           style: TextStyle(color: textColor, fontSize: 18),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Post Card (Expanded)
-                  DetailedPostCard(post: widget.post, likes: widget.likes),
+      body: Consumer<FeedProvider>(
+        builder: (context, feedProvider, child) {
+          final feed = widget.feedWithUser.feed;
+          final currentComments =
+              feedProvider.feedComments[feed.id] ?? widget.comments;
+          final currentLikes = feedProvider.feedLikes[feed.id] ?? widget.likes;
+          final isLiked = feedProvider.likedPosts[feed.id] ?? false;
 
-                  // Comments Section
-                  Container(
-                    color: backgroundColor,
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppLocalizations.of(
-                            context,
-                          )!.commentsWithCount(widget.comments.length),
-                          style: TextStyle(
-                            color: textColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Comments List
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: widget.comments.length,
-                          itemBuilder: (context, index) {
-                            return CommentCard(
-                              comment: widget.comments[index],
-                              index: index,
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Comment Input Section
-          Container(
-            color: isDark ? Colors.grey[900] : Colors.grey[100],
-            padding: const EdgeInsets.all(16),
-            child: SafeArea(
-              child: Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 16,
-                    backgroundImage: NetworkImage(
-                      'https://i.pravatar.cc/150?img=10',
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isDark ? Colors.grey[800] : Colors.grey[200],
-                        borderRadius: BorderRadius.circular(20),
+          return Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Post Card (Expanded)
+                      DetailedPostCard(
+                        feedWithUser: widget.feedWithUser,
+                        likes: currentLikes,
+                        isLiked: isLiked,
+                        onLikePressed: () => _handleLike(feed.id),
                       ),
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TextField(
-                              controller: _commentController,
-                              style: TextStyle(color: textColor),
-                              decoration: InputDecoration(
-                                hintText: AppLocalizations.of(
-                                  context,
-                                )!.addComment,
-                                hintStyle: TextStyle(
-                                  color: isDark
-                                      ? Colors.grey[400]
-                                      : Colors.grey[600],
-                                ),
-                                border: InputBorder.none,
+
+                      // Comments Section
+                      Container(
+                        color: backgroundColor,
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.commentsWithCount(currentComments.length),
+                              style: TextStyle(
+                                color: textColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.send,
-                              color: Color(0xFF7d54fb),
-                              size: 20,
-                            ),
-                            onPressed: () {
-                              // Handle send comment
-                              _commentController.clear();
-                            },
-                          ),
-                        ],
+                            const SizedBox(height: 16),
+
+                            // Comments List
+                            if (currentComments.isEmpty)
+                              Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(32),
+                                  child: Text(
+                                    'No comments yet. Be the first to comment!',
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? Colors.grey[400]
+                                          : Colors.grey[600],
+                                      fontSize: 16,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            else
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: currentComments.length,
+                                itemBuilder: (context, index) {
+                                  return CommentCard(
+                                    comment: currentComments[index],
+                                    index: index,
+                                  );
+                                },
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ],
+
+              // Comment Input Section
+              Container(
+                color: isDark ? Colors.grey[900] : Colors.grey[100],
+                padding: const EdgeInsets.all(16),
+                child: SafeArea(
+                  child: Row(
+                    children: [
+                      Consumer<AuthProvider>(
+                        builder: (context, authProvider, child) {
+                          return CircleAvatar(
+                            radius: 16,
+                            backgroundImage:
+                                authProvider.currentUser?.profileImage != null
+                                ? NetworkImage(
+                                    authProvider.currentUser!.profileImage!,
+                                  )
+                                : null,
+                            child:
+                                authProvider.currentUser?.profileImage == null
+                                ? Text(
+                                    authProvider.currentUser?.name
+                                            .substring(0, 1)
+                                            .toUpperCase() ??
+                                        'U',
+                                    style: const TextStyle(fontSize: 12),
+                                  )
+                                : null,
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.grey[800] : Colors.grey[200],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: TextField(
+                                  controller: _commentController,
+                                  style: TextStyle(color: textColor),
+                                  decoration: InputDecoration(
+                                    hintText: AppLocalizations.of(
+                                      context,
+                                    )!.addComment,
+                                    hintStyle: TextStyle(
+                                      color: isDark
+                                          ? Colors.grey[400]
+                                          : Colors.grey[600],
+                                    ),
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.send,
+                                  color: Color(0xFF7d54fb),
+                                  size: 20,
+                                ),
+                                onPressed: () => _handleAddComment(feed.id),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
+  }
+
+  void _handleLike(String feedId) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final feedProvider = Provider.of<FeedProvider>(context, listen: false);
+
+    if (authProvider.currentUser != null) {
+      feedProvider.toggleFeedLike(feedId, authProvider.currentUser!.id);
+    }
+  }
+
+  void _handleAddComment(String feedId) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final feedProvider = Provider.of<FeedProvider>(context, listen: false);
+
+    if (authProvider.currentUser != null &&
+        _commentController.text.trim().isNotEmpty) {
+      feedProvider.addFeedComment(
+        feedId: feedId,
+        learnerId: authProvider.currentUser!.id,
+        contentText: _commentController.text.trim(),
+      );
+      _commentController.clear();
+    }
   }
 }
 
 class DetailedPostCard extends StatefulWidget {
-  final FeedPost post;
+  final FeedWithUser feedWithUser;
   final List<FeedLike> likes;
+  final bool isLiked;
+  final VoidCallback onLikePressed;
 
-  const DetailedPostCard({super.key, required this.post, required this.likes});
+  const DetailedPostCard({
+    super.key,
+    required this.feedWithUser,
+    required this.likes,
+    required this.isLiked,
+    required this.onLikePressed,
+  });
 
   @override
   State<DetailedPostCard> createState() => _DetailedPostCardState();
@@ -184,6 +265,8 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
     final textColor = isDark ? Colors.white : Colors.black;
     final iconColor = isDark ? Colors.grey[400] : Colors.grey[600];
 
+    final feed = widget.feedWithUser.feed;
+
     return Container(
       color: backgroundColor,
       padding: const EdgeInsets.all(16),
@@ -195,7 +278,16 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundImage: NetworkImage(widget.post.userAvatar),
+                backgroundImage: widget.feedWithUser.userAvatarUrl != null
+                    ? NetworkImage(widget.feedWithUser.userAvatarUrl!)
+                    : null,
+                child: widget.feedWithUser.userAvatarUrl == null
+                    ? Text(
+                        widget.feedWithUser.userName
+                            .substring(0, 1)
+                            .toUpperCase(),
+                      )
+                    : null,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -205,7 +297,7 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
                     Row(
                       children: [
                         Text(
-                          widget.post.userName,
+                          widget.feedWithUser.userName,
                           style: TextStyle(
                             color: textColor,
                             fontWeight: FontWeight.bold,
@@ -214,12 +306,13 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
                         ),
                         const Spacer(),
                         Text(
-                          _formatTimeAgo(widget.post.createdAt),
+                          _formatTimeAgo(feed.createdAt),
                           style: TextStyle(color: iconColor, fontSize: 12),
                         ),
                       ],
                     ),
                     const SizedBox(height: 2),
+                    // Language badges (placeholder)
                     Row(
                       children: [
                         Flexible(
@@ -234,7 +327,7 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
                               ),
                             ),
                             child: Text(
-                              widget.post.nativeLanguage,
+                              'EN', // Placeholder - would come from user profile
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
@@ -263,7 +356,7 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
                               ),
                             ),
                             child: Text(
-                              widget.post.learningLanguage,
+                              'JP', // Placeholder - would come from user profile
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
@@ -278,27 +371,20 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
                 ),
               ),
               const SizedBox(width: 8),
+              // Follow button placeholder
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: widget.post.isFollowing
-                      ? (isDark
-                            ? const Color(0xFF311c85)
-                            : const Color(0xFFefecff))
-                      : (isDark ? Colors.grey.shade800 : Colors.grey.shade200),
+                  color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  widget.post.isFollowing
-                      ? AppLocalizations.of(context)!.following
-                      : AppLocalizations.of(context)!.follow,
+                  AppLocalizations.of(context)!.follow,
                   style: TextStyle(
-                    color: widget.post.isFollowing
-                        ? const Color(0xFF7758f3)
-                        : (isDark ? Colors.white : Colors.black),
+                    color: isDark ? Colors.white : Colors.black,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -313,24 +399,24 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
           const SizedBox(height: 12),
 
           // Image Grid
-          if (widget.post.images.isNotEmpty) ...[
+          if (feed.imageUrls.isNotEmpty) ...[
             GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: widget.post.images.length == 1 ? 1 : 2,
+                crossAxisCount: feed.imageUrls.length == 1 ? 1 : 2,
                 crossAxisSpacing: 4,
                 mainAxisSpacing: 4,
-                childAspectRatio: widget.post.images.length == 1 ? 16 / 9 : 1,
+                childAspectRatio: feed.imageUrls.length == 1 ? 16 / 9 : 1,
               ),
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: widget.post.images.length,
+              itemCount: feed.imageUrls.length,
               itemBuilder: (context, index) {
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     color: isDark ? Colors.grey[800] : Colors.grey[200],
                     child: Image.network(
-                      widget.post.images[index],
+                      feed.imageUrls[index],
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -352,7 +438,9 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
   }
 
   Widget _buildTranslatableContent(Color textColor) {
-    final content = _isTranslated ? _dummyTranslation : widget.post.content;
+    final content = _isTranslated
+        ? _dummyTranslation
+        : widget.feedWithUser.feed.contentText;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -393,25 +481,23 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
   }
 
   Widget _buildStatsRow(Color? iconColor) {
+    final feed = widget.feedWithUser.feed;
+
     return Row(
       children: [
         // Like button
         GestureDetector(
-          onTap: () {
-            // Handle like
-          },
+          onTap: widget.onLikePressed,
           child: Row(
             children: [
               Icon(
-                widget.post.isLiked ? Icons.favorite : Icons.favorite_border,
-                color: widget.post.isLiked
-                    ? const Color(0xFF7d54fb)
-                    : iconColor,
+                widget.isLiked ? Icons.favorite : Icons.favorite_border,
+                color: widget.isLiked ? const Color(0xFF7d54fb) : iconColor,
                 size: 20,
               ),
               const SizedBox(width: 4),
               Text(
-                '${widget.post.likeCount}',
+                '${feed.likesCount}',
                 style: TextStyle(color: iconColor, fontSize: 14),
               ),
             ],
@@ -424,7 +510,7 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
             Icon(Icons.chat_bubble_outline, color: iconColor, size: 20),
             const SizedBox(width: 4),
             Text(
-              '${widget.post.commentCount}',
+              '${feed.commentsCount}',
               style: TextStyle(color: iconColor, fontSize: 14),
             ),
           ],
@@ -448,12 +534,13 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
   }
 
   Widget _buildLikedUsersRow(Color? iconColor) {
-    // Use actual likes data instead of likedByAvatars
+    // Use actual likes data
     final likesData = widget.likes.take(3).toList();
+    final feed = widget.feedWithUser.feed;
 
     return Row(
       children: [
-        // Liked users avatars - show up to 3, use actual likes data
+        // Liked users avatars - show up to 3, using placeholder for now
         if (likesData.isNotEmpty) ...[
           SizedBox(
             height: 32,
@@ -467,14 +554,22 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
                 if (likesData.isNotEmpty)
                   CircleAvatar(
                     radius: 12,
-                    backgroundImage: NetworkImage(likesData[0].userAvatar),
+                    backgroundColor: Colors.grey[300],
+                    child: Text(
+                      '1',
+                      style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                    ),
                   ),
                 if (likesData.length > 1)
                   Positioned(
                     left: 16,
                     child: CircleAvatar(
                       radius: 12,
-                      backgroundImage: NetworkImage(likesData[1].userAvatar),
+                      backgroundColor: Colors.grey[300],
+                      child: Text(
+                        '2',
+                        style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                      ),
                     ),
                   ),
                 if (likesData.length > 2)
@@ -482,7 +577,11 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
                     left: 32,
                     child: CircleAvatar(
                       radius: 12,
-                      backgroundImage: NetworkImage(likesData[2].userAvatar),
+                      backgroundColor: Colors.grey[300],
+                      child: Text(
+                        '3',
+                        style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                      ),
                     ),
                   ),
               ],
@@ -496,7 +595,7 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
             _showLikedUsersList();
           },
           child: Text(
-            AppLocalizations.of(context)!.likesWithCount(widget.post.likeCount),
+            AppLocalizations.of(context)!.likesWithCount(feed.likesCount),
             style: const TextStyle(
               color: Color(0xFF7d54fb),
               fontSize: 14,
@@ -509,7 +608,7 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
   }
 
   void _showLikedUsersList() {
-    // Show modal with actual users who liked
+    // Show modal with users who liked (placeholder implementation)
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -522,7 +621,7 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            // List of users who liked using actual data
+            // Placeholder for likes list
             if (widget.likes.isEmpty)
               Padding(
                 padding: EdgeInsets.all(20),
@@ -533,9 +632,15 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
                   .map(
                     (like) => ListTile(
                       leading: CircleAvatar(
-                        backgroundImage: NetworkImage(like.userAvatar),
+                        backgroundColor: Colors.grey[300],
+                        child: Text(
+                          'U',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
                       ),
-                      title: Text(like.userName),
+                      title: Text(
+                        'User ${like.id.substring(0, 8)}',
+                      ), // Placeholder
                       trailing: Text(_formatTimeAgo(like.createdAt)),
                     ),
                   )
@@ -591,7 +696,11 @@ class _CommentCardState extends State<CommentCard> {
         children: [
           CircleAvatar(
             radius: 16,
-            backgroundImage: NetworkImage(widget.comment.userAvatar),
+            backgroundColor: Colors.grey[300],
+            child: Text(
+              'U',
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -601,7 +710,7 @@ class _CommentCardState extends State<CommentCard> {
                 Row(
                   children: [
                     Text(
-                      widget.comment.userName,
+                      'User ${widget.comment.id.substring(0, 8)}', // Placeholder username
                       style: const TextStyle(
                         color: Color(0xFF7d54fb),
                         fontWeight: FontWeight.bold,
@@ -654,7 +763,7 @@ class _CommentCardState extends State<CommentCard> {
                     Text(
                       _isTranslated
                           ? _dummyTranslation
-                          : widget.comment.comment,
+                          : widget.comment.contentText,
                       style: TextStyle(
                         color: subtextColor,
                         fontSize: 14,

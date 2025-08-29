@@ -5,6 +5,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../providers/chat_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../models/models.dart';
+import '../../../services/azure_translator_service.dart';
 import '../BottomTabs/Connect/others_profile_page.dart';
 
 // Models for chat data (keeping original for backward compatibility)
@@ -97,6 +98,15 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   final ScrollController _scrollController = ScrollController();
   int _currentMessageCount = 0;
   ChatProvider? _chatProvider;
+  bool _isSubscribedToRealTime = false; // Track subscription status
+  Set<String> _renderedMessageIds = {}; // Track rendered message IDs
+  bool _isSendingMessage = false; // Track sending state to prevent double-send
+
+  // Track which messages have been translated or corrected
+  Set<String> _translatedMessages = {};
+  Set<String> _correctedMessages = {};
+  Map<String, String> _messageTranslations = {};
+  Map<String, String> _messageCorrections = {};
 
   @override
   void initState() {
@@ -107,16 +117,23 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       final chatProvider = Provider.of<ChatProvider>(context, listen: false);
       _currentMessageCount = chatProvider.messages.length;
 
+      // Ensure we start at the bottom when opening chat
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToBottom();
+        if (mounted &&
+            _scrollController.hasClients &&
+            chatProvider.messages.isNotEmpty) {
+          // Instantly jump to bottom without animation to prevent "flash" effect
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        }
       });
 
       // Subscribe to real-time updates if we have a current chat
-      if (chatProvider.currentChat != null) {
+      if (chatProvider.currentChat != null && !_isSubscribedToRealTime) {
         print(
           'ChatDetailPage: Setting up real-time subscription for chat: ${chatProvider.currentChat!.id}',
         );
         chatProvider.subscribeToRealTimeUpdates(chatProvider.currentChat!.id);
+        _isSubscribedToRealTime = true;
       }
     });
   }
@@ -131,7 +148,10 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   @override
   void dispose() {
     // Unsubscribe from real-time updates using stored reference
-    _chatProvider?.unsubscribeFromRealTimeUpdates();
+    if (_isSubscribedToRealTime) {
+      _chatProvider?.unsubscribeFromRealTimeUpdates();
+      _isSubscribedToRealTime = false;
+    }
 
     _messageController.dispose();
     _scrollController.dispose();
@@ -188,22 +208,13 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     }
   }
 
-  void _scrollToBottom() {
-    if (!mounted) return;
-
-    if (_scrollController.hasClients) {
-      // Use jumpTo for immediate scrolling without animation to reduce UI overhead
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    }
-  }
-
   void _scrollToBottomSmooth() {
     if (!mounted) return;
 
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 200), // Faster animation
         curve: Curves.easeOut,
       );
     }
@@ -239,7 +250,10 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             Icons.arrow_back,
             color: isDark ? Colors.white : Colors.black,
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            // Return with success flag to trigger immediate refresh in home page
+            Navigator.pop(context, true);
+          },
         ),
         title: Row(
           children: [
@@ -306,11 +320,12 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       ),
       body: Consumer2<ChatProvider, AuthProvider>(
         builder: (context, chatProvider, authProvider, child) {
-          if (chatProvider.isLoading) {
+          // Only show loading on initial load when no chat exists yet
+          if (chatProvider.isLoading && chatProvider.currentChat == null) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (chatProvider.hasError) {
+          if (chatProvider.hasError && chatProvider.currentChat == null) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -343,62 +358,95 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           final messages = chatProvider.messages;
           final currentUserId = authProvider.currentUser?.id ?? '';
 
-          // Sort messages by creation time (chronological order)
-          final sortedMessages = List<ChatMessage>.from(messages)
+          // Deduplicate messages by ID and sort by creation time (chronological order)
+          final Map<String, ChatMessage> messageMap = {};
+          for (final message in messages) {
+            messageMap[message.id] = message;
+          }
+
+          final sortedMessages = messageMap.values.toList()
             ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
-          // Auto-scroll when new messages arrive via real-time (same pattern as instructor group chat)
-          final currentMessageCount = sortedMessages.length;
-          if (currentMessageCount > _currentMessageCount &&
-              _currentMessageCount > 0) {
-            // New messages arrived, scroll smoothly
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted && sortedMessages.isNotEmpty) {
-                _scrollToBottomSmooth();
-              }
-            });
-          } else if (currentMessageCount > 0 && _currentMessageCount == 0) {
-            // Initial load, scroll instantly
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted && sortedMessages.isNotEmpty) {
-                _scrollToBottom();
-              }
-            });
+          // Check for truly new messages (not just duplicates)
+          final newMessageIds = sortedMessages.map((m) => m.id).toSet();
+          final hasNewUniqueMessages = !newMessageIds.every(
+            (id) => _renderedMessageIds.contains(id),
+          );
+
+          // Update rendered message IDs for duplicate detection
+          _renderedMessageIds = newMessageIds;
+
+          // Debug: Log if duplicates were found
+          if (messages.length != sortedMessages.length) {
+            print(
+              'ChatDetailPage: Removed ${messages.length - sortedMessages.length} duplicate messages',
+            );
           }
-          _currentMessageCount = currentMessageCount;
+
+          // Handle scrolling only when messages actually change (by unique IDs, not just count)
+          final currentMessageCount = sortedMessages.length;
+          final shouldScroll =
+              hasNewUniqueMessages ||
+              (_currentMessageCount != currentMessageCount);
+
+          if (shouldScroll) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && _scrollController.hasClients) {
+                if (_currentMessageCount == 0 && currentMessageCount > 0) {
+                  // Initial load - scroll to bottom instantly without animation
+                  _scrollController.jumpTo(
+                    _scrollController.position.maxScrollExtent,
+                  );
+                } else if (currentMessageCount > _currentMessageCount &&
+                    _currentMessageCount > 0) {
+                  // New message arrived - smooth scroll
+                  _scrollToBottomSmooth();
+                }
+              }
+            });
+            _currentMessageCount = currentMessageCount;
+          }
 
           return Column(
             children: [
-              // Messages List with Profile Header
+              // Messages List - start from bottom to prevent jumping
               Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(16),
-                  itemCount: sortedMessages.length + 1, // +1 for profile header
-                  itemBuilder: (context, index) {
-                    // Show profile header as first item
-                    if (index == 0) {
-                      return _buildProfileHeader(
+                child: sortedMessages.isEmpty
+                    ? _buildEmptyStateWithProfile(
                         context,
                         isDark,
                         primaryPurple,
-                      );
-                    }
+                      )
+                    : ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.all(16),
+                        itemCount:
+                            sortedMessages.length + 1, // +1 for profile header
+                        itemBuilder: (context, index) {
+                          // Show profile header as first item
+                          if (index == 0) {
+                            return _buildProfileHeader(
+                              context,
+                              isDark,
+                              primaryPurple,
+                            );
+                          }
 
-                    // Show messages (adjust index by -1)
-                    final message = sortedMessages[index - 1];
-                    final isCurrentUser = message.senderId == currentUserId;
+                          // Show messages (adjust index by -1)
+                          final message = sortedMessages[index - 1];
+                          final isCurrentUser =
+                              message.senderId == currentUserId;
 
-                    return _buildMessageItem(
-                      context,
-                      message,
-                      isCurrentUser,
-                      isDark,
-                      primaryPurple,
-                      currentUserId,
-                    );
-                  },
-                ),
+                          return _buildMessageItem(
+                            context,
+                            message,
+                            isCurrentUser,
+                            isDark,
+                            primaryPurple,
+                            currentUserId,
+                          );
+                        },
+                      ),
               ),
 
               // Message Input
@@ -412,6 +460,37 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildEmptyStateWithProfile(
+    BuildContext context,
+    bool isDark,
+    Color primaryPurple,
+  ) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          _buildProfileHeader(context, isDark, primaryPurple),
+          const SizedBox(height: 40),
+          Icon(Icons.chat_bubble_outline, size: 64, color: Colors.grey[400]),
+          const SizedBox(height: 16),
+          Text(
+            'Start your conversation!',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Say hello to ${widget.user.name}',
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+          ),
+        ],
       ),
     );
   }
@@ -637,92 +716,271 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start,
               children: [
-                // Message Bubble
-                Container(
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.75,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isCurrentUser
-                        ? const Color(
-                            0xFFF0EAFF,
-                          ) // Light purple for current user
-                        : (isDark ? Colors.grey.shade800 : Colors.white),
-                    borderRadius: BorderRadius.circular(20),
-                    border: !isCurrentUser
-                        ? Border.all(
-                            color: isDark
-                                ? Colors.grey.shade700
-                                : Colors.grey.shade300,
-                          )
-                        : null,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Message content
-                      if (message.type == 'image')
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.image,
-                              size: 16,
-                              color: Colors.grey[600],
-                            ),
-                            const SizedBox(width: 4),
+                // Message Bubble with Stack for action icons
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.75,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isCurrentUser
+                            ? const Color(
+                                0xFFF0EAFF,
+                              ) // Light purple for current user
+                            : (isDark ? Colors.grey.shade800 : Colors.white),
+                        borderRadius: BorderRadius.circular(20),
+                        border: !isCurrentUser
+                            ? Border.all(
+                                color: isDark
+                                    ? Colors.grey.shade700
+                                    : Colors.grey.shade300,
+                              )
+                            : null,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Message content with correction display
+                          if (message.type == 'image')
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.image,
+                                  size: 16,
+                                  color: Colors.grey[600],
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Image',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ],
+                            )
+                          else if (message.hasCorrection ||
+                              _correctedMessages.contains(message.id))
+                            // Show corrected message format (visible to both sender and receiver)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        message.contentText ?? '',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.red,
+                                          decoration:
+                                              TextDecoration.lineThrough,
+                                          decorationColor: Colors.red,
+                                          decorationThickness: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.close,
+                                      color: Colors.red,
+                                      size: 16,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        message.correction ??
+                                            _messageCorrections[message.id] ??
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.chatCorrectedText,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.check,
+                                      color: Colors.green,
+                                      size: 16,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          else
                             Text(
-                              'Image',
+                              message.contentText ?? '',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.grey[600],
-                                fontStyle: FontStyle.italic,
+                                color: isCurrentUser
+                                    ? Colors.black87
+                                    : (isDark ? Colors.white : Colors.black87),
+                              ),
+                            ),
+
+                          // Translation display - show if message has been translated
+                          if (!isCurrentUser &&
+                              _translatedMessages.contains(message.id)) ...[
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: primaryPurple.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: primaryPurple.withOpacity(0.3),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.translate,
+                                    size: 16,
+                                    color: primaryPurple,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      _messageTranslations[message.id] ??
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.chatTranslationHere,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: primaryPurple,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
-                        )
-                      else
-                        Text(
-                          message.contentText ?? '',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: isCurrentUser
-                                ? Colors.black87
-                                : (isDark ? Colors.white : Colors.black87),
-                          ),
-                        ),
 
-                      // Timestamp and status
-                      const SizedBox(height: 4),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            _formatMessageTimestamp(message.createdAt),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
+                          // Timestamp and status
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _formatMessageTimestamp(message.createdAt),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              if (isCurrentUser) ...[
+                                const SizedBox(width: 4),
+                                Icon(
+                                  message.status == 'read'
+                                      ? Icons.done_all
+                                      : Icons.done,
+                                  size: 14,
+                                  color: message.status == 'read'
+                                      ? Colors.blue
+                                      : Colors.grey[600],
+                                ),
+                              ],
+                            ],
                           ),
-                          if (isCurrentUser) ...[
-                            const SizedBox(width: 4),
-                            Icon(
-                              message.status == 'read'
-                                  ? Icons.done_all
-                                  : Icons.done,
-                              size: 14,
-                              color: message.status == 'read'
-                                  ? Colors.blue
-                                  : Colors.grey[600],
-                            ),
-                          ],
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+
+                    // Action icons positioned on the border of message bubble
+                    if (!isCurrentUser && message.type != 'image')
+                      Positioned(
+                        bottom: -8,
+                        right: 12,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Translate icon
+                            GestureDetector(
+                              onTap: () {
+                                print('Translate icon tapped!');
+                                _autoTranslateMessage(message, primaryPurple);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.grey.shade800
+                                      : Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: primaryPurple.withOpacity(0.3),
+                                    width: 1,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Icon(
+                                  Icons.translate,
+                                  size: 12,
+                                  color: primaryPurple,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            // Correct icon
+                            GestureDetector(
+                              onTap: () {
+                                print('Correct icon tapped!');
+                                _showCorrectDialog(
+                                  context,
+                                  message,
+                                  primaryPurple,
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.grey.shade800
+                                      : Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: primaryPurple.withOpacity(0.3),
+                                    width: 1,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Icon(
+                                  Icons.edit,
+                                  size: 12,
+                                  color: primaryPurple,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),
@@ -790,7 +1048,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 shape: BoxShape.circle,
               ),
               child: IconButton(
-                icon: chatProvider.isSending
+                icon: _isSendingMessage
                     ? SizedBox(
                         width: 20,
                         height: 20,
@@ -802,7 +1060,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                         ),
                       )
                     : const Icon(Icons.send, color: Colors.white),
-                onPressed: chatProvider.isSending
+                onPressed: _isSendingMessage
                     ? null
                     : () => _sendMessage(chatProvider, currentUserId),
               ),
@@ -818,29 +1076,77 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     String currentUserId,
   ) async {
     final messageText = _messageController.text.trim();
-    if (messageText.isEmpty) return;
+    if (messageText.isEmpty || _isSendingMessage) return;
 
-    // Clear the input field immediately
+    // Set our own sending flag to prevent double-tap sends
+    setState(() {
+      _isSendingMessage = true;
+    });
+
+    // Clear the input field immediately for instant feedback
     _messageController.clear();
 
-    // Send the message
-    final success = await chatProvider.sendMessage(
-      messageText,
-      senderId: currentUserId,
-    );
+    // Instantly scroll to bottom to show typing area cleared
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
 
-    if (success) {
-      // Scroll to bottom to show the new message with smooth animation
-      _scrollToBottomSmooth();
-    } else {
-      // If failed, put the text back
-      _messageController.text = messageText;
+    try {
+      // Send the message asynchronously without waiting for provider state
+      chatProvider
+          .sendMessage(messageText, senderId: currentUserId)
+          .then((success) {
+            if (!success && mounted) {
+              // If failed, put the text back and show error
+              _messageController.text = messageText;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to send message. Please try again.'),
+                  backgroundColor: Colors.red,
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            }
+          })
+          .catchError((e) {
+            // Error handling - restore message text
+            if (mounted) {
+              _messageController.text = messageText;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Error sending message. Check your connection.',
+                  ),
+                  backgroundColor: Colors.red,
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            }
+          });
+
+      // Reset sending flag quickly for immediate UI feedback
+      await Future.delayed(const Duration(milliseconds: 300));
 
       if (mounted) {
+        setState(() {
+          _isSendingMessage = false;
+        });
+
+        // Scroll to bottom smoothly to show the new message
+        _scrollToBottomSmooth();
+      }
+    } catch (e) {
+      // Reset sending flag immediately on error
+      if (mounted) {
+        setState(() {
+          _isSendingMessage = false;
+        });
+        _messageController.text = messageText;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to send message. Please try again.'),
+            content: Text('Error sending message. Check your connection.'),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
           ),
         );
       }
@@ -856,5 +1162,270 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     } else {
       return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
     }
+  }
+
+  // Auto-translate message using Azure Translator Service
+  void _autoTranslateMessage(ChatMessage message, Color primaryPurple) async {
+    print('_autoTranslateMessage called for: ${message.contentText}');
+
+    try {
+      // Get current user's learning language for translation
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final currentUser = authProvider.currentUser as Learner?;
+
+      if (currentUser == null) {
+        print('No current user found for translation');
+        return;
+      }
+
+      // Show loading feedback
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text('Translating message...'),
+            ],
+          ),
+          backgroundColor: primaryPurple,
+          duration: Duration(seconds: 3),
+        ),
+      );
+
+      // Convert language names to proper capitalized format for Azure Translator
+      final sourceLanguage = _getProperLanguageName(widget.user.nativeLanguage);
+      final targetLanguage = _getProperLanguageName(currentUser.nativeLanguage);
+
+      print('Translating from $sourceLanguage to $targetLanguage');
+
+      // Translate from the partner's native language to current user's native language
+      final translation = await AzureTranslatorService.translateText(
+        text: message.contentText ?? '',
+        sourceLanguage: sourceLanguage, // Partner's native language
+        targetLanguage:
+            targetLanguage, // User's native language for understanding
+      );
+
+      print('Translation result: $translation');
+
+      if (mounted && translation.isNotEmpty) {
+        setState(() {
+          _translatedMessages.add(message.id);
+          _messageTranslations[message.id] = translation;
+        });
+
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Message translated to ${currentUser.nativeLanguage}!',
+            ),
+            backgroundColor: primaryPurple,
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Translation error: $e');
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Translation failed: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
+  // Convert language names to proper format for Azure Translator Service
+  String _getProperLanguageName(String languageName) {
+    switch (languageName.toLowerCase()) {
+      case 'english':
+        return 'English';
+      case 'spanish':
+        return 'Spanish';
+      case 'french':
+        return 'French';
+      case 'german':
+        return 'German';
+      case 'italian':
+        return 'Italian';
+      case 'portuguese':
+        return 'Portuguese';
+      case 'russian':
+        return 'Russian';
+      case 'japanese':
+        return 'Japanese';
+      case 'korean':
+        return 'Korean';
+      case 'chinese':
+        return 'Chinese';
+      case 'arabic':
+        return 'Arabic';
+      case 'hindi':
+        return 'Hindi';
+      case 'bengali':
+        return 'Bengali';
+      case 'urdu':
+        return 'Urdu';
+      case 'turkish':
+        return 'Turkish';
+      case 'dutch':
+        return 'Dutch';
+      case 'swedish':
+        return 'Swedish';
+      case 'norwegian':
+        return 'Norwegian';
+      case 'danish':
+        return 'Danish';
+      case 'finnish':
+        return 'Finnish';
+      case 'polish':
+        return 'Polish';
+      case 'czech':
+        return 'Czech';
+      case 'hungarian':
+        return 'Hungarian';
+      case 'romanian':
+        return 'Romanian';
+      case 'bulgarian':
+        return 'Bulgarian';
+      case 'greek':
+        return 'Greek';
+      case 'hebrew':
+        return 'Hebrew';
+      case 'thai':
+        return 'Thai';
+      case 'vietnamese':
+        return 'Vietnamese';
+      case 'indonesian':
+        return 'Indonesian';
+      case 'malay':
+        return 'Malay';
+      case 'filipino':
+        return 'Filipino';
+      default:
+        // Default to English if language not found, but preserve original case
+        return languageName.isNotEmpty
+            ? languageName[0].toUpperCase() +
+                  languageName.substring(1).toLowerCase()
+            : 'English';
+    }
+  }
+
+  // Show correction dialog
+  void _showCorrectDialog(
+    BuildContext context,
+    ChatMessage message,
+    Color primaryPurple,
+  ) {
+    final TextEditingController correctionController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.chatDialogCorrectMessage),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.chatDialogOriginal,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(message.contentText ?? ''),
+            const SizedBox(height: 16),
+            Text(
+              AppLocalizations.of(context)!.chatDialogCorrection,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: correctionController,
+              decoration: InputDecoration(
+                hintText: 'Enter your correction',
+                border: const OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.chatDialogCancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (correctionController.text.trim().isNotEmpty) {
+                try {
+                  final chatProvider = Provider.of<ChatProvider>(
+                    context,
+                    listen: false,
+                  );
+
+                  // Save correction to database using the repository
+                  await chatProvider.updateMessageCorrection(
+                    message.id,
+                    correctionController.text.trim(),
+                  );
+
+                  // Also save locally for immediate UI update
+                  setState(() {
+                    _correctedMessages.add(message.id);
+                    _messageCorrections[message.id] = correctionController.text
+                        .trim();
+                  });
+
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)!.chatDialogCorrectionSaved,
+                      ),
+                      backgroundColor: primaryPurple,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                } catch (e) {
+                  print('Error saving correction: $e');
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error saving correction: ${e.toString()}'),
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: primaryPurple),
+            child: Text(
+              AppLocalizations.of(context)!.chatDialogSave,
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

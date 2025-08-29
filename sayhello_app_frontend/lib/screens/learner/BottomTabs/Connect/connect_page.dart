@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 import '../../../../l10n/app_localizations.dart';
 import 'others_profile_page.dart';
 import '../../Notifications/notifications.dart';
@@ -34,6 +35,9 @@ class _ConnectPageState extends State<ConnectPage> {
   String? _selectedRegion;
   String? _selectedProficiency;
 
+  // Search debouncer
+  Timer? _searchDebouncer;
+
   @override
   void initState() {
     super.initState();
@@ -42,12 +46,15 @@ class _ConnectPageState extends State<ConnectPage> {
 
   @override
   void dispose() {
+    _searchDebouncer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
   /// Load language partners from backend based on current user's learning language
   Future<void> _loadLanguagePartners() async {
+    if (!mounted) return;
+
     setState(() {
       _isLoading = true;
       _error = null;
@@ -101,18 +108,34 @@ class _ConnectPageState extends State<ConnectPage> {
         _filteredLearners = [];
       }
     } catch (e) {
-      setState(() {
-        _error = e.toString();
-      });
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+        });
+      }
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
+  }
+
+  /// Debounced search to prevent rapid setState calls
+  void _onSearchChanged() {
+    _searchDebouncer?.cancel();
+    _searchDebouncer = Timer(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        _applyFilters();
+      }
+    });
   }
 
   /// Apply all filters to the learner list
   void _applyFilters() {
+    if (!mounted) return; // Early return if widget is disposed
+
     List<Learner> filtered = List.from(_allLearners);
 
     // Apply search filter
@@ -193,9 +216,11 @@ class _ConnectPageState extends State<ConnectPage> {
         break;
     }
 
-    setState(() {
-      _filteredLearners = filtered;
-    });
+    if (mounted) {
+      setState(() {
+        _filteredLearners = filtered;
+      });
+    }
   }
 
   /// Build main content with backend data integration
@@ -697,7 +722,9 @@ class _ConnectPageState extends State<ConnectPage> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    _applyFilters();
+                    if (mounted) {
+                      _applyFilters();
+                    }
                   },
                   child: const Text('Apply'),
                 ),
@@ -840,10 +867,12 @@ class _ConnectPageState extends State<ConnectPage> {
                       side: BorderSide(color: chipborderColor),
                     ),
                     onSelected: (_) {
-                      setState(() {
-                        selectedTopTabIndex = index;
-                        _applyFilters();
-                      });
+                      if (mounted) {
+                        setState(() {
+                          selectedTopTabIndex = index;
+                          _applyFilters();
+                        });
+                      }
                     },
                   ),
                 );
@@ -861,7 +890,7 @@ class _ConnectPageState extends State<ConnectPage> {
               ),
               child: TextField(
                 controller: _searchController,
-                onChanged: (value) => _applyFilters(),
+                onChanged: (value) => _onSearchChanged(),
                 decoration: InputDecoration(
                   hintText: AppLocalizations.of(context)!.searchPeople,
                   hintStyle: TextStyle(
@@ -884,7 +913,9 @@ class _ConnectPageState extends State<ConnectPage> {
                           ),
                           onPressed: () {
                             _searchController.clear();
-                            _applyFilters();
+                            if (mounted) {
+                              _applyFilters();
+                            }
                           },
                         ),
                       IconButton(

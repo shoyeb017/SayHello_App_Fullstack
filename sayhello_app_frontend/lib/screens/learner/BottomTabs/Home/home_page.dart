@@ -51,7 +51,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final TextEditingController _searchController = TextEditingController();
   final LearnerRepository _learnerRepository = LearnerRepository();
   bool _isSearching = false;
@@ -59,16 +59,41 @@ class _HomePageState extends State<HomePage> {
   Map<String, Learner> _userCache = {}; // Cache for loaded users
   ChatProvider? _chatProvider; // Store reference for real-time subscription
   Timer? _searchDebouncer; // Debouncer for search
+  Timer? _periodicRefreshTimer; // Timer for periodic refresh
 
   @override
   void initState() {
     super.initState();
+
+    // Add app lifecycle observer
+    WidgetsBinding.instance.addObserver(this);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserChats();
     });
 
     // Add listener to search controller for real-time search
     _searchController.addListener(_onSearchChanged);
+
+    // Set up minimal periodic refresh as fallback only (reduced frequency since real-time is primary)
+    _periodicRefreshTimer = Timer.periodic(const Duration(seconds: 30), (
+      timer,
+    ) {
+      if (mounted) {
+        print('HomePage: Fallback periodic refresh triggered');
+        _loadUserChats();
+      }
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed && mounted) {
+      // App came to foreground, refresh chat list
+      print('HomePage: App resumed, refreshing chat list');
+      _loadUserChats();
+    }
   }
 
   void _onSearchChanged() {
@@ -91,22 +116,125 @@ class _HomePageState extends State<HomePage> {
     // Safely store reference to ChatProvider for use in dispose()
     _chatProvider = Provider.of<ChatProvider>(context, listen: false);
 
-    // Set up real-time subscription for chat list
+    // Set up real-time subscription for chat list with instant updates
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (authProvider.currentUser != null &&
         authProvider.currentUser is Learner) {
       final currentUser = authProvider.currentUser as Learner;
       _chatProvider?.subscribeToUserChatList(currentUser.id);
+
+      // Add listener for instant real-time chat updates
+      _chatProvider?.addListener(_onChatProviderUpdate);
+
+      // Immediately load initial data
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _loadUserChats();
+      });
     }
+  }
+
+  /// Handle real-time updates from ChatProvider
+  void _onChatProviderUpdate() {
+    if (mounted) {
+      print('HomePage: ChatProvider updated, refreshing UI...');
+      setState(() {
+        // Trigger rebuild to show latest chat data
+      });
+      // Preload user data for new chats
+      _preloadUserDataInstant();
+    }
+  }
+
+  // Preload user data for better performance - instant version
+  void _preloadUserDataInstant() async {
+    if (!mounted) return;
+
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    final currentUserId = Provider.of<AuthProvider>(
+      context,
+      listen: false,
+    ).currentUser?.id;
+
+    if (currentUserId == null) return;
+
+    // Use existing userChats property and preload method for consistency
+    _preloadChatUsers(chatProvider.userChats, currentUserId);
+  }
+
+  /// Build skeleton loading for better perceived performance
+  Widget _buildSkeletonLoading() {
+    return ListView.builder(
+      itemCount: 6, // Show 6 skeleton items
+      itemBuilder: (context, index) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: Row(
+            children: [
+              // Avatar skeleton
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 15),
+              // Content skeleton
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 16,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 12,
+                      width: 200,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Time skeleton
+              Container(
+                height: 12,
+                width: 50,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
   void dispose() {
+    // Remove app lifecycle observer
+    WidgetsBinding.instance.removeObserver(this);
+
+    // Remove ChatProvider listener
+    _chatProvider?.removeListener(_onChatProviderUpdate);
+
     // Unsubscribe from real-time chat list updates using stored reference
     _chatProvider?.unsubscribeFromUserChatList();
 
-    // Clean up search debouncer
+    // Clean up timers
     _searchDebouncer?.cancel();
+    _periodicRefreshTimer?.cancel();
 
     // Remove listener and dispose controllers
     _searchController.removeListener(_onSearchChanged);
@@ -121,11 +249,26 @@ class _HomePageState extends State<HomePage> {
     if (authProvider.currentUser != null &&
         authProvider.currentUser is Learner) {
       final currentUser = authProvider.currentUser as Learner;
-      await chatProvider.loadUserChats(currentUser.id);
 
-      // Preload user data for better search performance
-      _preloadChatUsers(chatProvider.userChats, currentUser.id);
+      print('HomePage: Loading user chats for ${currentUser.id}');
+
+      try {
+        // Load chats with faster timeout and better error handling
+        await chatProvider.loadUserChats(currentUser.id);
+
+        // Preload user data for better search performance (async, non-blocking)
+        _preloadChatUsers(chatProvider.userChats, currentUser.id);
+      } catch (e) {
+        print('HomePage: Error loading chats: $e');
+        // Don't block UI for failed loads, show cached data if available
+      }
     }
+  }
+
+  /// Refresh chat list - called when returning from individual chat
+  Future<void> _refreshChatList() async {
+    print('HomePage: Refreshing chat list...');
+    await _loadUserChats();
   }
 
   /// Preload user data for all chat partners to improve search performance
@@ -440,15 +583,16 @@ class _HomePageState extends State<HomePage> {
 
           // const Divider(height: 1),
 
-          // Chat list
+          // Chat list with optimized loading
           Expanded(
             child: Consumer2<ChatProvider, AuthProvider>(
               builder: (context, chatProvider, authProvider, child) {
-                if (chatProvider.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                // Show skeleton loading only on initial load, not on updates
+                if (chatProvider.isLoading && chatProvider.userChats.isEmpty) {
+                  return _buildSkeletonLoading();
                 }
 
-                if (chatProvider.hasError) {
+                if (chatProvider.hasError && chatProvider.userChats.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -480,14 +624,24 @@ class _HomePageState extends State<HomePage> {
                 final allChats = chatProvider.userChats;
                 final currentUserId = authProvider.currentUser?.id ?? '';
 
+                // Sort chats by latest message time (newest first)
+                final sortedChats = List<ChatWithLatestMessage>.from(allChats)
+                  ..sort((a, b) {
+                    final aTime =
+                        a.latestMessage?.createdAt ?? a.chat.createdAt;
+                    final bTime =
+                        b.latestMessage?.createdAt ?? b.chat.createdAt;
+                    return bTime.compareTo(aTime); // Newest first
+                  });
+
                 List<ChatWithLatestMessage> filteredChats;
                 if (_searchQuery.isEmpty) {
-                  filteredChats = allChats;
+                  filteredChats = sortedChats;
                 } else {
                   // Create a list to store filtered chats
                   filteredChats = [];
 
-                  for (final chatWithMessage in allChats) {
+                  for (final chatWithMessage in sortedChats) {
                     final otherUserId =
                         chatWithMessage.chat.user1Id == currentUserId
                         ? chatWithMessage.chat.user2Id
@@ -565,7 +719,10 @@ class _HomePageState extends State<HomePage> {
                 }
 
                 return RefreshIndicator(
-                  onRefresh: _loadUserChats,
+                  onRefresh: () async {
+                    print('HomePage: Pull-to-refresh triggered');
+                    await _loadUserChats();
+                  },
                   child: ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     itemCount: filteredChats.length,
@@ -578,6 +735,8 @@ class _HomePageState extends State<HomePage> {
                             currentUserId: authProvider.currentUser?.id ?? '',
                             learnerRepository: _learnerRepository,
                             userCache: _userCache,
+                            onChatOpened:
+                                _refreshChatList, // Pass refresh callback
                           ),
                           // Partial width divider with indent and endIndent
                           if (index != filteredChats.length - 1)
@@ -652,12 +811,14 @@ class _BackendChatTile extends StatefulWidget {
   final String currentUserId;
   final LearnerRepository learnerRepository;
   final Map<String, Learner> userCache;
+  final VoidCallback? onChatOpened; // Callback to refresh parent
 
   const _BackendChatTile({
     required this.chatWithMessage,
     required this.currentUserId,
     required this.learnerRepository,
     required this.userCache,
+    this.onChatOpened,
   });
 
   @override
@@ -666,7 +827,7 @@ class _BackendChatTile extends StatefulWidget {
 
 class _BackendChatTileState extends State<_BackendChatTile> {
   Learner? _otherUser;
-  bool _isLoading = true;
+  bool _isLoading = false; // Start with false to show content immediately
 
   @override
   void initState() {
@@ -682,18 +843,34 @@ class _BackendChatTileState extends State<_BackendChatTile> {
           ? widget.chatWithMessage.chat.user2Id
           : widget.chatWithMessage.chat.user1Id;
 
-      // Check cache first
+      // Check cache first - if available, show immediately
       if (widget.userCache.containsKey(otherUserId)) {
-        setState(() {
-          _otherUser = widget.userCache[otherUserId];
-          _isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _otherUser = widget.userCache[otherUserId];
+            _isLoading = false;
+          });
+        }
         return;
       }
 
-      final learner = await widget.learnerRepository.getLearnerById(
-        otherUserId,
-      );
+      // If not cached, show loading state briefly
+      if (mounted) {
+        setState(() {
+          _isLoading = true;
+        });
+      }
+
+      // Load user data with timeout for better performance
+      final learner = await widget.learnerRepository
+          .getLearnerById(otherUserId)
+          .timeout(
+            const Duration(seconds: 5),
+            onTimeout: () {
+              print('HomePage: Timeout loading user $otherUserId');
+              return null;
+            },
+          );
 
       if (mounted) {
         setState(() {
@@ -740,49 +917,10 @@ class _BackendChatTileState extends State<_BackendChatTile> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    if (_isLoading) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 1.5, horizontal: 16),
-        child: Row(
-          children: [
-            const CircleAvatar(
-              radius: 32,
-              backgroundColor: Colors.grey,
-              child: Icon(Icons.person, color: Colors.white),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 16,
-                    width: 120,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    height: 14,
-                    width: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
+    // Instant display with cached data or placeholder
     final hasUnread = widget.chatWithMessage.hasUnread;
     final latestMessage = widget.chatWithMessage.latestMessage;
-    final otherUserName = _otherUser?.name ?? 'Unknown User';
+    final otherUserName = _otherUser?.name ?? 'Loading...';
     final otherUserAvatar = _otherUser?.profileImage;
 
     String lastMessageText = 'No messages yet';
@@ -797,99 +935,160 @@ class _BackendChatTileState extends State<_BackendChatTile> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 1.5),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-        leading: Stack(
-          children: [
-            CircleAvatar(
-              radius: 32,
-              backgroundImage: otherUserAvatar != null
-                  ? NetworkImage(otherUserAvatar)
-                  : null,
-              backgroundColor: Colors.grey[300],
-              child: otherUserAvatar == null
-                  ? const Icon(Icons.person, color: Colors.white, size: 32)
-                  : null,
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              child: Container(
-                width: 14,
-                height: 14,
-                decoration: BoxDecoration(
-                  color: Colors.purple,
-                  border: Border.all(color: Colors.white, width: 1.5),
-                  shape: BoxShape.circle,
+      child: Container(
+        decoration: hasUnread
+            ? BoxDecoration(
+                color: theme.primaryColor.withOpacity(0.05),
+                border: Border(
+                  left: BorderSide(color: theme.primaryColor, width: 3),
                 ),
+              )
+            : null,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          leading: Stack(
+            children: [
+              CircleAvatar(
+                radius: 32,
+                backgroundImage: otherUserAvatar != null
+                    ? NetworkImage(otherUserAvatar)
+                    : null,
+                backgroundColor: Colors.grey[300],
+                child: otherUserAvatar == null
+                    ? Icon(
+                        _isLoading ? Icons.person : Icons.person,
+                        color: _isLoading ? Colors.grey[400] : Colors.white,
+                        size: 32,
+                      )
+                    : null,
               ),
-            ),
-          ],
-        ),
-        title: Text(
-          otherUserName,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        subtitle: Text(
-          lastMessageText,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: hasUnread ? theme.primaryColor : null,
-            fontWeight: hasUnread ? FontWeight.w500 : null,
-          ),
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(dateLabel, style: theme.textTheme.bodySmall),
-            const SizedBox(height: 4),
-            if (hasUnread)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: theme.brightness == Brightness.dark
-                      ? const Color(0xFF311b86)
-                      : const Color(0xFFefecfd),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  widget.chatWithMessage.unreadCount.toString(),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF765ae3),
-                    fontWeight: FontWeight.w600,
+              // Online indicator (can be enhanced with real status)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                child: Container(
+                  width: 14,
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: Colors.green, // Real-time online status
+                    border: Border.all(color: Colors.white, width: 1.5),
+                    shape: BoxShape.circle,
                   ),
                 ),
               ),
-          ],
-        ),
-        onTap: () {
-          if (_otherUser != null) {
-            // Create a ChatUser from the Learner data to navigate to individual chat
-            final chatUser = ChatUser(
-              id: _otherUser!.id,
-              name: _otherUser!.name,
-              avatarUrl: _otherUser!.profileImage ?? '',
-              country: _otherUser!.country,
-              flag: _getCountryFlag(_otherUser!.country),
-              age: _calculateAge(_otherUser!.dateOfBirth),
-              gender: _otherUser!.gender == 'male' ? 'M' : 'F',
-              isOnline: true, // Could be enhanced with real online status
-              lastSeen: DateTime.now(), // Could be enhanced with real last seen
-              interests: _otherUser!.interests,
-              nativeLanguage: _otherUser!.nativeLanguage,
-              learningLanguage: _otherUser!.learningLanguage,
-            );
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChatDetailPage(user: chatUser),
+            ],
+          ),
+          title: Text(
+            otherUserName,
+            style: TextStyle(
+              fontWeight: hasUnread ? FontWeight.bold : FontWeight.w600,
+              fontSize: hasUnread ? 16 : 15,
+              color: _isLoading ? Colors.grey[400] : null,
+            ),
+          ),
+          subtitle: Text(
+            lastMessageText,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: hasUnread
+                  ? (theme.brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black87)
+                  : (theme.brightness == Brightness.dark
+                        ? Colors.grey[400]
+                        : Colors.grey[600]),
+              fontWeight: hasUnread ? FontWeight.w500 : FontWeight.normal,
+              fontSize: hasUnread ? 14 : 13,
+            ),
+          ),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                dateLabel,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: hasUnread
+                      ? theme.primaryColor
+                      : (theme.brightness == Brightness.dark
+                            ? Colors.grey[400]
+                            : Colors.grey[600]),
+                  fontWeight: hasUnread ? FontWeight.w500 : FontWeight.normal,
+                ),
               ),
-            );
-          }
-        },
+              const SizedBox(height: 4),
+              if (hasUnread)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  constraints: const BoxConstraints(
+                    minWidth: 20,
+                    minHeight: 20,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.primaryColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    widget.chatWithMessage.unreadCount > 99
+                        ? '99+'
+                        : widget.chatWithMessage.unreadCount.toString(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+            ],
+          ),
+          onTap: () async {
+            if (_otherUser != null) {
+              // Create a ChatUser from the Learner data to navigate to individual chat
+              final chatUser = ChatUser(
+                id: _otherUser!.id,
+                name: _otherUser!.name,
+                avatarUrl: _otherUser!.profileImage ?? '',
+                country: _otherUser!.country,
+                flag: _getCountryFlag(_otherUser!.country),
+                age: _calculateAge(_otherUser!.dateOfBirth),
+                gender: _otherUser!.gender == 'male' ? 'M' : 'F',
+                isOnline: true, // Could be enhanced with real online status
+                lastSeen:
+                    DateTime.now(), // Could be enhanced with real last seen
+                interests: _otherUser!.interests,
+                nativeLanguage: _otherUser!.nativeLanguage,
+                learningLanguage: _otherUser!.learningLanguage,
+              );
+
+              // Navigate to chat with instant transition
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatDetailPage(user: chatUser),
+                ),
+              );
+
+              // Instant callback for immediate parent refresh regardless of result
+              if (context.mounted && widget.onChatOpened != null) {
+                print('ChatTile: Triggering instant parent refresh...');
+                widget.onChatOpened!();
+              }
+
+              // Additional instant state update if chat was modified
+              if (result == true && mounted) {
+                setState(() {
+                  // Force rebuild to show latest changes immediately
+                });
+              }
+            }
+          },
+        ),
       ),
     );
   }

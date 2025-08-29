@@ -19,6 +19,7 @@ import 'providers/group_chat_provider.dart';
 import 'providers/feedback_provider.dart';
 import 'providers/revenue_provider.dart';
 import 'providers/chat_provider.dart';
+import 'providers/feed_provider.dart';
 
 import 'screens/auth/landing_page.dart';
 import 'screens/permissions/permission_wrapper.dart';
@@ -69,6 +70,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => RevenueProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ChangeNotifierProvider(create: (_) => FeedProvider()),
       ],
       child: const MyApp(),
     ),

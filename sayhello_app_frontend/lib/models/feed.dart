@@ -245,6 +245,55 @@ class FeedComment {
   int get hashCode => id.hashCode;
 }
 
+/// Model for feed likes
+class FeedLike {
+  final String id;
+  final String feedId;
+  final String learnerId;
+  final DateTime createdAt;
+
+  const FeedLike({
+    required this.id,
+    required this.feedId,
+    required this.learnerId,
+    required this.createdAt,
+  });
+
+  /// Create FeedLike from JSON (Supabase response)
+  factory FeedLike.fromJson(Map<String, dynamic> json) {
+    return FeedLike(
+      id: json['id'] as String,
+      feedId: json['feed_id'] as String,
+      learnerId: json['learner_id'] as String,
+      createdAt: DateTime.parse(json['created_at'] as String),
+    );
+  }
+
+  /// Convert FeedLike to JSON (for Supabase insert/update)
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'feed_id': feedId,
+      'learner_id': learnerId,
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
+
+  @override
+  String toString() {
+    return 'FeedLike(id: $id, feedId: $feedId, learnerId: $learnerId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is FeedLike && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
+}
+
 /// Model for feed with user details (for joined queries)
 class FeedWithUser {
   final Feed feed;

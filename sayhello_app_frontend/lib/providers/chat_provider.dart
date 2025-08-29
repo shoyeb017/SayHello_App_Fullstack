@@ -294,6 +294,34 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
+  /// Update message correction
+  Future<bool> updateMessageCorrection(
+    String messageId,
+    String correction,
+  ) async {
+    _clearError();
+
+    try {
+      await _repository.updateMessageCorrection(messageId, correction);
+
+      // Update local message
+      final messageIndex = _messages.indexWhere((msg) => msg.id == messageId);
+      if (messageIndex != -1) {
+        _messages[messageIndex] = _messages[messageIndex].copyWith(
+          correction: correction,
+        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          notifyListeners();
+        });
+      }
+
+      return true;
+    } catch (e) {
+      _setError('Failed to update message correction: $e');
+      return false;
+    }
+  }
+
   /// Delete chat
   Future<bool> deleteChat(String chatId) async {
     _setLoading(true);

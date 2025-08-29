@@ -20,8 +20,39 @@ class FeedRepository {
   Future<Feed> createFeedPost(Feed post) async {
     final data = post.toJson();
     data.remove('id');
+    data.remove('likes_count');
+    data.remove('comments_count');
+    data.remove('is_liked');
+    data.remove('image_urls'); // Will be handled separately
+
     final response = await _client.from('feed').insert(data).select().single();
-    return Feed.fromJson(response);
+
+    // Insert images if any
+    if (post.imageUrls.isNotEmpty) {
+      final feedId = response['id'] as String;
+      await _insertFeedImages(feedId, post.imageUrls);
+    }
+
+    return Feed.fromJson({
+      ...response,
+      'image_urls': post.imageUrls,
+      'likes_count': 0,
+      'comments_count': 0,
+      'is_liked': false,
+    });
+  }
+
+  /// Insert feed images
+  Future<void> _insertFeedImages(String feedId, List<String> imageUrls) async {
+    final imageData = imageUrls.asMap().entries.map((entry) {
+      return {
+        'feed_id': feedId,
+        'image_url': entry.value,
+        'position': entry.key,
+      };
+    }).toList();
+
+    await _client.from('feed_images').insert(imageData);
   }
 
   /// Get feed post by ID
@@ -48,28 +79,47 @@ class FeedRepository {
             .toList() ??
         [];
 
+    // Get counts separately
+    final likesCount = await getFeedLikeCount(id);
+    final commentsCount = await getFeedCommentCount(id);
+
     return Feed.fromJson({
       ...response,
       'image_urls': images,
-      'likes_count': 0, // Will be calculated separately
-      'comments_count': 0, // Will be calculated separately
-      'is_liked': false, // Will be calculated separately
+      'likes_count': likesCount,
+      'comments_count': commentsCount,
+      'is_liked': false, // Will be calculated separately if needed
     });
   }
 
   /// Update feed post
   Future<Feed> updateFeedPost(Feed post) async {
+    final data = {'content_text': post.contentText};
+
     final response = await _client
         .from('feed')
-        .update(post.toJson())
+        .update(data)
         .eq('id', post.id)
         .select()
         .single();
-    return Feed.fromJson(response);
+    return Feed.fromJson({
+      ...response,
+      'image_urls': post.imageUrls,
+      'likes_count': post.likesCount,
+      'comments_count': post.commentsCount,
+      'is_liked': post.isLiked,
+    });
   }
 
   /// Delete feed post
   Future<void> deleteFeedPost(String id) async {
+    // Delete images first (due to foreign key constraint)
+    await _client.from('feed_images').delete().eq('feed_id', id);
+    // Delete comments
+    await _client.from('feed_comments').delete().eq('feed_id', id);
+    // Delete likes
+    await _client.from('feed_likes').delete().eq('feed_id', id);
+    // Delete feed
     await _client.from('feed').delete().eq('id', id);
   }
 
@@ -89,22 +139,7 @@ class FeedRepository {
         .order('created_at', ascending: false)
         .range(offset, offset + limit - 1);
 
-    // Process the response to include image URLs
-    return (response as List).map((json) {
-      final images =
-          (json['feed_images'] as List?)
-              ?.map((img) => img['image_url'] as String)
-              .toList() ??
-          [];
-
-      return Feed.fromJson({
-        ...json,
-        'image_urls': images,
-        'likes_count': 0, // Will be calculated separately
-        'comments_count': 0, // Will be calculated separately
-        'is_liked': false, // Will be calculated separately
-      });
-    }).toList();
+    return _processFeedResponse(response);
   }
 
   /// Get feed posts by user
@@ -128,22 +163,137 @@ class FeedRepository {
         .order('created_at', ascending: false)
         .range(offset, offset + limit - 1);
 
-    // Process the response to include image URLs
-    return (response as List).map((json) {
+    return _processFeedResponse(response);
+  }
+
+  /// Get following feeds (feeds from users that current user follows + own posts)
+  Future<List<FeedWithUser>> getFollowingFeeds(
+    String currentUserId, {
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    final response = await _client
+        .from('feed')
+        .select('''
+          id,
+          learner_id,
+          content_text,
+          created_at,
+          feed_images (
+            image_url
+          ),
+          learner:learner_id (
+            name,
+            profile_image
+          )
+        ''')
+        .inFilter('learner_id', [
+          currentUserId, // Own posts
+          // TODO: Add subquery for followed users
+        ])
+        .order('created_at', ascending: false)
+        .range(offset, offset + limit - 1);
+
+    return _processFeedWithUserResponse(response);
+  }
+
+  /// Get public feeds (all feeds except current user's)
+  Future<List<FeedWithUser>> getPublicFeeds({
+    String? excludeUserId,
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    var query = _client.from('feed').select('''
+          id,
+          learner_id,
+          content_text,
+          created_at,
+          feed_images (
+            image_url
+          ),
+          learner:learner_id (
+            name,
+            profile_image
+          )
+        ''');
+
+    if (excludeUserId != null) {
+      query = query.neq('learner_id', excludeUserId);
+    }
+
+    final response = await query
+        .order('created_at', ascending: false)
+        .range(offset, offset + limit - 1);
+
+    return _processFeedWithUserResponse(response);
+  }
+
+  /// Process feed response helper
+  Future<List<Feed>> _processFeedResponse(List<dynamic> response) async {
+    final feeds = <Feed>[];
+
+    for (final json in response) {
       final images =
           (json['feed_images'] as List?)
               ?.map((img) => img['image_url'] as String)
               .toList() ??
           [];
 
-      return Feed.fromJson({
+      final feedId = json['id'] as String;
+      final likesCount = await getFeedLikeCount(feedId);
+      final commentsCount = await getFeedCommentCount(feedId);
+
+      feeds.add(
+        Feed.fromJson({
+          ...json,
+          'image_urls': images,
+          'likes_count': likesCount,
+          'comments_count': commentsCount,
+          'is_liked': false, // Will be set by provider
+        }),
+      );
+    }
+
+    return feeds;
+  }
+
+  /// Process feed with user response helper
+  Future<List<FeedWithUser>> _processFeedWithUserResponse(
+    List<dynamic> response,
+  ) async {
+    final feedsWithUser = <FeedWithUser>[];
+
+    for (final json in response) {
+      final images =
+          (json['feed_images'] as List?)
+              ?.map((img) => img['image_url'] as String)
+              .toList() ??
+          [];
+
+      final feedId = json['id'] as String;
+      final likesCount = await getFeedLikeCount(feedId);
+      final commentsCount = await getFeedCommentCount(feedId);
+
+      final learner = json['learner'] as Map<String, dynamic>?;
+
+      final feed = Feed.fromJson({
         ...json,
         'image_urls': images,
-        'likes_count': 0, // Will be calculated separately
-        'comments_count': 0, // Will be calculated separately
-        'is_liked': false, // Will be calculated separately
+        'likes_count': likesCount,
+        'comments_count': commentsCount,
+        'is_liked': false, // Will be set by provider
       });
-    }).toList();
+
+      feedsWithUser.add(
+        FeedWithUser(
+          feed: feed,
+          userName: learner?['name'] as String? ?? 'Unknown User',
+          userAvatarUrl: learner?['profile_image'] as String?,
+        ),
+      );
+    }
+
+    return feedsWithUser;
   }
 
   // =============================
@@ -154,12 +304,19 @@ class FeedRepository {
   Future<FeedComment> addFeedComment(FeedComment comment) async {
     final data = comment.toJson();
     data.remove('id');
+    data.remove('likes_count');
+    data.remove('is_liked');
+
     final response = await _client
         .from('feed_comments')
         .insert(data)
         .select()
         .single();
-    return FeedComment.fromJson(response);
+    return FeedComment.fromJson({
+      ...response,
+      'likes_count': 0,
+      'is_liked': false,
+    });
   }
 
   /// Get comments for feed post
@@ -174,8 +331,23 @@ class FeedRepository {
         .order('created_at', ascending: true)
         .limit(limit);
     return (response as List)
-        .map((json) => FeedComment.fromJson(json))
+        .map(
+          (json) => FeedComment.fromJson({
+            ...json,
+            'likes_count': 0, // TODO: Implement comment likes
+            'is_liked': false,
+          }),
+        )
         .toList();
+  }
+
+  /// Get comment count for feed
+  Future<int> getFeedCommentCount(String feedId) async {
+    final response = await _client
+        .from('feed_comments')
+        .select()
+        .eq('feed_id', feedId);
+    return (response as List).length;
   }
 
   /// Delete feed comment
@@ -213,6 +385,16 @@ class FeedRepository {
     return (response as List).length;
   }
 
+  /// Get likes for a feed post
+  Future<List<FeedLike>> getFeedLikes(String feedId) async {
+    final response = await _client
+        .from('feed_likes')
+        .select()
+        .eq('feed_id', feedId)
+        .order('created_at', ascending: false);
+    return (response as List).map((json) => FeedLike.fromJson(json)).toList();
+  }
+
   /// Check if user liked feed post
   Future<bool> isFeedLikedByUser(String feedId, String userId) async {
     final response = await _client
@@ -222,6 +404,60 @@ class FeedRepository {
         .eq('learner_id', userId)
         .maybeSingle();
     return response != null;
+  }
+
+  // =============================
+  // FOLLOW OPERATIONS
+  // =============================
+
+  /// Follow a user
+  Future<void> followUser(String followerId, String followedId) async {
+    await _client.from('followers').insert({
+      'follower_user_id': followerId,
+      'followed_user_id': followedId,
+    });
+  }
+
+  /// Unfollow a user
+  Future<void> unfollowUser(String followerId, String followedId) async {
+    await _client
+        .from('followers')
+        .delete()
+        .eq('follower_user_id', followerId)
+        .eq('followed_user_id', followedId);
+  }
+
+  /// Check if user is following another user
+  Future<bool> isFollowing(String followerId, String followedId) async {
+    final response = await _client
+        .from('followers')
+        .select()
+        .eq('follower_user_id', followerId)
+        .eq('followed_user_id', followedId)
+        .maybeSingle();
+    return response != null;
+  }
+
+  /// Get followers for a user
+  Future<List<String>> getFollowers(String userId) async {
+    final response = await _client
+        .from('followers')
+        .select('follower_user_id')
+        .eq('followed_user_id', userId);
+    return (response as List)
+        .map((item) => item['follower_user_id'] as String)
+        .toList();
+  }
+
+  /// Get following list for a user
+  Future<List<String>> getFollowing(String userId) async {
+    final response = await _client
+        .from('followers')
+        .select('followed_user_id')
+        .eq('follower_user_id', userId);
+    return (response as List)
+        .map((item) => item['followed_user_id'] as String)
+        .toList();
   }
 
   // =============================
