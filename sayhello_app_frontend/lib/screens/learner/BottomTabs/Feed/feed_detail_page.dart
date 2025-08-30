@@ -4,10 +4,11 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../models/models.dart';
 import '../../../../providers/feed_provider.dart';
 import '../../../../providers/auth_provider.dart';
+import '../../../../services/azure_translator_service.dart';
 
 class FeedDetailPage extends StatefulWidget {
   final FeedWithUser feedWithUser;
-  final List<FeedComment> comments;
+  final List<FeedCommentWithUser> comments;
   final List<FeedLike> likes;
 
   const FeedDetailPage({
@@ -115,7 +116,7 @@ class _FeedDetailPageState extends State<FeedDetailPage> {
                                 itemCount: currentComments.length,
                                 itemBuilder: (context, index) {
                                   return CommentCard(
-                                    comment: currentComments[index],
+                                    commentWithUser: currentComments[index],
                                     index: index,
                                   );
                                 },
@@ -253,10 +254,188 @@ class DetailedPostCard extends StatefulWidget {
 
 class _DetailedPostCardState extends State<DetailedPostCard> {
   bool _isTranslated = false;
+  bool _isTranslating = false;
+  String? _translatedText;
+  String? _detectedLanguage;
 
-  // Dummy translation - replace with actual API later
-  String get _dummyTranslation =>
-      'これは投稿内容のダミー翻訳です。将来的には、実際の翻訳APIを使用して、さまざまな言語でリアルタイム翻訳を提供する予定です';
+  Future<void> _translatePost() async {
+    if (_isTranslating) return;
+
+    setState(() {
+      _isTranslating = true;
+    });
+
+    try {
+      final originalText = widget.feedWithUser.feed.contentText;
+
+      if (_isTranslated && _translatedText != null) {
+        // If already translated, toggle back to original
+        setState(() {
+          _isTranslated = false;
+        });
+        return;
+      }
+
+      // Get user's native language from their profile
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final currentUser = authProvider.currentUser;
+
+      String targetLanguage = 'English'; // Default fallback
+
+      if (currentUser != null && currentUser is Learner) {
+        final nativeLang = currentUser.nativeLanguage;
+        targetLanguage = _getProperLanguageName(nativeLang);
+      }
+
+      // Detect source language if not already detected
+      if (_detectedLanguage == null) {
+        _detectedLanguage = await AzureTranslatorService.detectLanguage(
+          originalText,
+        );
+      }
+
+      final sourceLanguage = _detectedLanguage ?? 'Unknown';
+
+      // Check if source and target languages are the same
+      if (sourceLanguage.toLowerCase() == targetLanguage.toLowerCase()) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Post is already in $targetLanguage'),
+              backgroundColor: Colors.orange,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+        return;
+      }
+
+      // Perform translation
+      final translatedText = await AzureTranslatorService.translateText(
+        text: originalText,
+        sourceLanguage: sourceLanguage,
+        targetLanguage: targetLanguage,
+      );
+
+      if (mounted &&
+          translatedText.isNotEmpty &&
+          translatedText != originalText) {
+        setState(() {
+          _translatedText = translatedText;
+          _isTranslated = true;
+        });
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Post translated to $targetLanguage'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      print('DetailedPostCard: Translation error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Translation failed: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isTranslating = false;
+        });
+      }
+    }
+  }
+
+  // Convert language names to proper format for Azure Translator Service
+  String _getProperLanguageName(String languageName) {
+    switch (languageName.toLowerCase()) {
+      case 'english':
+        return 'English';
+      case 'spanish':
+        return 'Spanish';
+      case 'french':
+        return 'French';
+      case 'german':
+        return 'German';
+      case 'italian':
+        return 'Italian';
+      case 'portuguese':
+        return 'Portuguese';
+      case 'russian':
+        return 'Russian';
+      case 'japanese':
+        return 'Japanese';
+      case 'korean':
+        return 'Korean';
+      case 'chinese':
+        return 'Chinese';
+      case 'arabic':
+        return 'Arabic';
+      case 'hindi':
+        return 'Hindi';
+      case 'bengali':
+        return 'Bengali';
+      case 'dutch':
+        return 'Dutch';
+      case 'swedish':
+        return 'Swedish';
+      case 'norwegian':
+        return 'Norwegian';
+      case 'danish':
+        return 'Danish';
+      case 'finnish':
+        return 'Finnish';
+      case 'turkish':
+        return 'Turkish';
+      case 'polish':
+        return 'Polish';
+      case 'czech':
+        return 'Czech';
+      case 'hungarian':
+        return 'Hungarian';
+      case 'romanian':
+        return 'Romanian';
+      case 'bulgarian':
+        return 'Bulgarian';
+      case 'croatian':
+        return 'Croatian';
+      case 'serbian':
+        return 'Serbian';
+      case 'slovak':
+        return 'Slovak';
+      case 'slovenian':
+        return 'Slovenian';
+      case 'greek':
+        return 'Greek';
+      case 'hebrew':
+        return 'Hebrew';
+      case 'thai':
+        return 'Thai';
+      case 'vietnamese':
+        return 'Vietnamese';
+      case 'indonesian':
+        return 'Indonesian';
+      case 'malay':
+        return 'Malay';
+      case 'filipino':
+        return 'Filipino';
+      case 'tagalog':
+        return 'Filipino';
+      default:
+        // Capitalize first letter as fallback
+        return languageName.isNotEmpty
+            ? '${languageName[0].toUpperCase()}${languageName.substring(1).toLowerCase()}'
+            : 'English';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -438,8 +617,8 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
   }
 
   Widget _buildTranslatableContent(Color textColor) {
-    final content = _isTranslated
-        ? _dummyTranslation
+    final content = _isTranslated && _translatedText != null
+        ? _translatedText!
         : widget.feedWithUser.feed.contentText;
 
     return Column(
@@ -461,7 +640,9 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
                 Icon(Icons.translate, size: 16, color: const Color(0xFF7d54fb)),
                 const SizedBox(width: 4),
                 Text(
-                  AppLocalizations.of(context)!.translated,
+                  _detectedLanguage != null
+                      ? 'Translated from $_detectedLanguage'
+                      : AppLocalizations.of(context)!.translated,
                   style: TextStyle(
                     color: const Color(0xFF7d54fb),
                     fontSize: 12,
@@ -518,16 +699,23 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
         const Spacer(),
         // Translate button
         GestureDetector(
-          onTap: () {
-            setState(() {
-              _isTranslated = !_isTranslated;
-            });
-          },
-          child: Icon(
-            Icons.translate,
-            color: _isTranslated ? const Color(0xFF7d54fb) : iconColor,
-            size: 20,
-          ),
+          onTap: _isTranslating ? null : _translatePost,
+          child: _isTranslating
+              ? SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      const Color(0xFF7d54fb),
+                    ),
+                  ),
+                )
+              : Icon(
+                  Icons.translate,
+                  color: _isTranslated ? const Color(0xFF7d54fb) : iconColor,
+                  size: 20,
+                ),
         ),
       ],
     );
@@ -668,10 +856,10 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
 }
 
 class CommentCard extends StatefulWidget {
-  final FeedComment comment;
+  final FeedCommentWithUser commentWithUser;
   final int index;
 
-  const CommentCard({super.key, required this.comment, required this.index});
+  const CommentCard({super.key, required this.commentWithUser, required this.index});
 
   @override
   State<CommentCard> createState() => _CommentCardState();
@@ -679,9 +867,188 @@ class CommentCard extends StatefulWidget {
 
 class _CommentCardState extends State<CommentCard> {
   bool _isTranslated = false;
+  bool _isTranslating = false;
+  String? _translatedText;
+  String? _detectedLanguage;
 
-  // Dummy translation for comments
-  String get _dummyTranslation => 'これはコメントのダミー翻訳です。実際の翻訳APIを使用して翻訳されます。';
+  Future<void> _translateComment() async {
+    if (_isTranslating) return;
+
+    setState(() {
+      _isTranslating = true;
+    });
+
+    try {
+      final originalText = widget.commentWithUser.comment.contentText;
+
+      if (_isTranslated && _translatedText != null) {
+        // If already translated, toggle back to original
+        setState(() {
+          _isTranslated = false;
+        });
+        return;
+      }
+
+      // Get user's native language from their profile
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final currentUser = authProvider.currentUser;
+
+      String targetLanguage = 'English'; // Default fallback
+
+      if (currentUser != null && currentUser is Learner) {
+        final nativeLang = currentUser.nativeLanguage;
+        targetLanguage = _getProperLanguageName(nativeLang);
+      }
+
+      // Detect source language if not already detected
+      if (_detectedLanguage == null) {
+        _detectedLanguage = await AzureTranslatorService.detectLanguage(
+          originalText,
+        );
+      }
+
+      final sourceLanguage = _detectedLanguage ?? 'Unknown';
+
+      // Check if source and target languages are the same
+      if (sourceLanguage.toLowerCase() == targetLanguage.toLowerCase()) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Comment is already in $targetLanguage'),
+              backgroundColor: Colors.orange,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+        return;
+      }
+
+      // Perform translation
+      final translatedText = await AzureTranslatorService.translateText(
+        text: originalText,
+        sourceLanguage: sourceLanguage,
+        targetLanguage: targetLanguage,
+      );
+
+      if (mounted &&
+          translatedText.isNotEmpty &&
+          translatedText != originalText) {
+        setState(() {
+          _translatedText = translatedText;
+          _isTranslated = true;
+        });
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Comment translated to $targetLanguage'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      print('CommentCard: Translation error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Translation failed: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isTranslating = false;
+        });
+      }
+    }
+  }
+
+  // Convert language names to proper format for Azure Translator Service
+  String _getProperLanguageName(String languageName) {
+    switch (languageName.toLowerCase()) {
+      case 'english':
+        return 'English';
+      case 'spanish':
+        return 'Spanish';
+      case 'french':
+        return 'French';
+      case 'german':
+        return 'German';
+      case 'italian':
+        return 'Italian';
+      case 'portuguese':
+        return 'Portuguese';
+      case 'russian':
+        return 'Russian';
+      case 'japanese':
+        return 'Japanese';
+      case 'korean':
+        return 'Korean';
+      case 'chinese':
+        return 'Chinese';
+      case 'arabic':
+        return 'Arabic';
+      case 'hindi':
+        return 'Hindi';
+      case 'bengali':
+        return 'Bengali';
+      case 'dutch':
+        return 'Dutch';
+      case 'swedish':
+        return 'Swedish';
+      case 'norwegian':
+        return 'Norwegian';
+      case 'danish':
+        return 'Danish';
+      case 'finnish':
+        return 'Finnish';
+      case 'turkish':
+        return 'Turkish';
+      case 'polish':
+        return 'Polish';
+      case 'czech':
+        return 'Czech';
+      case 'hungarian':
+        return 'Hungarian';
+      case 'romanian':
+        return 'Romanian';
+      case 'bulgarian':
+        return 'Bulgarian';
+      case 'croatian':
+        return 'Croatian';
+      case 'serbian':
+        return 'Serbian';
+      case 'slovak':
+        return 'Slovak';
+      case 'slovenian':
+        return 'Slovenian';
+      case 'greek':
+        return 'Greek';
+      case 'hebrew':
+        return 'Hebrew';
+      case 'thai':
+        return 'Thai';
+      case 'vietnamese':
+        return 'Vietnamese';
+      case 'indonesian':
+        return 'Indonesian';
+      case 'malay':
+        return 'Malay';
+      case 'filipino':
+        return 'Filipino';
+      case 'tagalog':
+        return 'Filipino';
+      default:
+        // Capitalize first letter as fallback
+        return languageName.isNotEmpty
+            ? '${languageName[0].toUpperCase()}${languageName.substring(1).toLowerCase()}'
+            : 'English';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -696,11 +1063,20 @@ class _CommentCardState extends State<CommentCard> {
         children: [
           CircleAvatar(
             radius: 16,
-            backgroundColor: Colors.grey[300],
-            child: Text(
-              'U',
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-            ),
+            backgroundColor: isDark ? Colors.grey[700] : Colors.grey[300],
+            backgroundImage: widget.commentWithUser.userAvatarUrl != null
+                ? NetworkImage(widget.commentWithUser.userAvatarUrl!)
+                : null,
+            child: widget.commentWithUser.userAvatarUrl == null
+                ? Text(
+                    widget.commentWithUser.userName.substring(0, 1).toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark ? Colors.white : Colors.grey[600],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                : null,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -710,7 +1086,7 @@ class _CommentCardState extends State<CommentCard> {
                 Row(
                   children: [
                     Text(
-                      'User ${widget.comment.id.substring(0, 8)}', // Placeholder username
+                      widget.commentWithUser.userName, // Now showing real username
                       style: const TextStyle(
                         color: Color(0xFF7d54fb),
                         fontWeight: FontWeight.bold,
@@ -719,7 +1095,7 @@ class _CommentCardState extends State<CommentCard> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      _formatTimeAgo(widget.comment.createdAt),
+                      _formatTimeAgo(widget.commentWithUser.comment.createdAt),
                       style: TextStyle(color: iconColor, fontSize: 12),
                     ),
                   ],
@@ -761,9 +1137,9 @@ class _CommentCardState extends State<CommentCard> {
                       ),
                     ],
                     Text(
-                      _isTranslated
-                          ? _dummyTranslation
-                          : widget.comment.contentText,
+                      _isTranslated && _translatedText != null
+                          ? _translatedText!
+                          : widget.commentWithUser.comment.contentText,
                       style: TextStyle(
                         color: subtextColor,
                         fontSize: 14,
@@ -776,18 +1152,25 @@ class _CommentCardState extends State<CommentCard> {
                 Row(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isTranslated = !_isTranslated;
-                        });
-                      },
-                      child: Icon(
-                        Icons.translate,
-                        color: _isTranslated
-                            ? const Color(0xFF7d54fb)
-                            : iconColor,
-                        size: 16,
-                      ),
+                      onTap: _isTranslating ? null : _translateComment,
+                      child: _isTranslating
+                          ? SizedBox(
+                              width: 14,
+                              height: 14,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  const Color(0xFF7d54fb),
+                                ),
+                              ),
+                            )
+                          : Icon(
+                              Icons.translate,
+                              color: _isTranslated
+                                  ? const Color(0xFF7d54fb)
+                                  : iconColor,
+                              size: 16,
+                            ),
                     ),
                   ],
                 ),

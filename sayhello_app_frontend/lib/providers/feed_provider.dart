@@ -11,7 +11,7 @@ class FeedProvider extends ChangeNotifier {
   // Feed state
   List<FeedWithUser> _recentFeeds = [];
   List<FeedWithUser> _forYouFeeds = [];
-  Map<String, List<FeedComment>> _feedComments = {};
+  Map<String, List<FeedCommentWithUser>> _feedComments = {};
   Map<String, List<FeedLike>> _feedLikes = {};
   Map<String, bool> _likedPosts = {};
 
@@ -19,6 +19,7 @@ class FeedProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _isCommentsLoading = false;
   bool _isSending = false;
+  bool _isFollowOperationInProgress = false;
 
   // Error state
   String? _error;
@@ -26,31 +27,81 @@ class FeedProvider extends ChangeNotifier {
   // Getters
   List<FeedWithUser> get recentFeeds => _recentFeeds;
   List<FeedWithUser> get forYouFeeds => _forYouFeeds;
-  Map<String, List<FeedComment>> get feedComments => _feedComments;
+  List<FeedWithUser> get allFeeds => [..._recentFeeds, ..._forYouFeeds];
+  Map<String, List<FeedCommentWithUser>> get feedComments => _feedComments;
   Map<String, List<FeedLike>> get feedLikes => _feedLikes;
   Map<String, bool> get likedPosts => _likedPosts;
   bool get isLoading => _isLoading;
   bool get isCommentsLoading => _isCommentsLoading;
   bool get isSending => _isSending;
+  bool get isFollowOperationInProgress => _isFollowOperationInProgress;
   bool get hasError => _error != null;
   String? get error => _error;
 
   // =============================
   // FEED OPERATIONS
   // =============================
+  // FEED LOADING OPERATIONS
+  // =============================
 
-  /// Load recent feeds (following users + own posts)
+  /// Load both tabs simultaneously for faster initial loading
+  Future<void> loadAllFeeds(String currentUserId) async {
+    _setLoading(true);
+    _clearError();
+
+    try {
+      print('FeedProvider: Loading all feeds simultaneously');
+
+      // Load both tabs at the same time
+      final recentFeedsTask = _repository.getNotFollowingFeeds(
+        currentUserId,
+        limit: 15,
+      );
+
+      final forYouFeedsTask = _repository.getFollowingFeeds(
+        currentUserId,
+        limit: 15,
+      );
+
+      // Wait for both to complete
+      final results = await Future.wait([recentFeedsTask, forYouFeedsTask]);
+      final recentFeeds = results[0];
+      final forYouFeeds = results[1];
+
+      // Update feeds
+      _recentFeeds = recentFeeds;
+      _forYouFeeds = forYouFeeds;
+
+      // Load interactions for both feed lists
+      final allFeeds = [...recentFeeds, ...forYouFeeds];
+      if (allFeeds.isNotEmpty) {
+        await _loadFeedInteractions(allFeeds, currentUserId);
+      }
+
+      print(
+        'FeedProvider: Loaded ${recentFeeds.length} recent feeds and ${forYouFeeds.length} for you feeds',
+      );
+      notifyListeners();
+    } catch (e) {
+      print('FeedProvider: Error loading feeds: $e');
+      _setError('Failed to load feeds: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Load recent feeds (feeds from users NOT being followed)
   Future<void> loadRecentFeeds(String currentUserId) async {
     _setLoading(true);
     _clearError();
 
     try {
-      print('FeedProvider: Loading recent feeds for user: $currentUserId');
+      print('FeedProvider: Loading recent feeds (NOT following users)');
 
-      // Get feeds from following users + own posts
-      final feeds = await _repository.getFollowingFeeds(
+      // Get feeds from users NOT being followed
+      final feeds = await _repository.getNotFollowingFeeds(
         currentUserId,
-        limit: 20,
+        limit: 15, // Reduced limit to prevent crashes
       );
 
       _recentFeeds = feeds;
@@ -68,18 +119,18 @@ class FeedProvider extends ChangeNotifier {
     }
   }
 
-  /// Load for you feeds (all public feeds)
+  /// Load for you feeds (feeds from followed users only)
   Future<void> loadForYouFeeds(String currentUserId) async {
     _setLoading(true);
     _clearError();
 
     try {
-      print('FeedProvider: Loading for you feeds');
+      print('FeedProvider: Loading for you feeds (followed users only)');
 
-      // Get all public feeds (excluding own posts)
-      final feeds = await _repository.getPublicFeeds(
-        excludeUserId: currentUserId,
-        limit: 20,
+      // Get feeds only from followed users
+      final feeds = await _repository.getFollowingFeeds(
+        currentUserId,
+        limit: 15, // Reduced limit to prevent crashes
       );
 
       _forYouFeeds = feeds;
@@ -97,28 +148,184 @@ class FeedProvider extends ChangeNotifier {
     }
   }
 
-  /// Load feed interactions (likes, comments)
+  /// Load feed interactions (likes, comments) with optimized performance
   Future<void> _loadFeedInteractions(
     List<FeedWithUser> feeds,
     String currentUserId,
   ) async {
-    for (final feedWithUser in feeds) {
-      final feedId = feedWithUser.feed.id;
+    try {
+      // Limit the number of feeds processed to prevent memory issues
+      final limitedFeeds = feeds
+          .take(15)
+          .toList(); // Increased limit since we're optimizing
 
-      // Load comments for this feed
-      final comments = await _repository.getFeedComments(feedId);
-      _feedComments[feedId] = comments;
-
-      // Load likes for this feed
-      final likes = await _repository.getFeedLikes(feedId);
-      _feedLikes[feedId] = likes;
-
-      // Check if current user liked this post
-      final isLiked = await _repository.isFeedLikedByUser(
-        feedId,
-        currentUserId,
+      print(
+        'FeedProvider: Loading interactions for ${limitedFeeds.length} feeds',
       );
-      _likedPosts[feedId] = isLiked;
+
+      // Set default values immediately to show content faster
+      for (final feedWithUser in limitedFeeds) {
+        final feedId = feedWithUser.feed.id;
+        _feedComments[feedId] ??= [];
+        _feedLikes[feedId] ??= []; // Empty list, use likesCount from feed data
+        _likedPosts[feedId] ??= false;
+      }
+
+      // Notify listeners immediately to show feeds without interactions
+      notifyListeners();
+
+      // Load interactions in background batches - smaller batches, faster processing
+      const concurrencyLimit =
+          2; // Reduced to prevent overwhelming the database
+      for (int i = 0; i < limitedFeeds.length; i += concurrencyLimit) {
+        final batch = limitedFeeds.skip(i).take(concurrencyLimit).toList();
+
+        // Process batch with shorter timeouts
+        final futures = batch.map((feedWithUser) async {
+          final feedId = feedWithUser.feed.id;
+
+          try {
+            // Only load essential data with shorter timeouts
+            final commentsTask = _repository
+                .getFeedComments(
+                  feedId,
+                  limit: 3,
+                ) // Reduced limit for faster loading
+                .timeout(const Duration(seconds: 3)) // Shorter timeout
+                .then((comments) {
+                  _feedComments[feedId] = comments;
+                });
+
+            final likedTask = _repository
+                .isFeedLikedByUser(feedId, currentUserId)
+                .timeout(const Duration(seconds: 3)) // Shorter timeout
+                .then((isLiked) {
+                  _likedPosts[feedId] = isLiked;
+                });
+
+            // Skip likes count for faster loading - use feed.likesCount from database
+            await Future.wait([commentsTask, likedTask]);
+          } catch (e) {
+            print(
+              'FeedProvider: Error loading interactions for feed $feedId: $e',
+            );
+            // Keep safe defaults that were already set
+          }
+        });
+
+        // Wait for this batch to complete
+        await Future.wait(futures);
+
+        // Notify listeners after each batch for progressive loading
+        notifyListeners();
+
+        // Smaller delay between batches
+        if (i + concurrencyLimit < limitedFeeds.length) {
+          await Future.delayed(const Duration(milliseconds: 100));
+        }
+      }
+
+      print('FeedProvider: Completed loading interactions');
+    } catch (e) {
+      print('FeedProvider: Error in _loadFeedInteractions: $e');
+      // Don't throw, just log the error and continue
+    }
+  }
+
+  // Cache for user's own posts to avoid repeated database calls
+  Map<String, List<FeedWithUser>> _userPostsCache = {};
+  Map<String, DateTime> _userPostsCacheTimestamp = {};
+
+  /// Load user's own posts (optimized with caching)
+  Future<List<FeedWithUser>> getUserOwnPosts(String userId) async {
+    try {
+      // Check cache first (cache for 5 minutes)
+      final cacheKey = userId;
+      final cacheTimestamp = _userPostsCacheTimestamp[cacheKey];
+      final now = DateTime.now();
+
+      if (cacheTimestamp != null &&
+          now.difference(cacheTimestamp).inMinutes < 5 &&
+          _userPostsCache.containsKey(cacheKey)) {
+        print('FeedProvider: Returning cached user posts for $userId');
+        return _userPostsCache[cacheKey]!;
+      }
+
+      print('FeedProvider: Loading user posts from database for $userId');
+
+      // Get user's own posts from the repository
+      final ownPosts = await _repository.getFeedPostsByUser(userId);
+
+      // Convert to FeedWithUser format with minimal database calls
+      final feedsWithUser = <FeedWithUser>[];
+      for (final feed in ownPosts) {
+        // Set safe defaults for interactions to show posts immediately
+        _feedComments[feed.id] = [];
+        _feedLikes[feed.id] = [];
+        _likedPosts[feed.id] = false;
+
+        feedsWithUser.add(
+          FeedWithUser(
+            feed: feed,
+            userName: 'You',
+            userAvatarUrl: null, // Will be handled by the UI
+          ),
+        );
+      }
+
+      // Cache the results
+      _userPostsCache[cacheKey] = feedsWithUser;
+      _userPostsCacheTimestamp[cacheKey] = now;
+
+      // Load interactions in background (non-blocking)
+      _loadUserPostInteractions(ownPosts, userId);
+
+      return feedsWithUser;
+    } catch (e) {
+      print('FeedProvider: Error loading user posts: $e');
+      return [];
+    }
+  }
+
+  /// Load interactions for user's own posts in background
+  Future<void> _loadUserPostInteractions(
+    List<Feed> posts,
+    String userId,
+  ) async {
+    try {
+      // Process a few posts at a time to avoid overwhelming the database
+      const batchSize = 3;
+      for (int i = 0; i < posts.length; i += batchSize) {
+        final batch = posts.skip(i).take(batchSize);
+
+        final futures = batch.map((feed) async {
+          try {
+            final comments = await _repository.getFeedComments(
+              feed.id,
+              limit: 3,
+            );
+            final isLiked = await _repository.isFeedLikedByUser(
+              feed.id,
+              userId,
+            );
+
+            _feedComments[feed.id] = comments;
+            _likedPosts[feed.id] = isLiked;
+          } catch (e) {
+            print('Error loading interactions for post ${feed.id}: $e');
+          }
+        });
+
+        await Future.wait(futures);
+        notifyListeners(); // Update UI progressively
+
+        // Small delay between batches
+        if (i + batchSize < posts.length) {
+          await Future.delayed(const Duration(milliseconds: 100));
+        }
+      }
+    } catch (e) {
+      print('Error loading user post interactions: $e');
     }
   }
 
@@ -147,9 +354,12 @@ class FeedProvider extends ChangeNotifier {
 
       await _repository.createFeedPost(feed);
 
-      // Add to recent feeds if it's from current user
-      // You might want to refresh feeds instead
-      await loadRecentFeeds(learnerId);
+      // Invalidate user posts cache since we added a new post
+      _userPostsCache.remove(learnerId);
+      _userPostsCacheTimestamp.remove(learnerId);
+
+      // Refresh feeds to show the new post immediately
+      await loadAllFeeds(learnerId);
 
       print('FeedProvider: Feed post created successfully');
       return true;
@@ -168,6 +378,10 @@ class FeedProvider extends ChangeNotifier {
 
     try {
       await _repository.deleteFeedPost(feedId);
+
+      // Invalidate user posts cache since we deleted a post
+      _userPostsCache.remove(currentUserId);
+      _userPostsCacheTimestamp.remove(currentUserId);
 
       // Remove from local lists
       _recentFeeds.removeWhere((f) => f.feed.id == feedId);
@@ -283,11 +497,11 @@ class FeedProvider extends ChangeNotifier {
         isLiked: false,
       );
 
-      final createdComment = await _repository.addFeedComment(comment);
+      final createdCommentWithUser = await _repository.addFeedComment(comment);
 
       // Add to local comments list
       _feedComments[feedId] ??= [];
-      _feedComments[feedId]!.add(createdComment);
+      _feedComments[feedId]!.add(createdCommentWithUser);
 
       // Update comment count in feeds
       _updateFeedCommentCount(feedId, 1);
@@ -355,24 +569,88 @@ class FeedProvider extends ChangeNotifier {
 
   /// Follow a user
   Future<bool> followUser(String followerId, String followedId) async {
+    _isFollowOperationInProgress = true;
+    notifyListeners();
+
     try {
       await _repository.followUser(followerId, followedId);
-      // You might want to update the UI or reload feeds
+
+      // Real-time update: Refresh both tabs after following (without loading indicators)
+      await _refreshFeedsQuietly(followerId);
+
       return true;
     } catch (e) {
       _setError('Failed to follow user: $e');
       return false;
+    } finally {
+      _isFollowOperationInProgress = false;
+      notifyListeners();
     }
   }
 
   /// Unfollow a user
   Future<bool> unfollowUser(String followerId, String followedId) async {
+    _isFollowOperationInProgress = true;
+    notifyListeners();
+
     try {
       await _repository.unfollowUser(followerId, followedId);
-      // You might want to update the UI or reload feeds
+
+      // Real-time update: Refresh both tabs after unfollowing (without loading indicators)
+      await _refreshFeedsQuietly(followerId);
+
       return true;
     } catch (e) {
       _setError('Failed to unfollow user: $e');
+      return false;
+    } finally {
+      _isFollowOperationInProgress = false;
+      notifyListeners();
+    }
+  }
+
+  /// Refresh feeds quietly without showing loading indicators
+  Future<void> _refreshFeedsQuietly(String currentUserId) async {
+    try {
+      // Load feeds without setting loading state
+      final recentFeedsTask = _repository.getNotFollowingFeeds(
+        currentUserId,
+        limit: 15,
+      );
+
+      final forYouFeedsTask = _repository.getFollowingFeeds(
+        currentUserId,
+        limit: 15,
+      );
+
+      // Wait for both to complete
+      final results = await Future.wait([recentFeedsTask, forYouFeedsTask]);
+      final recentFeeds = results[0];
+      final forYouFeeds = results[1];
+
+      // Update feeds
+      _recentFeeds = recentFeeds;
+      _forYouFeeds = forYouFeeds;
+
+      // Load interactions for both feed lists
+      final allFeeds = [...recentFeeds, ...forYouFeeds];
+      if (allFeeds.isNotEmpty) {
+        await _loadFeedInteractions(allFeeds, currentUserId);
+      }
+
+      notifyListeners();
+    } catch (e) {
+      print('Error refreshing feeds quietly: $e');
+      // Don't show error for quiet refresh, just log it
+    }
+  }
+
+  /// Check if current user is following another user
+  Future<bool> isFollowing(String followerId, String followedId) async {
+    try {
+      return await _repository.isFollowing(followerId, followedId);
+    } catch (e) {
+      print('Error checking if following: $e');
       return false;
     }
   }

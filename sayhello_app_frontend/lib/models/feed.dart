@@ -25,10 +25,12 @@ class Feed {
   /// Create Feed from JSON (Supabase response)
   factory Feed.fromJson(Map<String, dynamic> json) {
     return Feed(
-      id: json['id'] as String,
-      learnerId: json['learner_id'] as String,
-      contentText: json['content_text'] as String,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      id: json['id'] as String? ?? '',
+      learnerId: json['learner_id'] as String? ?? '',
+      contentText: json['content_text'] as String? ?? '',
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
       imageUrls: List<String>.from(json['image_urls'] ?? []),
       likesCount: json['likes_count'] as int? ?? 0,
       commentsCount: json['comments_count'] as int? ?? 0,
@@ -318,5 +320,23 @@ class FeedWithUser {
   @override
   String toString() {
     return 'FeedWithUser(feed: ${feed.id}, user: $userName)';
+  }
+}
+
+/// Model for feed comment with user details (for joined queries)
+class FeedCommentWithUser {
+  final FeedComment comment;
+  final String userName;
+  final String? userAvatarUrl;
+
+  const FeedCommentWithUser({
+    required this.comment,
+    required this.userName,
+    this.userAvatarUrl,
+  });
+
+  @override
+  String toString() {
+    return 'FeedCommentWithUser(comment: ${comment.id}, user: $userName)';
   }
 }
