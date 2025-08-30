@@ -379,10 +379,7 @@ class FeedRepository {
     data.remove('likes_count');
     data.remove('is_liked');
 
-    final response = await _client
-        .from('feed_comments')
-        .insert(data)
-        .select('''
+    final response = await _client.from('feed_comments').insert(data).select('''
           id,
           feed_id,
           learner_id,
@@ -394,9 +391,8 @@ class FeedRepository {
             name,
             profile_image
           )
-        ''')
-        .single();
-    
+        ''').single();
+
     final learner = response['learner'] as Map<String, dynamic>?;
     return FeedCommentWithUser(
       comment: FeedComment.fromJson({
@@ -432,21 +428,19 @@ class FeedRepository {
         .eq('feed_id', feedId)
         .order('created_at', ascending: true)
         .limit(limit);
-    
-    return (response as List)
-        .map((json) {
-          final learner = json['learner'] as Map<String, dynamic>?;
-          return FeedCommentWithUser(
-            comment: FeedComment.fromJson({
-              ...json,
-              'likes_count': 0, // TODO: Implement comment likes
-              'is_liked': false,
-            }),
-            userName: learner?['name'] as String? ?? 'Unknown User',
-            userAvatarUrl: learner?['profile_image'] as String?,
-          );
-        })
-        .toList();
+
+    return (response as List).map((json) {
+      final learner = json['learner'] as Map<String, dynamic>?;
+      return FeedCommentWithUser(
+        comment: FeedComment.fromJson({
+          ...json,
+          'likes_count': 0, // TODO: Implement comment likes
+          'is_liked': false,
+        }),
+        userName: learner?['name'] as String? ?? 'Unknown User',
+        userAvatarUrl: learner?['profile_image'] as String?,
+      );
+    }).toList();
   }
 
   /// Get comment count for feed

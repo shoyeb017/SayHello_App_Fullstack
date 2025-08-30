@@ -859,7 +859,11 @@ class CommentCard extends StatefulWidget {
   final FeedCommentWithUser commentWithUser;
   final int index;
 
-  const CommentCard({super.key, required this.commentWithUser, required this.index});
+  const CommentCard({
+    super.key,
+    required this.commentWithUser,
+    required this.index,
+  });
 
   @override
   State<CommentCard> createState() => _CommentCardState();
@@ -1069,7 +1073,9 @@ class _CommentCardState extends State<CommentCard> {
                 : null,
             child: widget.commentWithUser.userAvatarUrl == null
                 ? Text(
-                    widget.commentWithUser.userName.substring(0, 1).toUpperCase(),
+                    widget.commentWithUser.userName
+                        .substring(0, 1)
+                        .toUpperCase(),
                     style: TextStyle(
                       fontSize: 12,
                       color: isDark ? Colors.white : Colors.grey[600],
@@ -1086,7 +1092,9 @@ class _CommentCardState extends State<CommentCard> {
                 Row(
                   children: [
                     Text(
-                      widget.commentWithUser.userName, // Now showing real username
+                      widget
+                          .commentWithUser
+                          .userName, // Now showing real username
                       style: const TextStyle(
                         color: Color(0xFF7d54fb),
                         fontWeight: FontWeight.bold,
