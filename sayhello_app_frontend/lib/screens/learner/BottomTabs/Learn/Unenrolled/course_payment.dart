@@ -835,8 +835,10 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
 
         if (authProvider.currentUser != null && widget.course['id'] != null) {
           // Check current enrollments before enrollment
-          print('Current enrollments before free course enrollment: ${courseProvider.learnerEnrollments.length}');
-          
+          print(
+            'Current enrollments before free course enrollment: ${courseProvider.learnerEnrollments.length}',
+          );
+
           final enrollmentSuccess = await courseProvider.enrollInCourse(
             widget.course['id'],
             authProvider.currentUser!.id,
@@ -847,12 +849,15 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
           if (!enrollmentSuccess) {
             throw Exception('Failed to enroll in free course');
           }
-          
+
           // Double-check enrollment by refreshing data
-          await courseProvider.loadLearnerEnrollments(authProvider.currentUser!.id);
+          await courseProvider.loadLearnerEnrollments(
+            authProvider.currentUser!.id,
+          );
           print('Enrollment data refreshed after free course enrollment');
-          print('Current enrollments after free course enrollment: ${courseProvider.learnerEnrollments.length}');
-          
+          print(
+            'Current enrollments after free course enrollment: ${courseProvider.learnerEnrollments.length}',
+          );
         } else {
           throw Exception('User not authenticated or course ID missing');
         }
@@ -907,8 +912,10 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
 
       if (authProvider.currentUser != null && widget.course['id'] != null) {
         // Check current enrollments before enrollment
-        print('Current enrollments before paid course enrollment: ${courseProvider.learnerEnrollments.length}');
-        
+        print(
+          'Current enrollments before paid course enrollment: ${courseProvider.learnerEnrollments.length}',
+        );
+
         final enrollmentSuccess = await courseProvider.enrollInCourse(
           widget.course['id'],
           authProvider.currentUser!.id,
@@ -919,12 +926,15 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
         if (!enrollmentSuccess) {
           throw Exception('Failed to enroll in course after payment');
         }
-        
+
         // Double-check enrollment by refreshing data
-        await courseProvider.loadLearnerEnrollments(authProvider.currentUser!.id);
+        await courseProvider.loadLearnerEnrollments(
+          authProvider.currentUser!.id,
+        );
         print('Enrollment data refreshed after paid course enrollment');
-        print('Current enrollments after paid course enrollment: ${courseProvider.learnerEnrollments.length}');
-        
+        print(
+          'Current enrollments after paid course enrollment: ${courseProvider.learnerEnrollments.length}',
+        );
       } else {
         throw Exception('User not authenticated or course ID missing');
       }
@@ -981,33 +991,40 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
               child: ElevatedButton(
                 onPressed: () async {
                   Navigator.of(context).pop(); // Close dialog
-                  
+
                   // Refresh the course provider to update enrollment status
-                  final courseProvider = Provider.of<CourseProvider>(context, listen: false);
-                  final authProvider = Provider.of<AuthProvider>(context, listen: false);
-                  
+                  final courseProvider = Provider.of<CourseProvider>(
+                    context,
+                    listen: false,
+                  );
+                  final authProvider = Provider.of<AuthProvider>(
+                    context,
+                    listen: false,
+                  );
+
                   print('Refreshing course data after enrollment...');
-                  
+
                   try {
                     // Refresh enrollment data
                     if (authProvider.currentUser != null) {
-                      await courseProvider.loadLearnerEnrollments(authProvider.currentUser!.id);
+                      await courseProvider.loadLearnerEnrollments(
+                        authProvider.currentUser!.id,
+                      );
                     }
                     await courseProvider.loadCourses();
-                    
+
                     print('Course data refreshed successfully');
                   } catch (e) {
                     print('Error refreshing course data: $e');
                   }
-                  
+
                   // Close payment page with success result
                   Navigator.of(context).pop(true);
-                  
+
                   // Close course details with enrollment result
-                  Navigator.of(context).pop({
-                    'enrolled': true,
-                    'courseId': widget.course['id'],
-                  });
+                  Navigator.of(
+                    context,
+                  ).pop({'enrolled': true, 'courseId': widget.course['id']});
 
                   // Navigate to course portal
                   Navigator.push(
