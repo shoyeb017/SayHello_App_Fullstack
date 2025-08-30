@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../models/models.dart';
@@ -252,11 +253,49 @@ class DetailedPostCard extends StatefulWidget {
   State<DetailedPostCard> createState() => _DetailedPostCardState();
 }
 
-class _DetailedPostCardState extends State<DetailedPostCard> {
+class _DetailedPostCardState extends State<DetailedPostCard>
+    with TickerProviderStateMixin {
   bool _isTranslated = false;
   bool _isTranslating = false;
   String? _translatedText;
   String? _detectedLanguage;
+
+  late AnimationController _likeAnimationController;
+  late Animation<double> _likeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _likeAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _likeAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+      CurvedAnimation(
+        parent: _likeAnimationController,
+        curve: Curves.elasticOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _likeAnimationController.dispose();
+    super.dispose();
+  }
+
+  void _handleLikeWithAnimation() {
+    // Add haptic feedback
+    HapticFeedback.lightImpact();
+
+    // Trigger animation
+    _likeAnimationController.forward().then((_) {
+      _likeAnimationController.reverse();
+    });
+
+    // Call the original like handler
+    widget.onLikePressed();
+  }
 
   Future<void> _translatePost() async {
     if (_isTranslating) return;
@@ -434,6 +473,29 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
         return languageName.isNotEmpty
             ? '${languageName[0].toUpperCase()}${languageName.substring(1).toLowerCase()}'
             : 'English';
+    }
+  }
+
+  // Helper methods to get user information
+  Future<String?> _getUserAvatar(String userId) async {
+    try {
+      final feedProvider = Provider.of<FeedProvider>(context, listen: false);
+      final userInfo = await feedProvider.getUserInfo(userId);
+      return userInfo?['profile_image'];
+    } catch (e) {
+      print('Error fetching user avatar: $e');
+      return null;
+    }
+  }
+
+  Future<String> _getUserName(String userId) async {
+    try {
+      final feedProvider = Provider.of<FeedProvider>(context, listen: false);
+      final userInfo = await feedProvider.getUserInfo(userId);
+      return userInfo?['name'] ?? 'Unknown User';
+    } catch (e) {
+      print('Error fetching user name: $e');
+      return 'Unknown User';
     }
   }
 
@@ -668,20 +730,30 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
       children: [
         // Like button
         GestureDetector(
-          onTap: widget.onLikePressed,
-          child: Row(
-            children: [
-              Icon(
-                widget.isLiked ? Icons.favorite : Icons.favorite_border,
-                color: widget.isLiked ? const Color(0xFF7d54fb) : iconColor,
-                size: 20,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '${feed.likesCount}',
-                style: TextStyle(color: iconColor, fontSize: 14),
-              ),
-            ],
+          onTap: _handleLikeWithAnimation,
+          child: AnimatedBuilder(
+            animation: _likeAnimation,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _likeAnimation.value,
+                child: Row(
+                  children: [
+                    Icon(
+                      widget.isLiked ? Icons.favorite : Icons.favorite_border,
+                      color: widget.isLiked
+                          ? const Color(0xFF7d54fb)
+                          : iconColor,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${feed.likesCount}',
+                      style: TextStyle(color: iconColor, fontSize: 14),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
         const SizedBox(width: 20),
@@ -722,81 +794,182 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
   }
 
   Widget _buildLikedUsersRow(Color? iconColor) {
-    // Use actual likes data
-    final likesData = widget.likes.take(3).toList();
     final feed = widget.feedWithUser.feed;
 
-    return Row(
-      children: [
-        // Liked users avatars - show up to 3, using placeholder for now
-        if (likesData.isNotEmpty) ...[
-          SizedBox(
-            height: 32,
-            width: likesData.length == 1
-                ? 24
-                : likesData.length == 2
-                ? 40
-                : 56,
-            child: Stack(
-              children: [
-                if (likesData.isNotEmpty)
-                  CircleAvatar(
-                    radius: 12,
-                    backgroundColor: Colors.grey[300],
-                    child: Text(
-                      '1',
-                      style: TextStyle(fontSize: 10, color: Colors.grey[600]),
-                    ),
-                  ),
-                if (likesData.length > 1)
-                  Positioned(
-                    left: 16,
-                    child: CircleAvatar(
-                      radius: 12,
-                      backgroundColor: Colors.grey[300],
-                      child: Text(
-                        '2',
-                        style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+    return Consumer<FeedProvider>(
+      builder: (context, feedProvider, child) {
+        // Load likes if not already loaded
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          feedProvider.loadFeedLikes(feed.id);
+        });
+
+        // Get the most up-to-date likes from the provider
+        final currentLikes = feedProvider.feedLikes[feed.id] ?? widget.likes;
+        final likesData = currentLikes.take(3).toList();
+
+        // Debug information
+        print('🔍 LikedUsersRow: Feed ID: ${feed.id}');
+        print('🔍 LikedUsersRow: Current likes count: ${currentLikes.length}');
+        print(
+          '🔍 LikedUsersRow: Likes data: ${likesData.map((like) => 'User: ${like.learnerId}, ID: ${like.id}, Created: ${like.createdAt}').join('\n')}',
+        );
+
+        return Row(
+          children: [
+            // Liked users avatars - show up to 3 with real user data
+            if (likesData.isNotEmpty) ...[
+              SizedBox(
+                height: 32,
+                width: likesData.length == 1
+                    ? 24
+                    : likesData.length == 2
+                    ? 40
+                    : 56,
+                child: Stack(
+                  children: [
+                    // First user avatar
+                    if (likesData.isNotEmpty)
+                      FutureBuilder<String?>(
+                        future: _getUserAvatar(likesData[0].learnerId),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            print(
+                              '❌ Avatar error for ${likesData[0].learnerId}: ${snapshot.error}',
+                            );
+                          }
+                          return CircleAvatar(
+                            radius: 12,
+                            backgroundImage: snapshot.data != null
+                                ? NetworkImage(snapshot.data!)
+                                : null,
+                            backgroundColor: Colors.grey[300],
+                            child: snapshot.data == null
+                                ? FutureBuilder<String>(
+                                    future: _getUserName(
+                                      likesData[0].learnerId,
+                                    ),
+                                    builder: (context, nameSnapshot) {
+                                      if (nameSnapshot.hasError) {
+                                        print(
+                                          '❌ Name error for ${likesData[0].learnerId}: ${nameSnapshot.error}',
+                                        );
+                                      }
+                                      final name = nameSnapshot.data ?? 'U';
+                                      print(
+                                        '✅ User name fetched: $name for ${likesData[0].learnerId}',
+                                      );
+                                      return Text(
+                                        name.substring(0, 1).toUpperCase(),
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.grey[600],
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : null,
+                          );
+                        },
                       ),
-                    ),
-                  ),
-                if (likesData.length > 2)
-                  Positioned(
-                    left: 32,
-                    child: CircleAvatar(
-                      radius: 12,
-                      backgroundColor: Colors.grey[300],
-                      child: Text(
-                        '3',
-                        style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                    // Second user avatar
+                    if (likesData.length > 1)
+                      Positioned(
+                        left: 16,
+                        child: FutureBuilder<String?>(
+                          future: _getUserAvatar(likesData[1].learnerId),
+                          builder: (context, snapshot) {
+                            return CircleAvatar(
+                              radius: 12,
+                              backgroundImage: snapshot.data != null
+                                  ? NetworkImage(snapshot.data!)
+                                  : null,
+                              backgroundColor: Colors.grey[300],
+                              child: snapshot.data == null
+                                  ? FutureBuilder<String>(
+                                      future: _getUserName(
+                                        likesData[1].learnerId,
+                                      ),
+                                      builder: (context, nameSnapshot) {
+                                        final name = nameSnapshot.data ?? 'U';
+                                        return Text(
+                                          name.substring(0, 1).toUpperCase(),
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.grey[600],
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : null,
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ),
-              ],
+                    // Third user avatar
+                    if (likesData.length > 2)
+                      Positioned(
+                        left: 32,
+                        child: FutureBuilder<String?>(
+                          future: _getUserAvatar(likesData[2].learnerId),
+                          builder: (context, snapshot) {
+                            return CircleAvatar(
+                              radius: 12,
+                              backgroundImage: snapshot.data != null
+                                  ? NetworkImage(snapshot.data!)
+                                  : null,
+                              backgroundColor: Colors.grey[300],
+                              child: snapshot.data == null
+                                  ? FutureBuilder<String>(
+                                      future: _getUserName(
+                                        likesData[2].learnerId,
+                                      ),
+                                      builder: (context, nameSnapshot) {
+                                        final name = nameSnapshot.data ?? 'U';
+                                        return Text(
+                                          name.substring(0, 1).toUpperCase(),
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.grey[600],
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : null,
+                            );
+                          },
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+            ],
+            GestureDetector(
+              onTap: () {
+                // Show list of users who liked
+                _showLikedUsersList();
+              },
+              child: Text(
+                AppLocalizations.of(context)!.likesWithCount(feed.likesCount),
+                style: const TextStyle(
+                  color: Color(0xFF7d54fb),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-        ],
-        GestureDetector(
-          onTap: () {
-            // Show list of users who liked
-            _showLikedUsersList();
-          },
-          child: Text(
-            AppLocalizations.of(context)!.likesWithCount(feed.likesCount),
-            style: const TextStyle(
-              color: Color(0xFF7d54fb),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
   void _showLikedUsersList() {
-    // Show modal with users who liked (placeholder implementation)
+    // Get current likes from provider or widget
+    final feedProvider = Provider.of<FeedProvider>(context, listen: false);
+    final currentLikes =
+        feedProvider.feedLikes[widget.feedWithUser.feed.id] ?? widget.likes;
+
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -809,27 +982,57 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            // Placeholder for likes list
-            if (widget.likes.isEmpty)
+            // Real likes list with user information
+            if (currentLikes.isEmpty)
               Padding(
                 padding: EdgeInsets.all(20),
                 child: Text(AppLocalizations.of(context)!.noLikesYet),
               )
             else
-              ...widget.likes
+              ...currentLikes
                   .map(
-                    (like) => ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.grey[300],
-                        child: Text(
-                          'U',
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                      ),
-                      title: Text(
-                        'User ${like.id.substring(0, 8)}',
-                      ), // Placeholder
-                      trailing: Text(_formatTimeAgo(like.createdAt)),
+                    (like) => FutureBuilder<Map<String, dynamic>?>(
+                      future: _getUserInfo(like.learnerId),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.grey[300],
+                              child: SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            ),
+                            title: Text('Loading...'),
+                            trailing: Text(_formatTimeAgo(like.createdAt)),
+                          );
+                        }
+
+                        final userInfo = snapshot.data;
+                        final userName = userInfo?['name'] ?? 'Unknown User';
+                        final userAvatar = userInfo?['profile_image'];
+
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: userAvatar != null
+                                ? NetworkImage(userAvatar)
+                                : null,
+                            backgroundColor: Colors.grey[300],
+                            child: userAvatar == null
+                                ? Text(
+                                    userName.substring(0, 1).toUpperCase(),
+                                    style: TextStyle(color: Colors.grey[600]),
+                                  )
+                                : null,
+                          ),
+                          title: Text(userName),
+                          trailing: Text(_formatTimeAgo(like.createdAt)),
+                        );
+                      },
                     ),
                   )
                   .toList(),
@@ -837,6 +1040,19 @@ class _DetailedPostCardState extends State<DetailedPostCard> {
         ),
       ),
     );
+  }
+
+  Future<Map<String, dynamic>?> _getUserInfo(String userId) async {
+    try {
+      print('🔍 _getUserInfo: Fetching user info for ID: $userId');
+      final feedProvider = Provider.of<FeedProvider>(context, listen: false);
+      final result = await feedProvider.getUserInfo(userId);
+      print('✅ _getUserInfo: Result for $userId: $result');
+      return result;
+    } catch (e) {
+      print('❌ _getUserInfo: Error fetching user info for $userId: $e');
+      return null;
+    }
   }
 
   String _formatTimeAgo(DateTime dateTime) {

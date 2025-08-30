@@ -12,13 +12,61 @@ class SupabaseConfig {
 
   /// Initialize Supabase
   static Future<void> initialize() async {
-    await Supabase.initialize(
-      url: supabaseUrl,
-      anonKey: supabaseAnonKey,
-      // // Optional: Add additional configuration
-      // authCallbackUrlHostname: 'localhost',
-      // authFlowType: AuthFlowType.pkce,
+    print('🚀 SupabaseConfig: Initializing Supabase...');
+    print('🔗 SupabaseConfig: URL: $supabaseUrl');
+    print(
+      '🔑 SupabaseConfig: Using anon key: ${supabaseAnonKey.substring(0, 20)}...',
     );
+
+    try {
+      await Supabase.initialize(
+        url: supabaseUrl,
+        anonKey: supabaseAnonKey,
+        // // Optional: Add additional configuration
+        // authCallbackUrlHostname: 'localhost',
+        // authFlowType: AuthFlowType.pkce,
+      );
+
+      print('✅ SupabaseConfig: Supabase initialized successfully');
+
+      // Test the connection
+      await _testConnection();
+    } catch (e) {
+      print('❌ SupabaseConfig: Failed to initialize Supabase: $e');
+      rethrow;
+    }
+  }
+
+  /// Test the database connection
+  static Future<void> _testConnection() async {
+    try {
+      print('🧪 SupabaseConfig: Testing database connection...');
+
+      // Try to access the learners table
+      final response = await client
+          .from('learners')
+          .select('count(*)')
+          .limit(1);
+
+      print('✅ SupabaseConfig: Database connection test successful');
+      print('📊 SupabaseConfig: Response type: ${response.runtimeType}');
+    } catch (e) {
+      print('❌ SupabaseConfig: Database connection test failed: $e');
+      print('🔍 SupabaseConfig: Error type: ${e.runtimeType}');
+
+      if (e is PostgrestException) {
+        print('🔍 SupabaseConfig: Postgrest error details:');
+        print('   - Code: ${e.code}');
+        print('   - Message: ${e.message}');
+        print('   - Details: ${e.details}');
+        print('   - Hint: ${e.hint}');
+      }
+    }
+  }
+
+  /// Public method to test connection (for debugging)
+  static Future<void> testConnection() async {
+    await _testConnection();
   }
 
   /// Get the Supabase client instance

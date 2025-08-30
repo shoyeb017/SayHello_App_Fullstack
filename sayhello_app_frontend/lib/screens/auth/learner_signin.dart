@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/theme_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/settings_provider.dart';
@@ -20,7 +19,6 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final Color primaryColor = const Color(0xFF7a54ff);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -176,12 +174,27 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
                         onPressed: _isLoading
                             ? null
                             : () async {
+                                print(
+                                  '🖱️ SignIn: User clicked sign-in button',
+                                );
+
                                 final username = _usernameController.text
                                     .trim();
                                 final password = _passwordController.text
                                     .trim();
 
+                                print('📝 SignIn: Input validation...');
+                                print(
+                                  '   - Username: "$username" (length: ${username.length})',
+                                );
+                                print(
+                                  '   - Password: [REDACTED] (length: ${password.length})',
+                                );
+
                                 if (username.isEmpty || password.isEmpty) {
+                                  print(
+                                    '❌ SignIn: Validation failed - empty fields',
+                                  );
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
@@ -193,6 +206,11 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
                                   return;
                                 }
 
+                                print('✅ SignIn: Input validation passed');
+                                print(
+                                  '🔄 SignIn: Starting authentication process...',
+                                );
+
                                 setState(() => _isLoading = true);
 
                                 try {
@@ -202,15 +220,37 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
                                         listen: false,
                                       );
 
+                                  print(
+                                    '📞 SignIn: Calling AuthProvider.signInLearner()',
+                                  );
                                   final success = await authProvider
                                       .signInLearner(username, password);
 
+                                  print(
+                                    '📊 SignIn: Authentication result: $success',
+                                  );
+
                                   if (success) {
+                                    print(
+                                      '🎉 SignIn: Authentication successful!',
+                                    );
+                                    print(
+                                      '👤 SignIn: Current user: ${authProvider.currentUser?.name}',
+                                    );
+                                    print(
+                                      '🔄 SignIn: Navigating to main page...',
+                                    );
+
                                     Navigator.pushReplacementNamed(
                                       context,
                                       '/learner-main',
                                     );
                                   } else {
+                                    print('❌ SignIn: Authentication failed');
+                                    print(
+                                      '💬 SignIn: Error message: ${authProvider.error}',
+                                    );
+
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
@@ -221,8 +261,21 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
                                       ),
                                     );
                                   }
+                                } catch (e, stackTrace) {
+                                  print(
+                                    '💥 SignIn: Unexpected error occurred: $e',
+                                  );
+                                  print('📍 SignIn: Stack trace: $stackTrace');
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Unexpected error: $e'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
                                 } finally {
                                   if (mounted) {
+                                    print('🏁 SignIn: Resetting loading state');
                                     setState(() => _isLoading = false);
                                   }
                                 }

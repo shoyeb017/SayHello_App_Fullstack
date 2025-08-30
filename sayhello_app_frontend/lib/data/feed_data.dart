@@ -601,4 +601,37 @@ class FeedRepository {
             .toList());
   }
   */
+
+  // =============================
+  // USER INFORMATION OPERATIONS
+  // =============================
+
+  /// Get user information by ID
+  Future<Map<String, dynamic>?> getUserInfo(String userId) async {
+    try {
+      print('🔍 FeedRepository: Getting user info for ID: $userId');
+
+      final response = await _client
+          .from('learners')
+          .select('id, name, profile_image')
+          .eq('id', userId)
+          .maybeSingle();
+
+      print('✅ FeedRepository: User info response for $userId: $response');
+      return response;
+    } catch (e) {
+      print('❌ FeedRepository: Error getting user info for $userId: $e');
+      print('📍 FeedRepository: Error type: ${e.runtimeType}');
+
+      if (e is PostgrestException) {
+        print('🔍 FeedRepository: Postgrest error details:');
+        print('   - Code: ${e.code}');
+        print('   - Message: ${e.message}');
+        print('   - Details: ${e.details}');
+        print('   - Hint: ${e.hint}');
+      }
+
+      return null;
+    }
+  }
 }

@@ -167,7 +167,7 @@ class FeedProvider extends ChangeNotifier {
       for (final feedWithUser in limitedFeeds) {
         final feedId = feedWithUser.feed.id;
         _feedComments[feedId] ??= [];
-        _feedLikes[feedId] ??= []; // Empty list, use likesCount from feed data
+        // Don't set empty likes list - let it load from database
         _likedPosts[feedId] ??= false;
       }
 
@@ -203,8 +203,16 @@ class FeedProvider extends ChangeNotifier {
                   _likedPosts[feedId] = isLiked;
                 });
 
+            // Load likes when available - for displaying liked users
+            final likesTask = _repository
+                .getFeedLikes(feedId)
+                .timeout(const Duration(seconds: 3))
+                .then((likes) {
+                  _feedLikes[feedId] = likes;
+                });
+
             // Skip likes count for faster loading - use feed.likesCount from database
-            await Future.wait([commentsTask, likedTask]);
+            await Future.wait([commentsTask, likedTask, likesTask]);
           } catch (e) {
             print(
               'FeedProvider: Error loading interactions for feed $feedId: $e',
@@ -407,32 +415,67 @@ class FeedProvider extends ChangeNotifier {
     try {
       final isCurrentlyLiked = _likedPosts[feedId] ?? false;
 
+      // Optimistic update - update UI immediately
       if (isCurrentlyLiked) {
-        // Unlike the post
-        await _repository.unlikeFeed(feedId, userId);
+        // Optimistically unlike the post
         _likedPosts[feedId] = false;
-
-        // Remove from likes list
         _feedLikes[feedId]?.removeWhere((like) => like.learnerId == userId);
-
-        // Update feed counts in both lists
         _updateFeedLikeCount(feedId, -1);
       } else {
-        // Like the post
-        await _repository.likeFeed(feedId, userId);
+        // Optimistically like the post
         _likedPosts[feedId] = true;
-
-        // Add to likes list (you'd need to create a FeedLike object)
         _feedLikes[feedId] ??= [];
-        // Note: You might want to create a proper FeedLike object here
+        // Add optimistic like to the list
+        _feedLikes[feedId]!.add(
+          FeedLike(
+            id: 'temp_${DateTime.now().millisecondsSinceEpoch}', // temporary ID
+            feedId: feedId,
+            learnerId: userId,
+            createdAt: DateTime.now(),
+          ),
+        );
+        _updateFeedLikeCount(feedId, 1);
+      }
 
-        // Update feed counts in both lists
+      // Notify listeners immediately for instant UI update
+      notifyListeners();
+
+      // Now perform the actual API call
+      if (isCurrentlyLiked) {
+        await _repository.unlikeFeed(feedId, userId);
+      } else {
+        await _repository.likeFeed(feedId, userId);
+      }
+
+      // If we reach here, the API call was successful
+      // The optimistic update was correct, no need to change anything
+      print('FeedProvider: Like toggle successful for feed $feedId');
+    } catch (e) {
+      print('FeedProvider: Error toggling like: $e');
+
+      // Revert optimistic update on error
+      final isCurrentlyLiked = _likedPosts[feedId] ?? false;
+      if (isCurrentlyLiked) {
+        // Revert the like (was unlike attempt that failed)
+        _likedPosts[feedId] = false;
+        _feedLikes[feedId]?.removeWhere((like) => like.learnerId == userId);
+        _updateFeedLikeCount(feedId, -1);
+      } else {
+        // Revert the unlike (was like attempt that failed)
+        _likedPosts[feedId] = true;
+        _feedLikes[feedId] ??= [];
+        _feedLikes[feedId]!.add(
+          FeedLike(
+            id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
+            feedId: feedId,
+            learnerId: userId,
+            createdAt: DateTime.now(),
+          ),
+        );
         _updateFeedLikeCount(feedId, 1);
       }
 
       notifyListeners();
-    } catch (e) {
-      print('FeedProvider: Error toggling like: $e');
       _setError('Failed to toggle like: $e');
     }
   }
@@ -692,6 +735,32 @@ class FeedProvider extends ChangeNotifier {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
+    }
+  }
+
+  /// Get user information by ID
+  Future<Map<String, dynamic>?> getUserInfo(String userId) async {
+    try {
+      return await _repository.getUserInfo(userId);
+    } catch (e) {
+      print('FeedProvider: Error getting user info: $e');
+      return null;
+    }
+  }
+
+  /// Load likes for a specific feed if not already loaded
+  Future<void> loadFeedLikes(String feedId) async {
+    try {
+      // Only load if not already loaded or if empty
+      if (_feedLikes[feedId] == null || _feedLikes[feedId]!.isEmpty) {
+        print('FeedProvider: Loading likes for feed $feedId');
+        final likes = await _repository.getFeedLikes(feedId);
+        _feedLikes[feedId] = likes;
+        print('FeedProvider: Loaded ${likes.length} likes for feed $feedId');
+        notifyListeners();
+      }
+    } catch (e) {
+      print('FeedProvider: Error loading likes for feed $feedId: $e');
     }
   }
 

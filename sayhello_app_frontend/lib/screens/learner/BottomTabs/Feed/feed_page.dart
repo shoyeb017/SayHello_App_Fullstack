@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'feed_detail_page.dart';
@@ -659,7 +660,7 @@ class FeedPostCard extends StatefulWidget {
 }
 
 class _FeedPostCardState extends State<FeedPostCard>
-    with AutomaticKeepAliveClientMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   bool _isExpanded = false;
   bool _isTranslated = false;
   bool _isFollowing = false;
@@ -669,13 +670,32 @@ class _FeedPostCardState extends State<FeedPostCard>
   String? _detectedLanguage;
   static const int _maxCaptionLength = 100;
 
+  late AnimationController _likeAnimationController;
+  late Animation<double> _likeAnimation;
+
   @override
   bool get wantKeepAlive => true; // Keep widget alive to prevent rebuilds
 
   @override
   void initState() {
     super.initState();
+    _likeAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _likeAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+      CurvedAnimation(
+        parent: _likeAnimationController,
+        curve: Curves.elasticOut,
+      ),
+    );
     _checkFollowStatus();
+  }
+
+  @override
+  void dispose() {
+    _likeAnimationController.dispose();
+    super.dispose();
   }
 
   Future<void> _checkFollowStatus() async {
@@ -1411,6 +1431,19 @@ class _FeedPostCardState extends State<FeedPostCard>
     );
   }
 
+  void _handleLikeWithAnimation() {
+    // Add haptic feedback for better user experience
+    HapticFeedback.lightImpact();
+
+    // Trigger animation
+    _likeAnimationController.forward().then((_) {
+      _likeAnimationController.reverse();
+    });
+
+    // Call the original like handler
+    widget.onLikePressed();
+  }
+
   Widget _buildStatsRow(Color? iconColor) {
     final feed = widget.feedWithUser.feed;
 
@@ -1418,20 +1451,30 @@ class _FeedPostCardState extends State<FeedPostCard>
       children: [
         // Like button
         GestureDetector(
-          onTap: widget.onLikePressed,
-          child: Row(
-            children: [
-              Icon(
-                widget.isLiked ? Icons.favorite : Icons.favorite_border,
-                color: widget.isLiked ? const Color(0xFF7d54fb) : iconColor,
-                size: 20,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '${feed.likesCount}',
-                style: TextStyle(color: iconColor, fontSize: 14),
-              ),
-            ],
+          onTap: _handleLikeWithAnimation,
+          child: AnimatedBuilder(
+            animation: _likeAnimation,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _likeAnimation.value,
+                child: Row(
+                  children: [
+                    Icon(
+                      widget.isLiked ? Icons.favorite : Icons.favorite_border,
+                      color: widget.isLiked
+                          ? const Color(0xFF7d54fb)
+                          : iconColor,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${feed.likesCount}',
+                      style: TextStyle(color: iconColor, fontSize: 14),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
         const SizedBox(width: 20),
