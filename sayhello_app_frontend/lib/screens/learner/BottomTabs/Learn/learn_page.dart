@@ -1,10 +1,15 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'Enrolled/course_portal.dart';
 import 'Unenrolled/unenrolled_course_details.dart';
 import 'search_courses_page.dart';
 import 'my_courses_page.dart';
 import '../../../../providers/settings_provider.dart';
+import '../../../../providers/course_provider.dart';
+import '../../../../providers/auth_provider.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../models/course.dart';
+import '../../../../models/learner.dart';
 import '../../Notifications/notifications.dart';
 
 class LearnPage extends StatefulWidget {
@@ -16,220 +21,86 @@ class LearnPage extends StatefulWidget {
 
 class _LearnPageState extends State<LearnPage> {
   // User data
-  final String userName = "Zeeshan Hamayoun";
+  String userName = "Loading...";
   final String userProfileImage = ""; // Add actual image URL
 
   // Categories
   final List<String> categories = ['Beginner', 'Intermediate', 'Advanced'];
 
-  // My enrolled courses (horizontal scroll)
-  final List<Map<String, dynamic>> enrolledCourses = [
-    {
-      'id': 'course_001',
-      'title': 'Japanese for Beginners',
-      'instructor': 'Hiro Tanaka',
-      'rating': 4.6,
-      'students': 120,
-      'progress': 0.4,
-      'sessions': 24,
-      'completedLectures': 10,
-      'icon': Icons.language,
-      'thumbnail': '',
-      'description':
-          'Learn Japanese from basics including Hiragana, Katakana, and essential vocabulary.',
-      'price': 59.99,
-      'duration': '6 weeks',
-      'level': 'Beginner',
-      'category': 'Language',
-      'startDate': '2025-08-01',
-      'endDate': '2025-09-15',
-    },
-    {
-      'id': 'course_002',
-      'title': 'Conversational Spanish',
-      'instructor': 'Maria Gomez',
-      'rating': 4.9,
-      'students': 95,
-      'progress': 0.75,
-      'sessions': 32,
-      'completedLectures': 24,
-      'icon': Icons.chat,
-      'thumbnail': '',
-      'description':
-          'Master Spanish conversation skills through interactive sessions.',
-      'price': 49.99,
-      'duration': '8 weeks',
-      'level': 'Intermediate',
-      'category': 'Language',
-      'startDate': '2025-07-15',
-      'endDate': '2025-09-10',
-    },
-    {
-      'id': 'course_003',
-      'title': 'German Advanced Grammar',
-      'instructor': 'Klaus Schmidt',
-      'rating': 4.5,
-      'students': 42,
-      'progress': 1.0,
-      'sessions': 20,
-      'completedLectures': 20,
-      'icon': Icons.book,
-      'thumbnail': '',
-      'description':
-          'Advanced German grammar concepts for fluent communication.',
-      'price': 79.99,
-      'duration': '10 weeks',
-      'level': 'Advanced',
-      'category': 'Language',
-      'startDate': '2025-06-01',
-      'endDate': '2025-08-10',
-    },
-  ];
+  // Get all courses from the CourseProvider
+  List<Course> get _allCourses {
+    final courseProvider = Provider.of<CourseProvider>(context);
+    return courseProvider.courses;
+  }
 
-  // Popular courses (vertical list)
-  final List<Map<String, dynamic>> popularCourses = [
-    {
-      'id': 'course_004',
-      'title': 'French Grammar Essentials',
-      'instructor': 'Jean Dupont',
-      'rating': 4.2,
-      'students': 60,
-      'progress': 0.0,
-      'sessions': 15,
-      'icon': Icons.book,
-      'thumbnail': '',
-      'description':
-          'Essential French grammar rules and structures for building a strong foundation.',
-      'price': 39.99,
-      'duration': '5 weeks',
-      'level': 'Beginner',
-      'category': 'Language',
-      'startDate': '2025-08-15',
-      'endDate': '2025-09-20',
-    },
-    {
-      'id': 'course_005',
-      'title': 'Italian for Travelers',
-      'instructor': 'Luca Bianchi',
-      'rating': 4.5,
-      'students': 55,
-      'progress': 0.0,
-      'sessions': 12,
-      'icon': Icons.flight_takeoff,
-      'thumbnail': '',
-      'description':
-          'Learn essential Italian phrases and cultural insights for your next trip.',
-      'price': 29.99,
-      'duration': '4 weeks',
-      'level': 'Beginner',
-      'category': 'Language',
-      'startDate': '2025-08-01',
-      'endDate': '2025-09-01',
-    },
-    {
-      'id': 'course_006',
-      'title': 'Business English Communication',
-      'instructor': 'Sarah Johnson',
-      'rating': 4.7,
-      'students': 180,
-      'progress': 0.0,
-      'sessions': 24,
-      'icon': Icons.business,
-      'thumbnail': '',
-      'description':
-          'Professional English communication skills for workplace success.',
-      'price': 69.99,
-      'duration': '8 weeks',
-      'level': 'Intermediate',
-      'category': 'Business',
-      'startDate': '2025-08-10',
-      'endDate': '2025-10-05',
-    },
-    {
-      'id': 'course_007',
-      'title': 'Mandarin Chinese Basics',
-      'instructor': 'Li Wei',
-      'rating': 4.4,
-      'students': 75,
-      'progress': 0.0,
-      'sessions': 21,
-      'icon': Icons.translate,
-      'thumbnail': '',
-      'description':
-          'Start your Mandarin journey with pronunciation, basic characters, and essential phrases.',
-      'price': 55.99,
-      'duration': '7 weeks',
-      'level': 'Beginner',
-      'category': 'Language',
-      'startDate': '2025-08-20',
-      'endDate': '2025-10-10',
-    },
-  ];
+  // Get enrolled courses (courses with progress > 0)
+  List<Course> get _enrolledCourses {
+    final courseProvider = Provider.of<CourseProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
 
-  // Completed courses (horizontal scroll) - These are deadline-over courses available for enrollment
-  final List<Map<String, dynamic>> completedCourses = [
-    {
-      'id': 'course_008',
-      'title': 'Russian Language Fundamentals',
-      'instructor': 'Dmitri Volkov',
-      'rating': 4.3,
-      'students': 85,
-      'progress': 0.0, // User not enrolled yet
-      'sessions': 18,
-      'icon': Icons.language,
-      'thumbnail': '',
-      'description':
-          'Complete Russian language course covering basics to intermediate level.',
-      'price': 65.99,
-      'duration': '6 weeks',
-      'level': 'Beginner',
-      'category': 'Language',
-      'startDate': '2024-01-01',
-      'endDate': '2024-01-15',
-    },
-    {
-      'id': 'course_009',
-      'title': 'Portuguese for Business',
-      'instructor': 'Ana Santos',
-      'rating': 4.6,
-      'students': 67,
-      'progress': 0.0, // User not enrolled yet
-      'sessions': 22,
-      'icon': Icons.business_center,
-      'thumbnail': '',
-      'description':
-          'Professional Portuguese for international business communication.',
-      'price': 79.99,
-      'duration': '8 weeks',
-      'level': 'Intermediate',
-      'category': 'Business',
-      'startDate': '2024-02-01',
-      'endDate': '2024-02-20',
-    },
-    {
-      'id': 'course_010',
-      'title': 'Korean Language Basics',
-      'instructor': 'Kim Min-jun',
-      'rating': 4.4,
-      'students': 92,
-      'progress': 0.0, // User not enrolled yet
-      'sessions': 20,
-      'icon': Icons.translate,
-      'thumbnail': '',
-      'description':
-          'Learn Korean alphabet, basic grammar, and essential vocabulary.',
-      'price': 54.99,
-      'duration': '7 weeks',
-      'level': 'Beginner',
-      'category': 'Language',
-      'startDate': '2024-03-01',
-      'endDate': '2024-03-10',
-    },
-  ];
+    if (authProvider.currentUser == null) return [];
+
+    return courseProvider.learnerEnrollments
+        .map((enrollment) => enrollment.course)
+        .toList();
+  }
+
+  // Get popular courses (not enrolled, high rating or students)
+  List<Course> get _popularCourses {
+    final enrolledCourseIds = _enrolledCourses.map((c) => c.id).toSet();
+
+    return _allCourses
+        .where(
+          (course) =>
+              !enrolledCourseIds.contains(course.id) &&
+              (_getCourseStatus(course) == 'active' ||
+                  _getCourseStatus(course) == 'upcoming'),
+        )
+        .toList();
+  }
+
+  // Get expired courses available for enrollment
+  List<Course> get _expiredCourses {
+    final enrolledCourseIds = _enrolledCourses.map((c) => c.id).toSet();
+
+    return _allCourses
+        .where(
+          (course) =>
+              !enrolledCourseIds.contains(course.id) &&
+              _getCourseStatus(course) == 'expired',
+        )
+        .toList();
+  }
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeData();
+    });
+  }
+
+  Future<void> _initializeData() async {
+    if (!mounted) return;
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final courseProvider = Provider.of<CourseProvider>(context, listen: false);
+
+    if (authProvider.currentUser != null) {
+      // Load user name
+      final learner = authProvider.currentUser as Learner?;
+      if (learner != null && mounted) {
+        setState(() {
+          userName = learner.name;
+        });
+      }
+
+      // Load all courses
+      await courseProvider.loadCourses();
+
+      // Load learner's enrollments
+      await courseProvider.loadLearnerEnrollments(authProvider.currentUser!.id);
+    }
   }
 
   @override
@@ -238,21 +109,69 @@ class _LearnPageState extends State<LearnPage> {
   }
 
   // Method to calculate course status based on dates
-  String _getCourseStatus(Map<String, dynamic> course) {
+  String _getCourseStatus(Course course) {
     final now = DateTime.now();
-    final startDate = DateTime.tryParse(course['startDate'] ?? '');
-    final endDate = DateTime.tryParse(course['endDate'] ?? '');
 
-    if (startDate == null || endDate == null) {
-      return 'active'; // Default status if dates are missing
-    }
-
-    if (now.isBefore(startDate)) {
+    if (now.isBefore(course.startDate)) {
       return 'upcoming';
-    } else if (now.isAfter(endDate)) {
+    } else if (now.isAfter(course.endDate)) {
       return 'expired';
     } else {
       return 'active';
+    }
+  }
+
+  // Helper method to convert Course to Map for compatibility
+  Map<String, dynamic> _courseToMap(Course course) {
+    return {
+      'id': course.id,
+      'title': course.title,
+      'description': course.description,
+      'language': course.language,
+      'level': course.level,
+      'total_sessions': course.totalSessions,
+      'price': course.price,
+      'startDate': course.startDate.toIso8601String(),
+      'endDate': course.endDate.toIso8601String(),
+      'status': course.status,
+      'instructor_id': course.instructorId,
+      'thumbnail_url': course.thumbnailUrl ?? '',
+      'enrolled_students': course.enrolledStudents,
+      'sessions': course.totalSessions,
+      'students': course.enrolledStudents,
+      'rating': 4.5, // Default rating
+      'progress': 0.0, // Will be updated based on enrollment
+      'icon': _getIconForCourse(course),
+    };
+  }
+
+  // Helper method to get icon based on course content
+  IconData _getIconForCourse(Course course) {
+    final title = course.title.toLowerCase();
+    final language = course.language.toLowerCase();
+
+    if (title.contains('japanese') || language.contains('japanese')) {
+      return Icons.language;
+    } else if (title.contains('spanish') || language.contains('spanish')) {
+      return Icons.chat;
+    } else if (title.contains('german') || language.contains('german')) {
+      return Icons.book;
+    } else if (title.contains('french') || language.contains('french')) {
+      return Icons.book;
+    } else if (title.contains('italian') || language.contains('italian')) {
+      return Icons.flight_takeoff;
+    } else if (title.contains('business') || title.contains('english')) {
+      return Icons.business;
+    } else if (title.contains('chinese') || title.contains('mandarin')) {
+      return Icons.translate;
+    } else if (title.contains('korean')) {
+      return Icons.translate;
+    } else if (title.contains('russian')) {
+      return Icons.language;
+    } else if (title.contains('portuguese')) {
+      return Icons.business_center;
+    } else {
+      return Icons.school;
     }
   }
 
@@ -269,7 +188,7 @@ class _LearnPageState extends State<LearnPage> {
     }
   }
 
-  void _navigateToCourse(Map<String, dynamic> course) {
+  void _navigateToCourse(Map<String, dynamic> course) async {
     // Check if user is currently enrolled (has progress > 0)
     final isCurrentlyEnrolled =
         course['progress'] != null && course['progress'] > 0;
@@ -282,12 +201,40 @@ class _LearnPageState extends State<LearnPage> {
       );
     } else {
       // Navigate to course details for unenrolled courses (including completed/deadline-over courses)
-      Navigator.push(
+      final result = await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => UnenrolledCourseDetailsPage(course: course),
         ),
       );
+
+      // If enrollment was successful, refresh the courses and switch to "My Courses" tab
+      if (result != null && result is Map && result['enrolled'] == true) {
+        // Refresh course data
+        final courseProvider = Provider.of<CourseProvider>(
+          context,
+          listen: false,
+        );
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+        await courseProvider.loadCourses();
+        if (authProvider.currentUser != null) {
+          await courseProvider.loadLearnerEnrollments(
+            authProvider.currentUser.id,
+          );
+        }
+
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Successfully enrolled! Check "My Courses" tab.'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -295,80 +242,291 @@ class _LearnPageState extends State<LearnPage> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(52),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          scrolledUnderElevation: 0,
-          title: Row(
-            children: [
-              // 🔧 SETTINGS ICON - This is the settings button in the app bar
-              // Click this to open the settings bottom sheet with theme and language options
-              IconButton(
-                icon: Icon(
-                  Icons.settings,
-                  color: isDark ? Colors.white : Colors.black,
+    return Consumer2<AuthProvider, CourseProvider>(
+      builder: (context, authProvider, courseProvider, child) {
+        // Show loading state
+        if (courseProvider.isLoading) {
+          return Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(52),
+              child: AppBar(
+                automaticallyImplyLeading: false,
+                scrolledUnderElevation: 0,
+                title: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.settings,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                      onPressed: () =>
+                          SettingsProvider.showSettingsBottomSheet(context),
+                    ),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!.learn,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    Stack(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.notifications_outlined,
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NotificationsPage(),
+                              ),
+                            );
+                          },
+                        ),
+                        Positioned(
+                          right: 11,
+                          top: 11,
+                          child: Container(
+                            padding: EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 12,
+                              minHeight: 12,
+                            ),
+                            child: Text(
+                              '3',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                onPressed: () =>
-                    SettingsProvider.showSettingsBottomSheet(context),
               ),
+            ),
+            body: const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF7A54FF)),
+              ),
+            ),
+          );
+        }
 
-              Expanded(
-                child: Text(
-                  AppLocalizations.of(context)!.learn,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+        // Show error state if any
+        if (courseProvider.hasError) {
+          return Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(52),
+              child: AppBar(
+                automaticallyImplyLeading: false,
+                scrolledUnderElevation: 0,
+                title: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.settings,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                      onPressed: () =>
+                          SettingsProvider.showSettingsBottomSheet(context),
+                    ),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!.learn,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    Stack(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.notifications_outlined,
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NotificationsPage(),
+                              ),
+                            );
+                          },
+                        ),
+                        Positioned(
+                          right: 11,
+                          top: 11,
+                          child: Container(
+                            padding: EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 12,
+                              minHeight: 12,
+                            ),
+                            child: Text(
+                              '3',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-
-              // 🔔 NOTIFICATION ICON - This is the notification button in the app bar
-              Stack(
+            ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.notifications_outlined,
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: isDark ? Colors.grey[600] : Colors.grey[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error loading courses',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black,
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NotificationsPage(),
-                        ),
-                      );
-                    },
                   ),
-                  // Red dot for unread notifications
-                  Positioned(
-                    right: 11,
-                    top: 11,
-                    child: Container(
-                      padding: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      constraints: BoxConstraints(minWidth: 12, minHeight: 12),
-                      child: Text(
-                        '3', // Number of unread notifications
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 8,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                  const SizedBox(height: 8),
+                  Text(
+                    courseProvider.error ?? 'Unknown error',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
                     ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => _initializeData(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF7A54FF),
+                      foregroundColor: Colors.white,
+                    ),
+                    child: Text('Retry'),
                   ),
                 ],
               ),
-            ],
+            ),
+          );
+        }
+
+        // Main content
+        return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(52),
+            child: AppBar(
+              automaticallyImplyLeading: false,
+              scrolledUnderElevation: 0,
+              title: Row(
+                children: [
+                  // 🔧 SETTINGS ICON - This is the settings button in the app bar
+                  // Click this to open the settings bottom sheet with theme and language options
+                  IconButton(
+                    icon: Icon(
+                      Icons.settings,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                    onPressed: () =>
+                        SettingsProvider.showSettingsBottomSheet(context),
+                  ),
+
+                  Expanded(
+                    child: Text(
+                      AppLocalizations.of(context)!.learn,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+
+                  // 🔔 NOTIFICATION ICON - This is the notification button in the app bar
+                  Stack(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.notifications_outlined,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NotificationsPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      // Red dot for unread notifications
+                      Positioned(
+                        right: 11,
+                        top: 11,
+                        child: Container(
+                          padding: EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          constraints: BoxConstraints(
+                            minWidth: 12,
+                            minHeight: 12,
+                          ),
+                          child: Text(
+                            '3', // Number of unread notifications
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-      body: SafeArea(child: _buildMainContent(isDark)),
+          body: SafeArea(child: _buildMainContent(isDark)),
+        );
+      },
     );
   }
 
@@ -487,6 +645,11 @@ class _LearnPageState extends State<LearnPage> {
   }
 
   Widget _buildSearchBar(bool isDark) {
+    // Convert courses to maps for compatibility
+    final allCourseMaps = _allCourses
+        .map((course) => _courseToMap(course))
+        .toList();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
@@ -494,13 +657,7 @@ class _LearnPageState extends State<LearnPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => SearchCoursesPage(
-                allCourses: [
-                  ...enrolledCourses,
-                  ...popularCourses,
-                  ...completedCourses,
-                ],
-              ),
+              builder: (_) => SearchCoursesPage(allCourses: allCourseMaps),
             ),
           );
         },
@@ -539,6 +696,10 @@ class _LearnPageState extends State<LearnPage> {
   }
 
   Widget _buildMyCoursesSection(bool isDark) {
+    final enrolledCourseMaps = _enrolledCourses
+        .map((course) => _courseToMap(course))
+        .toList();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -560,7 +721,8 @@ class _LearnPageState extends State<LearnPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => MyCoursesPage(courses: enrolledCourses),
+                      builder: (_) =>
+                          MyCoursesPage(courses: enrolledCourseMaps),
                     ),
                   );
                 },
@@ -578,13 +740,26 @@ class _LearnPageState extends State<LearnPage> {
           const SizedBox(height: 16),
           SizedBox(
             height: 200,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: enrolledCourses.length,
-              itemBuilder: (context, index) {
-                return _buildEnrolledCourseCard(enrolledCourses[index], isDark);
-              },
-            ),
+            child: _enrolledCourses.isEmpty
+                ? Center(
+                    child: Text(
+                      'No enrolled courses yet',
+                      style: TextStyle(
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        fontSize: 14,
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _enrolledCourses.length,
+                    itemBuilder: (context, index) {
+                      return _buildEnrolledCourseCard(
+                        _courseToMap(_enrolledCourses[index]),
+                        isDark,
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -593,7 +768,22 @@ class _LearnPageState extends State<LearnPage> {
 
   Widget _buildEnrolledCourseCard(Map<String, dynamic> course, bool isDark) {
     final progress = course['progress']?.toDouble() ?? 0.0;
-    final status = _getCourseStatus(course);
+
+    // Calculate status from map data
+    final now = DateTime.now();
+    final startDate = DateTime.tryParse(course['startDate'] ?? '');
+    final endDate = DateTime.tryParse(course['endDate'] ?? '');
+
+    String status = 'active';
+    if (startDate != null && endDate != null) {
+      if (now.isBefore(startDate)) {
+        status = 'upcoming';
+      } else if (now.isAfter(endDate)) {
+        status = 'expired';
+      } else {
+        status = 'active';
+      }
+    }
 
     return Container(
       width: 260,
@@ -748,6 +938,10 @@ class _LearnPageState extends State<LearnPage> {
   }
 
   Widget _buildTopCategorySection(bool isDark) {
+    final allCourseMaps = _allCourses
+        .map((course) => _courseToMap(course))
+        .toList();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -769,13 +963,8 @@ class _LearnPageState extends State<LearnPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => SearchCoursesPage(
-                        allCourses: [
-                          ...enrolledCourses,
-                          ...popularCourses,
-                          ...completedCourses,
-                        ],
-                      ),
+                      builder: (_) =>
+                          SearchCoursesPage(allCourses: allCourseMaps),
                     ),
                   );
                 },
@@ -797,7 +986,11 @@ class _LearnPageState extends State<LearnPage> {
               scrollDirection: Axis.horizontal,
               itemCount: categories.length,
               itemBuilder: (context, index) {
-                return _buildCategoryChip(categories[index], isDark);
+                return _buildCategoryChip(
+                  categories[index],
+                  isDark,
+                  allCourseMaps,
+                );
               },
             ),
           ),
@@ -806,7 +999,11 @@ class _LearnPageState extends State<LearnPage> {
     );
   }
 
-  Widget _buildCategoryChip(String category, bool isDark) {
+  Widget _buildCategoryChip(
+    String category,
+    bool isDark,
+    List<Map<String, dynamic>> allCourses,
+  ) {
     // Define icons for each category
     IconData getIconForCategory(String category) {
       switch (category) {
@@ -831,11 +1028,7 @@ class _LearnPageState extends State<LearnPage> {
             context,
             MaterialPageRoute(
               builder: (_) => SearchCoursesPage(
-                allCourses: [
-                  ...enrolledCourses,
-                  ...popularCourses,
-                  ...completedCourses,
-                ],
+                allCourses: allCourses,
                 initialFilter: category,
               ),
             ),
@@ -894,7 +1087,10 @@ class _LearnPageState extends State<LearnPage> {
 
   Widget _buildPopularCoursesSection(bool isDark) {
     // Show only first 3 popular courses
-    final limitedCourses = popularCourses.take(3).toList();
+    final limitedCourses = _popularCourses.take(3).toList();
+    final allCourseMaps = _allCourses
+        .map((course) => _courseToMap(course))
+        .toList();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -918,11 +1114,7 @@ class _LearnPageState extends State<LearnPage> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => SearchCoursesPage(
-                        allCourses: [
-                          ...enrolledCourses,
-                          ...popularCourses,
-                          ...completedCourses,
-                        ],
+                        allCourses: allCourseMaps,
                         initialFilter: 'Popular',
                       ),
                     ),
@@ -940,14 +1132,27 @@ class _LearnPageState extends State<LearnPage> {
             ],
           ),
           const SizedBox(height: 16),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: limitedCourses.length,
-            itemBuilder: (context, index) {
-              return _buildPopularCourseCard(limitedCourses[index], isDark);
-            },
-          ),
+          limitedCourses.isEmpty
+              ? Center(
+                  child: Text(
+                    'No popular courses available',
+                    style: TextStyle(
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      fontSize: 14,
+                    ),
+                  ),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: limitedCourses.length,
+                  itemBuilder: (context, index) {
+                    return _buildPopularCourseCard(
+                      _courseToMap(limitedCourses[index]),
+                      isDark,
+                    );
+                  },
+                ),
         ],
       ),
     );
@@ -1068,6 +1273,10 @@ class _LearnPageState extends State<LearnPage> {
   }
 
   Widget _buildCompletedCoursesSection(bool isDark) {
+    final allCourseMaps = _allCourses
+        .map((course) => _courseToMap(course))
+        .toList();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -1090,11 +1299,7 @@ class _LearnPageState extends State<LearnPage> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => SearchCoursesPage(
-                        allCourses: [
-                          ...enrolledCourses,
-                          ...popularCourses,
-                          ...completedCourses,
-                        ],
+                        allCourses: allCourseMaps,
                         initialFilter: 'Expired',
                       ),
                     ),
@@ -1114,16 +1319,26 @@ class _LearnPageState extends State<LearnPage> {
           const SizedBox(height: 16),
           SizedBox(
             height: 200,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: completedCourses.length,
-              itemBuilder: (context, index) {
-                return _buildCompletedCourseCard(
-                  completedCourses[index],
-                  isDark,
-                );
-              },
-            ),
+            child: _expiredCourses.isEmpty
+                ? Center(
+                    child: Text(
+                      'No expired courses available',
+                      style: TextStyle(
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        fontSize: 14,
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _expiredCourses.length,
+                    itemBuilder: (context, index) {
+                      return _buildCompletedCourseCard(
+                        _courseToMap(_expiredCourses[index]),
+                        isDark,
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -1290,7 +1505,6 @@ class _LearnPageState extends State<LearnPage> {
               ),
 
               // Price badge
-
               Positioned(
                 top: 15,
                 right: 15,

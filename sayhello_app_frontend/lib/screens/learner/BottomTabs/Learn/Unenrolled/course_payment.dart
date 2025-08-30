@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../../../../../l10n/app_localizations.dart';
+import '../../../../../providers/course_provider.dart';
+import '../../../../../providers/auth_provider.dart';
 import '../Enrolled/course_portal.dart';
 
 class CoursePaymentPage extends StatefulWidget {
@@ -45,6 +48,12 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
         widget.course['instructor'] ??
         AppLocalizations.of(context)!.paymentInstructorFallback;
 
+    // Debug: Print course data
+    print('Course Payment Page - Course Data:');
+    print('Course ID: ${widget.course['id']}');
+    print('Course Title: ${widget.course['title']}');
+    print('Course Price: $price');
+
     // Consistent color theme
     final primaryColor = Color(0xFF7A54FF);
 
@@ -61,7 +70,9 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          AppLocalizations.of(context)!.paymentCompletePurchase,
+          price > 0
+              ? AppLocalizations.of(context)!.paymentCompletePurchase
+              : 'Course Enrollment',
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 16,
@@ -90,21 +101,29 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
 
                     const SizedBox(height: 20),
 
-                    // Payment Method Selection
-                    _buildPaymentMethodSelection(isDark, primaryColor),
+                    // Payment Method Selection (only show for paid courses)
+                    if (price > 0) ...[
+                      _buildPaymentMethodSelection(isDark, primaryColor),
+                      const SizedBox(height: 20),
+                    ],
 
-                    const SizedBox(height: 20),
-
-                    // Payment Form
-                    if (_selectedPaymentMethod == 'card') ...[
+                    // Payment Form (only show for paid courses with card payment)
+                    if (price > 0 && _selectedPaymentMethod == 'card') ...[
                       _buildPaymentForm(isDark, primaryColor),
                       const SizedBox(height: 20),
                     ],
 
-                    // Billing Information
-                    _buildBillingInformation(isDark, primaryColor),
+                    // Billing Information (only show for paid courses)
+                    if (price > 0) ...[
+                      _buildBillingInformation(isDark, primaryColor),
+                      const SizedBox(height: 20),
+                    ],
 
-                    const SizedBox(height: 20),
+                    // Free Course Message (only show for free courses)
+                    if (price <= 0) ...[
+                      _buildFreeCourseMessage(isDark, primaryColor),
+                      const SizedBox(height: 20),
+                    ],
 
                     // Order Summary
                     _buildOrderSummary(price, isDark, primaryColor),
@@ -196,6 +215,46 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                   ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFreeCourseMessage(bool isDark, Color primaryColor) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[800] : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.celebration, color: Colors.green, size: 48),
+          const SizedBox(height: 16),
+          Text(
+            'This is a Free Course!',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'You can enroll in this course without any payment. Just click the enroll button below to get started.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? Colors.grey[300] : Colors.grey[600],
             ),
           ),
         ],
@@ -735,15 +794,17 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        AppLocalizations.of(context)!.paymentProcessing,
+                        price > 0 ? 'Processing Payment...' : 'Enrolling...',
                         style: TextStyle(fontSize: 15),
                       ),
                     ],
                   )
                 : Text(
-                    AppLocalizations.of(
-                      context,
-                    )!.paymentPay('\$${total.toStringAsFixed(2)}'),
+                    price > 0
+                        ? AppLocalizations.of(
+                            context,
+                          )!.paymentPay('\$${total.toStringAsFixed(2)}')
+                        : 'Enroll for Free',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
           ),
@@ -753,6 +814,62 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
   }
 
   void _processPayment() async {
+    final coursePrice =
+        double.tryParse(widget.course['price']?.toString() ?? '0') ?? 0.0;
+
+    // Handle free courses directly
+    if (coursePrice <= 0) {
+      setState(() => _isProcessing = true);
+
+      try {
+        // For free courses, directly enroll the user
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final courseProvider = Provider.of<CourseProvider>(
+          context,
+          listen: false,
+        );
+
+        print('Processing free course enrollment...');
+        print('User: ${authProvider.currentUser?.id}');
+        print('Course: ${widget.course['id']}');
+
+        if (authProvider.currentUser != null && widget.course['id'] != null) {
+          // Check current enrollments before enrollment
+          print('Current enrollments before free course enrollment: ${courseProvider.learnerEnrollments.length}');
+          
+          final enrollmentSuccess = await courseProvider.enrollInCourse(
+            widget.course['id'],
+            authProvider.currentUser!.id,
+          );
+
+          print('Free course enrollment result: $enrollmentSuccess');
+
+          if (!enrollmentSuccess) {
+            throw Exception('Failed to enroll in free course');
+          }
+          
+          // Double-check enrollment by refreshing data
+          await courseProvider.loadLearnerEnrollments(authProvider.currentUser!.id);
+          print('Enrollment data refreshed after free course enrollment');
+          print('Current enrollments after free course enrollment: ${courseProvider.learnerEnrollments.length}');
+          
+        } else {
+          throw Exception('User not authenticated or course ID missing');
+        }
+
+        setState(() => _isProcessing = false);
+
+        // Show success dialog for free course
+        _showSuccessDialog(isFree: true);
+      } catch (e) {
+        print('Error in free course enrollment: $e');
+        setState(() => _isProcessing = false);
+        _showErrorDialog(e.toString());
+      }
+      return;
+    }
+
+    // Handle paid courses
     if (_selectedPaymentMethod == 'paypal') {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -764,18 +881,66 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
       return;
     }
 
-    if (!_formKey.currentState!.validate()) {
+    // Only validate form for card payments
+    if (_selectedPaymentMethod == 'card' &&
+        !_formKey.currentState!.validate()) {
       return;
     }
 
     setState(() => _isProcessing = true);
 
-    // Simulate payment processing
-    await Future.delayed(Duration(seconds: 3));
+    try {
+      // Simulate payment processing
+      await Future.delayed(Duration(seconds: 3));
 
-    setState(() => _isProcessing = false);
+      print('Payment completed, now enrolling user...');
 
-    // Show success dialog
+      // After successful payment, enroll the user in the course
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final courseProvider = Provider.of<CourseProvider>(
+        context,
+        listen: false,
+      );
+
+      print('User: ${authProvider.currentUser?.id}');
+      print('Course: ${widget.course['id']}');
+
+      if (authProvider.currentUser != null && widget.course['id'] != null) {
+        // Check current enrollments before enrollment
+        print('Current enrollments before paid course enrollment: ${courseProvider.learnerEnrollments.length}');
+        
+        final enrollmentSuccess = await courseProvider.enrollInCourse(
+          widget.course['id'],
+          authProvider.currentUser!.id,
+        );
+
+        print('Paid course enrollment result: $enrollmentSuccess');
+
+        if (!enrollmentSuccess) {
+          throw Exception('Failed to enroll in course after payment');
+        }
+        
+        // Double-check enrollment by refreshing data
+        await courseProvider.loadLearnerEnrollments(authProvider.currentUser!.id);
+        print('Enrollment data refreshed after paid course enrollment');
+        print('Current enrollments after paid course enrollment: ${courseProvider.learnerEnrollments.length}');
+        
+      } else {
+        throw Exception('User not authenticated or course ID missing');
+      }
+
+      setState(() => _isProcessing = false);
+
+      // Show success dialog for paid course
+      _showSuccessDialog(isFree: false);
+    } catch (e) {
+      print('Error in paid course enrollment: $e');
+      setState(() => _isProcessing = false);
+      _showErrorDialog(e.toString());
+    }
+  }
+
+  void _showSuccessDialog({required bool isFree}) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -795,14 +960,18 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             ),
             const SizedBox(height: 20),
             Text(
-              AppLocalizations.of(context)!.paymentSuccessTitle,
+              isFree
+                  ? 'Enrollment Successful!'
+                  : AppLocalizations.of(context)!.paymentSuccessTitle,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(
-              AppLocalizations.of(
-                context,
-              )!.paymentSuccessMessage(widget.course['title']),
+              isFree
+                  ? 'You have successfully enrolled in ${widget.course['title']}!'
+                  : AppLocalizations.of(
+                      context,
+                    )!.paymentSuccessMessage(widget.course['title']),
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
@@ -810,10 +979,35 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   Navigator.of(context).pop(); // Close dialog
-                  Navigator.of(context).pop(); // Close payment page
-                  Navigator.of(context).pop(); // Close course details
+                  
+                  // Refresh the course provider to update enrollment status
+                  final courseProvider = Provider.of<CourseProvider>(context, listen: false);
+                  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                  
+                  print('Refreshing course data after enrollment...');
+                  
+                  try {
+                    // Refresh enrollment data
+                    if (authProvider.currentUser != null) {
+                      await courseProvider.loadLearnerEnrollments(authProvider.currentUser!.id);
+                    }
+                    await courseProvider.loadCourses();
+                    
+                    print('Course data refreshed successfully');
+                  } catch (e) {
+                    print('Error refreshing course data: $e');
+                  }
+                  
+                  // Close payment page with success result
+                  Navigator.of(context).pop(true);
+                  
+                  // Close course details with enrollment result
+                  Navigator.of(context).pop({
+                    'enrolled': true,
+                    'courseId': widget.course['id'],
+                  });
 
                   // Navigate to course portal
                   Navigator.push(
@@ -832,11 +1026,31 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Text(AppLocalizations.of(context)!.paymentStartLearning),
+                child: Text(
+                  isFree
+                      ? 'Start Learning'
+                      : AppLocalizations.of(context)!.paymentStartLearning,
+                ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showErrorDialog(String error) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text('Failed to process: $error'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('OK'),
+          ),
+        ],
       ),
     );
   }

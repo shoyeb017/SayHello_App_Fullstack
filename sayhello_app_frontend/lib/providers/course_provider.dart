@@ -439,6 +439,73 @@ class CourseProvider extends ChangeNotifier {
     }
   }
 
+  // =============================
+  // INSTRUCTOR OPERATIONS
+  // =============================
+
+  /// Get instructor details by ID
+  Future<Map<String, dynamic>?> getInstructorById(String instructorId) async {
+    try {
+      return await _repository.getInstructorById(instructorId);
+    } catch (e) {
+      _setError('Failed to get instructor details: $e');
+      return null;
+    }
+  }
+
+  /// Get instructor's total students count
+  Future<int> getInstructorStudentsCount(String instructorId) async {
+    try {
+      return await _repository.getInstructorStudentsCount(instructorId);
+    } catch (e) {
+      debugPrint('Failed to get instructor students count: $e');
+      return 0;
+    }
+  }
+
+  /// Get instructor's average rating
+  Future<double> getInstructorAverageRating(String instructorId) async {
+    try {
+      return await _repository.getInstructorAverageRating(instructorId);
+    } catch (e) {
+      debugPrint('Failed to get instructor average rating: $e');
+      return 4.5;
+    }
+  }
+
+  // =============================
+  // FEEDBACK OPERATIONS
+  // =============================
+
+  /// Get course feedback and statistics
+  Future<Map<String, dynamic>> getCourseFeedback(String courseId) async {
+    try {
+      return await _repository.getCourseFeedback(courseId);
+    } catch (e) {
+      _setError('Failed to get course feedback: $e');
+      return {
+        'averageRating': 4.5,
+        'totalReviews': 0,
+        'feedbackList': <Map<String, dynamic>>[],
+      };
+    }
+  }
+
+  /// Get comprehensive course statistics
+  Future<Map<String, dynamic>> getCourseStats(String courseId) async {
+    try {
+      return await _repository.getCourseStats(courseId);
+    } catch (e) {
+      _setError('Failed to get course stats: $e');
+      return {
+        'enrollmentCount': 0,
+        'averageRating': 4.5,
+        'totalReviews': 0,
+        'feedbackList': <Map<String, dynamic>>[],
+      };
+    }
+  }
+
   @override
   void dispose() {
     clear();

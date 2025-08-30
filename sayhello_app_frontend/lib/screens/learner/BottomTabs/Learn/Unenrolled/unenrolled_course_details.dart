@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../../l10n/app_localizations.dart';
+import '../../../../../providers/course_provider.dart';
 import 'course_payment.dart';
 
 class UnenrolledCourseDetailsPage extends StatefulWidget {
@@ -15,6 +17,183 @@ class UnenrolledCourseDetailsPage extends StatefulWidget {
 class _UnenrolledCourseDetailsPageState
     extends State<UnenrolledCourseDetailsPage> {
   bool isExpanded = false;
+  bool _isLoading = true;
+
+  // Backend data
+  Map<String, dynamic>? _instructorData;
+  Map<String, dynamic>? _feedbackData;
+  int _enrollmentCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCourseData();
+  }
+
+  Future<void> _loadCourseData() async {
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final courseProvider = Provider.of<CourseProvider>(
+        context,
+        listen: false,
+      );
+      final courseId = widget.course['id']?.toString();
+      final instructorId = widget.course['instructor_id']?.toString();
+
+      // Load data concurrently with timeout handling
+      final futures = <Future>[];
+
+      if (courseId != null) {
+        // Add course stats with timeout
+        final courseStatsFuture =
+            () async {
+              try {
+                final courseStats = await courseProvider.getCourseStats(
+                  courseId,
+                );
+                final courseFeedback = await courseProvider.getCourseFeedback(
+                  courseId,
+                );
+
+                if (mounted) {
+                  setState(() {
+                    _feedbackData = {
+                      'enrollmentCount': courseStats['enrollmentCount'] ?? 0,
+                      'averageRating': courseFeedback['averageRating'] ?? 0.0,
+                      'totalReviews': courseFeedback['totalReviews'] ?? 0,
+                      'feedbackList': courseFeedback['feedbackList'] ?? [],
+                    };
+                    _enrollmentCount = courseStats['enrollmentCount'] ?? 0;
+                  });
+                }
+              } catch (e) {
+                print('Error loading course stats: $e');
+                // Set default values on error
+                if (mounted) {
+                  setState(() {
+                    _feedbackData = {
+                      'enrollmentCount': 0,
+                      'averageRating': 4.5,
+                      'totalReviews': 0,
+                      'feedbackList': [],
+                    };
+                    _enrollmentCount = 0;
+                  });
+                }
+              }
+            }().timeout(
+              Duration(seconds: 10),
+              onTimeout: () {
+                print('Course stats timeout');
+                // Set default values on timeout
+                if (mounted) {
+                  setState(() {
+                    _feedbackData = {
+                      'enrollmentCount': 0,
+                      'averageRating': 4.5,
+                      'totalReviews': 0,
+                      'feedbackList': [],
+                    };
+                    _enrollmentCount = 0;
+                  });
+                }
+              },
+            );
+
+        futures.add(courseStatsFuture);
+      }
+
+      if (instructorId != null) {
+        // Add instructor data with timeout
+        final instructorFuture =
+            () async {
+              try {
+                final instructorData = await courseProvider.getInstructorById(
+                  instructorId,
+                );
+
+                if (mounted && instructorData != null) {
+                  final studentsCount = await courseProvider
+                      .getInstructorStudentsCount(instructorId);
+                  final averageRating = await courseProvider
+                      .getInstructorAverageRating(instructorId);
+
+                  instructorData['total_students'] = studentsCount;
+                  instructorData['average_rating'] = averageRating;
+
+                  setState(() {
+                    _instructorData = instructorData;
+                  });
+                }
+              } catch (e) {
+                print('Error loading instructor data: $e');
+                // Set default instructor data on error
+                if (mounted) {
+                  setState(() {
+                    _instructorData = {
+                      'name':
+                          widget.course['instructor'] ?? 'Unknown Instructor',
+                      'total_students': 0,
+                      'average_rating': 4.5,
+                    };
+                  });
+                }
+              }
+            }().timeout(
+              Duration(seconds: 8),
+              onTimeout: () {
+                print('Instructor data timeout');
+                // Set default instructor data on timeout
+                if (mounted) {
+                  setState(() {
+                    _instructorData = {
+                      'name':
+                          widget.course['instructor'] ?? 'Unknown Instructor',
+                      'total_students': 0,
+                      'average_rating': 4.5,
+                    };
+                  });
+                }
+              },
+            );
+
+        futures.add(instructorFuture);
+      }
+
+      // Wait for all futures to complete (or timeout)
+      await Future.wait(futures, eagerError: false);
+    } catch (e) {
+      print('Error loading course data: $e');
+      // Set default values if everything fails
+      if (mounted) {
+        setState(() {
+          _feedbackData = {
+            'enrollmentCount': 0,
+            'averageRating': 4.5,
+            'totalReviews': 0,
+            'feedbackList': [],
+          };
+          _enrollmentCount = 0;
+          _instructorData = {
+            'name': widget.course['instructor'] ?? 'Unknown Instructor',
+            'total_students': 0,
+            'average_rating': 4.5,
+          };
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,25 +211,48 @@ class _UnenrolledCourseDetailsPageState
         localizations.courseDetailsFallbackLanguage;
     final level =
         widget.course['level'] ?? localizations.courseDetailsFallbackLevel;
+
+    // Use backend instructor data or fallback
     final instructor =
+        _instructorData?['name'] ??
         widget.course['instructor'] ??
         localizations.courseDetailsFallbackInstructor;
-    final startDate = widget.course['startDate'] ?? '2025-07-15';
-    final endDate = widget.course['endDate'] ?? '2025-09-15';
+
+    final startDate =
+        widget.course['startDate'] ??
+        widget.course['start_date'] ??
+        '2025-07-15';
+    final endDate =
+        widget.course['endDate'] ?? widget.course['end_date'] ?? '2025-09-15';
+
+    // Format dates for better display
+    final formattedStartDate = _formatDate(startDate);
+    final formattedEndDate = _formatDate(endDate);
     final duration =
         widget.course['duration'] ??
         localizations.courseDetailsFallbackDuration;
     final status =
         widget.course['status'] ?? localizations.courseDetailsFallbackStatus;
-    final rating = widget.course['rating'] ?? 4.7;
-    final enrolledStudents = widget.course['students'] ?? 42;
+
+    // Use backend feedback data or fallback
+    final rating =
+        _feedbackData?['averageRating']?.toDouble() ??
+        widget.course['rating'] ??
+        4.7;
+
+    // Use backend enrollment count or fallback
+    final enrolledStudents = _enrollmentCount > 0
+        ? _enrollmentCount
+        : (widget.course['students'] ?? 42);
+
     final price =
         double.tryParse(widget.course['price']?.toString() ?? '49.99') ?? 49.99;
     final thumbnail = widget.course['thumbnail'] ?? '';
     final category =
         widget.course['category'] ??
         localizations.courseDetailsFallbackCategory;
-    final totalSessions = widget.course['totalSessions'] ?? 20;
+    final totalSessions =
+        widget.course['totalSessions'] ?? widget.course['total_sessions'] ?? 20;
 
     // Consistent color scheme with new theme
     final primaryColor = Color(0xFF7A54FF);
@@ -80,101 +282,109 @@ class _UnenrolledCourseDetailsPageState
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Hero-style Course Header (Unique Design)
-                  _buildHeroCourseHeader(
-                    title,
-                    instructor,
-                    thumbnail,
-                    level,
-                    status,
-                    category,
-                    duration,
-                    rating,
-                    price,
-                    isDark,
-                    primaryColor,
-                    textColor,
-                    cardColor,
-                  ),
-
-                  const SizedBox(height: 20),
-                  // Quick Info Pills (Unique Layout)
-                  _buildQuickInfoPills(
-                    language,
-                    totalSessions,
-                    enrolledStudents,
-                    isDark,
-                    primaryColor,
-                    textColor,
-                    subTextColor,
-                    cardColor,
-                    localizations,
-                  ),
-
-                  const SizedBox(height: 20),
-                  // Course Overview Card
-                  _buildCourseOverviewCard(
-                    description,
-                    startDate,
-                    endDate,
-                    duration,
-                    level,
-                    isDark,
-                    primaryColor,
-                    textColor,
-                    subTextColor,
-                    cardColor,
-                    localizations,
-                  ),
-
-                  const SizedBox(height: 20),
-                  // Instructor Spotlight (Different from course details)
-                  _buildInstructorSpotlight(
-                    instructor,
-                    isDark,
-                    primaryColor,
-                    textColor,
-                    subTextColor,
-                    cardColor,
-                    localizations,
-                  ),
-
-                  const SizedBox(height: 20),
-                  // Student Feedback Preview
-                  _buildStudentFeedbackPreview(
-                    rating,
-                    isDark,
-                    primaryColor,
-                    textColor,
-                    subTextColor,
-                    cardColor,
-                    localizations,
-                  ),
-
-                  const SizedBox(height: 100), // Space for floating button
-                ],
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF7A54FF)),
               ),
-            ),
-          ),
+            )
+          : Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Hero-style Course Header (Unique Design)
+                        _buildHeroCourseHeader(
+                          title,
+                          instructor,
+                          thumbnail,
+                          level,
+                          status,
+                          category,
+                          duration,
+                          rating,
+                          price,
+                          isDark,
+                          primaryColor,
+                          textColor,
+                          cardColor,
+                        ),
 
-          // Enhanced Enrollment Action Bar
-          _buildEnhancedEnrollmentBar(
-            price,
-            isDark,
-            primaryColor,
-            textColor,
-            localizations,
-          ),
-        ],
-      ),
+                        const SizedBox(height: 20),
+                        // Quick Info Pills (Unique Layout)
+                        _buildQuickInfoPills(
+                          language,
+                          totalSessions,
+                          enrolledStudents,
+                          isDark,
+                          primaryColor,
+                          textColor,
+                          subTextColor,
+                          cardColor,
+                          localizations,
+                        ),
+
+                        const SizedBox(height: 20),
+                        // Course Overview Card
+                        _buildCourseOverviewCard(
+                          description,
+                          formattedStartDate,
+                          formattedEndDate,
+                          duration,
+                          level,
+                          isDark,
+                          primaryColor,
+                          textColor,
+                          subTextColor,
+                          cardColor,
+                          localizations,
+                        ),
+
+                        const SizedBox(height: 20),
+                        // Instructor Spotlight (Different from course details)
+                        _buildInstructorSpotlight(
+                          instructor,
+                          isDark,
+                          primaryColor,
+                          textColor,
+                          subTextColor,
+                          cardColor,
+                          localizations,
+                        ),
+
+                        const SizedBox(height: 20),
+                        // Student Feedback Preview
+                        _buildStudentFeedbackPreview(
+                          rating,
+                          isDark,
+                          primaryColor,
+                          textColor,
+                          subTextColor,
+                          cardColor,
+                          localizations,
+                        ),
+
+                        const SizedBox(
+                          height: 100,
+                        ), // Space for floating button
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Enhanced Enrollment Action Bar
+                _buildEnhancedEnrollmentBar(
+                  price,
+                  isDark,
+                  primaryColor,
+                  textColor,
+                  localizations,
+                ),
+              ],
+            ),
     );
   }
 
@@ -731,13 +941,17 @@ class _UnenrolledCourseDetailsPageState
                 primaryColor,
               ),
               _buildInstructorStat(
-                '4.8',
+                _instructorData != null
+                    ? '${(_instructorData!['average_rating'] ?? 0.0).toStringAsFixed(1)}'
+                    : '4.8',
                 localizations.courseDetailsInstructorRating,
                 Icons.star,
                 Colors.amber,
               ),
               _buildInstructorStat(
-                '1.2K',
+                _instructorData != null
+                    ? '${_instructorData!['total_students'] ?? 0}'
+                    : '1.2K',
                 localizations.courseDetailsInstructorStudents,
                 Icons.people,
                 Colors.blue,
@@ -865,7 +1079,9 @@ class _UnenrolledCourseDetailsPageState
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      localizations.courseDetailsReviewsCount,
+                      _feedbackData != null
+                          ? '${_feedbackData!['totalReviews'] ?? 0} reviews'
+                          : localizations.courseDetailsReviewsCount,
                       style: TextStyle(fontSize: 10, color: subTextColor),
                     ),
                     const SizedBox(height: 6),
@@ -976,14 +1192,23 @@ class _UnenrolledCourseDetailsPageState
                   ],
                 ),
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
+                  onPressed: () async {
+                    // Always navigate to payment page first
+                    final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
                             CoursePaymentPage(course: widget.course),
                       ),
                     );
+
+                    // If payment was successful, navigate back
+                    if (result == true && mounted) {
+                      Navigator.pop(context, {
+                        'enrolled': true,
+                        'courseId': widget.course['id'],
+                      });
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
@@ -1025,6 +1250,29 @@ class _UnenrolledCourseDetailsPageState
         return Colors.orange;
       default:
         return Colors.green;
+    }
+  }
+
+  String _formatDate(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      final months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
+      return '${date.day} ${months[date.month - 1]} ${date.year}';
+    } catch (e) {
+      return dateString; // Return original if parsing fails
     }
   }
 }

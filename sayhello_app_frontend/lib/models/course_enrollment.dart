@@ -27,13 +27,19 @@ class CourseEnrollment {
   }
 
   /// Convert CourseEnrollment to JSON (for Supabase insert/update)
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
+  Map<String, dynamic> toJson({bool includeId = true}) {
+    final json = {
       'course_id': courseId,
       'learner_id': learnerId,
       'created_at': createdAt.toIso8601String(),
     };
+
+    // Only include id if it's not empty and includeId is true
+    if (includeId && id.isNotEmpty) {
+      json['id'] = id;
+    }
+
+    return json;
   }
 
   /// Create a copy with modified fields
