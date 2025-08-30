@@ -5,11 +5,13 @@ import 'dart:io';
 import '../../../../providers/settings_provider.dart';
 import '../../../../providers/learner_provider.dart';
 import '../../../../providers/auth_provider.dart';
+import '../../../../providers/follower_provider.dart';
 import '../../../../models/learner.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../services/supabase_config.dart';
 import '../../Notifications/notifications.dart';
 import '../../../auth/landing_page.dart';
+import 'followers_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -41,10 +43,19 @@ class _ProfilePageState extends State<ProfilePage> {
 
     _learnerProvider = Provider.of<LearnerProvider>(context, listen: false);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final followerProvider = Provider.of<FollowerProvider>(
+      context,
+      listen: false,
+    );
 
     if (_learnerProvider?.currentLearner == null &&
         authProvider.currentUser != null) {
       await _learnerProvider?.loadLearner(authProvider.currentUser.id);
+    }
+
+    // Load follower counts if user is available
+    if (authProvider.currentUser != null) {
+      await followerProvider.loadCounts(authProvider.currentUser.id);
     }
   }
 
@@ -183,8 +194,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<LearnerProvider, AuthProvider>(
-      builder: (context, learnerProvider, authProvider, child) {
+    return Consumer3<LearnerProvider, AuthProvider, FollowerProvider>(
+      builder: (context, learnerProvider, authProvider, followerProvider, child) {
         final learner = learnerProvider.currentLearner;
         final isLoading = learnerProvider.isLoading;
         final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -321,6 +332,17 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 // Profile Banner Section
                 _buildProfileBanner(context, isDark, primaryColor, learner),
+
+                const SizedBox(height: 16),
+
+                // Stats Section (Followers, Following, Posts)
+                _buildStatsSection(
+                  context,
+                  isDark,
+                  primaryColor,
+                  learner,
+                  followerProvider,
+                ),
 
                 const SizedBox(height: 16),
 
@@ -477,6 +499,140 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStatsSection(
+    BuildContext context,
+    bool isDark,
+    Color primaryColor,
+    Learner learner,
+    FollowerProvider followerProvider,
+  ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[800] : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          // Posts/Feed count
+          _buildStatItem(
+            context,
+            'Posts',
+            followerProvider.feedCount.toString(),
+            Icons.article_outlined,
+            primaryColor,
+            isDark,
+            onTap: () {
+              // Could navigate to user's feed posts
+              print('Navigate to user posts');
+            },
+          ),
+
+          // Followers count
+          _buildStatItem(
+            context,
+            'Followers',
+            followerProvider.followersCount.toString(),
+            Icons.people_outline,
+            primaryColor,
+            isDark,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FollowersPage(
+                    learnerId: learner.id,
+                    learnerName: learner.name,
+                    title: 'Followers',
+                    isFollowers: true,
+                  ),
+                ),
+              );
+            },
+          ),
+
+          // Following count
+          _buildStatItem(
+            context,
+            'Following',
+            followerProvider.followingCount.toString(),
+            Icons.person_add_outlined,
+            primaryColor,
+            isDark,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FollowersPage(
+                    learnerId: learner.id,
+                    learnerName: learner.name,
+                    title: 'Following',
+                    isFollowers: false,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(
+    BuildContext context,
+    String label,
+    String count,
+    IconData icon,
+    Color primaryColor,
+    bool isDark, {
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.grey[700] : Colors.grey[50],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: primaryColor.withOpacity(0.2), width: 1),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: primaryColor, size: 24),
+            const SizedBox(height: 8),
+            Text(
+              count,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
