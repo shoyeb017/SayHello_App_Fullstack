@@ -122,7 +122,7 @@ class _LearnPageState extends State<LearnPage> {
   }
 
   // Helper method to convert Course to Map for compatibility
-  Map<String, dynamic> _courseToMap(Course course) {
+  Map<String, dynamic> _courseToMap(Course course, {bool isEnrolled = false}) {
     return {
       'id': course.id,
       'title': course.title,
@@ -140,7 +140,9 @@ class _LearnPageState extends State<LearnPage> {
       'sessions': course.totalSessions,
       'students': course.enrolledStudents,
       'rating': 4.5, // Default rating
-      'progress': 0.0, // Will be updated based on enrollment
+      'progress': isEnrolled
+          ? 0.5
+          : 0.0, // Set progress > 0 for enrolled courses
       'icon': _getIconForCourse(course),
     };
   }
@@ -193,13 +195,20 @@ class _LearnPageState extends State<LearnPage> {
     final isCurrentlyEnrolled =
         course['progress'] != null && course['progress'] > 0;
 
+    print('🔥 Navigation Debug:');
+    print('Course: ${course['title']}');
+    print('Progress: ${course['progress']}');
+    print('Is Enrolled: $isCurrentlyEnrolled');
+
     if (isCurrentlyEnrolled) {
+      print('🔥 Navigating to Course Portal (enrolled course)');
       // Navigate to course portal for enrolled courses
       Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => CoursePortalPage(course: course)),
       );
     } else {
+      print('🔥 Navigating to Course Details (unenrolled course)');
       // Navigate to course details for unenrolled courses (including completed/deadline-over courses)
       final result = await Navigator.push(
         context,
@@ -697,7 +706,7 @@ class _LearnPageState extends State<LearnPage> {
 
   Widget _buildMyCoursesSection(bool isDark) {
     final enrolledCourseMaps = _enrolledCourses
-        .map((course) => _courseToMap(course))
+        .map((course) => _courseToMap(course, isEnrolled: true))
         .toList();
 
     return Padding(
@@ -755,7 +764,7 @@ class _LearnPageState extends State<LearnPage> {
                     itemCount: _enrolledCourses.length,
                     itemBuilder: (context, index) {
                       return _buildEnrolledCourseCard(
-                        _courseToMap(_enrolledCourses[index]),
+                        _courseToMap(_enrolledCourses[index], isEnrolled: true),
                         isDark,
                       );
                     },

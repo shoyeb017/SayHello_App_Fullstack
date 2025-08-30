@@ -1,33 +1,168 @@
 import 'package:flutter/material.dart';
 import '../../../../../../l10n/app_localizations.dart';
+import '../../../../../../data/course_data.dart';
+import 'package:intl/intl.dart';
 
-class CourseDetails extends StatelessWidget {
+class CourseDetails extends StatefulWidget {
   final Map<String, dynamic> course;
 
   const CourseDetails({super.key, required this.course});
 
   @override
+  State<CourseDetails> createState() => _CourseDetailsState();
+}
+
+class _CourseDetailsState extends State<CourseDetails> {
+  final CourseRepository _courseRepository = CourseRepository();
+
+  Map<String, dynamic>? _instructorData;
+  Map<String, dynamic>? _courseFeedback;
+  double _instructorRating = 4.5;
+  double _courseRating = 4.5;
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCourseData();
+  }
+
+  Future<void> _loadCourseData() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+
+      // Get instructor ID from course data
+      final instructorId = widget.course['instructor_id'];
+      if (instructorId != null) {
+        // Fetch instructor details
+        final instructorData = await _courseRepository.getInstructorById(
+          instructorId,
+        );
+        if (instructorData != null) {
+          _instructorData = instructorData;
+        }
+
+        // Fetch instructor rating
+        final instructorRating = await _courseRepository
+            .getInstructorAverageRating(instructorId);
+        _instructorRating = instructorRating;
+
+        // Fetch instructor's total students count
+        final studentsCount = await _courseRepository
+            .getInstructorStudentsCount(instructorId);
+        final coursesCount = await _courseRepository.getInstructorCoursesCount(
+          instructorId,
+        );
+        if (_instructorData != null) {
+          _instructorData!['total_students'] = studentsCount;
+          _instructorData!['courses_count'] = coursesCount;
+        }
+      }
+
+      // Fetch course feedback and rating
+      final courseId = widget.course['id'];
+      if (courseId != null) {
+        final feedbackData = await _courseRepository.getCourseFeedback(
+          courseId,
+        );
+        _courseFeedback = feedbackData;
+        _courseRating = feedbackData['averageRating']?.toDouble() ?? 4.5;
+      }
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading course data: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = e.toString();
+        });
+      }
+    }
+  }
+
+  String _formatDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return 'Not specified';
+
+    try {
+      final date = DateTime.parse(dateString);
+      return DateFormat('MMM d, yyyy').format(date);
+    } catch (e) {
+      print('Error parsing date: $dateString, error: $e');
+      return dateString; // Return original string if parsing fails
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Extract all course data with fallback values
-    final title = course['title'] ?? 'Course Title';
+    // Show loading indicator while fetching data
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF7A54FF)),
+        ),
+      );
+    }
+
+    // Show error message if data loading failed
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              'Error loading course details',
+              style: TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _error!,
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(onPressed: _loadCourseData, child: Text('Retry')),
+          ],
+        ),
+      );
+    }
+
+    // Extract all course data with fallback values and proper formatting
+    final title = widget.course['title'] ?? 'Course Title';
     final description =
-        course['description'] ??
+        widget.course['description'] ??
         'This is a comprehensive course designed to help you master the language.';
-    final language = course['language'] ?? 'English';
-    final level = course['level'] ?? 'Beginner';
-    final instructor = course['instructor'] ?? 'John Doe';
-    final startDate = course['startDate'] ?? '2025-07-15';
-    final endDate = course['endDate'] ?? '2025-09-15';
-    final duration = course['duration'] ?? '4 weeks';
-    final status = course['status'] ?? 'active';
-    final rating = course['rating'] ?? 4.7;
-    final enrolledStudents = course['students'] ?? 42;
+    final language = widget.course['language'] ?? 'English';
+    final level = widget.course['level'] ?? 'Beginner';
+    final instructor =
+        _instructorData?['name'] ?? widget.course['instructor'] ?? 'John Doe';
+    final startDate = _formatDate(
+      widget.course['startDate'] ?? widget.course['start_date'],
+    );
+    final endDate = _formatDate(
+      widget.course['endDate'] ?? widget.course['end_date'],
+    );
+    final duration = widget.course['duration'] ?? '4 weeks';
+    final status = widget.course['status'] ?? 'active';
+    final rating = _courseRating; // Use rating from feedback table
+    final enrolledStudents =
+        widget.course['students'] ?? widget.course['enrolled_students'] ?? 42;
     final price =
-        double.tryParse(course['price']?.toString() ?? '49.99') ?? 49.99;
-    final thumbnail = course['thumbnail'] ?? '';
-    final category = course['category'] ?? 'Language';
+        double.tryParse(widget.course['price']?.toString() ?? '49.99') ?? 49.99;
+    final thumbnail =
+        widget.course['thumbnail'] ?? widget.course['thumbnail_url'] ?? '';
+    final category = widget.course['category'] ?? 'Language';
 
     // Consistent color scheme with new theme
     final primaryColor = Color(0xFF7A54FF);
@@ -424,7 +559,7 @@ class CourseDetails extends StatelessWidget {
                     ), // Reduced from 20
                     const SizedBox(width: 3), // Reduced from 4
                     Text(
-                      rating.toStringAsFixed(1),
+                      _courseRating.toStringAsFixed(1),
                       style: TextStyle(
                         fontSize: 15, // Reduced from 18
                         fontWeight: FontWeight.bold,
@@ -441,6 +576,10 @@ class CourseDetails extends StatelessWidget {
                     color: subTextColor,
                     fontWeight: FontWeight.w500,
                   ),
+                ),
+                Text(
+                  '(${_courseFeedback?['totalReviews'] ?? 0} reviews)',
+                  style: TextStyle(fontSize: 8, color: subTextColor),
                 ),
               ],
             ),
@@ -723,18 +862,23 @@ class CourseDetails extends StatelessWidget {
     Color? cardColor,
     BuildContext context,
   ) {
-    // Sample instructor data - in real app this would come from API
-    final instructorData = {
-      'name': instructor,
-      'bio':
-          'Experienced educator with over 8 years of teaching experience. Specializes in modern language learning techniques and interactive teaching methods.',
-      'rating': 4.8,
-      'totalStudents': 1250,
-      'coursesOffered': 12,
-      'experience': 8, // Just the number, UI will add localized text
-      'language': course['language'] ?? 'English', // Just the language name
-      'avatar': '', // Would be URL in real app
-    };
+    // Use loaded instructor data or fallback values
+    final instructorData = _instructorData ?? {};
+    final instructorName = instructorData['name'] ?? instructor;
+    final instructorBio =
+        instructorData['bio'] ??
+        'Experienced educator with over 8 years of teaching experience. Specializes in modern language learning techniques and interactive teaching methods.';
+    final instructorImage = instructorData['profile_image'] ?? '';
+    final experienceYears = instructorData['years_of_experience'] ?? 8;
+    final instructorRating = _instructorRating;
+
+    // Calculate instructor's total students and courses (you may want to add these to the API)
+    final totalStudents =
+        _instructorData?['total_students'] ??
+        1250; // This now comes from getInstructorStudentsCount
+    final coursesOffered =
+        _instructorData?['courses_count'] ??
+        12; // This now comes from getInstructorCoursesCount
 
     return Container(
       width: double.infinity,
@@ -789,12 +933,12 @@ class CourseDetails extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: instructorData['avatar']?.toString().isEmpty == true
+                child: instructorImage.isEmpty
                     ? Icon(Icons.person, color: Colors.white, size: 30)
                     : ClipRRect(
                         borderRadius: BorderRadius.circular(30),
                         child: Image.network(
-                          instructorData['avatar']!.toString(),
+                          instructorImage,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
                               Icon(Icons.person, color: Colors.white, size: 30),
@@ -813,7 +957,7 @@ class CourseDetails extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            instructorData['name']!.toString(),
+                            instructorName,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -835,7 +979,7 @@ class CourseDetails extends StatelessWidget {
                         Icon(Icons.star, color: Colors.amber, size: 14),
                         const SizedBox(width: 2),
                         Text(
-                          '${instructorData['rating']}',
+                          instructorRating.toStringAsFixed(1),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -844,9 +988,9 @@ class CourseDetails extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          AppLocalizations.of(context)!.instructorStudents(
-                            instructorData['totalStudents'] as int,
-                          ),
+                          AppLocalizations.of(
+                            context,
+                          )!.instructorStudents(totalStudents),
                           style: TextStyle(fontSize: 11, color: subTextColor),
                         ),
                       ],
@@ -855,7 +999,7 @@ class CourseDetails extends StatelessWidget {
 
                     // Experience and Education
                     Text(
-                      '${AppLocalizations.of(context)!.experienceYears(instructorData['experience'].toString())} • ${AppLocalizations.of(context)!.expertInLanguage(instructorData['language'] as String)}',
+                      '${AppLocalizations.of(context)!.experienceYears(experienceYears.toString())} • ${AppLocalizations.of(context)!.expertInLanguage(widget.course['language'] ?? 'English')}',
                       style: TextStyle(fontSize: 11, color: subTextColor),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -879,7 +1023,7 @@ class CourseDetails extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            instructorData['bio']!.toString(),
+            instructorBio,
             style: TextStyle(fontSize: 12, color: subTextColor, height: 1.4),
           ),
 
@@ -891,7 +1035,7 @@ class CourseDetails extends StatelessWidget {
               Expanded(
                 child: _buildInstructorStatCard(
                   AppLocalizations.of(context)!.instructorCourses,
-                  '${instructorData['coursesOffered']}',
+                  coursesOffered.toString(),
                   Icons.book,
                   primaryColor,
                   isDark,
@@ -901,7 +1045,7 @@ class CourseDetails extends StatelessWidget {
               Expanded(
                 child: _buildInstructorStatCard(
                   AppLocalizations.of(context)!.studentsLabel,
-                  '${instructorData['totalStudents']}',
+                  totalStudents.toString(),
                   Icons.people,
                   primaryColor,
                   isDark,
@@ -911,7 +1055,7 @@ class CourseDetails extends StatelessWidget {
               Expanded(
                 child: _buildInstructorStatCard(
                   AppLocalizations.of(context)!.instructorRating,
-                  '${instructorData['rating']}',
+                  instructorRating.toStringAsFixed(1),
                   Icons.star,
                   Colors.amber,
                   isDark,

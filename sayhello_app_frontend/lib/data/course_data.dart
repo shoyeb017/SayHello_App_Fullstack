@@ -519,6 +519,26 @@ class CourseRepository {
     }
   }
 
+  /// Get instructor's courses count
+  Future<int> getInstructorCoursesCount(String instructorId) async {
+    try {
+      print('Getting courses count for instructor: $instructorId');
+
+      final response = await _supabase
+          .from('courses')
+          .select('id')
+          .eq('instructor_id', instructorId);
+
+      final count = response.length;
+      print('Total courses for instructor $instructorId: $count');
+      return count;
+    } catch (e, stackTrace) {
+      print('Error getting instructor courses count: $e');
+      print('Stack trace: $stackTrace');
+      return 0; // Return 0 instead of throwing to handle gracefully
+    }
+  }
+
   /// Helper method to get instructor's course IDs
   Future<List<String>> _getInstructorCourseIds(String instructorId) async {
     final response = await _supabase

@@ -768,7 +768,13 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: _isProcessing ? null : _processPayment,
+            onPressed: _isProcessing
+                ? null
+                : () {
+                    print('🔥 Payment button pressed!'); // Debug print
+                    print('🔥 _isProcessing: $_isProcessing'); // Debug print
+                    _processPayment();
+                  },
             style: ElevatedButton.styleFrom(
               backgroundColor: primaryColor,
               foregroundColor: Colors.white,
@@ -814,8 +820,12 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
   }
 
   void _processPayment() async {
+    print('🔥 _processPayment called!'); // Debug print
+    print('🔥 _isProcessing state: $_isProcessing'); // Debug print
+
     final coursePrice =
         double.tryParse(widget.course['price']?.toString() ?? '0') ?? 0.0;
+    print('🔥 Course price: $coursePrice'); // Debug print
 
     // Handle free courses directly
     if (coursePrice <= 0) {
@@ -875,23 +885,92 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
     }
 
     // Handle paid courses
+    print(
+      '🔥 Processing paid course, selected payment method: $_selectedPaymentMethod',
+    ); // Debug print
+
     if (_selectedPaymentMethod == 'paypal') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.paymentProcessingPayPal),
-          backgroundColor: Color(0xFF7A54FF),
-        ),
-      );
-      // Add PayPal payment processing logic here
+      print('🔥 PayPal selected, processing payment...'); // Debug print
+
+      setState(() => _isProcessing = true);
+
+      try {
+        // Show PayPal processing snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.paymentProcessingPayPal,
+            ),
+            backgroundColor: Color(0xFF7A54FF),
+          ),
+        );
+
+        // Simulate PayPal payment processing
+        await Future.delayed(Duration(seconds: 3));
+
+        print('🔥 PayPal payment completed, now enrolling user...');
+
+        // After successful PayPal payment, enroll the user in the course
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final courseProvider = Provider.of<CourseProvider>(
+          context,
+          listen: false,
+        );
+
+        print('User: ${authProvider.currentUser?.id}');
+        print('Course: ${widget.course['id']}');
+
+        if (authProvider.currentUser != null && widget.course['id'] != null) {
+          // Check current enrollments before enrollment
+          print(
+            'Current enrollments before PayPal course enrollment: ${courseProvider.learnerEnrollments.length}',
+          );
+
+          final enrollmentSuccess = await courseProvider.enrollInCourse(
+            widget.course['id'],
+            authProvider.currentUser!.id,
+          );
+
+          print('PayPal course enrollment result: $enrollmentSuccess');
+
+          if (!enrollmentSuccess) {
+            throw Exception('Failed to enroll in course after PayPal payment');
+          }
+
+          // Double-check enrollment by refreshing data
+          await courseProvider.loadLearnerEnrollments(
+            authProvider.currentUser!.id,
+          );
+          print('Enrollment data refreshed after PayPal course enrollment');
+          print(
+            'Current enrollments after PayPal course enrollment: ${courseProvider.learnerEnrollments.length}',
+          );
+        } else {
+          throw Exception('User not authenticated or course ID missing');
+        }
+
+        setState(() => _isProcessing = false);
+
+        // Show success dialog for PayPal payment
+        _showSuccessDialog(isFree: false);
+      } catch (e) {
+        print('Error in PayPal course enrollment: $e');
+        setState(() => _isProcessing = false);
+        _showErrorDialog(e.toString());
+      }
       return;
     }
+
+    print('🔥 Not PayPal, checking form validation...'); // Debug print
 
     // Only validate form for card payments
     if (_selectedPaymentMethod == 'card' &&
         !_formKey.currentState!.validate()) {
+      print('🔥 Form validation failed, returning'); // Debug print
       return;
     }
 
+    print('🔥 Starting payment processing...'); // Debug print
     setState(() => _isProcessing = true);
 
     try {
@@ -951,10 +1030,16 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
   }
 
   void _showSuccessDialog({required bool isFree}) {
+    // Save references to providers before showing dialog
+    final courseProvider = Provider.of<CourseProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final navigator = Navigator.of(context);
+    final localizations = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -972,16 +1057,14 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
             Text(
               isFree
                   ? 'Enrollment Successful!'
-                  : AppLocalizations.of(context)!.paymentSuccessTitle,
+                  : localizations.paymentSuccessTitle,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(
               isFree
                   ? 'You have successfully enrolled in ${widget.course['title']}!'
-                  : AppLocalizations.of(
-                      context,
-                    )!.paymentSuccessMessage(widget.course['title']),
+                  : localizations.paymentSuccessMessage(widget.course['title']),
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
@@ -990,17 +1073,8 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  Navigator.of(context).pop(); // Close dialog
-
-                  // Refresh the course provider to update enrollment status
-                  final courseProvider = Provider.of<CourseProvider>(
-                    context,
-                    listen: false,
-                  );
-                  final authProvider = Provider.of<AuthProvider>(
-                    context,
-                    listen: false,
-                  );
+                  // Close dialog first
+                  Navigator.of(dialogContext).pop();
 
                   print('Refreshing course data after enrollment...');
 
@@ -1018,17 +1092,15 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                     print('Error refreshing course data: $e');
                   }
 
-                  // Close payment page with success result
-                  Navigator.of(context).pop(true);
-
-                  // Close course details with enrollment result
-                  Navigator.of(
-                    context,
-                  ).pop({'enrolled': true, 'courseId': widget.course['id']});
+                  // Navigate back with results using saved navigator
+                  navigator.pop(true); // Close payment page
+                  navigator.pop({
+                    'enrolled': true,
+                    'courseId': widget.course['id'],
+                  }); // Close course details
 
                   // Navigate to course portal
-                  Navigator.push(
-                    context,
+                  navigator.push(
                     MaterialPageRoute(
                       builder: (context) =>
                           CoursePortalPage(course: widget.course),
@@ -1046,7 +1118,7 @@ class _CoursePaymentPageState extends State<CoursePaymentPage> {
                 child: Text(
                   isFree
                       ? 'Start Learning'
-                      : AppLocalizations.of(context)!.paymentStartLearning,
+                      : localizations.paymentStartLearning,
                 ),
               ),
             ),
