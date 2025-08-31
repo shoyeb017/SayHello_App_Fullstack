@@ -17,7 +17,10 @@ class NotificationRepository {
     try {
       print('NotificationRepository: Loading notifications for user: $userId');
 
-      var query = _client.from('notifications').select().eq('user_id', userId);
+      var query = _client
+          .from('notifications')
+          .select()
+          .eq('learner_id', userId);
 
       if (unreadOnly == true) {
         query = query.eq('is_read', false);
@@ -51,14 +54,13 @@ class NotificationRepository {
       print('NotificationRepository: Creating notification for user: $userId');
 
       final notification = {
-        'user_id': userId,
-        'title': title,
-        'message': message,
-        'type': type,
-        'related_id': relatedId,
+        'learner_id': userId,
+        'content_title': title,
+        'content_text': message,
+        'notification_type': type,
+        'course_id': relatedId,
         'is_read': false,
         'created_at': DateTime.now().toIso8601String(),
-        'data': data,
       };
 
       final response = await _client
@@ -112,7 +114,7 @@ class NotificationRepository {
             'is_read': true,
             'read_at': DateTime.now().toIso8601String(),
           })
-          .eq('user_id', userId)
+          .eq('learner_id', userId)
           .eq('is_read', false);
 
       print('NotificationRepository: All notifications marked as read');
@@ -151,7 +153,7 @@ class NotificationRepository {
       final totalResponse = await _client
           .from('notifications')
           .select('id, is_read, type')
-          .eq('user_id', userId);
+          .eq('learner_id', userId);
 
       final totalCount = totalResponse.length;
       final unreadCount = totalResponse
@@ -197,19 +199,20 @@ class NotificationRepository {
         'NotificationRepository: Loading notification settings for user: $userId',
       );
 
-      final response = await _client
-          .from('notification_settings')
-          .select()
-          .eq('user_id', userId)
-          .maybeSingle();
-
-      if (response == null) {
-        print('NotificationRepository: No settings found, creating default');
-        return await createDefaultNotificationSettings(userId);
-      }
-
-      print('NotificationRepository: Settings loaded successfully');
-      return NotificationSettings.fromJson(response);
+      // For now, return default settings since notification_settings table doesn't exist
+      return NotificationSettings(
+        id: userId,
+        userId: userId,
+        pushNotifications: true,
+        emailNotifications: true,
+        courseReminders: true,
+        chatMessages: true,
+        feedUpdates: true,
+        systemAlerts: true,
+        quietHoursStart: '22:00',
+        quietHoursEnd: '08:00',
+        updatedAt: DateTime.now(),
+      );
     } catch (e) {
       print('NotificationRepository: Error loading notification settings: $e');
       throw e;
@@ -225,27 +228,20 @@ class NotificationRepository {
         'NotificationRepository: Creating default notification settings for user: $userId',
       );
 
-      final settings = {
-        'user_id': userId,
-        'push_notifications': true,
-        'email_notifications': true,
-        'course_reminders': true,
-        'chat_messages': true,
-        'feed_updates': true,
-        'system_alerts': true,
-        'quiet_hours_start': '22:00',
-        'quiet_hours_end': '08:00',
-        'updated_at': DateTime.now().toIso8601String(),
-      };
-
-      final response = await _client
-          .from('notification_settings')
-          .insert(settings)
-          .select()
-          .single();
-
-      print('NotificationRepository: Default settings created successfully');
-      return NotificationSettings.fromJson(response);
+      // Return default settings since notification_settings table doesn't exist
+      return NotificationSettings(
+        id: userId,
+        userId: userId,
+        pushNotifications: true,
+        emailNotifications: true,
+        courseReminders: true,
+        chatMessages: true,
+        feedUpdates: true,
+        systemAlerts: true,
+        quietHoursStart: '22:00',
+        quietHoursEnd: '08:00',
+        updatedAt: DateTime.now(),
+      );
     } catch (e) {
       print('NotificationRepository: Error creating default settings: $e');
       throw e;
@@ -262,20 +258,20 @@ class NotificationRepository {
         'NotificationRepository: Updating notification settings for user: $userId',
       );
 
-      final updatedSettings = {
-        ...updates,
-        'updated_at': DateTime.now().toIso8601String(),
-      };
-
-      final response = await _client
-          .from('notification_settings')
-          .update(updatedSettings)
-          .eq('user_id', userId)
-          .select()
-          .single();
-
-      print('NotificationRepository: Settings updated successfully');
-      return NotificationSettings.fromJson(response);
+      // For now, return default settings with updates applied since notification_settings table doesn't exist
+      return NotificationSettings(
+        id: userId,
+        userId: userId,
+        pushNotifications: updates['push_notifications'] ?? true,
+        emailNotifications: updates['email_notifications'] ?? true,
+        courseReminders: updates['course_reminders'] ?? true,
+        chatMessages: updates['chat_messages'] ?? true,
+        feedUpdates: updates['feed_updates'] ?? true,
+        systemAlerts: updates['system_alerts'] ?? true,
+        quietHoursStart: updates['quiet_hours_start'] ?? '22:00',
+        quietHoursEnd: updates['quiet_hours_end'] ?? '08:00',
+        updatedAt: DateTime.now(),
+      );
     } catch (e) {
       print('NotificationRepository: Error updating settings: $e');
       throw e;
@@ -301,7 +297,7 @@ class NotificationRepository {
           table: 'notifications',
           filter: PostgresChangeFilter(
             type: PostgresChangeFilterType.eq,
-            column: 'user_id',
+            column: 'learner_id',
             value: userId,
           ),
           callback: (payload) {
@@ -316,7 +312,7 @@ class NotificationRepository {
           table: 'notifications',
           filter: PostgresChangeFilter(
             type: PostgresChangeFilterType.eq,
-            column: 'user_id',
+            column: 'learner_id',
             value: userId,
           ),
           callback: (payload) {
@@ -331,7 +327,7 @@ class NotificationRepository {
           table: 'notifications',
           filter: PostgresChangeFilter(
             type: PostgresChangeFilterType.eq,
-            column: 'user_id',
+            column: 'learner_id',
             value: userId,
           ),
           callback: (payload) {

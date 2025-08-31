@@ -65,7 +65,9 @@ class NotificationProvider extends ChangeNotifier {
       print(
         'NotificationProvider: Loaded ${_notifications.length} notifications',
       );
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     } catch (e) {
       print('NotificationProvider: Error loading notifications: $e');
       _setError('Failed to load notifications: ${e.toString()}');
@@ -92,7 +94,9 @@ class NotificationProvider extends ChangeNotifier {
       print(
         'NotificationProvider: Loaded ${_notifications.length} unread notifications',
       );
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     } catch (e) {
       print('NotificationProvider: Error loading unread notifications: $e');
       _setError('Failed to load unread notifications: ${e.toString()}');
@@ -118,7 +122,9 @@ class NotificationProvider extends ChangeNotifier {
         final index = _notifications.indexWhere((n) => n.id == notificationId);
         if (index != -1) {
           _notifications[index] = _notifications[index].markAsRead();
-          notifyListeners();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            notifyListeners();
+          });
         }
 
         print('NotificationProvider: Notification marked as read successfully');
@@ -150,7 +156,9 @@ class NotificationProvider extends ChangeNotifier {
       if (success) {
         // Update all local notifications
         _notifications = _notifications.map((n) => n.markAsRead()).toList();
-        notifyListeners();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          notifyListeners();
+        });
 
         print(
           'NotificationProvider: All notifications marked as read successfully',
@@ -183,7 +191,9 @@ class NotificationProvider extends ChangeNotifier {
       if (success) {
         // Remove from local list
         _notifications.removeWhere((n) => n.id == notificationId);
-        notifyListeners();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          notifyListeners();
+        });
 
         print('NotificationProvider: Notification deleted successfully');
         return true;
@@ -222,7 +232,9 @@ class NotificationProvider extends ChangeNotifier {
 
       // Add to local list (real-time will also add it, but this provides immediate feedback)
       _notifications.insert(0, notification);
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
 
       print('NotificationProvider: Notification created successfully');
       return notification;
@@ -249,7 +261,9 @@ class NotificationProvider extends ChangeNotifier {
       print(
         'NotificationProvider: Summary loaded - Total: ${_summary?.totalCount}, Unread: ${_summary?.unreadCount}',
       );
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     } catch (e) {
       print('NotificationProvider: Error loading summary: $e');
       _setError('Failed to load notification summary: ${e.toString()}');
@@ -270,7 +284,9 @@ class NotificationProvider extends ChangeNotifier {
       _settings = await _repository.getNotificationSettings(userId);
 
       print('NotificationProvider: Settings loaded successfully');
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     } catch (e) {
       print('NotificationProvider: Error loading settings: $e');
       _setError('Failed to load notification settings: ${e.toString()}');
@@ -293,7 +309,9 @@ class NotificationProvider extends ChangeNotifier {
       _settings = await _repository.updateNotificationSettings(userId, updates);
 
       print('NotificationProvider: Settings updated successfully');
-      notifyListeners();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
       return true;
     } catch (e) {
       print('NotificationProvider: Error updating settings: $e');
@@ -328,7 +346,9 @@ class NotificationProvider extends ChangeNotifier {
         // Check if notification already exists (to avoid duplicates)
         if (!_notifications.any((n) => n.id == notification.id)) {
           _notifications.insert(0, notification);
-          notifyListeners();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            notifyListeners();
+          });
         }
       },
       onNotificationUpdated: (notification) {
@@ -339,7 +359,9 @@ class NotificationProvider extends ChangeNotifier {
         final index = _notifications.indexWhere((n) => n.id == notification.id);
         if (index != -1) {
           _notifications[index] = notification;
-          notifyListeners();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            notifyListeners();
+          });
         }
       },
       onNotificationDeleted: (notificationId) {
@@ -348,7 +370,9 @@ class NotificationProvider extends ChangeNotifier {
         );
 
         _notifications.removeWhere((n) => n.id == notificationId);
-        notifyListeners();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          notifyListeners();
+        });
       },
     );
   }
@@ -387,7 +411,9 @@ class NotificationProvider extends ChangeNotifier {
     print('NotificationProvider: Clearing all notifications');
     _notifications.clear();
     _summary = null;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   /// Refresh notifications (reload from server)
@@ -423,22 +449,30 @@ class NotificationProvider extends ChangeNotifier {
 
   void _setLoading(bool loading) {
     _isLoading = loading;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   void _setUpdating(bool updating) {
     _isUpdating = updating;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   void _setDeleting(bool deleting) {
     _isDeleting = deleting;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   void _setError(String? error) {
     _error = error;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   void _clearError() {

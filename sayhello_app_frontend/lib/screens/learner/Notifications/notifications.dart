@@ -15,15 +15,20 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
+  NotificationProvider? _notificationProvider;
+
   @override
   void initState() {
     super.initState();
-    _loadNotifications();
+    // Defer loading notifications until after build phase
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadNotifications();
+    });
   }
 
   Future<void> _loadNotifications() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final notificationProvider = Provider.of<NotificationProvider>(
+    _notificationProvider = Provider.of<NotificationProvider>(
       context,
       listen: false,
     );
@@ -33,18 +38,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
       final currentUser = authProvider.currentUser as Learner;
 
       // Load notifications and subscribe to real-time updates
-      await notificationProvider.loadNotifications(currentUser.id);
-      notificationProvider.subscribeToRealTimeUpdates(currentUser.id);
+      await _notificationProvider!.loadNotifications(currentUser.id);
+      _notificationProvider!.subscribeToRealTimeUpdates(currentUser.id);
     }
   }
 
   @override
   void dispose() {
-    final notificationProvider = Provider.of<NotificationProvider>(
-      context,
-      listen: false,
-    );
-    notificationProvider.unsubscribeFromRealTimeUpdates();
+    // Use the stored reference instead of accessing context
+    _notificationProvider?.unsubscribeFromRealTimeUpdates();
     super.dispose();
   }
 
