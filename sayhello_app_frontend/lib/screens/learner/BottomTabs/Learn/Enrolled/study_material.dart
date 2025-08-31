@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../l10n/app_localizations.dart';
+import '../../../../../providers/study_material_provider.dart';
+import '../../../../../models/study_material.dart';
 import 'study_material_viewer.dart';
 
 class StudyMaterialTab extends StatefulWidget {
@@ -14,6 +17,27 @@ class StudyMaterialTab extends StatefulWidget {
 
 class _StudyMaterialTabState extends State<StudyMaterialTab> {
   final Set<String> _expandedDescriptions = <String>{};
+
+  @override
+  void initState() {
+    super.initState();
+    // Load study materials when widget initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadStudyMaterials();
+    });
+  }
+
+  /// Load study materials for this course
+  void _loadStudyMaterials() {
+    if (!mounted) return;
+
+    final studyMaterialProvider = context.read<StudyMaterialProvider>();
+    final courseId = widget.course['id']?.toString();
+
+    if (courseId != null) {
+      studyMaterialProvider.loadStudyMaterials(courseId);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,361 +53,318 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
         (isDark ? Colors.grey.shade400 : Colors.grey.shade600);
     final cardColor = Theme.of(context).cardColor;
 
-    // Enhanced dynamic study materials data with online URLs
-    final materials = [
-      {
-        'id': 'mat_1',
-        'title': 'Flutter Development Fundamentals',
-        'description':
-            'Comprehensive guide covering all essential Flutter concepts, widgets, state management, and best practices. This document includes detailed explanations of Flutter architecture, widget tree concepts, lifecycle methods, and practical examples to help you master mobile app development with Flutter.',
-        'type': 'pdf',
-        'category': 'Guide',
-        'uploaded': '2025-07-20',
-        'pages': 24,
-        'downloads': 156,
-        'rating': 4.8,
-        'isDownloaded': true,
-        'isFavorite': true,
-        'tags': ['fundamentals', 'guide', 'essential'],
-        'difficulty': 'Beginner',
-        'url':
-            'https://pdfs.semanticscholar.org/7980/8de858f8efe21868e782e42be1af624ffdb2.pdf', // Sample PDF URL
-      },
-      {
-        'id': 'mat_2',
-        'title': 'Advanced Dart Programming Workbook',
-        'description':
-            'Interactive workbook with exercises and practical applications for advanced Dart programming concepts. Covers async programming, streams, isolates, and advanced object-oriented programming techniques with real-world examples and coding challenges.',
-        'type': 'doc',
-        'category': 'Workbook',
-        'uploaded': '2025-07-22',
-        'pages': 18,
-        'downloads': 89,
-        'rating': 4.6,
-        'isDownloaded': false,
-        'isFavorite': true,
-        'tags': ['advanced', 'workbook', 'exercises'],
-        'difficulty': 'Advanced',
-        'url':
-            'https://docs.google.com/document/d/1dwPNGDiWvSZLcs9zKhKSMcKA9iQ80x8ZiW9ICu_n_Qs/preview', // Sample DOC URL
-      },
-      {
-        'id': 'mat_3',
-        'title': 'Flutter Widget Reference Chart',
-        'description':
-            'Handy visual reference chart for quick lookup of key Flutter widgets and their properties. Includes commonly used widgets, layout widgets, and material design components with visual examples and code snippets.',
-        'type': 'image',
-        'category': 'Reference',
-        'uploaded': '2025-07-23',
-        'pages': 2,
-        'downloads': 203,
-        'rating': 4.9,
-        'isDownloaded': true,
-        'isFavorite': false,
-        'tags': ['reference', 'quick', 'chart'],
-        'difficulty': 'All Levels',
-        'url': 'https://picsum.photos/800/600?random=1', // Sample image URL
-      },
-      {
-        'id': 'mat_4',
-        'title': 'State Management Patterns PDF',
-        'description':
-            'Complete guide to state management in Flutter applications. Covers Provider, Bloc, Riverpod, and other popular state management solutions with detailed examples and comparisons to help you choose the right approach for your project.',
-        'type': 'pdf',
-        'category': 'Guide',
-        'uploaded': '2025-07-24',
-        'pages': 35,
-        'downloads': 124,
-        'rating': 4.7,
-        'isDownloaded': false,
-        'isFavorite': true,
-        'tags': ['state management', 'patterns', 'architecture'],
-        'difficulty': 'Intermediate',
-        'url':
-            'https://pdfs.semanticscholar.org/7980/8de858f8efe21868e782e42be1af624ffdb2.pdf', // Sample PDF URL
-      },
-      {
-        'id': 'mat_5',
-        'title': 'Flutter UI Design Inspiration',
-        'description':
-            'Collection of beautiful Flutter UI designs and inspirations. This visual guide showcases modern app design patterns, color schemes, typography choices, and animation examples to inspire your next Flutter project.',
-        'type': 'image',
-        'category': 'Design',
-        'uploaded': '2025-07-25',
-        'pages': 1,
-        'downloads': 87,
-        'rating': 4.5,
-        'isDownloaded': false,
-        'isFavorite': false,
-        'tags': ['design', 'ui', 'inspiration'],
-        'difficulty': 'All Levels',
-        'url': 'https://picsum.photos/1200/800?random=2', // Sample image URL
-      },
-      {
-        'id': 'mat_6',
-        'title': 'API Integration Documentation',
-        'description':
-            'Detailed documentation for integrating REST APIs in Flutter applications. Covers HTTP requests, JSON parsing, error handling, authentication, and best practices for network programming in mobile apps.',
-        'type': 'docx',
-        'category': 'Documentation',
-        'uploaded': '2025-07-26',
-        'pages': 28,
-        'downloads': 165,
-        'rating': 4.8,
-        'isDownloaded': true,
-        'isFavorite': true,
-        'tags': ['api', 'integration', 'networking'],
-        'difficulty': 'Intermediate',
-        'url':
-            'https://file-examples.com/storage/fe68c1c2fa66f2c6e958a5d/2017/10/file_example_DOC_100kB.doc', // Sample DOCX URL
-      },
-    ];
+    return Consumer<StudyMaterialProvider>(
+      builder: (context, studyMaterialProvider, child) {
+        final isLoading = studyMaterialProvider.isLoading;
+        final error = studyMaterialProvider.error;
+        final materials = studyMaterialProvider.studyMaterials;
 
-    // Calculate statistics
-    final totalMaterials = materials.length;
-    final pdfCount = materials.where((m) => m['type'] == 'pdf').length;
-    final imageCount = materials.where((m) => m['type'] == 'image').length;
-    final othersCount = materials
-        .where((m) => !['pdf', 'image'].contains(m['type']))
-        .length;
+        // Calculate statistics from real data
+        final totalMaterials = materials.length;
+        final pdfCount = materials
+            .where((m) => m.materialType.toLowerCase() == 'pdf')
+            .length;
+        final imageCount = materials
+            .where((m) => m.materialType.toLowerCase() == 'image')
+            .length;
+        final othersCount = materials
+            .where(
+              (m) => !['pdf', 'image'].contains(m.materialType.toLowerCase()),
+            )
+            .length;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header Section with updated statistics
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [primaryColor.withOpacity(0.8), primaryColor],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: primaryColor.withOpacity(0.3),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header Section with updated statistics
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [primaryColor.withOpacity(0.8), primaryColor],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.description, color: Colors.white, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        AppLocalizations.of(context)!.studyMaterials,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                    Row(
+                      children: [
+                        Icon(Icons.description, color: Colors.white, size: 20),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            AppLocalizations.of(context)!.studyMaterials,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      AppLocalizations.of(context)!.downloadAndAccessMaterials,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.white70,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Updated statistics - removed size, added file type counts
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildStatCard(
+                            AppLocalizations.of(context)!.total,
+                            '$totalMaterials',
+                            Icons.folder_outlined,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildStatCard(
+                            AppLocalizations.of(context)!.pdfs,
+                            '$pdfCount',
+                            Icons.picture_as_pdf,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildStatCard(
+                            AppLocalizations.of(context)!.images,
+                            '$imageCount',
+                            Icons.image,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildStatCard(
+                            AppLocalizations.of(context)!.others,
+                            '$othersCount',
+                            Icons.description,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  AppLocalizations.of(context)!.downloadAndAccessMaterials,
-                  style: const TextStyle(fontSize: 13, color: Colors.white70),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 12),
+              ),
 
-                // Updated statistics - removed size, added file type counts
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildStatCard(
-                        AppLocalizations.of(context)!.total,
-                        '$totalMaterials',
-                        Icons.folder_outlined,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildStatCard(
-                        AppLocalizations.of(context)!.pdfs,
-                        '$pdfCount',
-                        Icons.picture_as_pdf,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildStatCard(
-                        AppLocalizations.of(context)!.images,
-                        '$imageCount',
-                        Icons.image,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildStatCard(
-                        AppLocalizations.of(context)!.others,
-                        '$othersCount',
-                        Icons.description,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+              const SizedBox(height: 20),
 
-          const SizedBox(height: 20),
-
-          // Materials List
-          ...materials
-              .map(
-                (material) => Container(
+              // Error Message
+              if (error != null)
+                Container(
                   margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: cardColor,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: isDark ? Colors.black26 : Colors.grey.shade200,
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.red.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.error_outline, color: Colors.red, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          error,
+                          style: TextStyle(color: Colors.red, fontSize: 12),
+                        ),
                       ),
                     ],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              color: _getTypeColor(
-                                material['type']?.toString(),
-                              ).withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Icon(
-                              _getIcon(material['type']?.toString()),
-                              color: _getTypeColor(
-                                material['type']?.toString(),
-                              ),
-                              size: 18,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  material['title']?.toString() ??
-                                      AppLocalizations.of(
-                                        context,
-                                      )!.untitledMaterial,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: textColor,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 4),
+                ),
 
-                                // Description with More/Less functionality (limited to 2 lines)
-                                _buildExpandableDescription(
-                                  material['id']?.toString() ?? '',
-                                  material['description']?.toString() ?? '',
-                                  subTextColor,
+              // Loading State
+              if (isLoading)
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            primaryColor,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Loading study materials...',
+                          style: TextStyle(color: subTextColor, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+              // Empty State
+              if (!isLoading && materials.isEmpty)
+                _buildEmptyState(isDark, primaryColor),
+
+              // Materials List
+              if (!isLoading && materials.isNotEmpty)
+                ...materials
+                    .map(
+                      (material) => Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: cardColor,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isDark
+                                  ? Colors.black26
+                                  : Colors.grey.shade200,
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    color: _getTypeColor(
+                                      material.materialType,
+                                    ).withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    _getIcon(material.materialType),
+                                    color: _getTypeColor(material.materialType),
+                                    size: 18,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        material.materialTitle,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: textColor,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+
+                                      // Description with More/Less functionality (limited to 2 lines)
+                                      _buildExpandableDescription(
+                                        material.id,
+                                        material.materialDescription,
+                                        subTextColor,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
 
-                      const SizedBox(height: 12),
+                            const SizedBox(height: 12),
 
-                      // Action buttons only
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8,
+                            // Action buttons only
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: primaryColor,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 8,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    onPressed: () =>
+                                        _viewMaterial(context, material),
+                                    icon: const Icon(
+                                      Icons.visibility,
+                                      color: Colors.white,
+                                      size: 14,
+                                    ),
+                                    label: Text(
+                                      AppLocalizations.of(context)!.view,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: OutlinedButton.icon(
+                                    style: OutlinedButton.styleFrom(
+                                      side: BorderSide(color: primaryColor),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 8,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    onPressed: () =>
+                                        _downloadMaterial(context, material),
+                                    icon: Icon(
+                                      Icons.open_in_new,
+                                      color: primaryColor,
+                                      size: 14,
+                                    ),
+                                    label: Text(
+                                      AppLocalizations.of(context)!.download,
+                                      style: TextStyle(
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              onPressed: () => _viewMaterial(context, material),
-                              icon: const Icon(
-                                Icons.visibility,
-                                color: Colors.white,
-                                size: 14,
-                              ),
-                              label: Text(
-                                AppLocalizations.of(context)!.view,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                              ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: primaryColor),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              onPressed: () =>
-                                  _downloadMaterial(context, material),
-                              icon: Icon(
-                                Icons.open_in_new,
-                                color: primaryColor,
-                                size: 14,
-                              ),
-                              label: Text(
-                                AppLocalizations.of(context)!.download,
-                                style: TextStyle(
-                                  color: primaryColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              )
-              .toList(),
-        ],
-      ),
+                    )
+                    .toList(),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -512,9 +493,9 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
     }
   }
 
-  void _viewMaterial(BuildContext context, Map<String, dynamic> material) {
-    final url = material['url']?.toString();
-    if (url == null || url.isEmpty) {
+  void _viewMaterial(BuildContext context, StudyMaterial material) {
+    final url = material.materialLink;
+    if (url.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.noUrlAvailable),
@@ -544,9 +525,9 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  AppLocalizations.of(context)!.openingFileType(
-                    material['type']?.toString().toUpperCase() ?? 'FILE',
-                  ),
+                  AppLocalizations.of(
+                    context,
+                  )!.openingFileType(material.materialType.toUpperCase()),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -567,20 +548,17 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
         MaterialPageRoute(
           builder: (context) => StudyMaterialViewer(
             url: url,
-            title: material['title']?.toString() ?? 'Study Material',
-            type: material['type']?.toString() ?? 'file',
+            title: material.materialTitle,
+            type: material.materialType,
           ),
         ),
       );
     });
   }
 
-  void _downloadMaterial(
-    BuildContext context,
-    Map<String, dynamic> material,
-  ) async {
-    final url = material['url']?.toString();
-    if (url == null || url.isEmpty) {
+  void _downloadMaterial(BuildContext context, StudyMaterial material) async {
+    final url = material.materialLink;
+    if (url.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.noUrlForDownload),
@@ -618,8 +596,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      material['title']?.toString() ??
-                          AppLocalizations.of(context)!.unknown,
+                      material.materialTitle,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF7A54FF),
@@ -627,9 +604,9 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      AppLocalizations.of(context)!.typeLabel(
-                        material['type']?.toString().toUpperCase() ?? 'FILE',
-                      ),
+                      AppLocalizations.of(
+                        context,
+                      )!.typeLabel(material.materialType.toUpperCase()),
                       style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ],
@@ -676,17 +653,17 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
       );
 
       if (launched) {
-        // Update material status (optional)
-        setState(() {
-          material['isDownloaded'] = true;
-        });
+        // Download successful
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Download started successfully'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
       } else {
         // Fallback: copy link to clipboard
-        await _copyUrlToClipboard(
-          context,
-          url,
-          material['title']?.toString() ?? 'File',
-        );
+        await _copyUrlToClipboard(context, url, material.materialTitle);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.couldNotOpenBrowser),
@@ -697,11 +674,7 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
       }
     } catch (e) {
       // Error handling: copy link to clipboard as fallback
-      await _copyUrlToClipboard(
-        context,
-        url,
-        material['title']?.toString() ?? 'File',
-      );
+      await _copyUrlToClipboard(context, url, material.materialTitle);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Column(
@@ -808,5 +781,42 @@ class _StudyMaterialTabState extends State<StudyMaterialTab> {
         ),
       );
     }
+  }
+
+  // Build empty state when no materials are available
+  Widget _buildEmptyState(bool isDark, Color primaryColor) {
+    return Container(
+      padding: const EdgeInsets.all(40),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.description_outlined,
+              size: 64,
+              color: isDark ? Colors.grey[600] : Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No study materials yet',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Study materials will appear here when instructor uploads them',
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? Colors.grey[500] : Colors.grey[500],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

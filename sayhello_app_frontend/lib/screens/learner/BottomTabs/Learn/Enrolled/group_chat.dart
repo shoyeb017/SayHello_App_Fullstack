@@ -34,31 +34,6 @@ class _GroupChatTabState extends State<GroupChatTab> {
     return learner?.name ?? 'Student';
   }
 
-  // Mock enrolled members data - in real app, get from course service
-  final List<Map<String, dynamic>> _enrolledMembers = [
-    {
-      'id': '123e4567-e89b-12d3-a456-426614174000',
-      'name': 'Dr. Smith',
-      'role': 'instructor',
-      'avatar': null,
-      'joinDate': '2025-07-15',
-    },
-    {
-      'id': '123e4567-e89b-12d3-a456-426614174001',
-      'name': 'Sarah Chen',
-      'role': 'learner',
-      'avatar': null,
-      'joinDate': '2025-07-18',
-    },
-    {
-      'id': '123e4567-e89b-12d3-a456-426614174002',
-      'name': 'Mike Johnson',
-      'role': 'learner',
-      'avatar': null,
-      'joinDate': '2025-07-19',
-    },
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -108,11 +83,13 @@ class _GroupChatTabState extends State<GroupChatTab> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final primaryColor = theme.primaryColor;
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final subTextColor = isDark ? Colors.white70 : Colors.black54;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = Color(0xFF7A54FF);
+
+    // Consistent theme colors
+    final textColor = isDark ? Colors.white : Colors.black;
+    final subTextColor = isDark ? Colors.grey[400]! : Colors.grey[600]!;
+    final cardColor = Theme.of(context).cardColor;
 
     return Consumer<GroupChatProvider>(
       builder: (context, provider, child) {
@@ -130,214 +107,250 @@ class _GroupChatTabState extends State<GroupChatTab> {
         }
         _previousMessageCount = currentMessageCount;
 
-        return Scaffold(
-          backgroundColor: isDark ? Colors.grey[900] : Colors.grey[50],
-          body: Column(
-            children: [
-              // Header
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.grey[800] : Colors.white,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: isDark ? Colors.grey[700]! : Colors.grey[200]!,
-                      width: 1,
-                    ),
+        return Column(
+          children: [
+            // Learner Chat Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: cardColor,
+                border: Border(
+                  bottom: BorderSide(
+                    color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
                   ),
                 ),
-                child: Row(
-                  children: [
-                    Icon(Icons.group, color: primaryColor, size: 18),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Group Chat',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: textColor,
-                            ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [primaryColor, primaryColor.withOpacity(0.7)],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.group,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Group Chat - ${widget.course['title']}',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          '${provider.messageCount} messages',
+                          style: TextStyle(fontSize: 12, color: subTextColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: primaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      'Student',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: primaryColor,
+                      ),
+                    ),
+                  ),
+                  // Refresh button
+                  IconButton(
+                    onPressed: () => _refreshMessages(),
+                    icon: Icon(Icons.refresh, color: primaryColor, size: 20),
+                  ),
+                ],
+              ),
+            ),
+
+            // Messages List
+            Expanded(
+              child: provider.isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(color: primaryColor),
+                    )
+                  : provider.error != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.error, color: Colors.red, size: 48),
+                          const SizedBox(height: 16),
                           Text(
-                            provider.isLoading
-                                ? 'Loading messages...'
-                                : '${provider.messageCount} messages',
-                            style: TextStyle(fontSize: 11, color: subTextColor),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                            'Error: ${provider.error}',
+                            style: TextStyle(color: Colors.red),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _refreshMessages,
+                            child: Text('Retry'),
                           ),
                         ],
                       ),
-                    ),
-                    IconButton(
-                      onPressed: () => _showEnrolledMembers(context),
-                      icon: Icon(Icons.people, color: primaryColor, size: 20),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Messages List
-              Expanded(
-                child: provider.isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(color: primaryColor),
-                      )
-                    : provider.error != null
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.error, color: Colors.red, size: 48),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Error: ${provider.error}',
-                              style: TextStyle(color: Colors.red),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: _refreshMessages,
-                              child: const Text('Retry'),
-                            ),
-                          ],
-                        ),
-                      )
-                    : provider.messages.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.chat_bubble_outline,
-                              size: 64,
-                              color: subTextColor,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No messages yet',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: subTextColor,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Start a conversation with your classmates and instructor',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: subTextColor,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: () async => _refreshMessages(),
-                        child: ListView.builder(
-                          controller: _scrollController,
-                          padding: const EdgeInsets.all(12),
-                          itemCount: provider.messages.length,
-                          itemBuilder: (context, index) {
-                            final message = provider.messages[index];
-                            return _buildMessageBubble(
-                              message,
-                              primaryColor,
-                              textColor,
-                              subTextColor,
-                              isDark,
-                            );
-                          },
-                        ),
+                    )
+                  : provider.messages.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.chat_bubble_outline,
+                            size: 64,
+                            color: subTextColor,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No messages yet',
+                            style: TextStyle(fontSize: 16, color: subTextColor),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Start a conversation with your classmates and instructor',
+                            style: TextStyle(fontSize: 14, color: subTextColor),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
-              ),
+                    )
+                  : ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(16),
+                      itemCount: provider.messages.length,
+                      itemBuilder: (context, index) {
+                        final message = provider.messages[index];
+                        return _buildMessageBubble(
+                          message,
+                          primaryColor,
+                          textColor,
+                          subTextColor,
+                          isDark,
+                        );
+                      },
+                    ),
+            ),
 
-              // Message Input
+            // Error display
+            if (provider.error != null)
               Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.grey[800] : Colors.white,
-                  border: Border(
-                    top: BorderSide(
-                      color: isDark ? Colors.grey[700]! : Colors.grey[200]!,
-                      width: 1,
-                    ),
-                  ),
-                ),
+                color: Colors.red.withOpacity(0.1),
                 child: Row(
                   children: [
+                    Icon(Icons.error, color: Colors.red, size: 16),
+                    const SizedBox(width: 8),
                     Expanded(
-                      child: TextField(
-                        controller: _controller,
-                        decoration: InputDecoration(
-                          hintText: 'Type a message...',
-                          hintStyle: TextStyle(
-                            color: subTextColor,
-                            fontSize: 14,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(color: Colors.grey[300]!),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(color: primaryColor),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          filled: true,
-                          fillColor: isDark
-                              ? Colors.grey[700]
-                              : Colors.grey[100],
-                        ),
-                        style: TextStyle(color: textColor, fontSize: 14),
-                        maxLines: null,
-                        onSubmitted: (_) => _sendMessage(),
+                      child: Text(
+                        provider.error!,
+                        style: TextStyle(color: Colors.red, fontSize: 12),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: _sendMessage,
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _controller.text.trim().isEmpty
-                              ? Colors.grey
-                              : primaryColor,
-                        ),
-                        child: provider.isSending
-                            ? const SizedBox(
-                                width: 14,
-                                height: 14,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : const Icon(
-                                Icons.send,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                      ),
+                    IconButton(
+                      onPressed: () => provider.clearError(),
+                      icon: Icon(Icons.close, color: Colors.red, size: 16),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
+
+            // Input Section
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: cardColor,
+                border: Border(
+                  top: BorderSide(
+                    color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        hintText: 'Type a message...',
+                        hintStyle: TextStyle(color: subTextColor, fontSize: 13),
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: primaryColor,
+                          size: 18,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: BorderSide(
+                            color: isDark
+                                ? Colors.grey.shade700
+                                : Colors.grey.shade300,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: BorderSide(
+                            color: isDark
+                                ? Colors.grey.shade700
+                                : Colors.grey.shade300,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: BorderSide(color: primaryColor),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                      ),
+                      style: TextStyle(color: textColor, fontSize: 13),
+                      maxLines: null,
+                      onSubmitted: (_) => _sendMessage(),
+                      enabled: !provider.isSending,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  FloatingActionButton.small(
+                    onPressed: provider.isSending ? null : _sendMessage,
+                    backgroundColor: provider.isSending
+                        ? Colors.grey
+                        : primaryColor,
+                    child: provider.isSending
+                        ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(Icons.send, color: Colors.white, size: 18),
+                  ),
+                ],
+              ),
+            ),
+          ],
         );
       },
     );
@@ -351,10 +364,9 @@ class _GroupChatTabState extends State<GroupChatTab> {
     bool isDark,
   ) {
     final isMe = message.senderId == _currentUserId;
-    final isInstructor = message.isFromInstructor;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: isMe
@@ -362,38 +374,35 @@ class _GroupChatTabState extends State<GroupChatTab> {
             : MainAxisAlignment.start,
         children: [
           if (!isMe) ...[
-            // Avatar
+            // Student/Instructor Avatar
             CircleAvatar(
-              radius: 14,
-              backgroundColor: isInstructor
+              radius: 16,
+              backgroundColor: message.isFromInstructor
                   ? primaryColor
                   : primaryColor.withOpacity(0.2),
-              child: isInstructor
+              child: message.isFromInstructor
                   ? const Icon(Icons.school, color: Colors.white, size: 12)
                   : Text(
-                      (message.senderName ?? 'U').substring(0, 1).toUpperCase(),
+                      (message.senderName ?? 'S').substring(0, 1).toUpperCase(),
                       style: TextStyle(
                         color: primaryColor,
-                        fontSize: 10,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
           ],
 
           // Message Content
           Flexible(
             child: Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: isMe
-                    ? primaryColor.withOpacity(0.1)
+                    ? primaryColor
                     : (isDark ? Colors.grey[800] : Colors.grey[100]),
-                borderRadius: BorderRadius.circular(12),
-                border: isMe
-                    ? Border.all(color: primaryColor.withOpacity(0.3))
-                    : null,
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -401,39 +410,32 @@ class _GroupChatTabState extends State<GroupChatTab> {
                   // Header with name and role indicator
                   if (!isMe)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 3),
+                      padding: const EdgeInsets.only(bottom: 4),
                       child: Row(
                         children: [
                           Text(
                             message.senderName ??
-                                (isInstructor ? 'Instructor' : 'Student'),
+                                (message.isFromInstructor
+                                    ? 'Instructor'
+                                    : 'Student'),
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: isInstructor ? primaryColor : textColor,
+                              color: message.isFromInstructor
+                                  ? primaryColor
+                                  : textColor,
                             ),
                           ),
-                          if (isInstructor) ...[
-                            const SizedBox(width: 4),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                                vertical: 1,
-                              ),
-                              decoration: BoxDecoration(
-                                color: primaryColor.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                'Instructor',
-                                style: TextStyle(
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w600,
-                                  color: primaryColor,
-                                ),
-                              ),
-                            ),
-                          ],
+                          const SizedBox(width: 4),
+                          Icon(
+                            message.isFromInstructor
+                                ? Icons.school
+                                : Icons.person,
+                            size: 12,
+                            color: message.isFromInstructor
+                                ? primaryColor
+                                : textColor,
+                          ),
                         ],
                       ),
                     ),
@@ -442,18 +444,21 @@ class _GroupChatTabState extends State<GroupChatTab> {
                   Text(
                     message.contentText,
                     style: TextStyle(
-                      fontSize: 12,
-                      color: textColor,
-                      height: 1.3,
+                      fontSize: 13,
+                      color: isMe ? Colors.white : textColor,
+                      height: 1.4,
                     ),
                   ),
 
                   const SizedBox(height: 6),
 
-                  // Footer - Only timestamp
+                  // Footer with timestamp
                   Text(
                     message.getFormattedTime(),
-                    style: TextStyle(fontSize: 10, color: subTextColor),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: isMe ? Colors.white70 : subTextColor,
+                    ),
                   ),
                 ],
               ),
@@ -461,16 +466,16 @@ class _GroupChatTabState extends State<GroupChatTab> {
           ),
 
           if (isMe) ...[
-            const SizedBox(width: 8),
-            // User Avatar
+            const SizedBox(width: 10),
+            // Student Avatar
             CircleAvatar(
-              radius: 14,
+              radius: 16,
               backgroundColor: primaryColor.withOpacity(0.2),
               child: Text(
                 _currentUserName.substring(0, 1).toUpperCase(),
                 style: TextStyle(
                   color: primaryColor,
-                  fontSize: 10,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -515,75 +520,6 @@ class _GroupChatTabState extends State<GroupChatTab> {
 
     // Auto-scroll is now handled automatically in the Consumer
     // when the provider notifies listeners of the new message
-  }
-
-  void _showEnrolledMembers(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Enrolled Members (${_enrolledMembers.length})',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            ...(_enrolledMembers
-                .map(
-                  (member) => ListTile(
-                    dense: true,
-                    leading: CircleAvatar(
-                      radius: 16,
-                      backgroundColor: member['role'] == 'instructor'
-                          ? const Color(0xFF7A54FF)
-                          : const Color(0xFF7A54FF).withOpacity(0.7),
-                      child: Text(
-                        (member['name'] as String)
-                            .substring(0, 1)
-                            .toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    title: Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            member['name'].toString(),
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ),
-                        if (member['role'] == 'instructor') ...[
-                          const SizedBox(width: 4),
-                          const Icon(
-                            Icons.verified,
-                            size: 14,
-                            color: Color(0xFF7A54FF),
-                          ),
-                        ],
-                      ],
-                    ),
-                    subtitle: Text(
-                      member['role'].toString(),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: member['role'] == 'instructor'
-                            ? const Color(0xFF7A54FF)
-                            : Colors.grey,
-                      ),
-                    ),
-                  ),
-                )
-                .toList()),
-          ],
-        ),
-      ),
-    );
   }
 
   @override

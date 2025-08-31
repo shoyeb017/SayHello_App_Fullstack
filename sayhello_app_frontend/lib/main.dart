@@ -21,6 +21,7 @@ import 'providers/revenue_provider.dart';
 import 'providers/chat_provider.dart';
 import 'providers/feed_provider.dart';
 import 'providers/follower_provider.dart';
+import 'providers/notification_provider.dart';
 
 import 'screens/auth/landing_page.dart';
 import 'screens/permissions/permission_wrapper.dart';
@@ -73,6 +74,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ChatProvider()),
         ChangeNotifierProvider(create: (_) => FeedProvider()),
         ChangeNotifierProvider(create: (_) => FollowerProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
       child: const MyApp(),
     ),
