@@ -1,5 +1,4 @@
 import 'package:file_picker/file_picker.dart';
-import 'dart:typed_data';
 
 class SimpleFilePicker {
   static Future<Map<String, dynamic>?> pickFile() async {

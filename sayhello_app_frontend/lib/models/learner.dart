@@ -88,6 +88,7 @@ class Learner {
     String? name,
     String? email,
     String? username,
+    String? password,
     DateTime? dateOfBirth,
     String? gender,
     String? country,

@@ -27,6 +27,7 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
   String gender = '', country = '', bio = '';
   List<String> interests = [];
   File? profileImage;
+  bool _obscurePassword = true; // Add password visibility state
 
   final languageOptions = [
     'English',
@@ -695,48 +696,43 @@ class _LearnerSignupPageState extends State<LearnerSignupPage> {
   }
 
   Widget _passwordField() {
-    return StatefulBuilder(
-      builder: (context, setStateSB) {
-        bool _obscure = true;
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: Container(
-            decoration: BoxDecoration(
-              color: grayBackground,
-              borderRadius: BorderRadius.circular(24),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: grayBackground,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: TextFormField(
+          obscureText: _obscurePassword,
+          style: const TextStyle(fontSize: 14),
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.password,
+            prefixIcon: Icon(Icons.lock, color: primaryColor, size: 18),
+            border: InputBorder.none,
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 10,
+              horizontal: 12,
             ),
-            child: TextFormField(
-              obscureText: _obscure,
-              style: const TextStyle(fontSize: 14),
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.password,
-                prefixIcon: Icon(Icons.lock, color: primaryColor, size: 18),
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 12,
-                ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscure ? Icons.visibility_off : Icons.visibility,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscure = !_obscure;
-                    });
-                  },
-                ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                color: primaryColor,
               ),
-              onSaved: (val) => password = val ?? '',
-              validator: (val) => val == null || val.isEmpty
-                  ? AppLocalizations.of(context)!.required
-                  : null,
+              onPressed: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
             ),
           ),
-        );
-      },
+          onSaved: (val) => password = val ?? '',
+          validator: (val) => val == null || val.isEmpty
+              ? AppLocalizations.of(context)!.required
+              : null,
+        ),
+      ),
     );
   }
 
