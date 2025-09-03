@@ -413,7 +413,7 @@ class _ConnectPageState extends State<ConnectPage> {
                                 ),
                               ),
                               child: Text(
-                                learner.nativeLanguage,
+                                _getLanguageCode(learner.nativeLanguage),
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -442,7 +442,7 @@ class _ConnectPageState extends State<ConnectPage> {
                                 ),
                               ),
                               child: Text(
-                                learner.learningLanguage,
+                                _getLanguageCode(learner.learningLanguage),
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -584,6 +584,105 @@ class _ConnectPageState extends State<ConnectPage> {
     }
   }
 
+  /// Helper method to get language code
+  String _getLanguageCode(String language) {
+    switch (language.toLowerCase()) {
+      case 'english':
+        return 'EN';
+      case 'spanish':
+        return 'ES';
+      case 'japanese':
+        return 'JP';
+      case 'korean':
+        return 'KR';
+      case 'french':
+        return 'FR';
+      case 'german':
+        return 'DE';
+      case 'chinese':
+        return 'ZH';
+      case 'arabic':
+        return 'AR';
+      case 'portuguese':
+        return 'PT';
+      case 'italian':
+        return 'IT';
+      case 'russian':
+        return 'RU';
+      case 'hindi':
+        return 'HI';
+      case 'bengali':
+        return 'BN';
+      case 'urdu':
+        return 'UR';
+      case 'dutch':
+        return 'NL';
+      case 'thai':
+        return 'TH';
+      case 'vietnamese':
+        return 'VI';
+      case 'turkish':
+        return 'TR';
+      case 'polish':
+        return 'PL';
+      case 'swedish':
+        return 'SV';
+      case 'norwegian':
+        return 'NO';
+      case 'danish':
+        return 'DA';
+      case 'finnish':
+        return 'FI';
+      case 'greek':
+        return 'EL';
+      case 'hebrew':
+        return 'HE';
+      case 'hungarian':
+        return 'HU';
+      case 'czech':
+        return 'CS';
+      case 'slovak':
+        return 'SK';
+      case 'ukrainian':
+        return 'UK';
+      case 'romanian':
+        return 'RO';
+      case 'bulgarian':
+        return 'BG';
+      case 'croatian':
+        return 'HR';
+      case 'serbian':
+        return 'SR';
+      case 'slovenian':
+        return 'SL';
+      case 'estonian':
+        return 'ET';
+      case 'latvian':
+        return 'LV';
+      case 'lithuanian':
+        return 'LT';
+      case 'maltese':
+        return 'MT';
+      case 'irish':
+        return 'GA';
+      case 'welsh':
+        return 'CY';
+      case 'scottish gaelic':
+        return 'GD';
+      case 'catalan':
+        return 'CA';
+      case 'basque':
+        return 'EU';
+      case 'galician':
+        return 'GL';
+      default:
+        // If not found, return first 2 characters of the language name in uppercase
+        return language.length >= 2
+            ? language.substring(0, 2).toUpperCase()
+            : language.toUpperCase();
+    }
+  }
+
   /// Helper method to calculate age
   int _calculateAge(DateTime dateOfBirth) {
     final now = DateTime.now();
@@ -597,6 +696,12 @@ class _ConnectPageState extends State<ConnectPage> {
 
   /// Show advanced filter dialog
   void _showAdvancedFilterDialog(BuildContext context) {
+    double tempAgeStart = _ageStart;
+    double tempAgeEnd = _ageEnd;
+    String? tempSelectedGender = _selectedGender;
+    String? tempSelectedRegion = _selectedRegion;
+    String? tempSelectedProficiency = _selectedProficiency;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -609,94 +714,174 @@ class _ConnectPageState extends State<ConnectPage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Language Proficiency Filter
+                    const Text(
+                      'Language Level',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:
+                          [
+                            'Beginner',
+                            'Elementary',
+                            'Intermediate',
+                            'Advanced',
+                            'Native',
+                          ].asMap().entries.map((entry) {
+                            final level = entry.value;
+                            final isSelected = tempSelectedProficiency == level;
+                            return GestureDetector(
+                              onTap: () => setState(
+                                () => tempSelectedProficiency = level,
+                              ),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.circle,
+                                    size: 20,
+                                    color: isSelected
+                                        ? Colors.purple
+                                        : Colors.grey.shade400,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    level,
+                                    style: const TextStyle(fontSize: 10),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                    ),
+                    const SizedBox(height: 24),
+
                     // Age Range
                     const Text(
                       'Age Range',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(tempAgeStart.toInt().toString()),
+                        Text('${tempAgeEnd.toInt()}+'),
+                      ],
+                    ),
                     RangeSlider(
-                      values: RangeValues(_ageStart, _ageEnd),
+                      values: RangeValues(tempAgeStart, tempAgeEnd),
                       min: 16,
                       max: 100,
                       divisions: 84,
                       labels: RangeLabels(
-                        _ageStart.round().toString(),
-                        _ageEnd.round().toString(),
+                        tempAgeStart.round().toString(),
+                        tempAgeEnd.round().toString(),
                       ),
                       onChanged: (RangeValues values) {
                         setState(() {
-                          _ageStart = values.start;
-                          _ageEnd = values.end;
+                          tempAgeStart = values.start;
+                          tempAgeEnd = values.end;
+                        });
+                      },
+                      activeColor: Colors.purple,
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Region Filter
+                    const Text(
+                      'Region of Language Partner',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      value: tempSelectedRegion,
+                      hint: const Text('Select Region'),
+                      items: ['USA', 'Spain', 'Japan', 'Korea', 'Bangladesh']
+                          .map(
+                            (region) => DropdownMenuItem(
+                              value: region,
+                              child: Text(region),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          tempSelectedRegion = value;
                         });
                       },
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
 
                     // Gender Filter
                     const Text(
                       'Gender',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 8),
-                    DropdownButtonFormField<String>(
-                      value: _selectedGender,
-                      hint: const Text('Select Gender'),
-                      items: ['All', 'Male', 'Female', 'Other']
-                          .map(
-                            (gender) => DropdownMenuItem(
-                              value: gender,
-                              child: Text(gender),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedGender = value;
-                        });
-                      },
-                    ),
                     const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: ['All', 'Male', 'Female'].asMap().entries.map((
+                        entry,
+                      ) {
+                        final gender = entry.value;
+                        IconData icon;
+                        if (gender == 'Male') {
+                          icon = Icons.male;
+                        } else if (gender == 'Female') {
+                          icon = Icons.female;
+                        } else {
+                          icon = Icons.group;
+                        }
 
-                    // Country/Region Filter
-                    const Text(
-                      'Country/Region',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        hintText: 'Enter country name',
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (value) {
-                        _selectedRegion = value.isEmpty ? null : value;
-                      },
-                    ),
-                    const SizedBox(height: 16),
+                        final isSelected = tempSelectedGender == gender;
 
-                    // Language Proficiency Filter
-                    const Text(
-                      'Language Proficiency',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    DropdownButtonFormField<String>(
-                      value: _selectedProficiency,
-                      hint: const Text('Select Proficiency Level'),
-                      items: ['Beginner', 'Intermediate', 'Advanced', 'Native']
-                          .map(
-                            (level) => DropdownMenuItem(
-                              value: level,
-                              child: Text(level),
+                        return GestureDetector(
+                          onTap: () =>
+                              setState(() => tempSelectedGender = gender),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
                             ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedProficiency = value;
-                        });
-                      },
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: isSelected
+                                    ? Colors.purple
+                                    : Colors.grey.shade400,
+                                width: 2,
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              color: Colors.transparent,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  icon,
+                                  size: 32,
+                                  color: isSelected
+                                      ? Colors.purple
+                                      : Colors.grey,
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  gender,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: isSelected
+                                        ? Colors.purple
+                                        : Colors.grey.shade700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ],
                 ),
@@ -705,11 +890,11 @@ class _ConnectPageState extends State<ConnectPage> {
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      _ageStart = 18;
-                      _ageEnd = 90;
-                      _selectedGender = null;
-                      _selectedRegion = null;
-                      _selectedProficiency = null;
+                      tempAgeStart = 18;
+                      tempAgeEnd = 90;
+                      tempSelectedGender = null;
+                      tempSelectedRegion = null;
+                      tempSelectedProficiency = null;
                     });
                   },
                   child: const Text('Clear'),
@@ -722,12 +907,27 @@ class _ConnectPageState extends State<ConnectPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    // Apply the filters to the main state
                     if (mounted) {
+                      _ageStart = tempAgeStart;
+                      _ageEnd = tempAgeEnd;
+                      _selectedGender = tempSelectedGender;
+                      _selectedRegion = tempSelectedRegion;
+                      _selectedProficiency = tempSelectedProficiency;
                       _applyFilters();
                     }
+                    Navigator.of(context).pop();
                   },
-                  child: const Text('Apply'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    'Apply',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             );
@@ -839,7 +1039,7 @@ class _ConnectPageState extends State<ConnectPage> {
               IconButton(
                 icon: Icon(Icons.more_vert, color: textColor),
                 onPressed: () {
-                  showSearchFilterSheet(context);
+                  _showAdvancedFilterDialog(context);
                 },
               ),
             ],
@@ -1011,347 +1211,6 @@ class _ConnectPageState extends State<ConnectPage> {
           // Main Content
           Expanded(child: _buildMainContent(isDark, textColor, dividerColor)),
         ],
-      ),
-    );
-  }
-}
-
-// Search Filter Sheet
-void showSearchFilterSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) => Padding(
-      padding: const EdgeInsets.only(top: 40),
-      child: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: const SearchFilterSheet(),
-      ),
-    ),
-  );
-}
-
-class SearchFilterSheet extends StatefulWidget {
-  const SearchFilterSheet({Key? key}) : super(key: key);
-
-  @override
-  State<SearchFilterSheet> createState() => _SearchFilterSheetState();
-}
-
-class _SearchFilterSheetState extends State<SearchFilterSheet> {
-  double _currentAgeStart = 18;
-  double _currentAgeEnd = 90;
-  int _selectedGenderIndex = 0;
-  final List<String> genders = ['All', 'Male', 'Female'];
-
-  List<String> get localizedGenders => [
-    AppLocalizations.of(context)!.all,
-    AppLocalizations.of(context)!.male,
-    AppLocalizations.of(context)!.female,
-  ];
-
-  final List<String> regions = [
-    'Asia',
-    'Europe',
-    'North America',
-    'South America',
-    'Africa',
-    'Oceania',
-  ];
-
-  final Map<String, List<String>> citiesByRegion = {
-    'Asia': [
-      'Tokyo',
-      'Seoul',
-      'Beijing',
-      'Shanghai',
-      'Dhaka',
-      'Mumbai',
-      'Bangkok',
-      'Manila',
-    ],
-    'Europe': [
-      'London',
-      'Paris',
-      'Berlin',
-      'Madrid',
-      'Rome',
-      'Amsterdam',
-      'Vienna',
-      'Prague',
-    ],
-    'North America': [
-      'New York',
-      'Los Angeles',
-      'Toronto',
-      'Vancouver',
-      'Mexico City',
-      'Montreal',
-    ],
-    'South America': [
-      'São Paulo',
-      'Buenos Aires',
-      'Lima',
-      'Bogotá',
-      'Santiago',
-      'Caracas',
-    ],
-    'Africa': ['Cairo', 'Lagos', 'Cape Town', 'Nairobi', 'Casablanca', 'Tunis'],
-    'Oceania': [
-      'Sydney',
-      'Melbourne',
-      'Auckland',
-      'Brisbane',
-      'Perth',
-      'Adelaide',
-    ],
-  };
-
-  String? _selectedRegion;
-  String? _selectedCity;
-  int _selectedProficiency = 4;
-
-  List<String> get availableCities {
-    if (_selectedRegion == null) return [];
-    return citiesByRegion[_selectedRegion] ?? [];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: MediaQuery.of(context).viewInsets,
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(Icons.close),
-                  ),
-                  Text(
-                    AppLocalizations.of(context)!.search,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _currentAgeStart = 18;
-                        _currentAgeEnd = 90;
-                        _selectedGenderIndex = 0;
-                        _selectedRegion = null;
-                        _selectedCity = null;
-                        _selectedProficiency = 4;
-                      });
-                    },
-                    child: Text(AppLocalizations.of(context)!.reset),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Proficiency levels
-              Text(
-                AppLocalizations.of(context)!.languageLevel,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(5, (index) {
-                  final titles = [
-                    AppLocalizations.of(context)!.beginner,
-                    AppLocalizations.of(context)!.elementary,
-                    AppLocalizations.of(context)!.intermediate,
-                    AppLocalizations.of(context)!.advanced,
-                    AppLocalizations.of(context)!.proficient,
-                  ];
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedProficiency = index),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.circle,
-                          size: 20,
-                          color: index <= _selectedProficiency
-                              ? Colors.purple
-                              : Colors.grey.shade400,
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          titles[index],
-                          style: const TextStyle(fontSize: 10),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                AppLocalizations.of(context)!.age,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(_currentAgeStart.toInt().toString()),
-                  Text('${_currentAgeEnd.toInt()}+'),
-                ],
-              ),
-              RangeSlider(
-                values: RangeValues(_currentAgeStart, _currentAgeEnd),
-                min: 18,
-                max: 90,
-                divisions: 72,
-                onChanged: (values) {
-                  setState(() {
-                    _currentAgeStart = values.start;
-                    _currentAgeEnd = values.end;
-                  });
-                },
-                activeColor: Colors.purple,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.advancedSearch,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  SizedBox(width: 6),
-                ],
-              ),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(
-                    context,
-                  )!.regionOfLanguagePartner,
-                  border: OutlineInputBorder(),
-                ),
-                value: _selectedRegion,
-                items: regions.map((region) {
-                  return DropdownMenuItem(value: region, child: Text(region));
-                }).toList(),
-                onChanged: (val) => setState(() {
-                  _selectedRegion = val;
-                  _selectedCity = null;
-                }),
-              ),
-              const SizedBox(height: 10),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(
-                    context,
-                  )!.cityOfLanguagePartner,
-                  border: OutlineInputBorder(),
-                ),
-                value: _selectedCity,
-                items: availableCities.map((city) {
-                  return DropdownMenuItem(value: city, child: Text(city));
-                }).toList(),
-                onChanged: (val) => setState(() => _selectedCity = val),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                AppLocalizations.of(context)!.gender,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: List.generate(genders.length, (index) {
-                  IconData icon;
-                  if (genders[index] == 'Male') {
-                    icon = Icons.male;
-                  } else if (genders[index] == 'Female') {
-                    icon = Icons.female;
-                  } else {
-                    icon = Icons.group;
-                  }
-
-                  final isSelected = _selectedGenderIndex == index;
-
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedGenderIndex = index),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: isSelected
-                              ? Colors.purple
-                              : Colors.grey.shade400,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        color: Colors.transparent,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            icon,
-                            size: 40,
-                            color: isSelected ? Colors.purple : Colors.grey,
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            localizedGenders[index],
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: isSelected
-                                  ? Colors.purple
-                                  : Colors.grey.shade700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-              ),
-              const SizedBox(height: 24),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 14,
-                    ),
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.search,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
       ),
     );
   }
