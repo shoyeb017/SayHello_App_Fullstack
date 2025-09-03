@@ -9,6 +9,7 @@ import '../Connect/others_profile_page.dart';
 import '../../../../providers/settings_provider.dart';
 import '../../../../providers/feed_provider.dart';
 import '../../../../providers/auth_provider.dart';
+import '../../../../providers/notification_provider.dart';
 import '../../../../models/models.dart';
 import '../../../../services/azure_translator_service.dart';
 
@@ -369,45 +370,54 @@ class _FeedPageState extends State<FeedPage>
               ),
 
               // 🔔 NOTIFICATION ICON - This is the notification button in the app bar
-              Stack(
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.notifications_outlined,
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NotificationsPage(),
+              Consumer<NotificationProvider>(
+                builder: (context, notificationProvider, child) {
+                  final unreadCount = notificationProvider.unreadCount;
+                  return Stack(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.notifications_outlined,
+                          color: isDark ? Colors.white : Colors.black,
                         ),
-                      );
-                    },
-                  ),
-                  // Red dot for unread notifications
-                  Positioned(
-                    right: 11,
-                    top: 11,
-                    child: Container(
-                      padding: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(6),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NotificationsPage(),
+                            ),
+                          );
+                        },
                       ),
-                      constraints: BoxConstraints(minWidth: 12, minHeight: 12),
-                      child: Text(
-                        '3', // Number of unread notifications
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 8,
-                          fontWeight: FontWeight.bold,
+                      // Red dot for unread notifications
+                      if (unreadCount > 0)
+                        Positioned(
+                          right: 11,
+                          top: 11,
+                          child: Container(
+                            padding: EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 12,
+                              minHeight: 12,
+                            ),
+                            child: Text(
+                              unreadCount > 99 ? '99+' : unreadCount.toString(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               ),
 
               // 📝 CREATE POST ICON - This is the create post button in the app bar

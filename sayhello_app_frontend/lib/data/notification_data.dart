@@ -87,10 +87,7 @@ class NotificationRepository {
 
       await _client
           .from('notifications')
-          .update({
-            'is_read': true,
-            'read_at': DateTime.now().toIso8601String(),
-          })
+          .update({'is_read': true})
           .eq('id', notificationId);
 
       print('NotificationRepository: Notification marked as read');
@@ -110,10 +107,7 @@ class NotificationRepository {
 
       await _client
           .from('notifications')
-          .update({
-            'is_read': true,
-            'read_at': DateTime.now().toIso8601String(),
-          })
+          .update({'is_read': true})
           .eq('learner_id', userId)
           .eq('is_read', false);
 

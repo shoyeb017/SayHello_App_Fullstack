@@ -31,7 +31,7 @@ class SettingsProvider {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[400],
+                  color: const Color.fromARGB(255, 76, 55, 55),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
