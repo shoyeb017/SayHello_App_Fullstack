@@ -1,0 +1,236 @@
+% HCI Final Report (LaTeX)
+\documentclass[11pt,a4paper]{article}
+
+% Encoding and fonts
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+\usepackage{enumitem}
+\usepackage{parskip}
+
+\title{Human--Computer Interaction (HCI) Evaluation Report: SayHello App}
+\author{\textit{SDP Project Team}}
+\date{September 4, 2025}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+ 
+\section{System Overview}
+
+\subsection{Purpose and vision}
+SayHello is a full\-stack, mobile\-first language exchange platform that unifies real conversation practice with structured learning and cultural immersion. It addresses three core problems: (1) limited access to real, native\-speaker interaction; (2) weak linkage between courses and real\-world practice; (3) lack of cultural/social immersion in learning tools.
+
+\subsection{Users and contexts of use}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Learner (primary):} finds partners, communicates with translation assistance, engages in the feed, enrolls in courses, tracks progress.
+  \item \textbf{Instructor (secondary):} creates/manages courses, uploads materials (PDF, video, live links), mentors via group chat, evaluates and gives feedback.
+\end{itemize}
+
+\noindent Contexts: mobile usage on the go (public transport, campus), intermittent connectivity, short session bursts (1--10 minutes) for chat and feed; longer sessions (15--45 minutes) for course content.
+
+\subsection{Key features and workflows}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Language Exchange \& Matching:} native/target language pairing; search filters (country, gender, age); follow to see feeds.
+  \item \textbf{Chat \& Translation:} real\-time messaging with tap\-to\-translate messages; visibility of translate states and errors.
+  \item \textbf{Social Feed:} public and followed views; create posts with text/images; like/comment/translate.
+  \item \textbf{Courses:} discovery with ratings; enroll; access materials (PDF/video/links), group chat, session links; track performance; rate instructor.
+\end{itemize}
+
+\noindent Primary journeys evaluated: (a) find and message a native speaker; (b) post to feed; (c) enroll and open first course material.
+
+\subsection{Product and technical scope}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Platforms:} Flutter mobile app (Android/iOS), with web support; backend services (e.g., Supabase/REST).
+  \item \textbf{Not in scope:} voice/video calls; proctoring; advanced analytics dashboards.
+\end{itemize}
+
+\subsection{Success criteria and metrics}
+\begin{itemize}[leftmargin=*]
+  \item Time\-to\-first\-chat under 3 minutes for new users.
+  \item Post\-publish confirmation recognized within 2 seconds; bounce after posting $< 10\%$.
+  \item Post\-enroll ``start learning'' action within 10 seconds, $> 80\%$ discoverability.
+  \item Reduction in HE/CW high\-severity issues by $> 60\%$ after iteration.
+\end{itemize}
+
+\subsection{Assumptions and constraints}
+\begin{itemize}[leftmargin=*]
+  \item New users have basic familiarity with social apps (feeds, likes, follows).
+  \item Intermittent network; must provide robust feedback and recovery.
+  \item Privacy: learners may prefer anonymity initially (optional profile picture).
+\end{itemize}
+
+\subsection{Evaluation scope and references}
+\begin{itemize}[leftmargin=*]
+  \item Usability of key learner/instructor flows.
+  \item First\-time learnability (CW) and principle alignment (HE).
+  \item See: \texttt{HCI\_Final\_Report.md} (summary), \texttt{HCI\_Evaluation\_Findings.csv} (all findings).
+\end{itemize}
+
+\section{Heuristic Evaluation (HE)}
+
+\subsection{Methodology}
+\begin{itemize}[leftmargin=*]
+  \item Four evaluators applied Nielsen’s 10 Heuristics to core flows: onboarding/profile, partner matching, chat/translation, feed, course enrollment/materials.
+  \item Each issue was logged with category, heuristic, severity (0--4), and a concrete recommendation; duplicates were merged.
+  \item Severity: 0$=$none, 1$=$cosmetic, 2$=$minor, 3$=$major, 4$=$catastrophic.
+\end{itemize}
+
+\subsection{Heuristics reference}
+1) Visibility of system status\; 2) Match between system and the real world\; 3) User control and freedom\; 4) Consistency and standards\; 5) Error prevention\; 6) Recognition rather than recall\; 7) Flexibility and efficiency of use\; 8) Aesthetic and minimalist design\; 9) Help users recognize, diagnose, recover from errors\; 10) Help and documentation.
+
+\subsection{Snapshot of findings (sample)}
+Refer to \texttt{HCI\_Evaluation\_Findings.csv} for the full list. Key samples:
+\begin{itemize}[leftmargin=*]
+  \item Chat send lacks ``sent/delivered'' status [Heuristic 1,9] --- Sev 2 --- Add message status and resend on failure.
+  \item Enroll button has no pressed/disabled state [1,9] --- Sev 3 --- Disable with spinner; success toast then navigate to course detail.
+  \item ``Give\-and\-take'' matching unclear [2,6] --- Sev 3 --- Add concise tooltip/onboarding card; link to help.
+  \item Filters reset after search [6,7] --- Sev 2 --- Persist until reset; show chips and Clear All.
+  \item PDF vs video icon similarity [4] --- Sev 1 --- Use distinct icons/labels and consistent previews.
+\end{itemize}
+
+\subsection{Distribution and prioritization}
+\begin{itemize}[leftmargin=*]
+  \item Current logged items (sample set): 13 total (HE$\approx$10, CW$\approx$3). High\-severity ($\geq$3): 3 items; Medium (2): 6; Low (1): 1; Info (0): 0.
+  \item Prioritization axes: severity, frequency, reach (how many flows), and fix effort.
+  \item Top fixes: global feedback states (send/post/enroll), filter persistence/discoverability, matching explanation.
+\end{itemize}
+
+\subsection{Recommendations (prioritized)}
+\begin{enumerate}[leftmargin=*]
+  \item System feedback and error recovery: add toasts/snackbars, inline statuses, disabled+spinner, and retry where applicable.
+  \item Discoverability: prominent Filters entry, saved chips, empty\-state guidance.
+  \item Comprehension: micro\-copy to explain matching and course states; align terms with user mental models.
+  \item Consistency: standardized iconography and empty/error states; platform\-appropriate patterns.
+\end{enumerate}
+
+See: \texttt{HCI\_Evaluation\_Findings.csv} and \texttt{HCI\_Evaluation\_Findings.md} for details.
+
+\section{Cognitive Walkthrough (CW)}
+
+\subsection{Methodology}
+\begin{itemize}[leftmargin=*]
+  \item Goal: assess first\-time learnability of critical journeys.
+  \item Approach: break each task into steps and answer the four CW questions (intent, visibility, mapping, feedback).
+  \item Participants: evaluators acting as first\-time users; assumptions documented in System Overview.
+\end{itemize}
+
+\subsection{Tasks}
+\begin{enumerate}[leftmargin=*]
+  \item Find and start a conversation with a native Spanish speaker.
+  \item Post an image with a question to the public feed.
+  \item Enroll in a course and open the first material.
+\end{enumerate}
+
+\subsection{Step analysis (highlights)}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Task 1 (Find partner):} Filters entry wasn’t obvious; users scanned list instead. After opening profile, ``Start Chat'' was discoverable, but no preview of translation capability caused hesitation.
+  \item \textbf{Task 2 (Post):} ``Create post'' entry was discoverable, but the lack of post\-publish confirmation led to uncertainty; users scrolled to check if it appeared.
+  \item \textbf{Task 3 (Enroll):} Button lacked pressed/disabled state; after enroll, route did not clearly highlight the first material.
+\end{itemize}
+
+\subsection{Recommendations}
+\begin{itemize}[leftmargin=*]
+  \item Make Filters salient (button/chip), add first\-use hint, and persist last filters.
+  \item On post, show confirmation toast and insert the new post at the top or navigate to it.
+  \item On enroll, show disabled+spinner state, success confirmation, and route to Course Detail with a prominent ``Start here'' CTA.
+\end{itemize}
+
+\subsection{Success criteria and measures}
+\begin{itemize}[leftmargin=*]
+  \item Time\-to\-apply filters $< 10$s; \% users who use filters on first try $> 70\%$.
+  \item Post\-publish recognition $< 2$s; \% users who see confirmation without manual checking $> 90\%$.
+  \item Post\-enroll ``Start here'' click\-through within 10s; $> 80\%$ discoverability.
+\end{itemize}
+
+Details and per\-step table: \texttt{HCI\_Cognitive\_Walkthrough\_Findings.md}.
+
+\section{Comparative Analysis (HE vs CW)}
+
+\subsection{Overlap}
+\begin{itemize}[leftmargin=*]
+  \item Both methods identified gaps in feedback/progress cues (send, post, enroll).
+  \item Need for explanatory micro\-copy (matching model) appears in HE and was reinforced by CW confusion during partner search.
+\end{itemize}
+
+\subsection{Differences}
+\begin{itemize}[leftmargin=*]
+  \item HE: breadth; surfaced global consistency and terminology issues (icons, empty/ error states, naming) and information hierarchy clarity.
+  \item CW: depth; exposed step\-level discoverability and sequencing issues within critical flows (filters, post routing, post\-enroll CTA).
+\end{itemize}
+
+\subsection{Quantified snapshot (current sample)}
+\begin{itemize}[leftmargin=*]
+  \item Total items: 13 (HE$\approx$10, CW$\approx$3). High severity ($\geq$3): 3; Medium (2): 6; Low (1): 1.
+  \item HE contributed more medium/low polish items; CW contributed high\-impact blockers in new\-user journeys.
+\end{itemize}
+
+\subsection{Risk and impact}
+\begin{itemize}[leftmargin=*]
+  \item Feedback\-visibility issues cut across multiple flows and impair user trust and efficiency.
+  \item Discoverability issues (filters, post\-enroll CTA) increase time\-to\-task and abandonment risk.
+\end{itemize}
+
+\subsection{Combined value}
+\begin{itemize}[leftmargin=*]
+  \item HE ensures principle conformance and consistency; CW validates practical learnability and path clarity.
+  \item Using both yields a pragmatic roadmap: fix global patterns (feedback, icons, terminology) and unblock task flows (filters, post confirmation, enroll routing).
+\end{itemize}
+
+Cross\-references: \texttt{HCI\_Evaluation\_Findings.csv}, \texttt{HCI\_Cognitive\_Walkthrough\_Findings.md}.
+
+\section{Design Recommendations and Comparative Insight}
+
+\subsection{Which method identified more issues?}
+HE surfaced more total issues due to breadth; CW found fewer but higher\-impact blockers in first\-use flows.
+
+\subsection{Unique issues by method}
+\begin{itemize}[leftmargin=*]
+  \item HE: consistency/standards, terminology alignment, and global empty/error states.
+  \item CW: weak affordances and missing step feedback inside flows (filters entry, post confirmation routing, post\-enroll CTA).
+\end{itemize}
+
+\subsection{Practicality in this context}
+HE was faster to execute and aggregate. CW required more time but provided deeper task\-level insights for Connect, Post, and Enroll.
+
+\subsection{Prioritized roadmap (Q1)}
+\paragraph{P0 (global feedback \& guidance)}~\\
+\begin{itemize}[leftmargin=*]
+  \item Add toasts/snackbars and inline statuses for send/post/enroll/follow/translate.
+  \item Disable+spinner on long\-running actions; show error with retry for failures.
+  \item Add micro\-copy for matching; link to concise help.
+\end{itemize}
+
+\paragraph{P1 (discoverability \& consistency)}~\\
+\begin{itemize}[leftmargin=*]
+  \item Prominent Filters entry on Connect; persist filters; add ``Clear all''.
+  \item Standardize iconography for PDFs/videos; unify empty/error states and messages.
+\end{itemize}
+
+\paragraph{P2 (onboarding \& learnability)}~\\
+\begin{itemize}[leftmargin=*]
+  \item Onboarding cards for key concepts (give\-and\-take, filters, translation in chat).
+  \item Post\-enroll routing: Course Detail with a clear ``Start here'' CTA; highlight first unit/material.
+\end{itemize}
+
+\subsection{Acceptance criteria (examples)}
+\begin{itemize}[leftmargin=*]
+  \item After sending a message, a sent/delivered indicator appears within 500ms; failure shows retry.
+  \item After tapping Post, a confirmation toast shows and the new post appears at the top within 1.5s.
+  \item After Enroll, the button disables with a spinner; success routes to Course Detail with ``Start here'' highlighted.
+\end{itemize}
+
+\subsection{Validation plan}
+\begin{itemize}[leftmargin=*]
+  \item Run a mini\-CW on the three tasks post\-fix; target metrics in System Overview \S1.5.
+  \item Monitor analytics: time\-to\-first\-chat, post success confirmations, post\-enroll start rate.
+\end{itemize}
+
+See also: \texttt{HCI\_Final\_Report.md} (summary), \texttt{HCI\_Evaluation\_Findings.csv}, \texttt{HCI\_Cognitive\_Walkthrough\_Findings.md}.
+
+\end{document}

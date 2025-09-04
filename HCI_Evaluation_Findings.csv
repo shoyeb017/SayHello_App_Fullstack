@@ -1,7 +1,7 @@
 Finding ID,Method (HE/CW),Category,Description of Issue,Heuristic Violated,Severity (0-4),Recommendation
 1,HE,Onboarding,The give-and-take system for matching is not explained during onboarding,Visibility of system status,3,Add a brief tutorial or info-graphic explaining how the matching system works
 2,HE,Profile Setup,Users are forced to add a profile picture and cannot skip this step,User control and freedom,2,Allow users to skip adding a profile picture and complete it later
-3,HE,Matching,The criteria for how partners are matched is unclear,Visibility of system status,3,Provide a clear explanation of the matching algorithm (e.g., language pairs, activity)
+3,HE,Matching,"The criteria for how partners are matched is unclear",Visibility of system status,3,"Provide a clear explanation of the matching algorithm (e.g., language pairs, activity)"
 4,HE,Search,Search filters reset after each search forcing re-application,Recognition rather than recall,2,Persist filters until reset manually
 5,HE,Chat,No confirmation when a message is sent,Visibility of system status,2,Show sent/delivered indicators
 6,HE,Translation,No error message when translation fails,Error prevention,4,Show clear error and offer retry
