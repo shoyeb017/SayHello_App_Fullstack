@@ -4,6 +4,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../Chat/chat.dart';
 import '../../../../providers/learner_provider.dart';
 import '../../../../providers/auth_provider.dart';
+import '../../../../providers/follower_provider.dart';
 import '../../../../models/learner.dart';
 import '../../../../models/feed.dart';
 import '../../../../data/feed_data.dart';
@@ -122,22 +123,36 @@ class _OthersProfilePageState extends State<OthersProfilePage>
   Future<void> _loadFollowStatus() async {
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final learnerProvider = Provider.of<LearnerProvider>(
+      final followerProvider = Provider.of<FollowerProvider>(
         context,
         listen: false,
       );
 
       if (authProvider.currentUser != null && _learnerData != null) {
         final currentUser = authProvider.currentUser as Learner;
-        final following = await learnerProvider.isFollowing(
+
+        // Force refresh follow status to ensure we have the latest data
+        await followerProvider.forceRefreshFollowStatus(
           currentUser.id,
           _learnerData!.id,
         );
+
+        // Debug: Check for any inconsistencies
+        await followerProvider.debugFollowStatus(
+          currentUser.id,
+          _learnerData!.id,
+        );
+
         setState(() {
-          isFollowing = following;
+          isFollowing = followerProvider.isFollowingUser(_learnerData!.id);
         });
+
+        print(
+          'OthersProfilePage: Follow status for ${_learnerData!.name}: $isFollowing',
+        );
       }
     } catch (e) {
+      print('Error loading follow status: $e');
       // Silent fail for follow status loading
     }
   }
@@ -197,7 +212,7 @@ class _OthersProfilePageState extends State<OthersProfilePage>
     });
 
     try {
-      final learnerProvider = Provider.of<LearnerProvider>(
+      final followerProvider = Provider.of<FollowerProvider>(
         context,
         listen: false,
       );
@@ -208,33 +223,22 @@ class _OthersProfilePageState extends State<OthersProfilePage>
         print('Debug: Target user ID: ${_learnerData!.id}');
         print('Debug: Current following status: $isFollowing');
 
-        bool success = false;
-        if (isFollowing) {
-          print('Debug: Attempting to unfollow...');
-          success = await learnerProvider.unfollowLearner(
-            currentUser.id,
-            _learnerData!.id,
-          );
-          print('Debug: Unfollow result: $success');
-          if (success) {
-            setState(() {
-              isFollowing = false;
-              _followerCount = _followerCount > 0 ? _followerCount - 1 : 0;
-            });
-          }
-        } else {
-          print('Debug: Attempting to follow...');
-          success = await learnerProvider.followLearner(
-            currentUser.id,
-            _learnerData!.id,
-          );
-          print('Debug: Follow result: $success');
-          if (success) {
-            setState(() {
-              isFollowing = true;
+        // Use FollowerProvider to toggle follow status
+        bool success = await followerProvider.toggleFollow(
+          currentUser.id,
+          _learnerData!.id,
+        );
+
+        print('Debug: Toggle result: $success');
+        if (success) {
+          setState(() {
+            isFollowing = followerProvider.isFollowingUser(_learnerData!.id);
+            if (isFollowing) {
               _followerCount = _followerCount + 1;
-            });
-          }
+            } else {
+              _followerCount = _followerCount > 0 ? _followerCount - 1 : 0;
+            }
+          });
         }
 
         if (success) {
@@ -709,31 +713,45 @@ class _OthersProfilePageState extends State<OthersProfilePage>
             ),
 
             // Right side - Follow button
-            GestureDetector(
-              onTap: _isFollowLoading ? null : _toggleFollow,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: isFollowing ? primaryColor : Colors.grey[300],
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: _isFollowLoading
-                    ? SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
+            Consumer<FollowerProvider>(
+              builder: (context, followerProvider, child) {
+                final currentIsFollowing = _learnerData != null
+                    ? followerProvider.isFollowingUser(_learnerData!.id)
+                    : isFollowing;
+
+                return GestureDetector(
+                  onTap: _isFollowLoading ? null : _toggleFollow,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: currentIsFollowing
+                          ? primaryColor
+                          : Colors.grey[300],
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: _isFollowLoading
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                        : Icon(
+                            currentIsFollowing
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: currentIsFollowing
+                                ? Colors.white
+                                : Colors.grey[600],
+                            size: 20,
                           ),
-                        ),
-                      )
-                    : Icon(
-                        isFollowing ? Icons.favorite : Icons.favorite_border,
-                        color: isFollowing ? Colors.white : Colors.grey[600],
-                        size: 20,
-                      ),
-              ),
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -1457,40 +1475,52 @@ class _OthersProfilePageState extends State<OthersProfilePage>
           children: [
             // Follow button
             Expanded(
-              child: ElevatedButton(
-                onPressed: _isFollowLoading ? null : _toggleFollow,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isFollowing
-                      ? primaryColor
-                      : Color(0xFFEFECFF),
-                  foregroundColor: isFollowing ? Colors.white : primaryColor,
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: _isFollowLoading
-                    ? SizedBox(
-                        width: 14,
-                        height: 14,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            isFollowing ? Colors.white : primaryColor,
-                          ),
-                        ),
-                      )
-                    : Text(
-                        isFollowing
-                            ? AppLocalizations.of(context)!.following
-                            : AppLocalizations.of(context)!.follow,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+              child: Consumer<FollowerProvider>(
+                builder: (context, followerProvider, child) {
+                  final currentIsFollowing = _learnerData != null
+                      ? followerProvider.isFollowingUser(_learnerData!.id)
+                      : isFollowing;
+
+                  return ElevatedButton(
+                    onPressed: _isFollowLoading ? null : _toggleFollow,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: currentIsFollowing
+                          ? primaryColor
+                          : Color(0xFFEFECFF),
+                      foregroundColor: currentIsFollowing
+                          ? Colors.white
+                          : primaryColor,
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
+                    ),
+                    child: _isFollowLoading
+                        ? SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                currentIsFollowing
+                                    ? Colors.white
+                                    : primaryColor,
+                              ),
+                            ),
+                          )
+                        : Text(
+                            currentIsFollowing
+                                ? AppLocalizations.of(context)!.following
+                                : AppLocalizations.of(context)!.follow,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                  );
+                },
               ),
             ),
 

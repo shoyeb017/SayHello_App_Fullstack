@@ -9,6 +9,7 @@ import '../Connect/others_profile_page.dart';
 import '../../../../providers/settings_provider.dart';
 import '../../../../providers/feed_provider.dart';
 import '../../../../providers/auth_provider.dart';
+import '../../../../providers/follower_provider.dart';
 import '../../../../providers/notification_provider.dart';
 import '../../../../models/models.dart';
 import '../../../../services/azure_translator_service.dart';
@@ -23,6 +24,7 @@ class FeedPage extends StatefulWidget {
 class _FeedPageState extends State<FeedPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  String? _currentLearningLanguage;
 
   @override
   void initState() {
@@ -41,11 +43,74 @@ class _FeedPageState extends State<FeedPage>
   void _loadInitialData() {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final feedProvider = Provider.of<FeedProvider>(context, listen: false);
+    final followerProvider = Provider.of<FollowerProvider>(
+      context,
+      listen: false,
+    );
 
     if (authProvider.currentUser != null) {
       final userId = authProvider.currentUser!.id;
-      // Load both tabs simultaneously for faster loading
-      feedProvider.loadAllFeeds(userId);
+      String? learningLanguage;
+
+      // Get learning language if user is a Learner
+      if (authProvider.currentUser is Learner) {
+        learningLanguage =
+            (authProvider.currentUser as Learner).learningLanguage;
+        print(
+          'FeedPage: Loading feeds with learning language filter: $learningLanguage',
+        );
+      }
+
+      // Load both tabs simultaneously with language filtering
+      feedProvider.loadAllFeeds(userId, learningLanguage: learningLanguage).then((
+        _,
+      ) {
+        // After feeds are loaded, batch-check follow status for all users in feeds
+        _batchLoadFollowStatuses();
+      });
+
+      // Load follower counts and data
+      followerProvider.loadCounts(userId);
+    }
+  }
+
+  /// Batch load follow statuses for all users currently visible in feeds
+  void _batchLoadFollowStatuses() {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final feedProvider = Provider.of<FeedProvider>(context, listen: false);
+    final followerProvider = Provider.of<FollowerProvider>(
+      context,
+      listen: false,
+    );
+
+    if (authProvider.currentUser != null) {
+      final currentUserId = authProvider.currentUser!.id;
+
+      // Collect all unique user IDs from both feed tabs
+      final Set<String> userIds = {};
+
+      for (var feedWithUser in feedProvider.recentFeeds) {
+        userIds.add(feedWithUser.feed.learnerId);
+      }
+
+      for (var feedWithUser in feedProvider.forYouFeeds) {
+        userIds.add(feedWithUser.feed.learnerId);
+      }
+
+      // Remove current user from the list
+      userIds.remove(currentUserId);
+
+      print(
+        'FeedPage: Batch loading follow status for ${userIds.length} users',
+      );
+
+      // Batch check follow status for all users
+      if (userIds.isNotEmpty) {
+        followerProvider.batchCheckFollowStatus(
+          currentUserId,
+          userIds.toList(),
+        );
+      }
     }
   }
 
@@ -514,20 +579,38 @@ class _FeedPageState extends State<FeedPage>
           ),
         ),
       ),
-      body: Consumer<FeedProvider>(
-        builder: (context, feedProvider, child) {
-          return TabBarView(
-            controller: _tabController,
-            children: [
-              _buildFeedContent(
-                feedProvider,
-                isRecentTab: true,
-              ), // Recent - users NOT being followed
-              _buildFeedContent(
-                feedProvider,
-                isRecentTab: false,
-              ), // For You - only followed users' posts
-            ],
+      body: Consumer<AuthProvider>(
+        builder: (context, authProvider, child) {
+          // Check if learning language has changed
+          if (authProvider.currentUser != null &&
+              authProvider.currentUser is Learner) {
+            final currentLearningLanguage =
+                (authProvider.currentUser as Learner).learningLanguage;
+            if (_currentLearningLanguage != currentLearningLanguage) {
+              _currentLearningLanguage = currentLearningLanguage;
+              // Reload feeds when learning language changes
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _loadInitialData();
+              });
+            }
+          }
+
+          return Consumer<FeedProvider>(
+            builder: (context, feedProvider, child) {
+              return TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildFeedContent(
+                    feedProvider,
+                    isRecentTab: true,
+                  ), // Recent - users whose native language matches learning language (not followed)
+                  _buildFeedContent(
+                    feedProvider,
+                    isRecentTab: false,
+                  ), // For You - posts from users you follow (any language)
+                ],
+              );
+            },
           );
         },
       ),
@@ -588,15 +671,13 @@ class _FeedPageState extends State<FeedPage>
             Icon(Icons.feed_outlined, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              isRecentTab
-                  ? 'No posts from unfollowed users'
-                  : 'No posts from followed users',
+              isRecentTab ? 'No posts found' : 'No posts from followed users',
               style: TextStyle(color: Colors.grey[600], fontSize: 16),
             ),
             const SizedBox(height: 8),
             Text(
               isRecentTab
-                  ? 'Posts from users you don\'t follow will appear here'
+                  ? 'Posts from native speakers of your learning language will appear here'
                   : 'Posts from users you follow will appear here',
               style: TextStyle(color: Colors.grey[500], fontSize: 14),
               textAlign: TextAlign.center,
@@ -699,7 +780,11 @@ class _FeedPostCardState extends State<FeedPostCard>
         curve: Curves.elasticOut,
       ),
     );
-    _checkFollowStatus();
+
+    // Use post-frame callback to avoid calling during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkFollowStatus();
+    });
   }
 
   @override
@@ -710,24 +795,44 @@ class _FeedPostCardState extends State<FeedPostCard>
 
   Future<void> _checkFollowStatus() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final feedProvider = Provider.of<FeedProvider>(context, listen: false);
+    final followerProvider = Provider.of<FollowerProvider>(
+      context,
+      listen: false,
+    );
 
     if (authProvider.currentUser?.id != null &&
         widget.feedWithUser.feed.learnerId != authProvider.currentUser!.id) {
-      final isFollowing = await feedProvider.isFollowing(
+      print(
+        'FeedPostCard: Checking follow status for user: ${widget.feedWithUser.feed.learnerId}',
+      );
+
+      // Force refresh to get the latest status from database
+      await followerProvider.forceRefreshFollowStatus(
         authProvider.currentUser!.id,
         widget.feedWithUser.feed.learnerId,
       );
+
       if (mounted) {
+        final newFollowingStatus = followerProvider.isFollowingUser(
+          widget.feedWithUser.feed.learnerId,
+        );
         setState(() {
-          _isFollowing = isFollowing;
+          _isFollowing = newFollowingStatus;
         });
+
+        print(
+          'FeedPostCard: Follow status for ${widget.feedWithUser.feed.learnerId}: $_isFollowing',
+        );
       }
     }
   }
 
   Future<void> _toggleFollow() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final followerProvider = Provider.of<FollowerProvider>(
+      context,
+      listen: false,
+    );
     final feedProvider = Provider.of<FeedProvider>(context, listen: false);
 
     if (authProvider.currentUser?.id == null) return;
@@ -737,31 +842,64 @@ class _FeedPostCardState extends State<FeedPostCard>
     });
 
     try {
-      bool success;
-      if (_isFollowing) {
-        success = await feedProvider.unfollowUser(
-          authProvider.currentUser!.id,
-          widget.feedWithUser.feed.learnerId,
-        );
-      } else {
-        success = await feedProvider.followUser(
-          authProvider.currentUser!.id,
-          widget.feedWithUser.feed.learnerId,
-        );
+      // Get learning language for feed refresh
+      String? learningLanguage;
+      if (authProvider.currentUser is Learner) {
+        learningLanguage =
+            (authProvider.currentUser as Learner).learningLanguage;
       }
+
+      // Use FollowerProvider to toggle follow status
+      bool success = await followerProvider.toggleFollow(
+        authProvider.currentUser!.id,
+        widget.feedWithUser.feed.learnerId,
+      );
 
       if (success && mounted) {
         setState(() {
-          _isFollowing = !_isFollowing;
+          _isFollowing = followerProvider.isFollowingUser(
+            widget.feedWithUser.feed.learnerId,
+          );
         });
 
-        // The provider will automatically refresh both tabs for real-time updates
+        // Refresh feeds to reflect follow status changes
+        feedProvider.loadAllFeeds(
+          authProvider.currentUser!.id,
+          learningLanguage: learningLanguage,
+        );
+
+        // Re-check the follow status for this specific user to ensure UI consistency
+        await followerProvider.checkFollowStatus(
+          authProvider.currentUser!.id,
+          widget.feedWithUser.feed.learnerId,
+        );
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_isFollowing ? 'Now following!' : 'Unfollowed'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 1),
+          ),
+        );
+      } else if (!success) {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update follow status. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } catch (e) {
+      print('Error toggling follow: $e');
       // Show error message
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -916,85 +1054,50 @@ class _FeedPostCardState extends State<FeedPostCard>
   }
 
   // Convert language names to proper format for Azure Translator Service
+  // Focused on the 5 supported languages: English, Spanish, Japanese, Korean, Bangla
   String _getProperLanguageName(String languageName) {
     switch (languageName.toLowerCase()) {
       case 'english':
         return 'English';
       case 'spanish':
         return 'Spanish';
-      case 'french':
-        return 'French';
-      case 'german':
-        return 'German';
-      case 'italian':
-        return 'Italian';
-      case 'portuguese':
-        return 'Portuguese';
-      case 'russian':
-        return 'Russian';
       case 'japanese':
         return 'Japanese';
       case 'korean':
         return 'Korean';
-      case 'chinese':
-        return 'Chinese';
-      case 'arabic':
-        return 'Arabic';
-      case 'hindi':
-        return 'Hindi';
+      case 'bangla':
       case 'bengali':
         return 'Bengali';
-      case 'dutch':
-        return 'Dutch';
-      case 'swedish':
-        return 'Swedish';
-      case 'norwegian':
-        return 'Norwegian';
-      case 'danish':
-        return 'Danish';
-      case 'finnish':
-        return 'Finnish';
-      case 'turkish':
-        return 'Turkish';
-      case 'polish':
-        return 'Polish';
-      case 'czech':
-        return 'Czech';
-      case 'hungarian':
-        return 'Hungarian';
-      case 'romanian':
-        return 'Romanian';
-      case 'bulgarian':
-        return 'Bulgarian';
-      case 'croatian':
-        return 'Croatian';
-      case 'serbian':
-        return 'Serbian';
-      case 'slovak':
-        return 'Slovak';
-      case 'slovenian':
-        return 'Slovenian';
-      case 'greek':
-        return 'Greek';
-      case 'hebrew':
-        return 'Hebrew';
-      case 'thai':
-        return 'Thai';
-      case 'vietnamese':
-        return 'Vietnamese';
-      case 'indonesian':
-        return 'Indonesian';
-      case 'malay':
-        return 'Malay';
-      case 'filipino':
-        return 'Filipino';
-      case 'tagalog':
-        return 'Filipino';
       default:
         // Capitalize first letter as fallback
         return languageName.isNotEmpty
             ? '${languageName[0].toUpperCase()}${languageName.substring(1).toLowerCase()}'
             : 'English';
+    }
+  }
+
+  // Helper method to convert language names to short codes for display
+  // Focused on the 5 supported languages: English, Spanish, Japanese, Korean, Bangla
+  String _getLanguageCode(String? language) {
+    if (language == null || language.isEmpty) return '??';
+
+    switch (language.toLowerCase()) {
+      case 'english':
+        return 'EN';
+      case 'spanish':
+        return 'ES';
+      case 'japanese':
+        return 'JA';
+      case 'korean':
+        return 'KO';
+      case 'bangla':
+      case 'bengali':
+        return 'BN';
+      default:
+        // For any other language, show first 2 characters
+        return language.length >= 2
+            ? language.substring(0, 2).toUpperCase()
+            : '??';
     }
   }
 
@@ -1061,9 +1164,11 @@ class _FeedPostCardState extends State<FeedPostCard>
                           name: widget.feedWithUser.userName,
                           avatar: widget.feedWithUser.userAvatarUrl ?? '',
                           nativeLanguage:
-                              'EN', // Placeholder - would come from user data
+                              widget.feedWithUser.userNativeLanguage ??
+                              'Unknown',
                           learningLanguage:
-                              'JP', // Placeholder - would come from user data
+                              widget.feedWithUser.userLearningLanguage ??
+                              'Unknown',
                         ),
                       ),
                     );
@@ -1119,9 +1224,15 @@ class _FeedPostCardState extends State<FeedPostCard>
                                     avatar:
                                         widget.feedWithUser.userAvatarUrl ?? '',
                                     nativeLanguage:
-                                        'EN', // Placeholder - would come from user data
+                                        widget
+                                            .feedWithUser
+                                            .userNativeLanguage ??
+                                        'Unknown',
                                     learningLanguage:
-                                        'JP', // Placeholder - would come from user data
+                                        widget
+                                            .feedWithUser
+                                            .userLearningLanguage ??
+                                        'Unknown',
                                   ),
                                 ),
                               );
@@ -1144,7 +1255,7 @@ class _FeedPostCardState extends State<FeedPostCard>
                       ],
                     ),
                     const SizedBox(height: 2),
-                    // Language badges (placeholder for now)
+                    // Language badges showing actual user languages
                     Row(
                       children: [
                         Flexible(
@@ -1159,7 +1270,9 @@ class _FeedPostCardState extends State<FeedPostCard>
                               ),
                             ),
                             child: Text(
-                              'EN', // Placeholder - would come from user profile
+                              _getLanguageCode(
+                                widget.feedWithUser.userNativeLanguage,
+                              ),
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
@@ -1188,7 +1301,9 @@ class _FeedPostCardState extends State<FeedPostCard>
                               ),
                             ),
                             child: Text(
-                              'JP', // Placeholder - would come from user profile
+                              _getLanguageCode(
+                                widget.feedWithUser.userLearningLanguage,
+                              ),
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
@@ -1209,47 +1324,55 @@ class _FeedPostCardState extends State<FeedPostCard>
                     context,
                     listen: false,
                   ).currentUser?.id)
-                GestureDetector(
-                  onTap: _isLoadingFollow ? null : _toggleFollow,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _isFollowing
-                          ? (isDark
-                                ? Colors.purple.shade800
-                                : Colors.purple.shade600)
-                          : (isDark
-                                ? Colors.grey.shade800
-                                : Colors.grey.shade200),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: _isLoadingFollow
-                        ? SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                isDark ? Colors.white : Colors.black,
+                Consumer<FollowerProvider>(
+                  builder: (context, followerProvider, child) {
+                    final isFollowing = followerProvider.isFollowingUser(
+                      widget.feedWithUser.feed.learnerId,
+                    );
+
+                    return GestureDetector(
+                      onTap: _isLoadingFollow ? null : _toggleFollow,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isFollowing
+                              ? (isDark
+                                    ? Colors.purple.shade800
+                                    : Colors.purple.shade600)
+                              : (isDark
+                                    ? Colors.grey.shade800
+                                    : Colors.grey.shade200),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: _isLoadingFollow
+                            ? SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    isDark ? Colors.white : Colors.black,
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                isFollowing
+                                    ? AppLocalizations.of(context)!.following
+                                    : AppLocalizations.of(context)!.follow,
+                                style: TextStyle(
+                                  color: isFollowing
+                                      ? Colors.white
+                                      : (isDark ? Colors.white : Colors.black),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          )
-                        : Text(
-                            _isFollowing
-                                ? AppLocalizations.of(context)!.following
-                                : AppLocalizations.of(context)!.follow,
-                            style: TextStyle(
-                              color: _isFollowing
-                                  ? Colors.white
-                                  : (isDark ? Colors.white : Colors.black),
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                  ),
+                      ),
+                    );
+                  },
                 ),
             ],
           ),

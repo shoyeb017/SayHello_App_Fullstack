@@ -127,6 +127,26 @@ class _ProfilePageState extends State<ProfilePage> {
     return input[0].toUpperCase() + input.substring(1).toLowerCase();
   }
 
+  // Helper: map language name to a representative flag
+  String _getLanguageFlagForLanguage(String language) {
+    switch (language.toLowerCase()) {
+      case 'english':
+        // Use UK or US flag; pick US here for consistency with existing assets
+        return '🇺🇸';
+      case 'spanish':
+        return '🇪🇸';
+      case 'japanese':
+        return '🇯🇵';
+      case 'korean':
+        return '🇰🇷';
+      case 'bangla':
+      case 'bengali':
+        return '🇧🇩';
+      default:
+        return '🌐';
+    }
+  }
+
   // Helper method to format country name for display
   String _formatCountryName(String country) {
     final capitalizedCountry = _capitalizeFirst(country);
@@ -892,9 +912,10 @@ class _ProfilePageState extends State<ProfilePage> {
             context,
             '',
             _capitalizeFirst(learner.learningLanguage),
-            '🇯🇵',
+            _getLanguageFlagForLanguage(learner.learningLanguage),
             isDark,
             primaryColor,
+            onTap: () => _showLearningLanguageDialog(context, primaryColor),
           ),
 
           const SizedBox(height: 8),
@@ -1889,6 +1910,197 @@ class _ProfilePageState extends State<ProfilePage> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Failed to update language level: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              child: Text(
+                AppLocalizations.of(context)!.save,
+                style: TextStyle(color: primaryColor),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Learning language selection dialog
+  void _showLearningLanguageDialog(BuildContext context, Color primaryColor) {
+    final learnerProvider = Provider.of<LearnerProvider>(
+      context,
+      listen: false,
+    );
+    final currentLearner = learnerProvider.currentLearner;
+
+    // Use existing languages list defined at top of this state
+    final available = languages;
+    // Capitalize the stored value for matching in list UI
+    String selected = currentLearner?.learningLanguage != null
+        ? _capitalizeFirst(currentLearner!.learningLanguage)
+        : available.first;
+    if (!available.contains(selected)) {
+      // Fallback if stored value not in list
+      selected = available.first;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text('Select Learning Language'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<String>(
+                value: selected,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.language,
+                ),
+                items: available
+                    .map(
+                      (lang) => DropdownMenuItem(
+                        value: lang,
+                        child: Row(
+                          children: [
+                            Text(
+                              _getLanguageFlagForLanguage(lang),
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(lang),
+                          ],
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value == null) return;
+                  setState(() {
+                    selected = value;
+                  });
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Show confirmation dialog first
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('Confirm Language Change'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Changing your learning language to $selected will log you out and you\'ll need to sign in again.',
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'This is required to reload all content according to your new language preference.',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: Text(
+                          'Continue',
+                          style: TextStyle(color: primaryColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirmed != true) return;
+
+                try {
+                  final update = {'learning_language': selected.toLowerCase()};
+                  final success = await learnerProvider.updateLearner(update);
+
+                  if (context.mounted) {
+                    Navigator.pop(
+                      context,
+                    ); // Close the language selection dialog
+
+                    if (success) {
+                      // Clear all providers/cache data
+                      final authProvider = Provider.of<AuthProvider>(
+                        context,
+                        listen: false,
+                      );
+                      final followerProvider = Provider.of<FollowerProvider>(
+                        context,
+                        listen: false,
+                      );
+                      final notificationProvider =
+                          Provider.of<NotificationProvider>(
+                            context,
+                            listen: false,
+                          );
+
+                      // Clear provider data
+                      followerProvider.clear();
+                      learnerProvider.clear();
+                      notificationProvider.clearNotifications();
+
+                      // Sign out and redirect to landing page
+                      await authProvider.signOut();
+
+                      // Navigate to landing page and clear all routes
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => LandingPage()),
+                        (route) => false,
+                      );
+
+                      // Show success message on the landing page context
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Learning language updated to $selected. Please sign in again.',
+                              ),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 4),
+                            ),
+                          );
+                        }
+                      });
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Failed to update learning language'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to update learning language: $e'),
                         backgroundColor: Colors.red,
                       ),
                     );

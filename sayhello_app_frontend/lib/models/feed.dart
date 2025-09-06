@@ -301,11 +301,15 @@ class FeedWithUser {
   final Feed feed;
   final String userName;
   final String? userAvatarUrl;
+  final String? userNativeLanguage;
+  final String? userLearningLanguage;
 
   const FeedWithUser({
     required this.feed,
     required this.userName,
     this.userAvatarUrl,
+    this.userNativeLanguage,
+    this.userLearningLanguage,
   });
 
   /// Create FeedWithUser from JSON with user data
@@ -314,12 +318,14 @@ class FeedWithUser {
       feed: Feed.fromJson(json),
       userName: json['user_name'] as String,
       userAvatarUrl: json['user_avatar_url'] as String?,
+      userNativeLanguage: json['user_native_language'] as String?,
+      userLearningLanguage: json['user_learning_language'] as String?,
     );
   }
 
   @override
   String toString() {
-    return 'FeedWithUser(feed: ${feed.id}, user: $userName)';
+    return 'FeedWithUser(feed: ${feed.id}, user: $userName, native: $userNativeLanguage, learning: $userLearningLanguage)';
   }
 }
 

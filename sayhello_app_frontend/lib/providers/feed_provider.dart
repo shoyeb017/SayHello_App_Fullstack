@@ -45,22 +45,28 @@ class FeedProvider extends ChangeNotifier {
   // =============================
 
   /// Load both tabs simultaneously for faster initial loading
-  Future<void> loadAllFeeds(String currentUserId) async {
+  Future<void> loadAllFeeds(
+    String currentUserId, {
+    String? learningLanguage,
+  }) async {
     _setLoading(true);
     _clearError();
 
     try {
       print('FeedProvider: Loading all feeds simultaneously');
+      print('FeedProvider: Learning language filter: $learningLanguage');
 
       // Load both tabs at the same time
       final recentFeedsTask = _repository.getNotFollowingFeeds(
         currentUserId,
         limit: 15,
+        learningLanguage: learningLanguage,
       );
 
       final forYouFeedsTask = _repository.getFollowingFeeds(
         currentUserId,
         limit: 15,
+        learningLanguage: learningLanguage,
       );
 
       // Wait for both to complete
@@ -90,15 +96,17 @@ class FeedProvider extends ChangeNotifier {
     }
   }
 
-  /// Load recent feeds (feeds from users NOT being followed)
+  /// Load recent feeds (feeds from users whose native language matches learning language, excluding followed users)
   Future<void> loadRecentFeeds(String currentUserId) async {
     _setLoading(true);
     _clearError();
 
     try {
-      print('FeedProvider: Loading recent feeds (NOT following users)');
+      print(
+        'FeedProvider: Loading recent feeds (native speakers of learning language)',
+      );
 
-      // Get feeds from users NOT being followed
+      // Get feeds from users whose native language matches the learning language
       final feeds = await _repository.getNotFollowingFeeds(
         currentUserId,
         limit: 15, // Reduced limit to prevent crashes
@@ -119,15 +127,17 @@ class FeedProvider extends ChangeNotifier {
     }
   }
 
-  /// Load for you feeds (feeds from followed users only)
+  /// Load for you feeds (feeds from followed users only, any language)
   Future<void> loadForYouFeeds(String currentUserId) async {
     _setLoading(true);
     _clearError();
 
     try {
-      print('FeedProvider: Loading for you feeds (followed users only)');
+      print(
+        'FeedProvider: Loading for you feeds (followed users, any language)',
+      );
 
-      // Get feeds only from followed users
+      // Get feeds only from followed users (no language filtering)
       final feeds = await _repository.getFollowingFeeds(
         currentUserId,
         limit: 15, // Reduced limit to prevent crashes
@@ -277,6 +287,8 @@ class FeedProvider extends ChangeNotifier {
             feed: feed,
             userName: 'You',
             userAvatarUrl: null, // Will be handled by the UI
+            userNativeLanguage: null, // User's own posts - handled by UI
+            userLearningLanguage: null, // User's own posts - handled by UI
           ),
         );
       }
@@ -611,7 +623,11 @@ class FeedProvider extends ChangeNotifier {
   // =============================
 
   /// Follow a user
-  Future<bool> followUser(String followerId, String followedId) async {
+  Future<bool> followUser(
+    String followerId,
+    String followedId, {
+    String? learningLanguage,
+  }) async {
     _isFollowOperationInProgress = true;
     notifyListeners();
 
@@ -619,7 +635,10 @@ class FeedProvider extends ChangeNotifier {
       await _repository.followUser(followerId, followedId);
 
       // Real-time update: Refresh both tabs after following (without loading indicators)
-      await _refreshFeedsQuietly(followerId);
+      await _refreshFeedsQuietly(
+        followerId,
+        learningLanguage: learningLanguage,
+      );
 
       return true;
     } catch (e) {
@@ -632,7 +651,11 @@ class FeedProvider extends ChangeNotifier {
   }
 
   /// Unfollow a user
-  Future<bool> unfollowUser(String followerId, String followedId) async {
+  Future<bool> unfollowUser(
+    String followerId,
+    String followedId, {
+    String? learningLanguage,
+  }) async {
     _isFollowOperationInProgress = true;
     notifyListeners();
 
@@ -640,7 +663,10 @@ class FeedProvider extends ChangeNotifier {
       await _repository.unfollowUser(followerId, followedId);
 
       // Real-time update: Refresh both tabs after unfollowing (without loading indicators)
-      await _refreshFeedsQuietly(followerId);
+      await _refreshFeedsQuietly(
+        followerId,
+        learningLanguage: learningLanguage,
+      );
 
       return true;
     } catch (e) {
@@ -653,17 +679,27 @@ class FeedProvider extends ChangeNotifier {
   }
 
   /// Refresh feeds quietly without showing loading indicators
-  Future<void> _refreshFeedsQuietly(String currentUserId) async {
+  Future<void> _refreshFeedsQuietly(
+    String currentUserId, {
+    String? learningLanguage,
+  }) async {
     try {
+      print(
+        'FeedProvider: Refreshing feeds quietly with learning language: $learningLanguage',
+      );
+
       // Load feeds without setting loading state
       final recentFeedsTask = _repository.getNotFollowingFeeds(
         currentUserId,
         limit: 15,
+        learningLanguage: learningLanguage,
       );
 
       final forYouFeedsTask = _repository.getFollowingFeeds(
         currentUserId,
         limit: 15,
+        learningLanguage:
+            learningLanguage, // For compatibility, not used in getFollowingFeeds
       );
 
       // Wait for both to complete

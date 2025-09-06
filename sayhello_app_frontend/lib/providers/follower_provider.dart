@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import '../models/learner.dart';
 import '../data/follower_data.dart';
 
@@ -31,6 +32,54 @@ class FollowerProvider with ChangeNotifier {
   /// Get follow status for a specific user
   bool isFollowingUser(String userId) {
     return _followStatus[userId] ?? false;
+  }
+
+  /// Safe notification that checks if we're in build phase
+  void _safeNotifyListeners() {
+    try {
+      // Try immediate notification first
+      notifyListeners();
+    } catch (e) {
+      // If it fails (during build), schedule for after build
+      print('FollowerProvider: Scheduling notification after build phase');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
+
+  /// Batch check follow status for multiple users
+  Future<void> batchCheckFollowStatus(
+    String followerId,
+    List<String> userIds,
+  ) async {
+    if (userIds.isEmpty) return;
+
+    try {
+      print(
+        'FollowerProvider: Batch checking follow status for ${userIds.length} users',
+      );
+
+      // Check each user's follow status
+      for (String userId in userIds) {
+        if (userId != followerId) {
+          // Don't check self
+          final isFollowing = await FollowerData.isFollowing(
+            followerId,
+            userId,
+          );
+          _followStatus[userId] = isFollowing;
+          print('FollowerProvider: User $userId follow status: $isFollowing');
+        }
+      }
+
+      // Schedule notification for after build is complete
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    } catch (e) {
+      print('Error in batch checking follow status: $e');
+    }
   }
 
   /// Load all counts for a learner
@@ -103,7 +152,11 @@ class FollowerProvider with ChangeNotifier {
       print(
         'FollowerProvider: Follow status $followerId -> $followedId: $isFollowing',
       );
-      notifyListeners();
+
+      // Schedule notification for after build is complete
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     } catch (e) {
       print('Error checking follow status: $e');
     }
@@ -141,7 +194,8 @@ class FollowerProvider with ChangeNotifier {
       }
 
       if (success) {
-        notifyListeners();
+        // Use safe notification for user-triggered actions
+        _safeNotifyListeners();
       }
 
       return success;
@@ -158,7 +212,7 @@ class FollowerProvider with ChangeNotifier {
       if (success) {
         _followStatus[followedId] = true;
         _followingCount++;
-        notifyListeners();
+        _safeNotifyListeners();
       }
       return success;
     } catch (e) {
@@ -177,7 +231,7 @@ class FollowerProvider with ChangeNotifier {
       if (success) {
         _followStatus[followedId] = false;
         _followingCount = (_followingCount > 0) ? _followingCount - 1 : 0;
-        notifyListeners();
+        _safeNotifyListeners();
       }
       return success;
     } catch (e) {
@@ -200,25 +254,102 @@ class FollowerProvider with ChangeNotifier {
     _following.clear();
     _followStatus.clear();
     _error = null;
-    notifyListeners();
+    _safeNotifyListeners();
+  }
+
+  /// Clear follow status cache for specific user (useful for refreshing)
+  void clearFollowStatusCache(String userId) {
+    _followStatus.remove(userId);
+    // Don't notify immediately to avoid build-time updates
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
+  }
+
+  /// Force refresh follow status for a specific user (ignores cache)
+  Future<void> forceRefreshFollowStatus(
+    String followerId,
+    String followedId,
+  ) async {
+    try {
+      print(
+        'FollowerProvider: Force refreshing follow status: $followerId -> $followedId',
+      );
+
+      // Clear cache first (without immediate notification)
+      _followStatus.remove(followedId);
+
+      // Check fresh from database
+      final isFollowing = await FollowerData.isFollowing(
+        followerId,
+        followedId,
+      );
+      _followStatus[followedId] = isFollowing;
+
+      print(
+        'FollowerProvider: Fresh follow status $followerId -> $followedId: $isFollowing',
+      );
+
+      // Schedule notification for after build is complete
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    } catch (e) {
+      print('Error force refreshing follow status: $e');
+    }
+  }
+
+  /// Debug method to check database vs cache consistency
+  Future<void> debugFollowStatus(String followerId, String followedId) async {
+    try {
+      print('=== DEBUG FOLLOW STATUS ===');
+      print('Follower ID: $followerId');
+      print('Followed ID: $followedId');
+
+      // Check cached value
+      final cachedValue = _followStatus[followedId];
+      print('Cached follow status: $cachedValue');
+
+      // Check database value
+      final dbValue = await FollowerData.isFollowing(followerId, followedId);
+      print('Database follow status: $dbValue');
+
+      // Check if they match
+      final matches = cachedValue == dbValue;
+      print('Cache matches DB: $matches');
+
+      if (!matches) {
+        print('⚠️  INCONSISTENCY DETECTED! Updating cache...');
+        _followStatus[followedId] = dbValue;
+
+        // Schedule notification for after build is complete
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          notifyListeners();
+        });
+      }
+
+      print('=== END DEBUG ===');
+    } catch (e) {
+      print('Error in debug follow status: $e');
+    }
   }
 
   /// Update feed count (called when user creates/deletes a feed)
   void updateFeedCount(int delta) {
     _feedCount += delta;
     if (_feedCount < 0) _feedCount = 0;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   /// Update followers count (called when someone follows/unfollows this user)
   void updateFollowersCount(int delta) {
     _followersCount += delta;
     if (_followersCount < 0) _followersCount = 0;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   void _setLoading(bool loading) {
     _isLoading = loading;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 }

@@ -166,11 +166,12 @@ class FeedRepository {
     return _processFeedResponse(response);
   }
 
-  /// Get feeds from users NOT being followed (excluding own posts)
+  /// Get feeds from users whose native language matches learning language (excluding own posts and followed users)
   Future<List<FeedWithUser>> getNotFollowingFeeds(
     String currentUserId, {
     int limit = 20,
     int offset = 0,
+    String? learningLanguage,
   }) async {
     try {
       // First get the list of users that the current user follows
@@ -184,25 +185,37 @@ class FeedRepository {
       final excludeIds = [...followingIds, currentUserId];
 
       print('Excluding user IDs: $excludeIds');
+      print('Learning language filter: $learningLanguage');
 
-      // Build the query differently to handle empty excludeIds
+      // Build the query with language filtering
       var query = _client.from('feed').select('''
-            id,
-            learner_id,
-            content_text,
-            created_at,
+            *,
+            learners!inner (
+              name,
+              profile_image,
+              native_language,
+              learning_language
+            ),
             feed_images (
               image_url
-            ),
-            learner:learner_id (
-              name,
-              profile_image
             )
           ''');
 
       // If there are users to exclude, add the filter
       if (excludeIds.isNotEmpty) {
         query = query.not('learner_id', 'in', '(${excludeIds.join(',')})');
+      }
+
+      // Filter by learning language - show posts from users whose native language matches the learning language
+      if (learningLanguage != null && learningLanguage.isNotEmpty) {
+        // We need to join with the learners table to filter by native_language
+        query = query.eq(
+          'learners.native_language',
+          learningLanguage.toLowerCase(),
+        );
+        print(
+          'Filtering feeds by native language: ${learningLanguage.toLowerCase()}',
+        );
       }
 
       final response = await query
@@ -217,11 +230,13 @@ class FeedRepository {
     }
   }
 
-  /// Get following feeds (feeds from users that current user follows)
+  /// Get following feeds (feeds from users that current user follows - no language filtering)
   Future<List<FeedWithUser>> getFollowingFeeds(
     String currentUserId, {
     int limit = 20,
     int offset = 0,
+    String?
+    learningLanguage, // Keep parameter for compatibility but don't use it
   }) async {
     try {
       // First get the list of users that the current user follows
@@ -235,26 +250,28 @@ class FeedRepository {
         return [];
       }
 
+      // Get all posts from followed users regardless of their native language
       final response = await _client
           .from('feed')
           .select('''
-            id,
-            learner_id,
-            content_text,
-            created_at,
+            *,
+            learners!inner (
+              name,
+              profile_image,
+              native_language,
+              learning_language
+            ),
             feed_images (
               image_url
-            ),
-            learner:learner_id (
-              name,
-              profile_image
             )
           ''')
           .inFilter('learner_id', followingIds)
           .order('created_at', ascending: false)
           .range(offset, offset + limit - 1);
 
-      print('Following feeds query response: ${response.length} feeds');
+      print(
+        'Following feeds query response: ${response.length} feeds (no language filter)',
+      );
       return _processFeedWithUserResponse(response);
     } catch (e) {
       print('Error in getFollowingFeeds: $e');
@@ -269,16 +286,15 @@ class FeedRepository {
     int offset = 0,
   }) async {
     var query = _client.from('feed').select('''
-          id,
-          learner_id,
-          content_text,
-          created_at,
+          *,
+          learners!inner (
+            name,
+            profile_image,
+            native_language,
+            learning_language
+          ),
           feed_images (
             image_url
-          ),
-          learner:learner_id (
-            name,
-            profile_image
           )
         ''');
 
@@ -340,7 +356,74 @@ class FeedRepository {
         final likesCount = await getFeedLikeCount(feedId);
         final commentsCount = await getFeedCommentCount(feedId);
 
-        final learner = json['learner'] as Map<String, dynamic>?;
+        final learners = json['learners'] as Map<String, dynamic>?;
+
+        // Debug: Print learners data to identify the issue
+        print('Processing feed ${json['id']}: learners data = $learners');
+        print('Full JSON: ${json.toString()}');
+
+        // Try to get user data from learners or fallback to direct lookup
+        String userName = 'Unknown User';
+        String? userAvatarUrl;
+        String? userNativeLanguage;
+        String? userLearningLanguage;
+
+        if (learners != null && learners.isNotEmpty) {
+          userName = learners['name'] as String? ?? 'Unknown User';
+          userAvatarUrl = learners['profile_image'] as String?;
+          userNativeLanguage = learners['native_language'] as String?;
+          userLearningLanguage = learners['learning_language'] as String?;
+          print('✅ Successfully got user data from join: $userName');
+        } else {
+          // Fallback: Direct lookup for user data if join failed
+          print(
+            '⚠️ Learners data is null/empty for feed ${json['id']}, attempting direct lookup for user ${json['learner_id']}',
+          );
+          try {
+            // First try learners table
+            var userResponse = await _client
+                .from('learners')
+                .select(
+                  'name, profile_image, native_language, learning_language',
+                )
+                .eq('id', json['learner_id'])
+                .maybeSingle();
+
+            if (userResponse != null) {
+              userName = userResponse['name'] as String? ?? 'Unknown User';
+              userAvatarUrl = userResponse['profile_image'] as String?;
+              userNativeLanguage = userResponse['native_language'] as String?;
+              userLearningLanguage =
+                  userResponse['learning_language'] as String?;
+              print(
+                '✅ Direct lookup successful in learners table for user ${json['learner_id']}: $userName',
+              );
+            } else {
+              // Try instructor table as fallback
+              print('Learners not found, trying instructor table...');
+              userResponse = await _client
+                  .from('instructor')
+                  .select('name, profile_image')
+                  .eq('id', json['learner_id'])
+                  .maybeSingle();
+
+              if (userResponse != null) {
+                userName = userResponse['name'] as String? ?? 'Unknown User';
+                userAvatarUrl = userResponse['profile_image'] as String?;
+                userNativeLanguage =
+                    null; // Instructors might not have language info
+                userLearningLanguage = null;
+                print('✅ Found user in instructor table: $userName');
+              } else {
+                print(
+                  '❌ User ${json['learner_id']} not found in either learners or instructor table',
+                );
+              }
+            }
+          } catch (e) {
+            print('❌ Error in direct user lookup: $e');
+          }
+        }
 
         final feed = Feed.fromJson({
           ...json,
@@ -353,8 +436,10 @@ class FeedRepository {
         feedsWithUser.add(
           FeedWithUser(
             feed: feed,
-            userName: learner?['name'] as String? ?? 'Unknown User',
-            userAvatarUrl: learner?['profile_image'] as String?,
+            userName: userName,
+            userAvatarUrl: userAvatarUrl,
+            userNativeLanguage: userNativeLanguage,
+            userLearningLanguage: userLearningLanguage,
           ),
         );
       } catch (e) {

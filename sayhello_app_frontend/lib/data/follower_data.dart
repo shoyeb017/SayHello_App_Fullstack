@@ -151,14 +151,32 @@ class FollowerData {
   /// Check if learner is following another learner
   static Future<bool> isFollowing(String followerId, String followedId) async {
     try {
+      print('FollowerData: Checking follow status: $followerId -> $followedId');
+
       final response = await SupabaseConfig.client
           .from('followers')
           .select('id')
           .eq('follower_user_id', followerId)
           .eq('followed_user_id', followedId)
-          .maybeSingle();
+          .limit(1);
 
-      return response != null;
+      print('FollowerData: Query returned ${response.length} rows');
+
+      // If we get any rows, it means the user is following
+      final isFollowing = response.isNotEmpty;
+
+      // Log warning if multiple rows found (indicates duplicate data)
+      if (response.length > 1) {
+        print(
+          '⚠️ WARNING: Found ${response.length} duplicate follow relationships for $followerId -> $followedId',
+        );
+        print(
+          '   This indicates duplicate data in the followers table that should be cleaned up',
+        );
+      }
+
+      print('FollowerData: Follow status result: $isFollowing');
+      return isFollowing;
     } catch (e) {
       print('Error checking follow status: $e');
       return false;
@@ -171,11 +189,21 @@ class FollowerData {
     String followedId,
   ) async {
     try {
+      print('FollowerData: Attempting to follow: $followerId -> $followedId');
+
+      // First check if already following to prevent duplicates
+      final alreadyFollowing = await isFollowing(followerId, followedId);
+      if (alreadyFollowing) {
+        print('FollowerData: Already following, skipping insert');
+        return true; // Already following, consider it successful
+      }
+
       await SupabaseConfig.client.from('followers').insert({
         'follower_user_id': followerId,
         'followed_user_id': followedId,
       });
 
+      print('FollowerData: Successfully followed');
       return true;
     } catch (e) {
       print('Error following learner: $e');
@@ -189,16 +217,66 @@ class FollowerData {
     String followedId,
   ) async {
     try {
+      print('FollowerData: Attempting to unfollow: $followerId -> $followedId');
+
       await SupabaseConfig.client
           .from('followers')
           .delete()
           .eq('follower_user_id', followerId)
           .eq('followed_user_id', followedId);
 
+      print('FollowerData: Unfollow operation completed');
       return true;
     } catch (e) {
       print('Error unfollowing learner: $e');
       return false;
+    }
+  }
+
+  /// Clean up duplicate follow relationships (maintenance method)
+  static Future<int> cleanupDuplicateFollows() async {
+    try {
+      print('FollowerData: Starting cleanup of duplicate follow relationships');
+
+      // Get all follow relationships
+      final allFollows = await SupabaseConfig.client
+          .from('followers')
+          .select('id, follower_user_id, followed_user_id, created_at')
+          .order('created_at', ascending: true);
+
+      // Group by follower-followed pair
+      Map<String, List<dynamic>> groups = {};
+      for (var follow in allFollows) {
+        final key =
+            '${follow['follower_user_id']}-${follow['followed_user_id']}';
+        groups[key] = groups[key] ?? [];
+        groups[key]!.add(follow);
+      }
+
+      // Find duplicates and remove all but the first one
+      int deletedCount = 0;
+      for (var entry in groups.entries) {
+        if (entry.value.length > 1) {
+          print('Found ${entry.value.length} duplicates for ${entry.key}');
+
+          // Keep the first one, delete the rest
+          for (int i = 1; i < entry.value.length; i++) {
+            await SupabaseConfig.client
+                .from('followers')
+                .delete()
+                .eq('id', entry.value[i]['id']);
+            deletedCount++;
+          }
+        }
+      }
+
+      print(
+        'FollowerData: Cleanup completed. Deleted $deletedCount duplicate entries',
+      );
+      return deletedCount;
+    } catch (e) {
+      print('Error cleaning up duplicate follows: $e');
+      return 0;
     }
   }
 

@@ -39,10 +39,22 @@ class _ConnectPageState extends State<ConnectPage> {
   // Search debouncer
   Timer? _searchDebouncer;
 
+  // Track current learning language to detect changes
+  String? _currentLearningLanguage;
+
   @override
   void initState() {
     super.initState();
     _loadLanguagePartners();
+
+    // Initialize current learning language
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      if (authProvider.currentUser != null) {
+        final currentUser = authProvider.currentUser as Learner;
+        _currentLearningLanguage = currentUser.learningLanguage;
+      }
+    });
   }
 
   @override
@@ -398,58 +410,81 @@ class _ConnectPageState extends State<ConnectPage> {
 
                       const SizedBox(height: 4),
 
-                      // Languages
-                      Row(
+                      // Languages with level stars
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Flexible(
-                            child: Container(
-                              padding: const EdgeInsets.only(bottom: 2),
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.green,
-                                    width: 2,
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Container(
+                                  padding: const EdgeInsets.only(bottom: 2),
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.green,
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    _getLanguageCode(learner.nativeLanguage),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ),
-                              child: Text(
-                                _getLanguageCode(learner.nativeLanguage),
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 6),
+                                child: Icon(
+                                  Icons.sync_alt,
+                                  size: 18,
+                                  color: Colors.grey,
                                 ),
-                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 6),
-                            child: Icon(
-                              Icons.sync_alt,
-                              size: 18,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          Flexible(
-                            child: Container(
-                              padding: const EdgeInsets.only(bottom: 2),
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.purple,
-                                    width: 2,
+                              Flexible(
+                                child: Container(
+                                  padding: const EdgeInsets.only(bottom: 2),
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.purple,
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    _getLanguageCode(learner.learningLanguage),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ),
-                              child: Text(
-                                _getLanguageCode(learner.learningLanguage),
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          // Language level stars
+                          Row(
+                            children: [
+                              Text(
+                                'Level: ',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: isDark
+                                      ? Colors.grey.shade400
+                                      : Colors.grey.shade600,
                                 ),
-                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
+                              ..._buildLanguageLevelStars(
+                                learner.languageLevel,
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -692,6 +727,53 @@ class _ConnectPageState extends State<ConnectPage> {
       age--;
     }
     return age;
+  }
+
+  /// Helper method to build language level stars
+  List<Widget> _buildLanguageLevelStars(String languageLevel) {
+    int starCount = 0;
+
+    switch (languageLevel.toLowerCase()) {
+      case 'beginner':
+        starCount = 1;
+        break;
+      case 'elementary':
+        starCount = 2;
+        break;
+      case 'intermediate':
+        starCount = 3;
+        break;
+      case 'advanced':
+        starCount = 4;
+        break;
+      case 'proficient':
+      case 'native':
+        starCount = 5;
+        break;
+      default:
+        starCount = 1; // Default to beginner
+        break;
+    }
+
+    List<Widget> stars = [];
+
+    // Add filled stars
+    for (int i = 0; i < starCount; i++) {
+      stars.add(Icon(Icons.star, size: 12, color: Colors.purple));
+    }
+
+    // Add empty stars to make total of 5
+    for (int i = starCount; i < 5; i++) {
+      stars.add(
+        Icon(
+          Icons.star_border,
+          size: 12,
+          color: Colors.purple.withOpacity(0.3),
+        ),
+      );
+    }
+
+    return stars;
   }
 
   /// Show advanced filter dialog
@@ -957,261 +1039,298 @@ class _ConnectPageState extends State<ConnectPage> {
         : Colors.grey.shade700;
     final dividerColor = isDark ? Colors.grey.shade800 : Colors.grey.shade300;
 
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(52),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          scrolledUnderElevation: 0,
-          title: Row(
-            children: [
-              // Settings icon
-              IconButton(
-                icon: Icon(
-                  Icons.settings,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-                onPressed: () =>
-                    SettingsProvider.showSettingsBottomSheet(context),
-              ),
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
+        // Check if learning language has changed and reload if needed
+        if (authProvider.currentUser != null) {
+          final currentUser = authProvider.currentUser as Learner;
+          if (_currentLearningLanguage != currentUser.learningLanguage) {
+            _currentLearningLanguage = currentUser.learningLanguage;
+            // Schedule reload after build completes
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _loadLanguagePartners();
+            });
+          }
+        }
 
-              const SizedBox(width: 40),
+        return Scaffold(
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(52),
+            child: AppBar(
+              automaticallyImplyLeading: false,
+              scrolledUnderElevation: 0,
+              title: Row(
+                children: [
+                  // Settings icon
+                  IconButton(
+                    icon: Icon(
+                      Icons.settings,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                    onPressed: () =>
+                        SettingsProvider.showSettingsBottomSheet(context),
+                  ),
 
-              Expanded(
-                child: Text(
-                  AppLocalizations.of(context)!.findPartners,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                ),
-              ),
+                  const SizedBox(width: 40),
 
-              // Notification icon
-              Consumer<NotificationProvider>(
-                builder: (context, notificationProvider, child) {
-                  final unreadCount = notificationProvider.unreadCount;
-                  return Stack(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.notifications_outlined,
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NotificationsPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      // Red dot for unread notifications
-                      if (unreadCount > 0)
-                        Positioned(
-                          right: 11,
-                          top: 11,
-                          child: Container(
-                            padding: EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            constraints: BoxConstraints(
-                              minWidth: 12,
-                              minHeight: 12,
-                            ),
-                            child: Text(
-                              unreadCount > 99 ? '99+' : unreadCount.toString(),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 8,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                    ],
-                  );
-                },
-              ),
-
-              IconButton(
-                icon: Icon(Icons.more_vert, color: textColor),
-                onPressed: () {
-                  _showAdvancedFilterDialog(context);
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Top Filter Tabs
-          SizedBox(
-            height: 50,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: topTabs.length,
-              itemBuilder: (context, index) {
-                final selected = index == selectedTopTabIndex;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 6),
-                  child: ChoiceChip(
-                    label: Text(
-                      topTabs[index],
+                  Expanded(
+                    child: Text(
+                      AppLocalizations.of(context)!.findPartners,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: selected ? textColor : chipUnselectedText,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
                       ),
                     ),
-                    selected: selected,
-                    backgroundColor: Colors.transparent,
-                    selectedColor: chipSelectedBg,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                      side: BorderSide(color: chipborderColor),
-                    ),
-                    onSelected: (_) {
-                      if (mounted) {
-                        setState(() {
-                          selectedTopTabIndex = index;
-                          _applyFilters();
-                        });
-                      }
+                  ),
+
+                  // Notification icon
+                  Consumer<NotificationProvider>(
+                    builder: (context, notificationProvider, child) {
+                      final unreadCount = notificationProvider.unreadCount;
+                      return Stack(
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              Icons.notifications_outlined,
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NotificationsPage(),
+                                ),
+                              );
+                            },
+                          ),
+                          // Red dot for unread notifications
+                          if (unreadCount > 0)
+                            Positioned(
+                              right: 11,
+                              top: 11,
+                              child: Container(
+                                padding: EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                constraints: BoxConstraints(
+                                  minWidth: 12,
+                                  minHeight: 12,
+                                ),
+                                child: Text(
+                                  unreadCount > 99
+                                      ? '99+'
+                                      : unreadCount.toString(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
                     },
                   ),
-                );
-              },
+
+                  IconButton(
+                    icon: Icon(Icons.more_vert, color: textColor),
+                    onPressed: () {
+                      _showAdvancedFilterDialog(context);
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
 
-          // Search Field
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: TextField(
-                controller: _searchController,
-                onChanged: (value) => _onSearchChanged(),
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.searchPeople,
-                  hintStyle: TextStyle(
-                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Top Filter Tabs
+              SizedBox(
+                height: 50,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
                   ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
-                  ),
-                  suffixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (_searchController.text.isNotEmpty)
-                        IconButton(
-                          icon: Icon(
-                            Icons.clear,
-                            color: isDark
-                                ? Colors.grey.shade400
-                                : Colors.grey.shade600,
+                  itemCount: topTabs.length,
+                  itemBuilder: (context, index) {
+                    final selected = index == selectedTopTabIndex;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 6),
+                      child: ChoiceChip(
+                        label: Text(
+                          topTabs[index],
+                          style: TextStyle(
+                            color: selected ? textColor : chipUnselectedText,
+                            fontWeight: FontWeight.w800,
                           ),
-                          onPressed: () {
-                            _searchController.clear();
-                            if (mounted) {
-                              _applyFilters();
-                            }
-                          },
                         ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.tune,
+                        selected: selected,
+                        backgroundColor: Colors.transparent,
+                        selectedColor: chipSelectedBg,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          side: BorderSide(color: chipborderColor),
+                        ),
+                        onSelected: (_) {
+                          if (mounted) {
+                            setState(() {
+                              selectedTopTabIndex = index;
+                              _applyFilters();
+                            });
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // Search Field
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: (value) => _onSearchChanged(),
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.searchPeople,
+                      hintStyle: TextStyle(
+                        color: isDark
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: isDark
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
+                      ),
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_searchController.text.isNotEmpty)
+                            IconButton(
+                              icon: Icon(
+                                Icons.clear,
+                                color: isDark
+                                    ? Colors.grey.shade400
+                                    : Colors.grey.shade600,
+                              ),
+                              onPressed: () {
+                                _searchController.clear();
+                                if (mounted) {
+                                  _applyFilters();
+                                }
+                              },
+                            ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.tune,
+                              color: isDark
+                                  ? Colors.grey.shade400
+                                  : Colors.grey.shade600,
+                            ),
+                            onPressed: () {
+                              _showAdvancedFilterDialog(context);
+                            },
+                          ),
+                        ],
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Status and Statistics
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Consumer<AuthProvider>(
+                      builder: (context, authProvider, child) {
+                        if (authProvider.currentUser != null) {
+                          final currentUser =
+                              authProvider.currentUser as Learner;
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Color(0xFF311c85)
+                                  : Color(0xFFefecff),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'Learning: ${currentUser.learningLanguage}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF7758f3),
+                                fontSize: 12,
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                    const Spacer(),
+                    if (!_isLoading && _error == null)
+                      Text(
+                        '${_filteredLearners.length} partners found',
+                        style: TextStyle(
                           color: isDark
                               ? Colors.grey.shade400
                               : Colors.grey.shade600,
+                          fontSize: 12,
                         ),
-                        onPressed: () {
-                          _showAdvancedFilterDialog(context);
-                        },
                       ),
-                    ],
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                ),
-                style: TextStyle(color: isDark ? Colors.white : Colors.black),
-              ),
-            ),
-          ),
-
-          // Status and Statistics
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Consumer<AuthProvider>(
-                  builder: (context, authProvider, child) {
-                    if (authProvider.currentUser != null) {
-                      final currentUser = authProvider.currentUser as Learner;
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDark ? Color(0xFF311c85) : Color(0xFFefecff),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          'Learning: ${currentUser.learningLanguage}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF7758f3),
-                            fontSize: 12,
-                          ),
-                        ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-                const Spacer(),
-                if (!_isLoading && _error == null)
-                  Text(
-                    '${_filteredLearners.length} partners found',
-                    style: TextStyle(
-                      color: isDark
-                          ? Colors.grey.shade400
-                          : Colors.grey.shade600,
-                      fontSize: 12,
+                    IconButton(
+                      icon: Icon(
+                        Icons.refresh,
+                        color: isDark
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
+                        size: 20,
+                      ),
+                      onPressed: _loadLanguagePartners,
                     ),
-                  ),
-                IconButton(
-                  icon: Icon(
-                    Icons.refresh,
-                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
-                    size: 20,
-                  ),
-                  onPressed: _loadLanguagePartners,
+                  ],
                 ),
-              ],
-            ),
+              ),
+
+              const SizedBox(height: 10),
+
+              // Main Content
+              Expanded(
+                child: _buildMainContent(isDark, textColor, dividerColor),
+              ),
+            ],
           ),
-
-          const SizedBox(height: 10),
-
-          // Main Content
-          Expanded(child: _buildMainContent(isDark, textColor, dividerColor)),
-        ],
-      ),
+        );
+      },
     );
   }
 }
