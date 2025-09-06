@@ -183,20 +183,28 @@ class _ConnectPageState extends State<ConnectPage> {
     // Apply region filter
     if (_selectedRegion != null) {
       filtered = filtered
-          .where((learner) => learner.country == _selectedRegion)
+          .where(
+            (learner) =>
+                learner.country.toLowerCase() == _selectedRegion!.toLowerCase(),
+          )
           .toList();
     }
 
     // Apply proficiency filter
     if (_selectedProficiency != null) {
       filtered = filtered
-          .where((learner) => learner.languageLevel == _selectedProficiency)
+          .where(
+            (learner) =>
+                learner.languageLevel.toLowerCase() ==
+                _selectedProficiency!.toLowerCase(),
+          )
           .toList();
     }
 
     // Apply top tab filters
     switch (selectedTopTabIndex) {
       case 1: // Shared Interests
+        if (!mounted) break;
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
         if (authProvider.currentUser != null) {
           final currentUser = authProvider.currentUser as Learner;
@@ -208,6 +216,7 @@ class _ConnectPageState extends State<ConnectPage> {
         }
         break;
       case 2: // Nearby (same country)
+        if (!mounted) break;
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
         if (authProvider.currentUser != null) {
           final currentUser = authProvider.currentUser as Learner;
@@ -217,6 +226,7 @@ class _ConnectPageState extends State<ConnectPage> {
         }
         break;
       case 3: // Gender (opposite gender)
+        if (!mounted) break;
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
         if (authProvider.currentUser != null) {
           final currentUser = authProvider.currentUser as Learner;
@@ -568,6 +578,8 @@ class _ConnectPageState extends State<ConnectPage> {
 
   /// Navigate to chat page with the selected learner
   Future<void> _navigateToChat(Learner learner) async {
+    if (!mounted) return;
+
     try {
       // Create ChatUser from Learner for navigation
       final chatUser = ChatUser(
@@ -592,12 +604,14 @@ class _ConnectPageState extends State<ConnectPage> {
       );
     } catch (e) {
       print('Error navigating to chat: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to start chat. Please try again.'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to start chat. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -619,7 +633,7 @@ class _ConnectPageState extends State<ConnectPage> {
     }
   }
 
-  /// Helper method to get language code
+  /// Helper method to get language code (only for supported languages)
   String _getLanguageCode(String language) {
     switch (language.toLowerCase()) {
       case 'english':
@@ -630,91 +644,14 @@ class _ConnectPageState extends State<ConnectPage> {
         return 'JP';
       case 'korean':
         return 'KR';
-      case 'french':
-        return 'FR';
-      case 'german':
-        return 'DE';
-      case 'chinese':
-        return 'ZH';
-      case 'arabic':
-        return 'AR';
-      case 'portuguese':
-        return 'PT';
-      case 'italian':
-        return 'IT';
-      case 'russian':
-        return 'RU';
-      case 'hindi':
-        return 'HI';
+      case 'bangla':
       case 'bengali':
         return 'BN';
-      case 'urdu':
-        return 'UR';
-      case 'dutch':
-        return 'NL';
-      case 'thai':
-        return 'TH';
-      case 'vietnamese':
-        return 'VI';
-      case 'turkish':
-        return 'TR';
-      case 'polish':
-        return 'PL';
-      case 'swedish':
-        return 'SV';
-      case 'norwegian':
-        return 'NO';
-      case 'danish':
-        return 'DA';
-      case 'finnish':
-        return 'FI';
-      case 'greek':
-        return 'EL';
-      case 'hebrew':
-        return 'HE';
-      case 'hungarian':
-        return 'HU';
-      case 'czech':
-        return 'CS';
-      case 'slovak':
-        return 'SK';
-      case 'ukrainian':
-        return 'UK';
-      case 'romanian':
-        return 'RO';
-      case 'bulgarian':
-        return 'BG';
-      case 'croatian':
-        return 'HR';
-      case 'serbian':
-        return 'SR';
-      case 'slovenian':
-        return 'SL';
-      case 'estonian':
-        return 'ET';
-      case 'latvian':
-        return 'LV';
-      case 'lithuanian':
-        return 'LT';
-      case 'maltese':
-        return 'MT';
-      case 'irish':
-        return 'GA';
-      case 'welsh':
-        return 'CY';
-      case 'scottish gaelic':
-        return 'GD';
-      case 'catalan':
-        return 'CA';
-      case 'basque':
-        return 'EU';
-      case 'galician':
-        return 'GL';
       default:
-        // If not found, return first 2 characters of the language name in uppercase
+        // For any other language, show first 2 characters as fallback
         return language.length >= 2
             ? language.substring(0, 2).toUpperCase()
-            : language.toUpperCase();
+            : '??';
     }
   }
 
@@ -778,6 +715,8 @@ class _ConnectPageState extends State<ConnectPage> {
 
   /// Show advanced filter dialog
   void _showAdvancedFilterDialog(BuildContext context) {
+    if (!mounted) return;
+
     double tempAgeStart = _ageStart;
     double tempAgeEnd = _ageEnd;
     String? tempSelectedGender = _selectedGender;
@@ -810,7 +749,7 @@ class _ConnectPageState extends State<ConnectPage> {
                             'Elementary',
                             'Intermediate',
                             'Advanced',
-                            'Native',
+                            'Proficient',
                           ].asMap().entries.map((entry) {
                             final level = entry.value;
                             final isSelected = tempSelectedProficiency == level;
@@ -881,14 +820,24 @@ class _ConnectPageState extends State<ConnectPage> {
                     DropdownButtonFormField<String>(
                       value: tempSelectedRegion,
                       hint: const Text('Select Region'),
-                      items: ['USA', 'Spain', 'Japan', 'Korea', 'Bangladesh']
-                          .map(
-                            (region) => DropdownMenuItem(
-                              value: region,
-                              child: Text(region),
-                            ),
-                          )
-                          .toList(),
+                      items:
+                          [
+                                {'display': 'USA', 'value': 'usa'},
+                                {'display': 'Spain', 'value': 'spain'},
+                                {'display': 'Japan', 'value': 'japan'},
+                                {'display': 'Korea', 'value': 'korea'},
+                                {
+                                  'display': 'Bangladesh',
+                                  'value': 'bangladesh',
+                                },
+                              ]
+                              .map(
+                                (country) => DropdownMenuItem(
+                                  value: country['value'],
+                                  child: Text(country['display']!),
+                                ),
+                              )
+                              .toList(),
                       onChanged: (value) {
                         setState(() {
                           tempSelectedRegion = value;
