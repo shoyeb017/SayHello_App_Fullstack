@@ -5,6 +5,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../models/models.dart';
 import '../../../../providers/feed_provider.dart';
 import '../../../../providers/auth_provider.dart';
+import '../../../../providers/follower_provider.dart';
 import '../../../../services/azure_translator_service.dart';
 
 class FeedDetailPage extends StatefulWidget {
@@ -276,6 +277,28 @@ class _DetailedPostCardState extends State<DetailedPostCard>
         curve: Curves.elasticOut,
       ),
     );
+
+    // Check follow status when widget loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkFollowStatus();
+    });
+  }
+
+  void _checkFollowStatus() {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final followerProvider = Provider.of<FollowerProvider>(
+      context,
+      listen: false,
+    );
+
+    if (authProvider.currentUser != null) {
+      final currentUserId = authProvider.currentUser!.id;
+      final targetUserId = widget.feedWithUser.feed.learnerId;
+
+      if (currentUserId != targetUserId) {
+        followerProvider.checkFollowStatus(currentUserId, targetUserId);
+      }
+    }
   }
 
   @override
@@ -295,6 +318,19 @@ class _DetailedPostCardState extends State<DetailedPostCard>
 
     // Call the original like handler
     widget.onLikePressed();
+  }
+
+  /// Handle follow/unfollow toggle
+  void _handleFollowToggle(String targetUserId) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final followerProvider = Provider.of<FollowerProvider>(
+      context,
+      listen: false,
+    );
+
+    if (authProvider.currentUser != null) {
+      followerProvider.toggleFollow(authProvider.currentUser!.id, targetUserId);
+    }
   }
 
   Future<void> _translatePost() async {
@@ -393,86 +429,42 @@ class _DetailedPostCardState extends State<DetailedPostCard>
     }
   }
 
-  // Convert language names to proper format for Azure Translator Service
+  // Convert language names to proper format for Azure Translator Service (5 supported languages only)
   String _getProperLanguageName(String languageName) {
     switch (languageName.toLowerCase()) {
       case 'english':
         return 'English';
       case 'spanish':
         return 'Spanish';
-      case 'french':
-        return 'French';
-      case 'german':
-        return 'German';
-      case 'italian':
-        return 'Italian';
-      case 'portuguese':
-        return 'Portuguese';
-      case 'russian':
-        return 'Russian';
       case 'japanese':
         return 'Japanese';
       case 'korean':
         return 'Korean';
-      case 'chinese':
-        return 'Chinese';
-      case 'arabic':
-        return 'Arabic';
-      case 'hindi':
-        return 'Hindi';
+      case 'bangla':
       case 'bengali':
         return 'Bengali';
-      case 'dutch':
-        return 'Dutch';
-      case 'swedish':
-        return 'Swedish';
-      case 'norwegian':
-        return 'Norwegian';
-      case 'danish':
-        return 'Danish';
-      case 'finnish':
-        return 'Finnish';
-      case 'turkish':
-        return 'Turkish';
-      case 'polish':
-        return 'Polish';
-      case 'czech':
-        return 'Czech';
-      case 'hungarian':
-        return 'Hungarian';
-      case 'romanian':
-        return 'Romanian';
-      case 'bulgarian':
-        return 'Bulgarian';
-      case 'croatian':
-        return 'Croatian';
-      case 'serbian':
-        return 'Serbian';
-      case 'slovak':
-        return 'Slovak';
-      case 'slovenian':
-        return 'Slovenian';
-      case 'greek':
-        return 'Greek';
-      case 'hebrew':
-        return 'Hebrew';
-      case 'thai':
-        return 'Thai';
-      case 'vietnamese':
-        return 'Vietnamese';
-      case 'indonesian':
-        return 'Indonesian';
-      case 'malay':
-        return 'Malay';
-      case 'filipino':
-        return 'Filipino';
-      case 'tagalog':
-        return 'Filipino';
       default:
-        // Capitalize first letter as fallback
-        return languageName.isNotEmpty
-            ? '${languageName[0].toUpperCase()}${languageName.substring(1).toLowerCase()}'
-            : 'English';
+        // Default to English for any unsupported language
+        return 'English';
+    }
+  }
+
+  // Helper method to get language code (only for supported languages)
+  String _getLanguageCode(String language) {
+    switch (language.toLowerCase()) {
+      case 'english':
+        return 'EN';
+      case 'spanish':
+        return 'ES';
+      case 'japanese':
+        return 'JP';
+      case 'korean':
+        return 'KR';
+      case 'bangla':
+      case 'bengali':
+        return 'BN';
+      default:
+        return 'EN'; // Default to English
     }
   }
 
@@ -553,83 +545,200 @@ class _DetailedPostCardState extends State<DetailedPostCard>
                       ],
                     ),
                     const SizedBox(height: 2),
-                    // Language badges (placeholder)
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Container(
-                            padding: const EdgeInsets.only(bottom: 2),
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: Colors.green,
-                                  width: 2,
+                    // Language badges with real user data
+                    Consumer<FeedProvider>(
+                      builder: (context, feedProvider, child) {
+                        return FutureBuilder<Map<String, dynamic>?>(
+                          future: feedProvider.getUserInfo(
+                            widget.feedWithUser.feed.learnerId,
+                          ),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData && snapshot.data != null) {
+                              final userInfo = snapshot.data!;
+                              final nativeLanguage =
+                                  userInfo['native_language'] ?? 'English';
+                              final learningLanguage =
+                                  userInfo['learning_language'] ?? 'Spanish';
+
+                              return Row(
+                                children: [
+                                  Flexible(
+                                    child: Container(
+                                      padding: const EdgeInsets.only(bottom: 2),
+                                      decoration: const BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: Colors.green,
+                                            width: 2,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        _getLanguageCode(nativeLanguage),
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                    ),
+                                    child: Icon(
+                                      Icons.sync_alt,
+                                      size: 18,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: Container(
+                                      padding: const EdgeInsets.only(bottom: 2),
+                                      decoration: const BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: Colors.purple,
+                                            width: 2,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        _getLanguageCode(learningLanguage),
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+                            // Fallback to default while loading
+                            return Row(
+                              children: [
+                                Flexible(
+                                  child: Container(
+                                    padding: const EdgeInsets.only(bottom: 2),
+                                    decoration: const BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: Colors.green,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'EN',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            child: Text(
-                              'EN', // Placeholder - would come from user profile
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 6),
-                          child: Icon(
-                            Icons.sync_alt,
-                            size: 18,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        Flexible(
-                          child: Container(
-                            padding: const EdgeInsets.only(bottom: 2),
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: Colors.purple,
-                                  width: 2,
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 6),
+                                  child: Icon(
+                                    Icons.sync_alt,
+                                    size: 18,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                              ),
-                            ),
-                            child: Text(
-                              'JP', // Placeholder - would come from user profile
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ],
+                                Flexible(
+                                  child: Container(
+                                    padding: const EdgeInsets.only(bottom: 2),
+                                    decoration: const BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: Colors.purple,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'ES',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 8),
-              // Follow button placeholder
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  AppLocalizations.of(context)!.follow,
-                  style: TextStyle(
-                    color: isDark ? Colors.white : Colors.black,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              // Follow button with FollowerProvider integration
+              Consumer2<FollowerProvider, AuthProvider>(
+                builder: (context, followerProvider, authProvider, child) {
+                  final currentUserId = authProvider.currentUser?.id;
+                  final targetUserId = widget.feedWithUser.feed.learnerId;
+
+                  // Don't show follow button for own posts
+                  if (currentUserId == targetUserId) {
+                    return const SizedBox.shrink();
+                  }
+
+                  final isFollowing = followerProvider.isFollowingUser(
+                    targetUserId,
+                  );
+                  final isLoading = followerProvider.isLoading;
+
+                  return GestureDetector(
+                    onTap: isLoading
+                        ? null
+                        : () => _handleFollowToggle(targetUserId),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isFollowing
+                            ? (isDark
+                                  ? Colors.grey.shade700
+                                  : Colors.grey.shade300)
+                            : const Color(0xFF7d54fb),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: isLoading
+                          ? SizedBox(
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  isDark ? Colors.white : Colors.black,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              isFollowing
+                                  ? AppLocalizations.of(context)!.following
+                                  : AppLocalizations.of(context)!.follow,
+                              style: TextStyle(
+                                color: isFollowing
+                                    ? (isDark ? Colors.white : Colors.black)
+                                    : Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -1187,86 +1296,23 @@ class _CommentCardState extends State<CommentCard> {
     }
   }
 
-  // Convert language names to proper format for Azure Translator Service
+  // Convert language names to proper format for Azure Translator Service (5 supported languages only)
   String _getProperLanguageName(String languageName) {
     switch (languageName.toLowerCase()) {
       case 'english':
         return 'English';
       case 'spanish':
         return 'Spanish';
-      case 'french':
-        return 'French';
-      case 'german':
-        return 'German';
-      case 'italian':
-        return 'Italian';
-      case 'portuguese':
-        return 'Portuguese';
-      case 'russian':
-        return 'Russian';
       case 'japanese':
         return 'Japanese';
       case 'korean':
         return 'Korean';
-      case 'chinese':
-        return 'Chinese';
-      case 'arabic':
-        return 'Arabic';
-      case 'hindi':
-        return 'Hindi';
+      case 'bangla':
       case 'bengali':
         return 'Bengali';
-      case 'dutch':
-        return 'Dutch';
-      case 'swedish':
-        return 'Swedish';
-      case 'norwegian':
-        return 'Norwegian';
-      case 'danish':
-        return 'Danish';
-      case 'finnish':
-        return 'Finnish';
-      case 'turkish':
-        return 'Turkish';
-      case 'polish':
-        return 'Polish';
-      case 'czech':
-        return 'Czech';
-      case 'hungarian':
-        return 'Hungarian';
-      case 'romanian':
-        return 'Romanian';
-      case 'bulgarian':
-        return 'Bulgarian';
-      case 'croatian':
-        return 'Croatian';
-      case 'serbian':
-        return 'Serbian';
-      case 'slovak':
-        return 'Slovak';
-      case 'slovenian':
-        return 'Slovenian';
-      case 'greek':
-        return 'Greek';
-      case 'hebrew':
-        return 'Hebrew';
-      case 'thai':
-        return 'Thai';
-      case 'vietnamese':
-        return 'Vietnamese';
-      case 'indonesian':
-        return 'Indonesian';
-      case 'malay':
-        return 'Malay';
-      case 'filipino':
-        return 'Filipino';
-      case 'tagalog':
-        return 'Filipino';
       default:
-        // Capitalize first letter as fallback
-        return languageName.isNotEmpty
-            ? '${languageName[0].toUpperCase()}${languageName.substring(1).toLowerCase()}'
-            : 'English';
+        // Default to English for any unsupported language
+        return 'English';
     }
   }
 

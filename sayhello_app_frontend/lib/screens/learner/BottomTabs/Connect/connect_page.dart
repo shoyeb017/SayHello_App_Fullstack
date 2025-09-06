@@ -741,41 +741,55 @@ class _ConnectPageState extends State<ConnectPage> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children:
-                          [
-                            'Beginner',
-                            'Elementary',
-                            'Intermediate',
-                            'Advanced',
-                            'Proficient',
-                          ].asMap().entries.map((entry) {
-                            final level = entry.value;
-                            final isSelected = tempSelectedProficiency == level;
-                            return GestureDetector(
-                              onTap: () => setState(
-                                () => tempSelectedProficiency = level,
-                              ),
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.circle,
-                                    size: 20,
-                                    color: isSelected
-                                        ? Colors.purple
-                                        : Colors.grey.shade400,
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children:
+                            [
+                              'Beginner',
+                              'Elementary',
+                              'Intermediate',
+                              'Advanced',
+                              'Proficient',
+                            ].asMap().entries.map((entry) {
+                              final level = entry.value;
+                              final isSelected =
+                                  tempSelectedProficiency == level;
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4.0,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () => setState(
+                                    () => tempSelectedProficiency = level,
                                   ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    level,
-                                    style: const TextStyle(fontSize: 10),
-                                    overflow: TextOverflow.ellipsis,
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.circle,
+                                        size: 18,
+                                        color: isSelected
+                                            ? Colors.purple
+                                            : Colors.grey.shade400,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      SizedBox(
+                                        width: 55,
+                                        child: Text(
+                                          level,
+                                          style: const TextStyle(fontSize: 9),
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.center,
+                                          maxLines: 1,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
+                                ),
+                              );
+                            }).toList(),
+                      ),
                     ),
                     const SizedBox(height: 24),
 

@@ -126,6 +126,7 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
 
   void _applyFilter() {
     final query = _searchController.text.toLowerCase().trim();
+
     setState(() {
       _filteredCourses = widget.allCourses.where((course) {
         // Search filter - enhanced search functionality
@@ -148,10 +149,12 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
               description.contains(query);
         }
 
-        // Level filter
+        // Level filter - Fixed case sensitivity and comparison
         bool matchesLevel = true;
         if (_selectedLevelFilter != 'All') {
-          matchesLevel = course['level'] == _selectedLevelFilter;
+          final courseLevel = (course['level'] ?? '').toString();
+          matchesLevel =
+              courseLevel.toLowerCase() == _selectedLevelFilter.toLowerCase();
         }
 
         // Status filter
@@ -162,17 +165,33 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
               calculatedStatus == _selectedStatusFilter.toLowerCase();
         }
 
-        // Popular filter
+        // Popular filter - Made criteria more flexible
         bool matchesPopular = true;
         if (_showPopularOnly) {
-          matchesPopular =
-              (course['rating'] ?? 0) >= 4.5 ||
-              (course['students'] ?? 0) >= 100;
+          final rating = course['rating'] ?? 0;
+          final students = course['students'] ?? 0;
+          final isPopular = course['isPopular'] ?? false;
+
+          // A course is popular if:
+          // 1. It has high rating (4.0+) OR
+          // 2. It has many students (50+) OR
+          // 3. It's explicitly marked as popular
+          matchesPopular = rating >= 4.0 || students >= 50 || isPopular == true;
         }
 
         return matchesSearch && matchesLevel && matchesStatus && matchesPopular;
       }).toList();
     });
+  }
+
+  void _clearAllFilters() {
+    setState(() {
+      _selectedLevelFilter = 'All';
+      _selectedStatusFilter = 'All';
+      _showPopularOnly = false;
+      _searchController.clear();
+    });
+    _applyFilter();
   }
 
   void _navigateToCourse(Map<String, dynamic> course) {
@@ -483,21 +502,50 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
 
             const SizedBox(height: 16),
 
-            // Results count
+            // Results count and clear filters
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  AppLocalizations.of(context)!.coursesFound(
-                    _filteredCourses.length.toString(),
-                    _filteredCourses.length != 1 ? 's' : '',
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.coursesFound(
+                      _filteredCourses.length.toString(),
+                      _filteredCourses.length != 1 ? 's' : '',
+                    ),
+                    style: TextStyle(
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      fontSize: 14,
+                    ),
                   ),
-                  style: TextStyle(
-                    color: isDark ? Colors.grey[400] : Colors.grey[600],
-                    fontSize: 14,
-                  ),
-                ),
+                  // Clear filters button
+                  if (_selectedLevelFilter != 'All' ||
+                      _selectedStatusFilter != 'All' ||
+                      _showPopularOnly ||
+                      _searchController.text.isNotEmpty)
+                    TextButton.icon(
+                      onPressed: _clearAllFilters,
+                      icon: Icon(
+                        Icons.clear_all,
+                        size: 16,
+                        color: Color(0xFF7A54FF),
+                      ),
+                      label: Text(
+                        'Clear Filters',
+                        style: TextStyle(
+                          color: Color(0xFF7A54FF),
+                          fontSize: 12,
+                        ),
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        minimumSize: Size(0, 0),
+                      ),
+                    ),
+                ],
               ),
             ),
 
@@ -547,6 +595,12 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
 
   Widget _buildCourseCard(Map<String, dynamic> course, bool isDark) {
     final isEnrolled = course['progress'] != null && course['progress'] > 0;
+
+    // Debug course data
+    final courseLevel = course['level']?.toString() ?? 'Unknown';
+    final courseRating = course['rating'] ?? 0;
+    final courseStudents = course['students'] ?? 0;
+    final isPopularCourse = course['isPopular'] ?? false;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -601,26 +655,94 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      course['title'] ?? '',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    // Title and level badge
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            course['title'] ?? '',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (courseLevel.toLowerCase() != 'unknown')
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color(0xFF7A54FF).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: Color(0xFF7A54FF).withOpacity(0.3),
+                              ),
+                            ),
+                            child: Text(
+                              courseLevel,
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF7A54FF),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      course['instructor'] ?? '',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+
+                    // Instructor and rating/students
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            course['instructor'] ?? '',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (courseRating > 0)
+                          Row(
+                            children: [
+                              Icon(Icons.star, size: 12, color: Colors.amber),
+                              SizedBox(width: 2),
+                              Text(
+                                courseRating.toStringAsFixed(1),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: isDark
+                                      ? Colors.grey[400]
+                                      : Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        if (courseStudents > 0) ...[
+                          SizedBox(width: 8),
+                          Text(
+                            '${courseStudents}+',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
+
                     if (isEnrolled) ...[
                       const SizedBox(height: 4),
                       Text(
@@ -636,7 +758,37 @@ class _SearchCoursesPageState extends State<SearchCoursesPage> {
                       ),
                     ] else ...[
                       const SizedBox(height: 4),
-                      _buildStatusBadge(_getCourseStatus(course)),
+                      Row(
+                        children: [
+                          _buildStatusBadge(_getCourseStatus(course)),
+                          if (isPopularCourse ||
+                              courseRating >= 4.0 ||
+                              courseStudents >= 50) ...[
+                            SizedBox(width: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(3),
+                                border: Border.all(
+                                  color: Colors.orange.withOpacity(0.3),
+                                ),
+                              ),
+                              child: Text(
+                                '⭐ Popular',
+                                style: TextStyle(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ],
                   ],
                 ),

@@ -25,12 +25,26 @@ class _ProfilePageState extends State<ProfilePage> {
   LearnerProvider? _learnerProvider;
   bool _initialized = false;
   ScaffoldMessengerState? _scaffoldMessenger;
+  String? _lastUserId; // Track the last user ID to detect changes
+
+  @override
+  void initState() {
+    super.initState();
+    // Reset initialization flag when widget is recreated
+    _initialized = false;
+    _lastUserId = null;
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_initialized) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final currentUserId = authProvider.currentUser?.id;
+
+    // Initialize if not done yet, or if user has changed
+    if (!_initialized || _lastUserId != currentUserId) {
       _initialized = true;
+      _lastUserId = currentUserId;
       _scaffoldMessenger = ScaffoldMessenger.of(context);
       // Use post-frame callback to avoid calling notifyListeners during build
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -49,13 +63,16 @@ class _ProfilePageState extends State<ProfilePage> {
       listen: false,
     );
 
-    if (_learnerProvider?.currentLearner == null &&
-        authProvider.currentUser != null) {
-      await _learnerProvider?.loadLearner(authProvider.currentUser.id);
-    }
-
-    // Load follower counts if user is available
+    // Always load fresh data for the current user
     if (authProvider.currentUser != null) {
+      // Clear any existing data first to ensure fresh load
+      _learnerProvider?.clear();
+      followerProvider.clear();
+
+      // Load learner data
+      await _learnerProvider?.loadLearner(authProvider.currentUser.id);
+
+      // Load follower counts
       await followerProvider.loadCounts(authProvider.currentUser.id);
     }
   }
@@ -888,7 +905,7 @@ class _ProfilePageState extends State<ProfilePage> {
             context,
             AppLocalizations.of(context)!.native,
             _capitalizeFirst(learner.nativeLanguage),
-            '🇺🇸',
+            _getLanguageFlagForLanguage(learner.nativeLanguage),
             isDark,
             primaryColor,
             isNative: true,
