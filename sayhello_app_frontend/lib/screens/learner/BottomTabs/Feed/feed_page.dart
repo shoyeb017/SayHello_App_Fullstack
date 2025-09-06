@@ -66,7 +66,9 @@ class _FeedPageState extends State<FeedPage>
         _,
       ) {
         // After feeds are loaded, batch-check follow status for all users in feeds
-        _batchLoadFollowStatuses();
+        if (mounted) {
+          _batchLoadFollowStatuses();
+        }
       });
 
       // Load follower counts and data
@@ -76,6 +78,9 @@ class _FeedPageState extends State<FeedPage>
 
   /// Batch load follow statuses for all users currently visible in feeds
   void _batchLoadFollowStatuses() {
+    // Early return if widget is unmounted
+    if (!mounted) return;
+
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final feedProvider = Provider.of<FeedProvider>(context, listen: false);
     final followerProvider = Provider.of<FollowerProvider>(
@@ -83,7 +88,7 @@ class _FeedPageState extends State<FeedPage>
       listen: false,
     );
 
-    if (authProvider.currentUser != null) {
+    if (authProvider.currentUser != null && mounted) {
       final currentUserId = authProvider.currentUser!.id;
 
       // Collect all unique user IDs from both feed tabs
@@ -115,6 +120,8 @@ class _FeedPageState extends State<FeedPage>
   }
 
   void _showMyPosts() {
+    if (!mounted) return;
+
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     if (authProvider.currentUser != null) {
@@ -721,6 +728,8 @@ class _FeedPageState extends State<FeedPage>
   }
 
   void _handleLike(String feedId) {
+    if (!mounted) return;
+
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final feedProvider = Provider.of<FeedProvider>(context, listen: false);
 
@@ -794,6 +803,9 @@ class _FeedPostCardState extends State<FeedPostCard>
   }
 
   Future<void> _checkFollowStatus() async {
+    // Early return if widget is unmounted
+    if (!mounted) return;
+
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final followerProvider = Provider.of<FollowerProvider>(
       context,
@@ -801,7 +813,8 @@ class _FeedPostCardState extends State<FeedPostCard>
     );
 
     if (authProvider.currentUser?.id != null &&
-        widget.feedWithUser.feed.learnerId != authProvider.currentUser!.id) {
+        widget.feedWithUser.feed.learnerId != authProvider.currentUser!.id &&
+        mounted) {
       print(
         'FeedPostCard: Checking follow status for user: ${widget.feedWithUser.feed.learnerId}',
       );
@@ -910,7 +923,7 @@ class _FeedPostCardState extends State<FeedPostCard>
   }
 
   Future<void> _translateText() async {
-    if (_isTranslating) return;
+    if (_isTranslating || !mounted) return;
 
     setState(() {
       _isTranslating = true;
@@ -938,6 +951,8 @@ class _FeedPostCardState extends State<FeedPostCard>
       }
 
       // Get user's native language from their profile instead of device locale
+      if (!mounted) return;
+
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final currentUser = authProvider.currentUser;
 
