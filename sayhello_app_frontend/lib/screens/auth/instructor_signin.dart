@@ -210,7 +210,8 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                                     Navigator.pushNamedAndRemoveUntil(
                                       context,
                                       '/instructor-main',
-                                      (route) => false, // Remove all previous routes
+                                      (route) =>
+                                          false, // Remove all previous routes
                                     );
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
