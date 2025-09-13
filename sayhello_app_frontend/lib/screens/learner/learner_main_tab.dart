@@ -26,9 +26,15 @@ class _LearnerMainTabState extends State<LearnerMainTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_currentIndex],
-      bottomNavigationBar: Theme(
+    return WillPopScope(
+      onWillPop: () async {
+        // Prevent going back to login page after authentication
+        // Users should only logout through the proper logout button
+        return false;
+      },
+      child: Scaffold(
+        body: _pages[_currentIndex],
+        bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           splashColor: Colors.transparent, // ❌ Remove ripple
           highlightColor: Colors.transparent, // ❌ Remove highlight
@@ -67,9 +73,10 @@ class _LearnerMainTabState extends State<LearnerMainTab> {
                 label: AppLocalizations.of(context)!.profile,
               ),
             ],
-          ),
-        ),
-      ),
-    );
+          ), // BottomNavigationBar closing
+        ), // Material closing
+      ), // Theme closing
+    ), // Scaffold closing
+  ); // WillPopScope closing
   }
 }

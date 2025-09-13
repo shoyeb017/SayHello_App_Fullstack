@@ -241,9 +241,11 @@ class _LearnerSignInPageState extends State<LearnerSignInPage> {
                                       '🔄 SignIn: Navigating to main page...',
                                     );
 
-                                    Navigator.pushReplacementNamed(
+                                    // Clear entire navigation stack and navigate to main page
+                                    Navigator.pushNamedAndRemoveUntil(
                                       context,
                                       '/learner-main',
+                                      (route) => false, // Remove all previous routes
                                     );
                                   } else {
                                     print('❌ SignIn: Authentication failed');

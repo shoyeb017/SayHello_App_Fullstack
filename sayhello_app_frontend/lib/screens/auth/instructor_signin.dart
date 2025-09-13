@@ -206,9 +206,11 @@ class _InstructorSignInPageState extends State<InstructorSignInPage> {
                                       .signInInstructor(username, password);
 
                                   if (success) {
-                                    Navigator.pushReplacementNamed(
+                                    // Clear entire navigation stack and navigate to main page
+                                    Navigator.pushNamedAndRemoveUntil(
                                       context,
                                       '/instructor-main',
+                                      (route) => false, // Remove all previous routes
                                     );
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(

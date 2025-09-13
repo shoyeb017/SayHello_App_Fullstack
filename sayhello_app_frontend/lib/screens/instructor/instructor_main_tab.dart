@@ -22,7 +22,13 @@ class _InstructorMainTabState extends State<InstructorMainTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        // Prevent going back to login page after authentication
+        // Users should only logout through the proper logout button
+        return false;
+      },
+      child: Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
@@ -69,8 +75,9 @@ class _InstructorMainTabState extends State<InstructorMainTab> {
               ),
             ],
           ),
-        ),
-      ),
-    );
+        ), // Material closing
+      ), // Theme closing  
+    ), // Scaffold closing
+  ); // WillPopScope closing
   }
 }
